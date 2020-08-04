@@ -23,6 +23,7 @@
     "content_scripts":[{
         "run_at": "document_idle",
         "js" : [
+            "Third Party/jquery-3.5.1.min.js",
             "powerup.js"
         ],
         "css": [
@@ -32,19 +33,17 @@
             "https://*.live.dynatrace.com/#dashboard*",
             "https://*/e/*/#dashboard*",
             "https://*.sprint.dynatracelabs.com/#dashboard*",
-            "https://*.dev.dynatracelabs.com/#dashboard*"
+            "https://*.dev.dynatracelabs.com/*"
         ]
     }],
 
     "web_accessible_resources": [
-        "main.js",
-        "popup.js",
-        "Assets/menu-close.svg"
+        "powerup.js",
+        "powerup.css"
     ],
 
     "permissions": [
       "declarativeContent",
-      "activeTab",
-      "storage"
+      "activeTab"
     ]
 }

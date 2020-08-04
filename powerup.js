@@ -1,35 +1,57 @@
+console.log("Powerup: Dashboard powerups installed.");
+window.jQuery || console.log("Powerup: No jQuery...");
+$(document).ready(function () {
+    console.log("Powerup: document ready");
+    if (window.location.hash.startsWith("#dashboard;") ||
+        window.location.hash.startsWith("#dashboard/dashboard;")) {
+        //Add event listener to start hacking
+        console.log("Powerup: listener loaded");
+        $(window).on("load hashchange", hackDashboards);
+        Highcharts.addEvent(chart, 'load', hackDashboards);
+    } else {
+        console.log("Powerup: not a dashboard, quit.");
+        return; //not a dashboard
+    }
+
+
+});
+
 //Note, this is hacked from Alistair Emslie's Dynatrace Business Impact extension
 const title_selector = '[uitestid="gwt-debug-title"]';
 const val_selector = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type';
-const colorize_selector = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"]';
+const colorize_selector = '.grid-tile';
 const svg_selector = '[uitestid="gwt-debug-MARKDOWN"] > div > div';
 const colorhack = '!colorhack:';
 const svghack = '!svghack:';
 
-//Add event listener to check if it should calculate results when the anchor tag changes
-window.addEventListener("load hashchange", hackDashboards, false);
+
+
 
 
 //This is a function that runs when on the "dashboard" page (the check if we are on that page is at the bottom) 
 function hackDashboards() {
-
     //Wait for the dashboard page to load before proceeding 
-    if ($('[uitestid="gwt-debug-dashboardGrid"]').length) {
+    if (document.readyState == 'complete' &&
+        $('[uitestid="gwt-debug-dashboardGrid"]').length &&     //grid is loaded
+        !$(".loader").length &&                                //main loading distractor gone
+        !$('[uitestid="gwt-debug-tileLoader"]:visible').length        //tile distractors hidden
+    ) {
         console.log("Powerup: dashboard hacking...");
 
         //Step1: color changes
         colorPowerUp();
 
         //Step2: swap markdowns for SVGs
-        svgPowerUp();
+        //svgPowerUp();
 
         //Step3: add tooltips
-        addToolTips();
+        //addToolTips();
 
         return; //Stop checking we are on the dashboard screen once it's navigated to
+    } else {
+        console.log("Powerup: dashboardGrid not found yet, sleeping 200.");
+        setTimeout(hackDashboards, 200);
     }
-    //If we're not on the dashboard screen, then keep checking //TODO: add throttling or smarter waiting
-    window.requestAnimationFrame(ready);
 };
 
 
@@ -44,20 +66,24 @@ function colorPowerUp() {
             console.log("Powerup: color hack found");
             let argstring = $title.text().split(colorhack)[1];
             let args = argstring.split(";").map(x => x.split("="));
+            if (args.length < 3) {
+                console.log("Powerup: invalid argstring: " + argstring);
+                return false;
+            }
             let base = args.find(x => x[0] == "base")[1];
             let warn = Number(args.find(x => x[0] == "warn")[1]);
             let crit = Number(args.find(x => x[0] == "crit")[1]);
             let val = Number($tile.find(val_selector).text());
 
-            $title.removeClass("powerup-colorhack-critical powerup-colorhack-warning powerup-colorhack-normal");
+            $tile.removeClass("powerup-colorhack-critical powerup-colorhack-warning powerup-colorhack-normal");
             if (base == "low") {
-                if (val < warn) $title.addClass("powerup-colorhack-normal");
-                else if (val < crit) $title.addClass("powerup-colorhack-warning");
-                else $title.addClass("powerup-colorhack-critical");
+                if (val < warn) $tile.addClass("powerup-colorhack-normal");
+                else if (val < crit) $tile.addClass("powerup-colorhack-warning");
+                else $tile.addClass("powerup-colorhack-critical");
             } else if (base == "high") {
-                if (val > warn) $title.addClass("powerup-colorhack-normal");
-                else if (val > crit) $title.addClass("powerup-colorhack-warning");
-                else $title.addClass("powerup-colorhack-critical");
+                if (val > warn) $tile.addClass("powerup-colorhack-normal");
+                else if (val > crit) $tile.addClass("powerup-colorhack-warning");
+                else $tile.addClass("powerup-colorhack-critical");
             }
         }
     });
