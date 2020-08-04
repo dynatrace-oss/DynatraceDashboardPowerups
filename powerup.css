@@ -1,0 +1,25 @@
+@keyframes powerup-colorhack-critical {
+    0% {background-color: darkred;}
+    50% {background-color: red;}
+    100% {background-color: darkred;}
+  }
+  .powerup-colorhack-critical {
+    animation-name: powerup-colorhack-critical;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes powerup-colorhack-warning {
+    0% {background-color: yellow;}
+    50% {background-color: lightyellow;}
+    100% {background-color: yellow;}
+  }
+  .powerup-colorhack-warning {
+    animation-name: powerup-colorhack-warning;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+  }
+
+  .powerup-colorhack-normal {
+      background-color: green;
+  }

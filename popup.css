@@ -1,0 +1,19 @@
+body{
+	width: 500px;
+	height: 100%;
+}
+
+.centre {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+.green {
+	color: green;
+}
+
+.label {
+	font-weight: bold;
+}
