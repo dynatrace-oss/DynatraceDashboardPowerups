@@ -11,13 +11,14 @@
 
   @keyframes powerup-colorhack-warning {
     0% {background-color: yellow;}
-    50% {background-color: lightyellow;}
+    50% {background-color: goldenrod;}
     100% {background-color: yellow;}
   }
   .powerup-colorhack-warning {
-    animation-name: powerup-colorhack-warning;
+    /*animation-name: powerup-colorhack-warning;
     animation-duration: 1s;
-    animation-iteration-count: infinite;
+    animation-iteration-count: infinite;*/
+    background-color: yellow;
   }
 
   .powerup-colorhack-normal {
@@ -37,13 +38,14 @@
 
   @keyframes powerup-svghack-warning {
     0% {fill: yellow;}
-    50% {fill: lightyellow;}
+    50% {fill: goldenrod;}
     100% {fill: yellow;}
   }
   .powerup-svghack-warning {
-    animation-name: powerup-svghack-warning;
+    /*animation-name: powerup-svghack-warning;
     animation-duration: 1s;
-    animation-iteration-count: infinite;
+    animation-iteration-count: infinite;*/
+    fill: yellow;
   }
 
   .powerup-svghack-normal {

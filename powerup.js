@@ -1,5 +1,6 @@
 console.log("Powerup: Dashboard powerups installed.");
 window.jQuery || console.log("Powerup: No jQuery...");
+var hacking = false;
 $(document).ready(function () {
     console.log("Powerup: document ready");
     if (window.location.hash.startsWith("#dashboard;") ||
@@ -7,7 +8,7 @@ $(document).ready(function () {
         //Add event listener to start hacking
         console.log("Powerup: listener loaded");
         $(window).on("load hashchange", hackDashboards);
-        //Highcharts.addEvent(chart, 'load', hackDashboards); //cannot access webpage's globals
+        //setTimeout(() => { if (!hacking) hackDashboards(); }, 30000); //if hacking hasn't started in 30s, we probably missed the load event, fire now
     } else {
         console.log("Powerup: not a dashboard, quit.");
         return; //not a dashboard
@@ -31,6 +32,7 @@ const linker = '!link=';
 
 //This is a function that runs when on the "dashboard" page (the check if we are on that page is at the bottom) 
 function hackDashboards() {
+    hacking = true;
     //Wait for the dashboard page to load before proceeding 
     if (document.readyState == 'complete' &&
         $('[uitestid="gwt-debug-dashboardGrid"]').length &&     //grid is loaded
@@ -50,8 +52,8 @@ function hackDashboards() {
 
         return; //Stop checking we are on the dashboard screen once it's navigated to
     } else {
-        console.log("Powerup: dashboardGrid not found yet, sleeping 200.");
-        setTimeout(hackDashboards, 200);
+        console.log("Powerup: dashboardGrid not found yet, sleeping 1s.");
+        setTimeout(hackDashboards, 1000);
     }
 };
 
