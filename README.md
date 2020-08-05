@@ -1,4 +1,4 @@
-#Dynatrace Dashboard Powerups
+# Dynatrace Dashboard Powerups
 
 This extension hacks Dynatrace dashboards to enable cool new features live, such as:
 - Color changing tiles based on thresholds
@@ -9,7 +9,7 @@ Use the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigura
    
 *Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum*
 
-##Installation
+## Installation
 Download the extension source
 ![click download](Assets/loadext1.png)
 
