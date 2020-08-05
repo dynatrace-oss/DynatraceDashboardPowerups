@@ -23,3 +23,29 @@
   .powerup-colorhack-normal {
       background-color: green;
   }
+
+  @keyframes powerup-svghack-critical {
+    0% {fill: darkred;}
+    50% {fill: red;}
+    100% {fill: darkred;}
+  }
+  .powerup-svghack-critical {
+    animation-name: powerup-svghack-critical;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes powerup-svghack-warning {
+    0% {fill: yellow;}
+    50% {fill: lightyellow;}
+    100% {fill: yellow;}
+  }
+  .powerup-svghack-warning {
+    animation-name: powerup-svghack-warning;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+  }
+
+  .powerup-svghack-normal {
+      fill: green;
+  }

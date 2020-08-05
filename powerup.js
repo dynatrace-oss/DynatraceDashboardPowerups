@@ -7,7 +7,7 @@ $(document).ready(function () {
         //Add event listener to start hacking
         console.log("Powerup: listener loaded");
         $(window).on("load hashchange", hackDashboards);
-        Highcharts.addEvent(chart, 'load', hackDashboards);
+        //Highcharts.addEvent(chart, 'load', hackDashboards); //cannot access webpage's globals
     } else {
         console.log("Powerup: not a dashboard, quit.");
         return; //not a dashboard
@@ -20,7 +20,7 @@ $(document).ready(function () {
 const title_selector = '[uitestid="gwt-debug-title"]';
 const val_selector = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type';
 const colorize_selector = '.grid-tile';
-const svg_selector = '[uitestid="gwt-debug-MARKDOWN"] > div > div';
+const svg_selector = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
 const colorhack = '!colorhack:';
 const svghack = '!svghack:';
 
@@ -42,7 +42,7 @@ function hackDashboards() {
         colorPowerUp();
 
         //Step2: swap markdowns for SVGs
-        //svgPowerUp();
+        svgPowerUp();
 
         //Step3: add tooltips
         //addToolTips();
@@ -91,39 +91,54 @@ function colorPowerUp() {
 
 function svgPowerUp() {
     $(svg_selector).each((i, el) => {
-        if ($title.text().includes(svghack)) { //example !svghack:icon=host;link=val1;base=high;warn=90;crit=70
+        let $svgcontainer = $(el);
+        let $tile = $svgcontainer.parents(".grid-tile");
+
+        if ($svgcontainer.text().includes(svghack)) { //example !svghack:icon=host;link=val1;base=high;warn=90;crit=70 other tile has !link=val1
             console.log("Powerup: svg hack found");
-            let argstring = $title.text().split(svghack)[1];
+            let argstring = $svgcontainer.text().split(svghack)[1];
             let args = argstring.split(";").map(x => x.split("="));
+            let icon = args.find(x => x[0] == "icon")[1];
             let link = args.find(x => x[0] == "link")[1];
             let base = args.find(x => x[0] == "base")[1];
             let warn = Number(args.find(x => x[0] == "warn")[1]);
             let crit = Number(args.find(x => x[0] == "crit")[1]);
-            let val = 0;
+            let val;
 
             //find val
-            $(title_selector).each((i, el) => {
-                let $linktitle = $(el);
-                let $linktile = $linktitle.parents(".grid-tile");
-                //if ()
+            let link_text = '!link=' + link;
+            $(title_selector).each((i_link, el_link) => {
+                let $linktitle = $(el_link);
+                
+                if ($linktitle.text().includes(link_text)) {
+                    let $linktile = $linktitle.parents(".grid-tile");
+                    val = Number($linktile.find(val_selector).text());
+                }
             });
-
-            let $svgcontainer = $(el);
-            $svgcontainer.empty();
-            let $svg = (examplesvg) //get actual svg somewhere
-                .appendTo($svgcontainer);
-
-
-            $svg.removeClass("powerup-colorhack-critical powerup-colorhack-warning powerup-colorhack-normal");
-            if (base == "low") {
-                if (val < warn) $title.addClass("powerup-colorhack-normal");
-                else if (val < crit) $title.addClass("powerup-colorhack-warning");
-                else $title.addClass("powerup-colorhack-critical");
-            } else if (base == "high") {
-                if (val > warn) $title.addClass("powerup-colorhack-normal");
-                else if (val > crit) $title.addClass("powerup-colorhack-warning");
-                else $title.addClass("powerup-colorhack-critical");
+            if(typeof val == "undefined"){
+                console.log("Powerup: unable to match link: "+link_text);
             }
+
+            //swap in the svg
+            var imgURL = chrome.runtime.getURL("3rdParty/barista-icons/" + icon + ".svg");
+            fetch(imgURL)
+                .then((response) => response.text())
+                .then((svgtext) => {
+                    $svgcontainer.empty();
+                    let $svg = $(svgtext)
+                        .appendTo($svgcontainer);
+
+                    $svg.removeClass("powerup-svghack-critical powerup-svghack-warning powerup-svghack-normal");
+                    if (base == "low") {
+                        if (val < warn) $svg.addClass("powerup-svghack-normal");
+                        else if (val < crit) $svg.addClass("powerup-svghack-warning");
+                        else $svg.addClass("powerup-svghack-critical");
+                    } else if (base == "high") {
+                        if (val > warn) $svg.addClass("powerup-svghack-normal");
+                        else if (val > crit) $svg.addClass("powerup-svghack-warning");
+                        else $svg.addClass("powerup-svghack-critical");
+                    }
+                });
         }
     });
 
