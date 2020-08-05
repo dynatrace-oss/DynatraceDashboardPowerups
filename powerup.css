@@ -49,3 +49,7 @@
   .powerup-svghack-normal {
       fill: green;
   }
+
+  .powerup-markup {
+      display: none;
+  }

@@ -40,7 +40,8 @@
     "web_accessible_resources": [
         "powerup.js",
         "powerup.css",
-        "3rdParty/barista-icons/*"
+        "3rdParty/barista-icons/*",
+        "tooltips.js"
     ],
 
     "permissions": [
