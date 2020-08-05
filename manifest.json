@@ -30,9 +30,9 @@
             "powerup.css"
         ],
         "matches":[
-            "https://*.live.dynatrace.com/#dashboard*",
-            "https://*/e/*/#dashboard*",
-            "https://*.sprint.dynatracelabs.com/#dashboard*",
+            "https://*.live.dynatrace.com/*",
+            "https://*/e/*/*",
+            "https://*.sprint.dynatracelabs.com/*",
             "https://*.dev.dynatracelabs.com/*"
         ]
     }],
