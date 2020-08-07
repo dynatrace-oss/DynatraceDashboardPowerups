@@ -178,6 +178,7 @@ function addToolTips() {
                 setTimeout(initHackHighcharts,200);
             } else {
                 addHackHighchartsListener();
+                loadChartSync();
             }
         }
         initHackHighcharts();

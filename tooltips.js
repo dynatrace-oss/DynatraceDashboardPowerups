@@ -11,7 +11,8 @@ const series_opts = {
                 "size": 10
             }
         }
-    }
+    },
+
 };
 
 
@@ -55,18 +56,8 @@ function hackHighcharts() {
                 let p = new $.Deferred();
                 promises.push(p);
                 setTimeout(function () {
-                    chart.series.forEach(series => {
-                        series.update(series_opts, false);
-                    });
-                    //chart.update(xAxis_opts,false);
-                    chart.update({ tooltip: tooltip_opts }, false);
-                    chart.update({ xAxis: xAxis_opts }, false);
-                    chart.update({ yAxis: xAxis_opts }, false);
-
-
-                    chart.redraw(false);
-                    //chart.powerupHacked = true;
-                    hackedCount++;
+                    if (hackHighchart(chart))
+                        hackedCount++;
                     p.resolve();
                 }, 100); //still hitting synchronicity issues, try waiting
             }
@@ -81,8 +72,108 @@ function hackHighcharts() {
     }
 }
 
+function hackHighchart(chart) {
+    if (typeof (chart) !== "undefined" &&
+        !chart.powerupHacked &&
+        typeof (chart.container) != "undefined") {
+        chart.series.forEach(series => {
+            series.update(series_opts, false);
+        });
+        //chart.update(xAxis_opts,false);
+        chart.update({ tooltip: tooltip_opts }, false);
+        chart.update({ xAxis: xAxis_opts }, false);
+        chart.update({ yAxis: xAxis_opts }, false);
+
+
+        chart.redraw(false);
+        //chart.powerupHacked = true;
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 function addHackHighchartsListener() {
     console.log("Powerup: added hackHighcharts listener");
     Highcharts.addEvent(Highcharts.Chart, 'load', hackHighcharts);
     hackHighcharts();
 }
+
+function highlightPointsInOtherCharts(e) {
+    const container = e.currentTarget;
+    const charts = Highcharts.charts.filter(x => typeof (x) != "undefined");
+    const chartIndex = charts.findIndex(chart => chart.container === container);
+
+    if (chartIndex > -1) {
+        const chart = charts[chartIndex];
+
+        const event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
+        const point = chart.series[0].searchPoint(event, true); // Get the hovered point
+        //const point = chart.pointer.findNearestKDPoint(
+        //    chart.series, true, e
+        //)
+
+        if (point) {
+            const x = point.x;
+
+            for (let i = 0; i < charts.length; i++) {
+                if (i != chartIndex) {
+                    for (let s = 0; s<charts[i].series.length; s++ ){
+                        const points = charts[i].series[s].points;
+                        for (let p = 0; p < points.length; p++) {
+                            if (points[p].x === x) {
+                                //points[p].onMouseOver();
+                                points[p].series.xAxis.drawCrosshair(undefined,points[p]);
+                                points[p].series.yAxis.drawCrosshair(undefined,points[p]);
+                                break;
+                            }
+                        }
+                    }
+                    
+                } else {
+                    //point.series.xAxis.drawCrosshair(undefined,point);
+                    //point.series.yAxis.drawCrosshair(undefined,point);
+                    try{
+                        //point.series.chart.tooltip.refresh(point,undefined); 
+                    } catch(err){
+                        //Cannot read property 'category' of undefined
+                        //no idea why or how to stop it, let's just throw it away for now...
+                        //console.log(err.message);
+                        //console.log(point);
+                    }
+                    
+                }
+            }
+        }
+    }
+}
+
+function removeHighlightPointsInOtherCharts(e) {
+    const charts = Highcharts.charts.filter(x => typeof (x) != "undefined");
+    for (let i = 0; i < charts.length; i++) {
+        charts[i].xAxis[0].hideCrosshair();
+    }
+}
+
+function loadChartSync() {
+    $('[uitestid="gwt-debug-dashboardGrid"]').on("mouseover", ".highcharts-container", debouncedHighlight);
+    $('[uitestid="gwt-debug-dashboardGrid"]').on("mouseout", ".highcharts-container", removeHighlightPointsInOtherCharts);
+}
+
+const debounce = (func, wait) => {
+    let timeout;
+  
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+  
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
+  var debouncedHighlight = debounce(highlightPointsInOtherCharts,50);
