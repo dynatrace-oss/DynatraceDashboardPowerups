@@ -1,23 +1,12 @@
 console.log("Powerup: Dashboard powerups installed.");
 window.jQuery || console.log("Powerup: No jQuery...");
-var hacking = false;
+var PowerupHacking = false;
 $(document).ready(function () {
     console.log("Powerup: document ready");
-    if (window.location.hash.startsWith("#dashboard;") ||
-        window.location.hash.startsWith("#dashboard/dashboard;")) {
-        //Add event listener to start hacking
-        console.log("Powerup: listener loaded");
-        $(window).on("load hashchange", hackDashboards);
-        //setTimeout(() => { if (!hacking) hackDashboards(); }, 30000); //if hacking hasn't started in 30s, we probably missed the load event, fire now
-    } else {
-        console.log("Powerup: not a dashboard, quit.");
-        return; //not a dashboard
-    }
-
-
+    $(window).on("load hashchange", powerupListener);
+    console.log("Powerup: listener loaded");
 });
 
-//Note, this is hacked from Alistair Emslie's Dynatrace Business Impact extension
 const title_selector = '[uitestid="gwt-debug-title"]';
 const val_selector = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type';
 const colorize_selector = '.grid-tile';
@@ -27,19 +16,29 @@ const svghack = '!svghack:';
 const linker = '!link=';
 
 
-
+//Function to check to see if we should do some hacking
+function powerupListener() {
+    if (window.location.hash.startsWith("#dashboard;") ||
+        window.location.hash.startsWith("#dashboard/dashboard;")) {
+        console.log("Powerup: on a dashboard, get to hacking");
+        hackDashboards();
+    } else {
+        console.log("Powerup: not a dashboard, quit.");
+        return;
+    }
+}
 
 
 //This is a function that runs when on the "dashboard" page (the check if we are on that page is at the bottom) 
 function hackDashboards() {
-    hacking = true;
+    PowerupHacking = true;
     //Wait for the dashboard page to load before proceeding 
     if (document.readyState == 'complete' &&
         $('[uitestid="gwt-debug-dashboardGrid"]').length &&     //grid is loaded
-        !$(".loader").length &&                                //main loading distractor gone
-        !$('[uitestid="gwt-debug-tileLoader"]:visible').length        //tile distractors hidden
+        !$(".loader").length &&                                 //main loading distractor gone
+        !$('[uitestid="gwt-debug-tileLoader"]:visible').length  //tile distractors hidden
     ) {
-        console.log("Powerup: dashboard hacking...");
+        console.log("Powerup: things look ready, begin dashboard hacking...");
 
         //Step1: color changes
         colorPowerUp();
@@ -50,9 +49,10 @@ function hackDashboards() {
         //Step3: add tooltips
         addToolTips();
 
-        return; //Stop checking we are on the dashboard screen once it's navigated to
+        console.log("Powerup: hacks complete.");
+        return;
     } else {
-        console.log("Powerup: dashboardGrid not found yet, sleeping 1s.");
+        console.log("Powerup: doesn't look like things are loaded yet, sleeping 1s.");
         setTimeout(hackDashboards, 1000);
     }
 };
@@ -164,9 +164,23 @@ function svgPowerUp() {
 }
 
 function addToolTips() {
-    var s = document.createElement("script");
-    s.type = "text/javascript";
-    s.src = chrome.runtime.getURL("tooltips.js"); //execute in webpage context, not extension
-    $("head").append(s);
-    $(".highcharts-container").css("z-index", 999);
+    if(!$("#HighchartsHack").length) {
+        var $s = $("<script>")
+        .attr("id","HighchartsHack") 
+        .attr("src",chrome.runtime.getURL("tooltips.js")) //execute in webpage context, not extension
+        .appendTo("body");
+    }
+    var $s = $("<script>")
+        .append(document.createTextNode(`
+        function initHackHighcharts(){
+            if(typeof(addHackHighchartsListener)=="undefined"){
+                console.log("Powerup: tooltips.js not loaded yet");
+                setTimeout(initHackHighcharts,200);
+            } else {
+                addHackHighchartsListener();
+            }
+        }
+        initHackHighcharts();
+        `))
+        .appendTo("body");
 }
