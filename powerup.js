@@ -14,6 +14,7 @@ const svg_selector = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:fi
 const colorhack = '!colorhack:';
 const svghack = '!svghack:';
 const linker = '!link=';
+const markers = [colorhack, svghack, linker];
 
 
 //Function to check to see if we should do some hacking
@@ -48,6 +49,9 @@ function hackDashboards() {
 
         //Step3: add tooltips
         addToolTips();
+
+        //Last Step: cleanup ugly markup
+        //cleanMarkup();
 
         console.log("Powerup: hacks complete.");
         return;
@@ -89,12 +93,6 @@ function colorPowerUp() {
                 else if (val > crit) $tile.addClass("powerup-colorhack-warning");
                 else $tile.addClass("powerup-colorhack-critical");
             }
-
-            //hide ugly markup
-            if (!$title.html().includes('<span class="powerup-markup">')) {
-                let newTitle = titletokens[0] + '<span class="powerup-markup">' + titletokens[1] + '</span>';
-                $title.html(newTitle);
-            }
         }
     });
 }
@@ -123,15 +121,6 @@ function svgPowerUp() {
                 if ($linktitle.text().includes(link_text)) {
                     let $linktile = $linktitle.parents(".grid-tile");
                     val = Number($linktile.find(val_selector).text());
-
-                    //hide ugly markup
-                    if (!$linktitle.html().includes('<span class="powerup-markup">')) {
-                        let re = new RegExp('(.*)(' + linker + '[^ ]*)(.*)');
-                        let titletokens = $linktitle.html().match(re);
-                        let newTitle = titletokens[1] + '<span class="powerup-markup">' + titletokens[2] + '</span>' + titletokens[3];
-                        $linktitle.html(newTitle);
-                    }
-
                 }
             });
             if (typeof val == "undefined") {
@@ -185,3 +174,4 @@ function addToolTips() {
         `))
         .appendTo("body");
 }
+

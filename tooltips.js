@@ -1,4 +1,11 @@
-
+const title_selector = '[uitestid="gwt-debug-title"]';
+const val_selector = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type';
+const colorize_selector = '.grid-tile';
+const svg_selector = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
+const colorhack = '!colorhack:';
+const svghack = '!svghack:';
+const linker = '!link=';
+const markers = [colorhack, svghack, linker];
 const series_opts = {
     "animation": true,
     "allowPointSelect": true,
@@ -79,14 +86,15 @@ function hackHighchart(chart) {
         chart.series.forEach(series => {
             series.update(series_opts, false);
         });
-        //chart.update(xAxis_opts,false);
         chart.update({ tooltip: tooltip_opts }, false);
         chart.update({ xAxis: xAxis_opts }, false);
         chart.update({ yAxis: xAxis_opts }, false);
 
 
         chart.redraw(false);
-        //chart.powerupHacked = true;
+
+        //other dashboard hacking here
+        cleanMarkup();
 
         return true;
     } else {
@@ -120,30 +128,30 @@ function highlightPointsInOtherCharts(e) {
 
             for (let i = 0; i < charts.length; i++) {
                 if (i != chartIndex) {
-                    for (let s = 0; s<charts[i].series.length; s++ ){
+                    for (let s = 0; s < charts[i].series.length; s++) {
                         const points = charts[i].series[s].points;
                         for (let p = 0; p < points.length; p++) {
                             if (points[p].x === x) {
                                 //points[p].onMouseOver();
-                                points[p].series.xAxis.drawCrosshair(undefined,points[p]);
-                                points[p].series.yAxis.drawCrosshair(undefined,points[p]);
+                                points[p].series.xAxis.drawCrosshair(undefined, points[p]);
+                                points[p].series.yAxis.drawCrosshair(undefined, points[p]);
                                 break;
                             }
                         }
                     }
-                    
+
                 } else {
                     //point.series.xAxis.drawCrosshair(undefined,point);
                     //point.series.yAxis.drawCrosshair(undefined,point);
-                    try{
+                    try {
                         //point.series.chart.tooltip.refresh(point,undefined); 
-                    } catch(err){
+                    } catch (err) {
                         //Cannot read property 'category' of undefined
                         //no idea why or how to stop it, let's just throw it away for now...
                         //console.log(err.message);
                         //console.log(point);
                     }
-                    
+
                 }
             }
         }
@@ -164,16 +172,34 @@ function loadChartSync() {
 
 const debounce = (func, wait) => {
     let timeout;
-  
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-  
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  };
 
-  var debouncedHighlight = debounce(highlightPointsInOtherCharts,50);
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+};
+
+var debouncedHighlight = debounce(highlightPointsInOtherCharts, 50);
+
+function cleanMarkup() {
+    $(title_selector).each((i, el) => {
+        let $title = $(el);
+        let title = $title.text();
+        let idx = title.length;
+
+        idx = markers.reduce((acc, marker) => (title.includes(marker) ? Math.min(title.indexOf(marker), acc) : idx));
+
+        let newTitle = title.substring(0, idx) +
+            `<span class="powerup-markup">` +
+            title.substring(idx) +
+            `</span>`;
+
+        if (idx < title.length)
+            $title.html(newTitle);
+    });
+}
