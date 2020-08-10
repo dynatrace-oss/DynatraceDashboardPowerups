@@ -1,6 +1,6 @@
 var DashboardPowerups = (function () {
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
-    const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type';
+    const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type';
     const TILE_SELECTOR = '.grid-tile';
     const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"]';
     const SVG_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
@@ -39,10 +39,10 @@ var DashboardPowerups = (function () {
 
                 let $container = $(point.series.chart.container);
                 let $legend = $container.parents(TILE_SELECTOR).find(LEGEND_SELECTOR);
-                if($legend.length){
+                if ($legend.length) {
                     let series_index = point.series.index;
-                    let series_name = $legend.children(`.gwt-HTML:nth-child(${series_index+1})`).text();
-                    if(series_name.length) sn = series_name;
+                    let series_name = $legend.children(`.gwt-HTML:nth-child(${series_index + 1})`).text();
+                    if (series_name.length) sn = series_name;
                 }
 
                 return s + '<br/><span style=\"color:' + point.color + '\">●</span>' + sn + ': ' +
@@ -136,7 +136,7 @@ var DashboardPowerups = (function () {
 
     pub.addHackHighchartsListener = function () {
         console.log("Powerup: added hackHighcharts listener");
-        Highcharts.addEvent(Highcharts.Chart, 'load', debounce(pub.hackHighcharts,50));
+        Highcharts.addEvent(Highcharts.Chart, 'load', debounce(pub.hackHighcharts, 50));
         pub.hackHighcharts();
     }
 
@@ -207,7 +207,11 @@ var DashboardPowerups = (function () {
             let title = $title.text();
             let idx = title.length;
 
-            idx = MARKERS.reduce((acc, marker) => (title.includes(marker) ? Math.min(title.indexOf(marker), acc) : idx));
+            idx = MARKERS.reduce((acc, marker) =>
+                (title.includes(marker) ?
+                    Math.min(title.indexOf(marker), acc) :
+                    Math.min(acc, idx))
+                , idx);
 
             let newTitle = title.substring(0, idx) +
                 `<span class="powerup-markup">` +
@@ -280,7 +284,7 @@ var DashboardPowerups = (function () {
                 let val = pub.findLinkedVal(link);
 
                 //swap in the svg
-                var imgURL = `${pub.POWERUP_EXT_URL}3rdParty/barista-icons/${icon}.svg`;
+                var imgURL = pub.POWERUP_EXT_URL + encodeURI(`3rdParty/node_modules/@dynatrace/barista-icons/${icon}.svg`);
                 fetch(imgURL)
                     .then((response) => response.text())
                     .then((svgtext) => {

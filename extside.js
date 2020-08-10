@@ -105,15 +105,15 @@ var uniqId = (function () {
     //usage: let myId = uniqId();
     var i = 0;
     return function () {
-      return i++;
+        return i++;
     }
-  })();
+})();
 
-function injectCSS(){
+function injectCSS() {
     var $link = $("link")
-    .attr("id","PowerUpCSS")
-    .attr("rel","stylesheet")
-    .attr("type","text/css")
-    .attr("href",ext_url+"powerup.css")
-    .appendTo("head");
+        .attr("id", "PowerUpCSS")
+        .attr("rel", "stylesheet")
+        .attr("type", "text/css")
+        .attr("href", ext_url + "powerup.css")
+        .appendTo("head");
 }

@@ -3,15 +3,74 @@
 
 <head>
     <title>Dynatrace Dashboard Powerup</title>
-    <link rel="stylesheet" href="popup.css">   
+    <link rel="stylesheet" href="popup.css">
 </head>
 
 <body style="width: 300px; max-width: 400px">
     <h2>Dynatrace Dashboard Powerup</h2>
     <p>This extension hacks dashboards to enable cool new features live.</p>
-    <p>Use the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a> for deploying dashboards.</p>
-   
-    <p><i>Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum</i> </p>
-   </body>
+
+    <h3>Preferences</h3>
+    <table>
+        <tr>
+            <td>Color PowerUp</td>
+            <td><input type="checkbox" id="colorHack" checked></td>
+        </tr>
+        <tr>
+            <td>Icon PowerUp</td>
+            <td><input type="checkbox" id="svgHack" checked></td>
+        </tr>
+        <tr>
+            <td>ToolTips PowerUp</td>
+            <td><input type="checkbox" id="tooltipHack" checked></td>
+        </tr>
+    </table>
+    <table id="colorizeOptions">
+        <tr>
+            <td>Colorize:</td>
+            <td>
+                <select id="colorHackTarget">
+                    <option>Text</option>
+                    <option>Border</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Pulse on Critical:</td>
+            <td><select id="animateCritical">
+                <option>3 Pulses</option>
+                <option>Always</option>
+                <option>Never</option>
+            </select></td>
+        </tr>
+        <tr>
+            <td>Pulse on Warning:</td>
+            <td><select id="animateWarning">
+                <option>Never</option>
+                <option>3 Pulses</option>
+                <option>Always</option>
+            </select></td>
+        </tr>
+    </table>
+    <tr>
+        <td>Color PowerUp</td>
+        <td><input type="checkbox" id="colorHack" checked></td>
+    </tr>
+
+
+
+
+
+
+
+
+
+    <p>Use the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a> for deploying dashboards.
+    </p>
+
+    <p><i>Please note: this is a community developed demonstration application. It is provided without any
+            representations, warranties, or support from Dynatrace. If you have questions about this app, please post on
+            our forum</i> </p>
+</body>
 
 </html>
