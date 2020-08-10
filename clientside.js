@@ -4,7 +4,7 @@ var DashboardPowerups = (function () {
     const TILE_SELECTOR = '.grid-tile';
     const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"]';
     const SVG_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
-    const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span';
+    const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, [uitestid="gwt-debug-kpiValue"] span';
     const COLORHACK = '!colorhack:';
     const SVGHACK = '!svghack:';
     const LINKER = '!link=';
@@ -242,7 +242,7 @@ var DashboardPowerups = (function () {
                 let base = args.find(x => x[0] == "base")[1];
                 let warn = Number(args.find(x => x[0] == "warn")[1]);
                 let crit = Number(args.find(x => x[0] == "crit")[1]);
-                let val = Number($tile.find(VAL_SELECTOR).text());
+                let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g,''));
 
                 let $target = $bignum; //or $tile
                 $target.removeClass("powerup-colorhack-critical powerup-colorhack-warning powerup-colorhack-normal");
