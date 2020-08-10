@@ -2,7 +2,7 @@
     "manifest_version": 2, 
     "name": "Dynatrace Dashboard Powerups",
     "description": "Hack existing dashboards for cool features",
-    "version": "0.2",
+    "version": "0.3",
     "author": "Lucas Hocker",
 
     "browser_action": {
@@ -24,7 +24,7 @@
         "run_at": "document_end",
         "js" : [
             "3rdParty/jquery-3.5.1.min.js",
-            "powerup.js"
+            "extside.js"
         ],
         "css": [
             "powerup.css"
@@ -38,10 +38,9 @@
     }],
 
     "web_accessible_resources": [
-        "powerup.js",
         "powerup.css",
         "3rdParty/barista-icons/*",
-        "tooltips.js"
+        "clientside.js"
     ],
 
     "permissions": [
