@@ -39,10 +39,12 @@ var DashboardPowerups = (function () {
                 let sn = n.substring(0, i) || "";
 
                 let $container = $(point.series.chart.container);
+                let color = point.series.color;
                 let $legend = $container.parents(TILE_SELECTOR).find(LEGEND_SELECTOR);
                 if ($legend.length) {
                     let series_index = point.series.index;
-                    let series_name = $legend.children(`.gwt-HTML:nth-child(${series_index + 1})`).text();
+                    //let series_name = $legend.children(`.gwt-HTML:nth-child(${series_index + 1})`).text();
+                    let series_name = $legend.find(`svg[fill='${color}']`).parents(".gwt-HTML").text();
                     if (series_name.length) sn = series_name;
                 }
 
