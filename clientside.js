@@ -5,6 +5,7 @@ var DashboardPowerups = (function () {
     const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"]';
     const SVG_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
     const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, [uitestid="gwt-debug-kpiValue"] span';
+    const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
     const COLORHACK = '!colorhack:';
     const SVGHACK = '!svghack:';
     const LINKER = '!link=';
@@ -300,6 +301,19 @@ var DashboardPowerups = (function () {
                     if (val > warn) $target.addClass("powerup-colorhack-normal");
                     else if (val > crit) $target.addClass("powerup-colorhack-warning");
                     else $target.addClass("powerup-colorhack-critical");
+                }
+
+                let $trend = $tile.find(TREND_SELECTOR);
+                if($trend.length){
+                    let trend = Number($trend.text().replace(/%/,''));
+                    $trend.removeClass("powerup-colorhack-critical powerup-colorhack-warning powerup-colorhack-normal");
+                    if(base == "low"){
+                        if(trend>0) $trend.addClass("powerup-colorhack-warning");
+                        else if(trend<0) $trend.addClass("powerup-colorhack-normal");
+                    } else if(base == "high"){
+                        if(trend<0) $trend.addClass("powerup-colorhack-warning");
+                        else if(trend>0) $trend.addClass("powerup-colorhack-normal");
+                    }
                 }
             }
         });
