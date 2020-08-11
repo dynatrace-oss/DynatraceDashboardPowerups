@@ -50,10 +50,7 @@ function hackDashboards() {
 
         injectClientsideString(`
         DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
-        console.log("Powerup: DashboardPowerups=");
-        console.log(DashboardPowerups);
-        console.log("Powerup: --");
-
+        
         //Step1: color changes
         DashboardPowerups.colorPowerUp();
 

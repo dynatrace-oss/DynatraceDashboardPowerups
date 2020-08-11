@@ -56,6 +56,7 @@ var DashboardPowerups = (function () {
             width: '1px'
         }
     };
+    var hackHighchartsMutex = false;
 
     //Private methods
     const debounce = (func, wait) => {
@@ -72,6 +73,23 @@ var DashboardPowerups = (function () {
         };
     };
 
+    const debounceMutex = (fn, time) => {
+        let timeout;
+        let mutex = false;
+
+        return function () {
+            const functionCall = () => {
+                mutex = true;
+                let p = fn.apply(this, arguments);
+                $.when(p).done(() => { mutex = false; })
+            }
+
+            clearTimeout(timeout);
+            if (!mutex)
+                timeout = setTimeout(functionCall, time);
+        }
+    }
+
 
 
     //Public methods
@@ -84,8 +102,14 @@ var DashboardPowerups = (function () {
         if (window.location.hash.startsWith("#dashboard;") ||
             window.location.hash.startsWith("#dashboard/dashboard;")) {
             console.log("Powerup: hacking Highcharts...");
+            //if(hackHighchartsMutex){
+            //    console.log("Powerup: hacking Highcharts mutex blocked");
+            //    return false;
+            //}
+            // hackHighchartsMutex = true;
             let hackedCount = 0;
             let promises = [];
+            let mainPromise = new $.Deferred();
             Highcharts.charts.slice().forEach(chart => {
                 if (typeof (chart) !== "undefined" &&
                     !chart.powerupHacked &&
@@ -106,10 +130,14 @@ var DashboardPowerups = (function () {
                 pub.colorPowerUp();
                 pub.updateSVGPowerUp();
                 pub.cleanMarkup();
+                //hackHighchartsMutex = false;
+                mainPromise.resolve(true);
             });
+            return mainPromise;
         } else {
             console.log("Powerup: no longer on a dashboard, removing hackHighcharts listener...");
             Highcharts.removeEvent(Highcharts.Chart, 'load', pub.hackHighcharts);
+            return false;
         }
     }
 
@@ -136,8 +164,26 @@ var DashboardPowerups = (function () {
 
     pub.addHackHighchartsListener = function () {
         console.log("Powerup: added hackHighcharts listener");
-        Highcharts.addEvent(Highcharts.Chart, 'load', debounce(pub.hackHighcharts, 50));
+        Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.hackHighcharts,200));
+        Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.hackHighcharts,200));
         pub.hackHighcharts();
+
+        /*
+            custom charts are destroyed and loaded on new data, fires load event
+            usql charts are redrawn on new data, fires redraw event
+
+            listen for either event and begin hacking
+            we will get several of these events, so need to debounce
+                start a timer
+                throw aways all but last event until timer expires
+
+            at the end of hacking, we must redraw the chart(s) ourselves, which again fires redraw
+                handle by using a crude mutex
+                if mutex == true, we're already hacking, abort
+                else set mutex=true and hack away
+                when done set mutex=false
+
+        */
     }
 
     pub.highlightPointsInOtherCharts = function (e) {
@@ -242,7 +288,7 @@ var DashboardPowerups = (function () {
                 let base = args.find(x => x[0] == "base")[1];
                 let warn = Number(args.find(x => x[0] == "warn")[1]);
                 let crit = Number(args.find(x => x[0] == "crit")[1]);
-                let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g,''));
+                let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g, ''));
 
                 let $target = $bignum; //or $tile
                 $target.removeClass("powerup-colorhack-critical powerup-colorhack-warning powerup-colorhack-normal");
