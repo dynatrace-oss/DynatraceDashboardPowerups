@@ -2,7 +2,7 @@
     "manifest_version": 2, 
     "name": "Dynatrace Dashboard Powerups",
     "description": "Hack existing dashboards for cool features",
-    "version": "0.4",
+    "version": "0.5",
     "author": "Lucas Hocker",
 
     "browser_action": {
