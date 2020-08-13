@@ -471,6 +471,9 @@ var DashboardPowerups = (function () {
             let $tile = $target.parents(TILE_SELECTOR);
             let width = d3Target.attr("width");
             let height = d3Target.attr("height");
+            var dataTable = [];
+            let keys = [];
+            let normalTable = [];
 
             const zoom = d3.zoom()
                 .scaleExtent([1, 8])
@@ -520,10 +523,17 @@ var DashboardPowerups = (function () {
                 let country = $path.attr("title");
                 let code = $path.attr("id").split('-')[1];
                 let data = $path.attr("data-data");
+                let key = keys[keys.length - 1];
+                let countryData = normalTable.find(x => x.country == country);
+                let val;
+                if (typeof countryData !== "undefined" && typeof (countryData[key]) !== "undefined")
+                    val = countryData[key];
+                else
+                    val = "0";
 
                 if ($tooltip.length) {
                     $tooltip.find(".geoText").text(`Country: ${country} (${code})`);
-                    $tooltip.find(".valueText").text(`Value: ${data}`)
+                    $tooltip.find(".valueText").text(`${key}: ${val}`)
                 }
             }
 
@@ -547,7 +557,7 @@ var DashboardPowerups = (function () {
             }
 
             //Read data from table
-            var dataTable = [];
+
             $(`[uitestid="gwt-debug-tablePanel"] > div > div`).each(function (i, el) {
                 let $el = $(el);
                 $el.find('span').each(function (j, el2) {
@@ -555,10 +565,11 @@ var DashboardPowerups = (function () {
                     dataTable[i][j] = $(el2).text();
                 });
             });
-            let keys = []; for (let i = 0; i < dataTable.length; i++) {
+
+            for (let i = 0; i < dataTable.length; i++) {
                 keys.push(dataTable[i].shift());
             }
-            let normalTable = [];
+
             for (let i = 0; i < dataTable[0].length; i++) {
                 let obj = {};
                 for (let j = 0; j < dataTable.length; j++) {
@@ -569,15 +580,15 @@ var DashboardPowerups = (function () {
             }
 
             //Populate map
-            $target.find("path").each(function(i,el){
+            $target.find("path").each(function (i, el) {
                 let $el = $(el);
                 let country = $el.attr("title");
 
-                let data = normalTable.filter(x=>x.country==country);
+                let data = normalTable.filter(x => x.country == country);
                 //.map(x=>x.)
                 //.reduce((acc,x)=>acc+x)
 
-                $el.attr("data-data",JSON.stringify(data));
+                $el.attr("data-data", JSON.stringify(data));
             });
 
             console.log("Powerup: map hacked");

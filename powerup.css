@@ -74,8 +74,12 @@
 
   .powerupMapTooltip {
     position: absolute;
-    right: 5px;
-    top: 5px;
+    right: 10px;
+    top: 10px;
     z-index: 1000;
     text-align: right;
+  }
+
+  .geoText, .valueText {
+    font-size: large;
   }
