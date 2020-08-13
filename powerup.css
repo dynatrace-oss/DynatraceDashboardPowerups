@@ -66,3 +66,16 @@
   .powerup-markup {
       display: none;
   }
+
+  .country:hover {
+    fill: blue;
+    cursor: crosshair;
+  }
+
+  .powerupMapTooltip {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    z-index: 1000;
+    text-align: right;
+  }

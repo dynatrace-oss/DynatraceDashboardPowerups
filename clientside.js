@@ -6,6 +6,7 @@ var DashboardPowerups = (function () {
     const SVG_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
     const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, [uitestid="gwt-debug-kpiValue"] span';
     const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
+    const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
     const COLORHACK = '!colorhack:';
     const SVGHACK = '!svghack:';
     const LINKER = '!link=';
@@ -59,6 +60,7 @@ var DashboardPowerups = (function () {
             width: '1px'
         }
     };
+    const MO_CONFIG = { attributes: true, childList: true, subtree: true };
     var hackHighchartsMutex = false;
 
     //Private methods
@@ -133,6 +135,7 @@ var DashboardPowerups = (function () {
                 pub.colorPowerUp();
                 pub.updateSVGPowerUp();
                 pub.cleanMarkup();
+                pub.initMapHack();
                 //hackHighchartsMutex = false;
                 mainPromise.resolve(true);
             });
@@ -167,8 +170,8 @@ var DashboardPowerups = (function () {
 
     pub.addHackHighchartsListener = function () {
         console.log("Powerup: added hackHighcharts listener");
-        Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.hackHighcharts,200));
-        Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.hackHighcharts,200));
+        Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.hackHighcharts, 200));
+        Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.hackHighcharts, 200));
         pub.hackHighcharts();
 
         /*
@@ -306,15 +309,15 @@ var DashboardPowerups = (function () {
                 }
 
                 let $trend = $tile.find(TREND_SELECTOR);
-                if($trend.length){
-                    let trend = Number($trend.text().replace(/%/,''));
+                if ($trend.length) {
+                    let trend = Number($trend.text().replace(/%/, ''));
                     $trend.removeClass("powerup-colorhack-critical powerup-colorhack-warning powerup-colorhack-normal");
-                    if(base == "low"){
-                        if(trend>0) $trend.addClass("powerup-colorhack-warning");
-                        else if(trend<0) $trend.addClass("powerup-colorhack-normal");
-                    } else if(base == "high"){
-                        if(trend<0) $trend.addClass("powerup-colorhack-warning");
-                        else if(trend>0) $trend.addClass("powerup-colorhack-normal");
+                    if (base == "low") {
+                        if (trend > 0) $trend.addClass("powerup-colorhack-warning");
+                        else if (trend < 0) $trend.addClass("powerup-colorhack-normal");
+                    } else if (base == "high") {
+                        if (trend < 0) $trend.addClass("powerup-colorhack-warning");
+                        else if (trend > 0) $trend.addClass("powerup-colorhack-normal");
                     }
                 }
             }
@@ -425,6 +428,164 @@ var DashboardPowerups = (function () {
         }
     }
 
+    pub.initMapHack = function () {
+        let observers = [];
+        let targets = [];
+
+        const callback = function (mutationsList, observer) {
+
+            /*for (let mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    console.log('A child node has been added or removed.');
+                }
+                else if (mutation.type === 'attributes') {
+                    console.log('The ' + mutation.attributeName + ' attribute was modified.');
+                }
+                svg = $(mutation.target).parents("svg");
+            }*/
+            //let svg = $(mutationsList[0].target).parents("svg")[0];
+            observer.disconnect(); //stop listening while we make some changes
+            setTimeout(() => {
+                pub.mapHack(mutationsList, observer);
+            }, 50); //Sleep a bit in case there was a lot of mutations
+
+        }
+
+        // Start observing the target node for configured mutations
+        $(MAP_SELECTOR).find(`svg`).each(function (i, el) {
+            const observer = new MutationObserver(callback);
+            const target = el;
+            observer.observe(el, MO_CONFIG);
+            observers.push(observer);
+            targets.push(target);
+            callback(undefined, observer);
+        });
+
+
+        pub.mapHack = function (mutationsList, observer) {
+            let i = observers.findIndex((o) => observer === o);
+            let target = targets[i];
+            let $target = $(target);
+            let d3Target = d3.select(target);
+            let $container = $target.parents(MAP_SELECTOR);
+            let $tile = $target.parents(TILE_SELECTOR);
+            let width = d3Target.attr("width");
+            let height = d3Target.attr("height");
+
+            const zoom = d3.zoom()
+                .scaleExtent([1, 8])
+                .on("zoom", zoomed);
+            d3Target.call(zoom);
+            d3Target.selectAll("path").on("click", clicked);
+            d3Target.selectAll("path").on("mouseover", hover);
+            d3Target.on("click", reset);
+
+            function zoomed() {
+                observer.disconnect();
+                const { transform } = d3.event;
+                let g = d3Target.select("g[transform]");
+                g.attr("transform", transform);
+                g.attr("stroke-width", 1 / transform.k);
+                //console.log("Powerup: map zoom");
+                observer.observe(target, MO_CONFIG);  //done zooming, resume observations  
+            }
+
+            function clicked(d) {
+                //let d3Path = d3.select(this);
+                //const [[x0, y0], [x1, y1]] = d3Path.bounds(d);
+                let bb = this.getBBox();
+
+                d3.event.stopPropagation();
+                d3Target.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity
+                        .translate(width / 2, height / 2)
+                        .scale(Math.min(8, 0.9 / Math.max((bb.width) / width, (bb.height) / height)))
+                        .translate(-(bb.x + bb.width / 2), -(bb.y + bb.height / 2)),
+                    d3.mouse(d3Target.node())
+                );
+            }
+
+            function reset() {
+                d3Target.transition().duration(750).call(
+                    zoom.transform,
+                    d3.zoomIdentity,
+                    d3.zoomTransform(d3Target.node()).invert([width / 2, height / 2])
+                );
+            }
+
+            function hover() {
+                let $tooltip = $tile.find(".powerupMapTooltip");
+                let $path = $(this);
+                let country = $path.attr("title");
+                let code = $path.attr("id").split('-')[1];
+                let data = $path.attr("data-data");
+
+                if ($tooltip.length) {
+                    $tooltip.find(".geoText").text(`Country: ${country} (${code})`);
+                    $tooltip.find(".valueText").text(`Value: ${data}`)
+                }
+            }
+
+            //Prep the SVG
+            $target.find(`path`).css("fill", ""); //remove existing coloring
+            $container.css("z-index", 999); //bring to front to get hovers
+
+            //Create tooltip
+            if (!$tile.find(".powerupMapTooltip").length) {
+                let $tooltip = $("<div>")
+                    .addClass("powerupMapTooltip")
+                    .appendTo($tile);
+                let $geoText = $("<div>")
+                    .addClass("geoText")
+                    .text("Country: ")
+                    .appendTo($tooltip);
+                let $valueText = $("<div>")
+                    .addClass("valueText")
+                    .text("Value: ")
+                    .appendTo($tooltip);
+            }
+
+            //Read data from table
+            var dataTable = [];
+            $(`[uitestid="gwt-debug-tablePanel"] > div > div`).each(function (i, el) {
+                let $el = $(el);
+                $el.find('span').each(function (j, el2) {
+                    if (typeof (dataTable[i]) == "undefined") dataTable[i] = [];
+                    dataTable[i][j] = $(el2).text();
+                });
+            });
+            let keys = []; for (let i = 0; i < dataTable.length; i++) {
+                keys.push(dataTable[i].shift());
+            }
+            let normalTable = [];
+            for (let i = 0; i < dataTable[0].length; i++) {
+                let obj = {};
+                for (let j = 0; j < dataTable.length; j++) {
+                    let key = keys[j];
+                    obj[key] = dataTable[j][i];
+                }
+                normalTable.push(obj);
+            }
+
+            //Populate map
+            $target.find("path").each(function(i,el){
+                let $el = $(el);
+                let country = $el.attr("title");
+
+                let data = normalTable.filter(x=>x.country==country);
+                //.map(x=>x.)
+                //.reduce((acc,x)=>acc+x)
+
+                $el.attr("data-data",JSON.stringify(data));
+            });
+
+            console.log("Powerup: map hacked");
+            observer.observe(target, MO_CONFIG); //done w/ initial hack, resume observations
+        }
+
+
+    };
 
     return pub;
 })();
