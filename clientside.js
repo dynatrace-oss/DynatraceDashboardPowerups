@@ -7,8 +7,10 @@ var DashboardPowerups = (function () {
     const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, [uitestid="gwt-debug-kpiValue"] span';
     const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
+    const TABLE_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div';
     const COLORHACK = '!colorhack:';
     const SVGHACK = '!svghack:';
+    const MAPHACK = '!maphack:';
     const LINKER = '!link=';
     const MARKERS = [COLORHACK, SVGHACK, LINKER];
     const SERIES_OPTS = {
@@ -431,19 +433,9 @@ var DashboardPowerups = (function () {
     pub.initMapHack = function () {
         let observers = [];
         let targets = [];
+        let dataTables = [];
 
         const callback = function (mutationsList, observer) {
-
-            /*for (let mutation of mutationsList) {
-                if (mutation.type === 'childList') {
-                    console.log('A child node has been added or removed.');
-                }
-                else if (mutation.type === 'attributes') {
-                    console.log('The ' + mutation.attributeName + ' attribute was modified.');
-                }
-                svg = $(mutation.target).parents("svg");
-            }*/
-            //let svg = $(mutationsList[0].target).parents("svg")[0];
             observer.disconnect(); //stop listening while we make some changes
             setTimeout(() => {
                 pub.mapHack(mutationsList, observer);
@@ -451,16 +443,41 @@ var DashboardPowerups = (function () {
 
         }
 
-        // Start observing the target node for configured mutations
-        $(MAP_SELECTOR).find(`svg`).each(function (i, el) {
-            const observer = new MutationObserver(callback);
-            const target = el;
-            observer.observe(el, MO_CONFIG);
-            observers.push(observer);
-            targets.push(target);
-            callback(undefined, observer);
-        });
+        //Read data from table
+        function readTableData(tabletile) {
+            let $tabletile = $(tabletile);
+            let dataTable = [];
+            let normalTable = [];
+            let keys = [];
+            $tabletile
+                .find(TABLE_SELECTOR)
+                .each(function (i, el) {
+                    let $el = $(el);
+                    $el.find('span').each(function (j, el2) {
+                        if (typeof (dataTable[i]) == "undefined") dataTable[i] = [];
+                        dataTable[i][j] = $(el2).text();
+                    });
+                });
 
+            let numKeys = dataTable.length;
+            let numRows = dataTable[0].length;
+            for (let i = 0; i < numKeys; i++) {
+                keys.push(dataTable[i].shift());
+            }
+
+            for (let i = 0; i < numRows; i++) {
+                let obj = {};
+                for (let j = 0; j < numKeys; j++) {
+                    let key = keys[j];
+                    if (j == numKeys - 1 && dataTable[j][i] != null) //Last column should be a number
+                        obj[key] = Number(dataTable[j][i].replace(/,/g, ''));
+                    else
+                        obj[key] = dataTable[j][i] || 0;
+                }
+                normalTable.push(obj);
+            }
+            return ({ keys: keys, normalTable: normalTable })
+        }
 
         pub.mapHack = function (mutationsList, observer) {
             let i = observers.findIndex((o) => observer === o);
@@ -471,9 +488,13 @@ var DashboardPowerups = (function () {
             let $tile = $target.parents(TILE_SELECTOR);
             let width = d3Target.attr("width");
             let height = d3Target.attr("height");
-            var dataTable = [];
-            let keys = [];
-            let normalTable = [];
+            let keys = dataTables[i].keys;
+            let valKey = keys[keys.length - 1];
+            let normalTable = dataTables[i].normalTable;
+            let color = dataTables[i].color;
+            let max = Math.max(1,normalTable.reduce((acc, row) => Math.max(row[valKey], acc), 0));
+            let min = Math.max(1,normalTable.reduce((acc, row) => Math.min(row[valKey], acc), 0));
+            let scale = d3.scaleLog().domain([min,max]);
 
             const zoom = d3.zoom()
                 .scaleExtent([1, 8])
@@ -522,7 +543,7 @@ var DashboardPowerups = (function () {
                 let $path = $(this);
                 let country = $path.attr("title");
                 let code = $path.attr("id").split('-')[1];
-                let data = $path.attr("data-data");
+                //let data = $path.attr("data-data");
                 let key = keys[keys.length - 1];
                 let countryData = normalTable.find(x => x.country == country);
                 let val;
@@ -556,29 +577,6 @@ var DashboardPowerups = (function () {
                     .appendTo($tooltip);
             }
 
-            //Read data from table
-
-            $(`[uitestid="gwt-debug-tablePanel"] > div > div`).each(function (i, el) {
-                let $el = $(el);
-                $el.find('span').each(function (j, el2) {
-                    if (typeof (dataTable[i]) == "undefined") dataTable[i] = [];
-                    dataTable[i][j] = $(el2).text();
-                });
-            });
-
-            for (let i = 0; i < dataTable.length; i++) {
-                keys.push(dataTable[i].shift());
-            }
-
-            for (let i = 0; i < dataTable[0].length; i++) {
-                let obj = {};
-                for (let j = 0; j < dataTable.length; j++) {
-                    let key = keys[j];
-                    obj[key] = dataTable[j][i];
-                }
-                normalTable.push(obj);
-            }
-
             //Populate map
             $target.find("path").each(function (i, el) {
                 let $el = $(el);
@@ -589,11 +587,53 @@ var DashboardPowerups = (function () {
                 //.reduce((acc,x)=>acc+x)
 
                 $el.attr("data-data", JSON.stringify(data));
+                let val = 0;
+                if (data.length && data[0][valKey]) {
+                    val = data[0][valKey];
+                    let pathColor = d3.hsl(color);
+                    pathColor.s = color.s * scale(val);
+                    $el.css("fill", pathColor.toString());
+                }
             });
 
             console.log("Powerup: map hacked");
             observer.observe(target, MO_CONFIG); //done w/ initial hack, resume observations
         }
+
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $tabletitle = $(el);
+            let $tabletile = $tabletitle.parents(TILE_SELECTOR);
+
+            if ($tabletitle.text().includes(MAPHACK)) {
+                let titletokens = $tabletitle.text().split(MAPHACK);
+                let argstring = titletokens[1];
+                let args = argstring.split(";").map(x => x.split("="));
+                let color = args.find(x => x[0] == "color")[1] || "green";
+                color = d3.hsl(color);
+                let link = args.find(x => x[0] == "link")[1];
+                let dataTable = readTableData($tabletile);
+                dataTable.color = color;
+                dataTable.link = link;
+                dataTables.push(dataTable);
+
+                // Start observing the target node for configured mutations
+                $(MAP_SELECTOR).find(`svg`).each(function (i, el) {
+                    let $maptile = $(el).parents(TILE_SELECTOR);
+                    let $maptitle = $maptile.find(`span[uitestid="gwt-debug-WorldMapTile"]`);
+                    let maptitle = $maptitle.text();
+                    if(maptitle.includes(link) || link == null){
+                        const observer = new MutationObserver(callback);
+                        const target = el;
+                        observer.observe(el, MO_CONFIG);
+                        observers.push(observer);
+                        targets.push(target);
+                        callback(undefined, observer);
+                    }
+                });
+            }
+        });
+
+
 
 
     };

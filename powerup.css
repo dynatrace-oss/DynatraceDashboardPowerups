@@ -68,7 +68,7 @@
   }
 
   .country:hover {
-    fill: blue;
+    fill: blue !important;
     cursor: crosshair;
   }
 
