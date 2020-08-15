@@ -48,7 +48,7 @@ Explanation:
 - `link=` this is used to link to a Single Value Tile to get the comparison value
 - `warn=` this is the warning threshold, once breached color coding will be yellow
 - `crit=` this is the critical threshold, once breached color coding will be red
-Just be sure to include the `!PU(link)=` with a matching string in the desired Single Value Tile
+Just be sure to include the `!PU(link):` with a matching string in the desired Single Value Tile
 
 ### World maps
 This powerup reloads the data in world maps with that from a USQL table. This allows you to map arbitrary things like revenue. It also enables click or scrollwheel to zoom. Click in an ocean to reset zoom. Add markup to your USQL table's title like this:

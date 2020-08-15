@@ -8,11 +8,13 @@ var DashboardPowerups = (function () {
     const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
     const TABLE_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div';
+    const BANNER_SELECTOR = '[uitestid="gwt-debug-dashboardNameLabel"]';
+    const TAG_SELECTOR = '[uitestid="gwt-debug-showMoreTags"] ~ [title]';
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
     const PU_MAP = '!PU(map):';
-    const PU_LINK = '!PU(link)=';
-    const PU_BANNER = '!PU(banner)=';
+    const PU_LINK = '!PU(link):';
+    const PU_BANNER = '!PU(banner):';
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER];
     const SERIES_OPTS = {
         "animation": true,
@@ -130,6 +132,7 @@ var DashboardPowerups = (function () {
                 $(".highcharts-container").css("z-index", 999);
                 console.log("Powerup: " + PUcount + " Highcharts powered-up.");
                 //other dashboard powering-up here
+                pub.bannerPowerUp();
                 pub.colorPowerUp();
                 pub.updateSVGPowerUp();
                 pub.initMapPU();
@@ -199,9 +202,6 @@ var DashboardPowerups = (function () {
 
             const event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
             const point = chart.series[0].searchPoint(event, true); // Get the hovered point
-            //const point = chart.pointer.findNearestKDPoint(
-            //    chart.series, true, e
-            //)
 
             if (point) {
                 const x = point.x;
@@ -220,17 +220,7 @@ var DashboardPowerups = (function () {
                             }
                         }
 
-                    } else {
-                        //point.series.xAxis.drawCrosshair(undefined,point);
-                        //point.series.yAxis.drawCrosshair(undefined,point);
-                        try {
-                            //point.series.chart.tooltip.refresh(point,undefined); 
-                        } catch (err) {
-                            //Cannot read property 'category' of undefined
-                            //no idea why or how to stop it, let's just throw it away for now...
-                            //console.log(err.message);
-                            //console.log(point);
-                        }
+                    } else { //no need to anything on current chart
 
                     }
                 }
@@ -269,6 +259,30 @@ var DashboardPowerups = (function () {
 
             if (idx < title.length)
                 $title.html(newTitle);
+        });
+    }
+
+    pub.bannerPowerUp = function () {
+        $(TAG_SELECTOR).each((i, el) => {
+            let $tag = $(el);
+            let title = $tag.attr("title");
+
+            if (title.includes(PU_BANNER)) {
+                let titletokens = title.split(PU_BANNER);
+                let argstring = titletokens[1];
+                let args = argstring.split(";").map(x => x.split("="));
+                let color = args.find(x => x[0] == "color")[1];
+
+                $(BANNER_SELECTOR).css("background", color);
+
+                //white or black text
+                let c = d3.rgb(color);
+                let L = (0.2126 * c.r)/255 + (0.7152 * c.g)/255 + (0.0722 * c.b)/255;
+                if ((L + 0.05) / (0.0 + 0.05) > (1.0 + 0.05) / (L + 0.05))
+                    $(BANNER_SELECTOR).css("color", "black");
+                else
+                    $(BANNER_SELECTOR).css("color", "white");
+            }
         });
     }
 
@@ -326,7 +340,7 @@ var DashboardPowerups = (function () {
             let $svgcontainer = $(el);
             let $tile = $svgcontainer.parents(".grid-tile");
 
-            if ($svgcontainer.text().includes(PU_SVG)) { //example !PU_SVG:icon=host;link=val1;base=high;warn=90;crit=70 other tile has !link=val1
+            if ($svgcontainer.text().includes(PU_SVG)) {
                 console.log("Powerup: svg power-up found");
                 let argstring = $svgcontainer.text().split(PU_SVG)[1];
 
@@ -487,9 +501,9 @@ var DashboardPowerups = (function () {
             let valKey = keys[keys.length - 1];
             let normalTable = dataTables[i].normalTable;
             let color = dataTables[i].color;
-            let max = Math.max(1,normalTable.reduce((acc, row) => Math.max(row[valKey], acc), 0));
-            let min = Math.max(1,normalTable.reduce((acc, row) => Math.min(row[valKey], acc), 0));
-            let scale = d3.scaleLog().domain([min,max]);
+            let max = Math.max(1, normalTable.reduce((acc, row) => Math.max(row[valKey], acc), 0));
+            let min = Math.max(1, normalTable.reduce((acc, row) => Math.min(row[valKey], acc), 0));
+            let scale = d3.scaleLog().domain([min, max]);
 
             const zoom = d3.zoom()
                 .scaleExtent([1, 8])
@@ -616,7 +630,7 @@ var DashboardPowerups = (function () {
                     let $maptile = $(el).parents(TILE_SELECTOR);
                     let $maptitle = $maptile.find(`span[uitestid="gwt-debug-WorldMapTile"]`);
                     let maptitle = $maptitle.text();
-                    if(maptitle.includes(link) || link == null){
+                    if (maptitle.includes(link) || link == null) {
                         const observer = new MutationObserver(callback);
                         const target = el;
                         observer.observe(el, MO_CONFIG);
