@@ -8,11 +8,12 @@ var DashboardPowerups = (function () {
     const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
     const TABLE_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div';
-    const COLORHACK = '!colorhack:';
-    const SVGHACK = '!svghack:';
-    const MAPHACK = '!maphack:';
-    const LINKER = '!link=';
-    const MARKERS = [COLORHACK, SVGHACK, LINKER];
+    const PU_COLOR = '!PU(color):';
+    const PU_SVG = '!PU(svg):';
+    const PU_MAP = '!PU(map):';
+    const PU_LINK = '!PU(link)=';
+    const PU_BANNER = '!PU(banner)=';
+    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER];
     const SERIES_OPTS = {
         "animation": true,
         "allowPointSelect": true,
@@ -63,7 +64,7 @@ var DashboardPowerups = (function () {
         }
     };
     const MO_CONFIG = { attributes: true, childList: true, subtree: true };
-    var hackHighchartsMutex = false;
+    var PUHighchartsMutex = false;
 
     //Private methods
     const debounce = (func, wait) => {
@@ -104,54 +105,48 @@ var DashboardPowerups = (function () {
 
     pub.POWERUP_EXT_URL = "";
 
-    pub.hackHighcharts = function () {
+    pub.PUHighcharts = function () {
         //be sure not to leak off dashboards
         if (window.location.hash.startsWith("#dashboard;") ||
             window.location.hash.startsWith("#dashboard/dashboard;")) {
-            console.log("Powerup: hacking Highcharts...");
-            //if(hackHighchartsMutex){
-            //    console.log("Powerup: hacking Highcharts mutex blocked");
-            //    return false;
-            //}
-            // hackHighchartsMutex = true;
-            let hackedCount = 0;
+            console.log("Powerup: powering-up Highcharts...");
+            let PUcount = 0;
             let promises = [];
             let mainPromise = new $.Deferred();
             Highcharts.charts.slice().forEach(chart => {
                 if (typeof (chart) !== "undefined" &&
-                    !chart.powerupHacked &&
+                    !chart.poweredup &&
                     typeof (chart.container) != "undefined") {
                     let p = new $.Deferred();
                     promises.push(p);
                     setTimeout(function () {
-                        if (pub.hackHighchart(chart))
-                            hackedCount++;
+                        if (pub.PUHighchart(chart))
+                            PUcount++;
                         p.resolve();
                     }, 100); //still hitting synchronicity issues, try waiting
                 }
             });
             $.when.apply($, promises).then(function () {
                 $(".highcharts-container").css("z-index", 999);
-                console.log("Powerup: " + hackedCount + " Highcharts hacked.");
-                //other dashboard hacking here
+                console.log("Powerup: " + PUcount + " Highcharts powered-up.");
+                //other dashboard powering-up here
                 pub.colorPowerUp();
                 pub.updateSVGPowerUp();
+                pub.initMapPU();
                 pub.cleanMarkup();
-                pub.initMapHack();
-                //hackHighchartsMutex = false;
                 mainPromise.resolve(true);
             });
             return mainPromise;
         } else {
-            console.log("Powerup: no longer on a dashboard, removing hackHighcharts listener...");
-            Highcharts.removeEvent(Highcharts.Chart, 'load', pub.hackHighcharts);
+            console.log("Powerup: no longer on a dashboard, removing PUHighcharts listener...");
+            Highcharts.removeEvent(Highcharts.Chart, 'load', pub.PUHighcharts);
             return false;
         }
     }
 
-    pub.hackHighchart = function (chart) {
+    pub.PUHighchart = function (chart) {
         if (typeof (chart) !== "undefined" &&
-            !chart.powerupHacked &&
+            !chart.poweredup &&
             typeof (chart.container) != "undefined") {
             chart.series.forEach(series => {
                 series.update(SERIES_OPTS, false);
@@ -162,7 +157,7 @@ var DashboardPowerups = (function () {
 
 
             chart.redraw(false);
-            //chart.powerupHacked = true;  //Don't know why this doesn't work
+
 
             return true;
         } else {
@@ -170,25 +165,25 @@ var DashboardPowerups = (function () {
         }
     }
 
-    pub.addHackHighchartsListener = function () {
-        console.log("Powerup: added hackHighcharts listener");
-        Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.hackHighcharts, 200));
-        Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.hackHighcharts, 200));
-        pub.hackHighcharts();
+    pub.addPUHighchartsListener = function () {
+        console.log("Powerup: added PUHighcharts listener");
+        Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.PUHighcharts, 200));
+        Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.PUHighcharts, 200));
+        pub.PUHighcharts();
 
         /*
             custom charts are destroyed and loaded on new data, fires load event
             usql charts are redrawn on new data, fires redraw event
 
-            listen for either event and begin hacking
+            listen for either event and begin powering-up
             we will get several of these events, so need to debounce
                 start a timer
                 throw aways all but last event until timer expires
 
-            at the end of hacking, we must redraw the chart(s) ourselves, which again fires redraw
+            at the end of powering-up, we must redraw the chart(s) ourselves, which again fires redraw
                 handle by using a crude mutex
-                if mutex == true, we're already hacking, abort
-                else set mutex=true and hack away
+                if mutex == true, we're already powering-up, abort
+                else set mutex=true and power-up
                 when done set mutex=false
 
         */
@@ -284,9 +279,9 @@ var DashboardPowerups = (function () {
             let $bignum = $tile.find(BIGNUM_SELECTOR);
 
             //Step1: change tile colors
-            if ($title.text().includes(COLORHACK)) { //example !COLORHACK:base=high;warn=90;crit=70
-                console.log("Powerup: color hack found");
-                let titletokens = $title.text().split(COLORHACK);
+            if ($title.text().includes(PU_COLOR)) { //example !PU(color):base=high;warn=90;crit=70
+                console.log("Powerup: color power-up found");
+                let titletokens = $title.text().split(PU_COLOR);
                 let argstring = titletokens[1];
                 let args = argstring.split(";").map(x => x.split("="));
                 if (args.length < 3) {
@@ -299,27 +294,27 @@ var DashboardPowerups = (function () {
                 let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g, ''));
 
                 let $target = $bignum; //or $tile
-                $target.removeClass("powerup-colorhack-critical powerup-colorhack-warning powerup-colorhack-normal");
+                $target.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
                 if (base == "low") {
-                    if (val < warn) $target.addClass("powerup-colorhack-normal");
-                    else if (val < crit) $target.addClass("powerup-colorhack-warning");
-                    else $target.addClass("powerup-colorhack-critical");
+                    if (val < warn) $target.addClass("powerup-color-normal");
+                    else if (val < crit) $target.addClass("powerup-color-warning");
+                    else $target.addClass("powerup-color-critical");
                 } else if (base == "high") {
-                    if (val > warn) $target.addClass("powerup-colorhack-normal");
-                    else if (val > crit) $target.addClass("powerup-colorhack-warning");
-                    else $target.addClass("powerup-colorhack-critical");
+                    if (val > warn) $target.addClass("powerup-color-normal");
+                    else if (val > crit) $target.addClass("powerup-color-warning");
+                    else $target.addClass("powerup-color-critical");
                 }
 
                 let $trend = $tile.find(TREND_SELECTOR);
                 if ($trend.length) {
                     let trend = Number($trend.text().replace(/%/, ''));
-                    $trend.removeClass("powerup-colorhack-critical powerup-colorhack-warning powerup-colorhack-normal");
+                    $trend.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
                     if (base == "low") {
-                        if (trend > 0) $trend.addClass("powerup-colorhack-warning");
-                        else if (trend < 0) $trend.addClass("powerup-colorhack-normal");
+                        if (trend > 0) $trend.addClass("powerup-color-warning");
+                        else if (trend < 0) $trend.addClass("powerup-color-normal");
                     } else if (base == "high") {
-                        if (trend < 0) $trend.addClass("powerup-colorhack-warning");
-                        else if (trend > 0) $trend.addClass("powerup-colorhack-normal");
+                        if (trend < 0) $trend.addClass("powerup-color-warning");
+                        else if (trend > 0) $trend.addClass("powerup-color-normal");
                     }
                 }
             }
@@ -331,9 +326,9 @@ var DashboardPowerups = (function () {
             let $svgcontainer = $(el);
             let $tile = $svgcontainer.parents(".grid-tile");
 
-            if ($svgcontainer.text().includes(SVGHACK)) { //example !SVGHACK:icon=host;link=val1;base=high;warn=90;crit=70 other tile has !link=val1
-                console.log("Powerup: svg hack found");
-                let argstring = $svgcontainer.text().split(SVGHACK)[1];
+            if ($svgcontainer.text().includes(PU_SVG)) { //example !PU_SVG:icon=host;link=val1;base=high;warn=90;crit=70 other tile has !link=val1
+                console.log("Powerup: svg power-up found");
+                let argstring = $svgcontainer.text().split(PU_SVG)[1];
 
                 let args = argstring.split(";").map(x => x.split("="));
                 let icon = args.find(x => x[0] == "icon")[1];
@@ -360,15 +355,15 @@ var DashboardPowerups = (function () {
                             .attr("data-args", JSON.stringify(argObj))
                             .appendTo($svgcontainer);
 
-                        $svg.removeClass("powerup-svghack-critical powerup-svghack-warning powerup-svghack-normal");
+                        $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
                         if (base == "low") {
-                            if (val < warn) $svg.addClass("powerup-svghack-normal");
-                            else if (val < crit) $svg.addClass("powerup-svghack-warning");
-                            else $svg.addClass("powerup-svghack-critical");
+                            if (val < warn) $svg.addClass("powerup-svg-normal");
+                            else if (val < crit) $svg.addClass("powerup-svg-warning");
+                            else $svg.addClass("powerup-svg-critical");
                         } else if (base == "high") {
-                            if (val > warn) $svg.addClass("powerup-svghack-normal");
-                            else if (val > crit) $svg.addClass("powerup-svghack-warning");
-                            else $svg.addClass("powerup-svghack-critical");
+                            if (val > warn) $svg.addClass("powerup-svg-normal");
+                            else if (val > crit) $svg.addClass("powerup-svg-warning");
+                            else $svg.addClass("powerup-svg-critical");
                         }
                     });
             }
@@ -387,15 +382,15 @@ var DashboardPowerups = (function () {
 
                 let val = pub.findLinkedVal(args.link);
 
-                $svg.removeClass("powerup-svghack-critical powerup-svghack-warning powerup-svghack-normal");
+                $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
                 if (args.base == "low") {
-                    if (val < args.warn) $svg.addClass("powerup-svghack-normal");
-                    else if (val < args.crit) $svg.addClass("powerup-svghack-warning");
-                    else $svg.addClass("powerup-svghack-critical");
+                    if (val < args.warn) $svg.addClass("powerup-svg-normal");
+                    else if (val < args.crit) $svg.addClass("powerup-svg-warning");
+                    else $svg.addClass("powerup-svg-critical");
                 } else if (args.base == "high") {
-                    if (val > args.warn) $svg.addClass("powerup-svghack-normal");
-                    else if (val > args.crit) $svg.addClass("powerup-svghack-warning");
-                    else $svg.addClass("powerup-svghack-critical");
+                    if (val > args.warn) $svg.addClass("powerup-svg-normal");
+                    else if (val > args.crit) $svg.addClass("powerup-svg-warning");
+                    else $svg.addClass("powerup-svg-critical");
                 }
             }
         });
@@ -403,7 +398,7 @@ var DashboardPowerups = (function () {
 
     pub.findLinkedVal = function (link) {
         //find val
-        let link_text = LINKER + link;
+        let link_text = PU_LINK + link;
         $(TITLE_SELECTOR).each((i_link, el_link) => {
             let $linktitle = $(el_link);
 
@@ -421,16 +416,16 @@ var DashboardPowerups = (function () {
     }
 
     pub.addToolTips = function () {
-        if (typeof (pub.addHackHighchartsListener) == "undefined") {
+        if (typeof (pub.addPUHighchartsListener) == "undefined") {
             console.log("Powerup: clientside.js not loaded yet");
-            setTimeout(pub.initHackHighcharts, 200);
+            setTimeout(pub.addToolTips, 200);
         } else {
-            pub.addHackHighchartsListener();
+            pub.addPUHighchartsListener();
             pub.loadChartSync();
         }
     }
 
-    pub.initMapHack = function () {
+    pub.initMapPU = function () {
         let observers = [];
         let targets = [];
         let dataTables = [];
@@ -438,7 +433,7 @@ var DashboardPowerups = (function () {
         const callback = function (mutationsList, observer) {
             observer.disconnect(); //stop listening while we make some changes
             setTimeout(() => {
-                pub.mapHack(mutationsList, observer);
+                pub.mapPU(mutationsList, observer);
             }, 50); //Sleep a bit in case there was a lot of mutations
 
         }
@@ -479,7 +474,7 @@ var DashboardPowerups = (function () {
             return ({ keys: keys, normalTable: normalTable })
         }
 
-        pub.mapHack = function (mutationsList, observer) {
+        pub.mapPU = function (mutationsList, observer) {
             let i = observers.findIndex((o) => observer === o);
             let target = targets[i];
             let $target = $(target);
@@ -596,16 +591,16 @@ var DashboardPowerups = (function () {
                 }
             });
 
-            console.log("Powerup: map hacked");
-            observer.observe(target, MO_CONFIG); //done w/ initial hack, resume observations
+            console.log("Powerup: map powered-up");
+            observer.observe(target, MO_CONFIG); //done w/ initial power-up, resume observations
         }
 
         $(TITLE_SELECTOR).each((i, el) => {
             let $tabletitle = $(el);
             let $tabletile = $tabletitle.parents(TILE_SELECTOR);
 
-            if ($tabletitle.text().includes(MAPHACK)) {
-                let titletokens = $tabletitle.text().split(MAPHACK);
+            if ($tabletitle.text().includes(PU_MAP)) {
+                let titletokens = $tabletitle.text().split(PU_MAP);
                 let argstring = titletokens[1];
                 let args = argstring.split(";").map(x => x.split("="));
                 let color = args.find(x => x[0] == "color")[1] || "green";

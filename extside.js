@@ -1,30 +1,19 @@
 console.log("Powerup: Dashboard powerups installed.");
 window.jQuery || console.log("Powerup: No jQuery...");
-var PowerupHacking = false;
 $(document).ready(function () {
     console.log("Powerup: document ready");
     $(window).on("load hashchange", powerupListener);
     console.log("Powerup: listener loaded");
 });
 
-const title_selector = '[uitestid="gwt-debug-title"]';
-const val_selector = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type';
-const colorize_selector = '.grid-tile';
-const svg_selector = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
-const bignum_selector = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span';
-
-const colorhack = '!colorhack:';
-const svghack = '!svghack:';
-const linker = '!link=';
-const markers = [colorhack, svghack, linker];
 const ext_url = chrome.runtime.getURL("");
 
-//Function to check to see if we should do some hacking
+//Function to check to see if we should do some 
 function powerupListener() {
     if (window.location.hash.startsWith("#dashboard;") ||
         window.location.hash.startsWith("#dashboard/dashboard;")) {
-        console.log("Powerup: on a dashboard, get to hacking");
-        hackDashboards();
+        console.log("Powerup: on a dashboard, power-up!");
+        powerupDashboards();
     } else {
         console.log("Powerup: not a dashboard, quit.");
         return;
@@ -33,8 +22,7 @@ function powerupListener() {
 
 
 //This is a function that runs when on the "dashboard" page (the check if we are on that page is at the bottom) 
-function hackDashboards() {
-    PowerupHacking = true;
+function powerupDashboards() {
 
     //Wait for the dashboard page to load before proceeding 
     if (document.readyState == 'complete' &&
@@ -42,7 +30,7 @@ function hackDashboards() {
         !$(".loader").length &&                                 //main loading distractor gone
         !$('[uitestid="gwt-debug-tileLoader"]:visible').length  //tile distractors hidden
     ) {
-        console.log("Powerup: things look ready, begin dashboard hacking...");
+        console.log("Powerup: things look ready, begin power-ups...");
         //Load functions to call in client context
         injectClientsideLib();
         injectCSS();
@@ -64,11 +52,11 @@ function hackDashboards() {
         DashboardPowerups.cleanMarkup();
         `);
 
-        console.log("Powerup: hacks complete.");
+        console.log("Powerup: powerups complete.");
         return;
     } else {
         console.log("Powerup: doesn't look like things are loaded yet, sleeping 1s.");
-        setTimeout(hackDashboards, 1000);
+        setTimeout(powerupDashboards, 1000);
     }
 };
 

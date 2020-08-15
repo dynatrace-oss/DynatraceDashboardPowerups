@@ -1,65 +1,65 @@
-@keyframes powerup-colorhack-critical {
+@keyframes powerup-color-critical {
     0% {background-color: darkred;}
     50% {background-color: red;}
     100% {background-color: darkred;}
   }
-  div.powerup-colorhack-critical {
-    /*animation-name: powerup-colorhack-critical;
+  div.powerup-color-critical {
+    /*animation-name: powerup-color-critical;
     animation-duration: 1s;
     animation-iteration-count: infinite;*/
     background-color: red;
   }
-  span.powerup-colorhack-critical {
+  span.powerup-color-critical {
       color: red;
   }
 
-  @keyframes powerup-colorhack-warning {
+  @keyframes powerup-color-warning {
     0% {background-color: yellow;}
     50% {background-color: goldenrod;}
     100% {background-color: yellow;}
   }
-  div.powerup-colorhack-warning {
-    /*animation-name: powerup-colorhack-warning;
+  div.powerup-color-warning {
+    /*animation-name: powerup-color-warning;
     animation-duration: 1s;
     animation-iteration-count: infinite;*/
     background-color: yellow;
   }
-  span.powerup-colorhack-warning {
+  span.powerup-color-warning {
       color: yellow;
   }
 
-  div.powerup-colorhack-normal {
+  div.powerup-color-normal {
       background-color: green;
   }
-  span.powerup-colorhack-normal {
+  span.powerup-color-normal {
       color: green;
   }
 
-  @keyframes powerup-svghack-critical {
+  @keyframes powerup-svg-critical {
     0% {fill: darkred;}
     50% {fill: red;}
     100% {fill: darkred;}
   }
-  .powerup-svghack-critical {
-    /*animation-name: powerup-svghack-critical;
+  .powerup-svg-critical {
+    /*animation-name: powerup-svg-critical;
     animation-duration: 1s;
     animation-iteration-count: infinite;*/
     fill: red;
   }
 
-  @keyframes powerup-svghack-warning {
+  @keyframes powerup-svg-warning {
     0% {fill: yellow;}
     50% {fill: goldenrod;}
     100% {fill: yellow;}
   }
-  .powerup-svghack-warning {
-    /*animation-name: powerup-svghack-warning;
+  .powerup-svg-warning {
+    /*animation-name: powerup-svg-warning;
     animation-duration: 1s;
     animation-iteration-count: infinite;*/
     fill: yellow;
   }
 
-  .powerup-svghack-normal {
+  .powerup-svg-normal {
       fill: green;
   }
 
