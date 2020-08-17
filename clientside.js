@@ -7,6 +7,7 @@ var DashboardPowerups = (function () {
     const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, [uitestid="gwt-debug-kpiValue"] span';
     const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
+    const MAPTITLE_SELECTOR = 'span[uitestid="gwt-debug-WorldMapTile"]';
     const TABLE_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div';
     const BANNER_SELECTOR = '[uitestid="gwt-debug-dashboardNameLabel"]';
     const TAG_SELECTOR = '[uitestid="gwt-debug-showMoreTags"] ~ [title]';
@@ -277,7 +278,7 @@ var DashboardPowerups = (function () {
 
                 //white or black text
                 let c = d3.rgb(color);
-                let L = (0.2126 * c.r)/255 + (0.7152 * c.g)/255 + (0.0722 * c.b)/255;
+                let L = (0.2126 * c.r) / 255 + (0.7152 * c.g) / 255 + (0.0722 * c.b) / 255;
                 if ((L + 0.05) / (0.0 + 0.05) > (1.0 + 0.05) / (L + 0.05))
                     $(BANNER_SELECTOR).css("color", "black");
                 else
@@ -501,6 +502,8 @@ var DashboardPowerups = (function () {
             let valKey = keys[keys.length - 1];
             let normalTable = dataTables[i].normalTable;
             let color = dataTables[i].color;
+            let link = dataTables[i].link;
+            let newTitle = dataTables[i].newTitle;
             let max = Math.max(1, normalTable.reduce((acc, row) => Math.max(row[valKey], acc), 0));
             let min = Math.max(1, normalTable.reduce((acc, row) => Math.min(row[valKey], acc), 0));
             let scale = d3.scaleLog().domain([min, max]);
@@ -604,6 +607,10 @@ var DashboardPowerups = (function () {
                     $el.css("fill", pathColor.toString());
                 }
             });
+            let $maptile = $target.parents(TILE_SELECTOR);
+            let $maptitle = $maptile.find(MAPTITLE_SELECTOR);
+            let maptitle = `World Map (${newTitle})`;
+            $maptitle.text(maptitle);
 
             console.log("Powerup: map powered-up");
             observer.observe(target, MO_CONFIG); //done w/ initial power-up, resume observations
@@ -623,12 +630,13 @@ var DashboardPowerups = (function () {
                 let dataTable = readTableData($tabletile);
                 dataTable.color = color;
                 dataTable.link = link;
+                dataTable.newTitle = titletokens[0].trim();
                 dataTables.push(dataTable);
 
                 // Start observing the target node for configured mutations
                 $(MAP_SELECTOR).find(`svg`).each(function (i, el) {
                     let $maptile = $(el).parents(TILE_SELECTOR);
-                    let $maptitle = $maptile.find(`span[uitestid="gwt-debug-WorldMapTile"]`);
+                    let $maptitle = $maptile.find(MAPTITLE_SELECTOR);
                     let maptitle = $maptitle.text();
                     if (maptitle.includes(link) || link == null) {
                         const observer = new MutationObserver(callback);
