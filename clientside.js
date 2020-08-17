@@ -560,7 +560,7 @@ var DashboardPowerups = (function () {
                 let countryData = normalTable.find(x => x.country == country);
                 let val;
                 if (typeof countryData !== "undefined" && typeof (countryData[key]) !== "undefined")
-                    val = countryData[key];
+                    val = countryData[key].toLocaleString();
                 else
                     val = "0";
 
