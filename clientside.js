@@ -565,7 +565,8 @@ var DashboardPowerups = (function () {
                     val = "0";
 
                 if ($tooltip.length) {
-                    $tooltip.find(".geoText").text(`Country: ${country} (${code})`);
+                    let flag = code.toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0)+127397) );
+                    $tooltip.find(".geoText").text(`Country: ${country} (${flag})`);
                     $tooltip.find(".valueText").text(`${key}: ${val}`)
                 }
             }
