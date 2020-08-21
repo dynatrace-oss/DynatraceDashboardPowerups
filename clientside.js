@@ -66,8 +66,8 @@ var DashboardPowerups = (function () {
             width: '1px'
         }
     };
-    const MO_CONFIG = { attributes: true, childList: true, subtree: true };
-    var PUHighchartsMutex = false;
+    const MO_CONFIG = { attributes: true, childList: true, subtree: true }; //MutexObserver
+    var PUHighchartsMutex = 0;
 
     //Private methods
     const debounce = (func, wait) => {
@@ -107,11 +107,18 @@ var DashboardPowerups = (function () {
     var pub = {};
 
     pub.POWERUP_EXT_URL = "";
+    pub.config = {};
 
     pub.PUHighcharts = function () {
         //be sure not to leak off dashboards
         if (window.location.hash.startsWith("#dashboard;") ||
             window.location.hash.startsWith("#dashboard/dashboard;")) {
+                if(PUHighchartsMutex){
+                    console.log("Powerup: PUHighcharts mutex blocked, skip.");
+                    return false;
+                } else {
+                    PUHighchartsMutex=1;
+                }
             console.log("Powerup: powering-up Highcharts...");
             let PUcount = 0;
             let promises = [];
@@ -139,6 +146,7 @@ var DashboardPowerups = (function () {
                 pub.initMapPU();
                 pub.cleanMarkup();
                 mainPromise.resolve(true);
+                setTimeout(()=>{PUHighchartsMutex=false},10000); //Don't do it again for at least 10s
             });
             return mainPromise;
         } else {
@@ -171,9 +179,12 @@ var DashboardPowerups = (function () {
 
     pub.addPUHighchartsListener = function () {
         console.log("Powerup: added PUHighcharts listener");
-        Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.PUHighcharts, 200));
-        Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.PUHighcharts, 200));
+        /*Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.PUHighcharts, 200));
+        Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.PUHighcharts, 200));*/
+        Highcharts.addEvent(Highcharts.Chart, 'load', pub.PUHighcharts);
+        Highcharts.addEvent(Highcharts.Chart, 'redraw', pub.PUHighcharts);
         pub.PUHighcharts();
+
 
         /*
             custom charts are destroyed and loaded on new data, fires load event

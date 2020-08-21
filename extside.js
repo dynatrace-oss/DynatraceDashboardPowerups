@@ -23,7 +23,6 @@ function powerupListener() {
 
 //This is a function that runs when on the "dashboard" page (the check if we are on that page is at the bottom) 
 function powerupDashboards() {
-
     //Wait for the dashboard page to load before proceeding 
     if (document.readyState == 'complete' &&
         $('[uitestid="gwt-debug-dashboardGrid"]').length &&     //grid is loaded
@@ -31,28 +30,32 @@ function powerupDashboards() {
         !$('[uitestid="gwt-debug-tileLoader"]:visible').length  //tile distractors hidden
     ) {
         console.log("Powerup: things look ready, begin power-ups...");
+        let config_p = loadConfig();
         //Load functions to call in client context
         injectClientsideLib();
         injectCSS();
         console.log("Powerup: clientside libs injected.");
 
-        injectClientsideString(`
-        DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
-        
-        //Step1: color changes
-        DashboardPowerups.colorPowerUp();
+        $.when(config_p).done(function (config) {
+            injectClientsideString(`
+            DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
+            DashboardPowerups.config = ${JSON.stringify(config.Powerups)};
+            
+            //Step1: color changes
+            DashboardPowerups.colorPowerUp();
 
-        //Step2: swap markdowns for SVGs
-        DashboardPowerups.svgPowerUp();
+            //Step2: swap markdowns for SVGs
+            DashboardPowerups.svgPowerUp();
 
-        //Step3: add tooltips
-        DashboardPowerups.addToolTips();
+            //Step3: add tooltips
+            DashboardPowerups.addToolTips();
 
-        //Last Step: cleanup ugly markup
-        DashboardPowerups.cleanMarkup();
-        `);
+            //Last Step: cleanup ugly markup
+            DashboardPowerups.cleanMarkup();
+            `);
 
-        console.log("Powerup: powerups complete.");
+            console.log("Powerup: powerups complete.");
+        });
         return;
     } else {
         console.log("Powerup: doesn't look like things are loaded yet, sleeping 1s.");
@@ -101,4 +104,39 @@ function injectCSS() {
         .attr("type", "text/css")
         .attr("href", ext_url + "powerup.css")
         .appendTo("head");
+}
+
+function loadConfig() {
+    let p = $.Deferred();
+    let defaultConfig = {
+        Powerups: {
+            tooltipPU: true,
+            colorPU: true,
+            svgPU: true,
+            worldmapPU: true,
+            bannerPU: true,
+            debug: false
+        }
+    }
+
+    chrome.storage.local.get(['Powerups'], function (result) {
+        console.log('Powerup: (extside) config from storage is: ' + JSON.stringify(result));
+        if (result && result.Powerups &&
+            Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length) {
+            //TODO: add some sort of new config merge
+            p.resolve(result);
+        }
+        else {
+            console.log("Powerup: stored config format didn't match, defaulting...");
+            writeConfig(defaultConfig);
+            p.resolve(defaultConfig);
+        }
+    });
+    return p;
+}
+
+function writeConfig(defaultConfig) {
+    chrome.storage.local.set(defaultConfig, function () {
+        console.log('Powerup: (extside) config storage set to ' + JSON.stringify(defaultConfig));
+    });
 }

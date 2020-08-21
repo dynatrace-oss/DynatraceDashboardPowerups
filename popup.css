@@ -2,7 +2,7 @@ body{
 	width: 500px;
 	height: 100%;
 }
-
+/*
 .centre {
 	display: block;
 	margin-left: auto;
@@ -16,4 +16,9 @@ body{
 
 .label {
 	font-weight: bold;
+}
+*/
+
+p {
+	word-wrap: normal;
 }

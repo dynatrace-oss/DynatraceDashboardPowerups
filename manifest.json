@@ -2,7 +2,7 @@
     "manifest_version": 2, 
     "name": "Dynatrace Dashboard Powerups",
     "description": "Power-up existing dashboards with cool experimental features",
-    "version": "0.10",
+    "version": "0.11",
     "author": "Lucas Hocker",
 
     "browser_action": {
@@ -45,6 +45,7 @@
 
     "permissions": [
       "declarativeContent",
-      "activeTab"
+      "activeTab",
+      "storage"
     ]
 }
