@@ -36,10 +36,11 @@ var DashboardPowerups = (function () {
         enabled: true,
         animation: false,
         outside: true,
-        useHTML: false,
+        useHTML: true,
         hideDelay: 100,
         shared: true,
         formatter: function () {
+            if (typeof (this.points) == "undefined") return;
             return this.points.reduce(function (s, point) {
                 let n = point.series.name;
                 let i = n.indexOf('¦') || "APPLICATION-0000000000000000".length;
@@ -55,8 +56,19 @@ var DashboardPowerups = (function () {
                     if (series_name.length) sn = series_name;
                 }
 
-                return s + '<br/><span style=\"color:' + point.color + '\">●</span>' + sn + ': ' +
-                    Math.round(point.y, 1) + '';
+                let y = Number(point.y);
+                if (Number.isNaN(y)) y = point.y; //Isn't a number, keep what we had
+                else y = y.toLocaleString(undefined, { maximumFractionDigits: 2 });
+
+                let tip = s + //s gives the category for first series' point, blank otherwise
+                    `<div class="powerupLineTooltip">
+                    <div class="dot" style="color: ${point.color}; background:${contrast(color)}">● </div>
+                    <div>${sn}:</div>
+                    <div class="spacer"></div>
+                    <div>${y}</div>
+                </div>`;
+
+                return tip;
             }, '<b>' + Highcharts.dateFormat("%H:%M", this.x) + '</b>');
         },
     };
@@ -67,7 +79,7 @@ var DashboardPowerups = (function () {
         }
     };
     const MO_CONFIG = { attributes: true, childList: true, subtree: true }; //MutexObserver
-    var PUHighchartsMutex = 0;
+
 
     //Private methods
     const debounce = (func, wait) => {
@@ -84,20 +96,59 @@ var DashboardPowerups = (function () {
         };
     };
 
-    const debounceMutex = (fn, time) => {
+    const debounceMutex = (fn, mutex, time) => {
         let timeout;
-        let mutex = false;
 
         return function () {
             const functionCall = () => {
-                mutex = true;
                 let p = fn.apply(this, arguments);
-                $.when(p).done(() => { mutex = false; })
+                //$.when(p).done(() => { mutex = false; })
             }
 
-            clearTimeout(timeout);
-            if (!mutex)
+            clearTimeout(timeout); //new fn trigger came in, throw away old and start waiting again
+            if (!mutex.blocking) {
                 timeout = setTimeout(functionCall, time);
+            } else {
+                //already running, throw it away
+            }
+        }
+    }
+
+    const contrast = (color) => {
+        let c = d3.rgb(color);
+        let L = (0.2126 * c.r) / 255 + (0.7152 * c.g) / 255 + (0.0722 * c.b) / 255;
+        if ((L + 0.05) / (0.0 + 0.05) > (1.0 + 0.05) / (L + 0.05))
+            return "black";
+        else
+            return "white";
+    }
+
+    const PUwatchdog = () => {
+        var timeout;
+        //test for un-powereduped charts
+        if (pub.PUHighchartsStatus().filter(x => !x).length) {
+            //if we we're not doing it, then do it
+            if (!pub.PUHighchartsMutex.blocking) {
+                console.log(`Powerup: WARN - Watchdog found Highcharts w/o powerup. Kicking off powerup.`);
+                pub.PUHighcharts();
+            }
+
+            if (pub.PUHighchartsMutex.blocking &&
+                pub.PUHighchartsMutex.blocked > 100) {
+                console.log(`Powerup: ERROR - Watchdog saw Mutex blocked too long ${PUHighchartsMutex.blocked}. Reset.`)
+                pub.PUHighchartsMutex.blocking = false;
+                pub.PUHighchartsMutex.blocked = 0;
+                pub.PUHighcharts();
+            }
+        }
+        clearTimeout(timeout);
+        timeout = setTimeout(PUwatchdog, 5000); //run every 5s
+    }
+
+    const clearPowerup = (e)=>{
+        if(!pub.PUHighchartsMutex.blocked){
+            let chart = e.target;
+            chart.poweredup = false;
         }
     }
 
@@ -108,22 +159,27 @@ var DashboardPowerups = (function () {
 
     pub.POWERUP_EXT_URL = "";
     pub.config = {};
+    pub.PUHighchartsMutex = { blocking: false, blocked: 0 }; //must be obj to ensure passby ref
+    pub.PUHighchartsStatus = () => { return Highcharts.charts.filter(x => typeof (x) !== "undefined").map(x => x.poweredup); }
 
     pub.PUHighcharts = function () {
         //be sure not to leak off dashboards
         if (window.location.hash.startsWith("#dashboard;") ||
             window.location.hash.startsWith("#dashboard/dashboard;")) {
-                if(PUHighchartsMutex){
-                    console.log("Powerup: PUHighcharts mutex blocked, skip.");
-                    return false;
-                } else {
-                    PUHighchartsMutex=1;
+            if (pub.PUHighchartsMutex.blocking) {
+                pub.PUHighchartsMutex.blocked++;
+                if (pub.PUHighchartsMutex.blocked % 100 == 0) {
+                    console.log("Powerup: PUHighcharts mutex blocked, skipped " + pub.PUHighchartsMutex.blocked);
                 }
+                return false;
+            } else {
+                pub.PUHighchartsMutex.blocking = true;
+            }
             console.log("Powerup: powering-up Highcharts...");
             let PUcount = 0;
             let promises = [];
             let mainPromise = new $.Deferred();
-            Highcharts.charts.slice().forEach(chart => {
+            Highcharts.charts.forEach(chart => {
                 if (typeof (chart) !== "undefined" &&
                     !chart.poweredup &&
                     typeof (chart.container) != "undefined") {
@@ -146,7 +202,10 @@ var DashboardPowerups = (function () {
                 pub.initMapPU();
                 pub.cleanMarkup();
                 mainPromise.resolve(true);
-                setTimeout(()=>{PUHighchartsMutex=false},10000); //Don't do it again for at least 10s
+                setTimeout(() => {
+                    pub.PUHighchartsMutex.blocking = false;
+                    pub.PUHighchartsMutex.blocked = 0;
+                }, 10000); //Don't do it again for at least 10s
             });
             return mainPromise;
         } else {
@@ -170,7 +229,7 @@ var DashboardPowerups = (function () {
 
             chart.redraw(false);
 
-
+            chart.poweredup = true;
             return true;
         } else {
             return false;
@@ -179,12 +238,11 @@ var DashboardPowerups = (function () {
 
     pub.addPUHighchartsListener = function () {
         console.log("Powerup: added PUHighcharts listener");
-        /*Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.PUHighcharts, 200));
-        Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.PUHighcharts, 200));*/
-        Highcharts.addEvent(Highcharts.Chart, 'load', pub.PUHighcharts);
-        Highcharts.addEvent(Highcharts.Chart, 'redraw', pub.PUHighcharts);
+        Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.PUHighcharts, pub.PUHighchartsMutex, 200));
+        Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.PUHighcharts, pub.PUHighchartsMutex, 200));
+        Highcharts.addEvent(Highcharts.Chart, 'redraw', clearPowerup);
         pub.PUHighcharts();
-
+        PUwatchdog();
 
         /*
             custom charts are destroyed and loaded on new data, fires load event
@@ -193,7 +251,7 @@ var DashboardPowerups = (function () {
             listen for either event and begin powering-up
             we will get several of these events, so need to debounce
                 start a timer
-                throw aways all but last event until timer expires
+                throw away all but last event until timer expires
 
             at the end of powering-up, we must redraw the chart(s) ourselves, which again fires redraw
                 handle by using a crude mutex
@@ -213,9 +271,13 @@ var DashboardPowerups = (function () {
             const chart = charts[chartIndex];
 
             const event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
-            const point = chart.series[0].searchPoint(event, true); // Get the hovered point
+            var point;
+            chart.series.forEach((s, i) => { // Get the hovered point
+                if (!point)
+                    point = s.searchPoint(event, true);
+            });
 
-            if (point) {
+            if (point && point.series && point.series.xAxis && point.series.yAxis) { //prevent errors if something doesn't exist
                 const x = point.x;
 
                 for (let i = 0; i < charts.length; i++) {
@@ -286,14 +348,7 @@ var DashboardPowerups = (function () {
                 let color = args.find(x => x[0] == "color")[1];
 
                 $(BANNER_SELECTOR).css("background", color);
-
-                //white or black text
-                let c = d3.rgb(color);
-                let L = (0.2126 * c.r) / 255 + (0.7152 * c.g) / 255 + (0.0722 * c.b) / 255;
-                if ((L + 0.05) / (0.0 + 0.05) > (1.0 + 0.05) / (L + 0.05))
-                    $(BANNER_SELECTOR).css("color", "black");
-                else
-                    $(BANNER_SELECTOR).css("color", "white");
+                $(BANNER_SELECTOR).css("color", contrast(color));
             }
         });
     }
@@ -576,7 +631,7 @@ var DashboardPowerups = (function () {
                     val = "0";
 
                 if ($tooltip.length) {
-                    let flag = code.toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0)+127397) );
+                    let flag = code.toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0) + 127397));
                     $tooltip.find(".geoText").text(`Country: ${country} (${flag})`);
                     $tooltip.find(".valueText").text(`${key}: ${val}`)
                 }

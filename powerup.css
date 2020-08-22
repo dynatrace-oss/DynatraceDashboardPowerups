@@ -83,3 +83,22 @@
   .geoText, .valueText {
     font-size: large;
   }
+
+  .powerupLineTooltip {
+    display: flex;
+  }
+
+  .powerupLineTooltip .dot {
+    border-radius: 3px;
+  }
+
+  .powerupLineTooltip div {
+    flex: 0;
+    /*white-space: nowrap;*/
+  }
+
+  .powerupLineTooltip .spacer{
+    flex: 1;
+  }
+
+  

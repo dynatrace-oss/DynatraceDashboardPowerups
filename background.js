@@ -1,18 +1,4 @@
-/*chrome.runtime.onInstalled.addListener(function () {
-    chrome.storage.sync.set(
-        {
-            Powerups: {
-                tooltipPU: true,
-                colorPU: true,
-                svgPU: true,
-                worldmapPU: true,
-                bannerPU: true
-            }
-
-        }, function () {
-            console.log('Powerup: added to storage');
-        });
-
+chrome.runtime.onInstalled.addListener(function () {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
         chrome.declarativeContent.onPageChanged.addRules([{
             conditions: [new chrome.declarativeContent.PageStateMatcher({
@@ -23,4 +9,3 @@
         }]);
     });
 });
-*/
