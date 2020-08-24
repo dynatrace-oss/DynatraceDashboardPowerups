@@ -16,7 +16,10 @@ var DashboardPowerups = (function () {
     const PU_MAP = '!PU(map):';
     const PU_LINK = '!PU(link):';
     const PU_BANNER = '!PU(banner):';
-    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER];
+    const PU_LINE = '!PU(line):'; //To be implemented, green above / red below threshold
+    const PU_USQLSTACK = '!PU(usqlstack):'; //To be implemented, rebuid bar chart with stacking and better colors
+
+    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK];
     const SERIES_OPTS = {
         "animation": true,
         "allowPointSelect": true,
@@ -79,6 +82,7 @@ var DashboardPowerups = (function () {
         }
     };
     const MO_CONFIG = { attributes: true, childList: true, subtree: true }; //MutexObserver
+    var waits = 0;
 
 
     //Private methods
@@ -125,11 +129,13 @@ var DashboardPowerups = (function () {
 
     const PUwatchdog = () => {
         var timeout;
+        var unpowered = pub.PUHighchartsStatus().filter(x => !x).length;
         //test for un-powereduped charts
-        if (pub.PUHighchartsStatus().filter(x => !x).length) {
+        if (unpowered) {
             //if we we're not doing it, then do it
             if (!pub.PUHighchartsMutex.blocking) {
-                console.log(`Powerup: WARN - Watchdog found Highcharts w/o powerup. Kicking off powerup.`);
+                if (pub.config.Powerups.debug)
+                    console.log(`Powerup: WARN - Watchdog found ${unpowered} Highcharts w/o powerup. Kicking off powerup.`);
                 pub.PUHighcharts();
             }
 
@@ -145,8 +151,8 @@ var DashboardPowerups = (function () {
         timeout = setTimeout(PUwatchdog, 5000); //run every 5s
     }
 
-    const clearPowerup = (e)=>{
-        if(!pub.PUHighchartsMutex.blocked){
+    const clearPowerup = (e) => {
+        if (!pub.PUHighchartsMutex.blocked) {
             let chart = e.target;
             chart.poweredup = false;
         }
@@ -169,13 +175,13 @@ var DashboardPowerups = (function () {
             if (pub.PUHighchartsMutex.blocking) {
                 pub.PUHighchartsMutex.blocked++;
                 if (pub.PUHighchartsMutex.blocked % 100 == 0) {
-                    console.log("Powerup: PUHighcharts mutex blocked, skipped " + pub.PUHighchartsMutex.blocked);
+                    console.log("Powerup: WARN - PUHighcharts mutex blocked, skipped " + pub.PUHighchartsMutex.blocked);
                 }
                 return false;
             } else {
                 pub.PUHighchartsMutex.blocking = true;
             }
-            console.log("Powerup: powering-up Highcharts...");
+            if (pub.config.Powerups.debug) console.log("Powerup: powering-up Highcharts...");
             let PUcount = 0;
             let promises = [];
             let mainPromise = new $.Deferred();
@@ -186,6 +192,7 @@ var DashboardPowerups = (function () {
                     let p = new $.Deferred();
                     promises.push(p);
                     setTimeout(function () {
+                        let pu = false;
                         if (pub.PUHighchart(chart))
                             PUcount++;
                         p.resolve();
@@ -194,7 +201,7 @@ var DashboardPowerups = (function () {
             });
             $.when.apply($, promises).then(function () {
                 $(".highcharts-container").css("z-index", 999);
-                console.log("Powerup: " + PUcount + " Highcharts powered-up.");
+                if (pub.config.Powerups.debug) console.log("Powerup: " + PUcount + " Highcharts powered-up.");
                 //other dashboard powering-up here
                 pub.bannerPowerUp();
                 pub.colorPowerUp();
@@ -209,14 +216,15 @@ var DashboardPowerups = (function () {
             });
             return mainPromise;
         } else {
-            console.log("Powerup: no longer on a dashboard, removing PUHighcharts listener...");
+            if (pub.config.Powerups.debug) console.log("Powerup: no longer on a dashboard, removing PUHighcharts listener...");
             Highcharts.removeEvent(Highcharts.Chart, 'load', pub.PUHighcharts);
             return false;
         }
     }
 
     pub.PUHighchart = function (chart) {
-        if (typeof (chart) !== "undefined" &&
+        if (pub.config.Powerups.tooltipPU &&
+            typeof (chart) !== "undefined" &&
             !chart.poweredup &&
             typeof (chart.container) != "undefined") {
             chart.series.forEach(series => {
@@ -226,6 +234,14 @@ var DashboardPowerups = (function () {
             chart.update({ xAxis: AXIS_OPTS }, false);
             chart.update({ yAxis: AXIS_OPTS }, false);
 
+            let $container = $(chart.container);
+            let $tile = $container.parents(TILE_SELECTOR);
+            let $title = $tile.find(TITLE_SELECTOR);
+            let title = $title.text();
+            if(title.includes(PU_LINE)) pub.PULine(chart,title);
+            if(title.includes(PU_USQLSTACK)) setTimeout(()=>{
+                pub.PUUsqlStack(chart,title);
+            },100);
 
             chart.redraw(false);
 
@@ -236,8 +252,96 @@ var DashboardPowerups = (function () {
         }
     }
 
+    pub.PULine = function(chart,title){ //example: !PU(line):thld=4000;hcol=green;lcol=red
+        let titletokens = title.split(PU_LINE);
+        let argstring = titletokens[1];
+        let args = argstring.split(";").map(x => x.split("="));
+        if (args.length < 3) {
+            if (pub.config.Powerups.debug)
+                console.log("Powerup: ERROR - invalid argstring: " + argstring);
+            return false;
+        }
+        let thld = args.find(x => x[0] == "thld")[1];
+        let hcol = args.find(x => x[0] == "hcol")[1];
+        let lcol = args.find(x => x[0] == "lcol")[1];
+        
+        let series_opts = {
+            threshold: thld,
+            negativeColor: lcol,
+            color: hcol
+        }
+
+        chart.series[0].update(series_opts);
+        chart.yAxis[0].addPlotLine({
+            value: thld,
+            color: 'yellow',
+            width: 1
+        });
+    }
+
+    pub.PUUsqlStack = function(chart,title){ //example: !PU(usqlstack):color:green
+        let titletokens = title.split(PU_USQLSTACK);
+        let argstring = titletokens[1];
+        let args = argstring.split(";").map(x => x.split("="));
+        if (args.length < 1) {
+            if (pub.config.Powerups.debug)
+                console.log("Powerup: ERROR - invalid argstring: " + argstring);
+            return false;
+        }
+        let color = args.find(x => x[0] == "color")[1];
+
+        //get data
+        console.log(chart.series[0].data);
+        if(chart.series.length!=1) return false; //if more than 1 series, this doesn't make sense; quit
+        if(!chart.series[0].data.length) return false; //no data, quit
+        if(!chart.series[0].data[0].name.includes(',')) return false; //if there's no splitting, quit
+        let splittings = [];
+        let newSeries = [];
+        let newCategories = [];
+        
+        chart.series[0].data.forEach((d)=>{
+            let nameArr = d.name.split(',');
+            let newName = nameArr[0];
+            let split = nameArr[1].trim();
+            let i = splittings.findIndex((x)=>x==split);
+            if(i<0){
+                splittings.push(split);
+                let newSerie = {
+                    name: chart.series[0].name + `(${split})`,
+                    type: 'bar',
+                    stacking: 'normal',
+                    data: [
+                        {
+                            name: newName,
+                            x: 0,
+                            y: d.y
+                        }
+                    ]
+                }
+                newSeries.push(newSerie);
+            } else {
+                newSeries[i].data.push({
+                    name: newName,
+                    x: newSeries[i].data.length,
+                    y: d.y
+                });
+            }
+            if(newCategories.findIndex(x=>x==newName)<0)
+                newCategories.push(newName);
+        });
+        
+        newSeries.forEach((ns)=>{
+            chart.addSeries(ns,false,false);
+        });
+        //chart.series[0].hide();
+        chart.series[0].remove(false,false);
+        chart.axes[0].setCategories(newCategories,false);
+        
+        chart.redraw(false);
+    }
+
     pub.addPUHighchartsListener = function () {
-        console.log("Powerup: added PUHighcharts listener");
+        if (pub.config.Powerups.debug) console.log("Powerup: added PUHighcharts listener");
         Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.PUHighcharts, pub.PUHighchartsMutex, 200));
         Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.PUHighcharts, pub.PUHighchartsMutex, 200));
         Highcharts.addEvent(Highcharts.Chart, 'redraw', clearPowerup);
@@ -263,6 +367,8 @@ var DashboardPowerups = (function () {
     }
 
     pub.highlightPointsInOtherCharts = function (e) {
+        if (!pub.config.Powerups.tooltipPU) return;
+
         const container = e.currentTarget;
         const charts = Highcharts.charts.filter(x => typeof (x) != "undefined");
         const chartIndex = charts.findIndex(chart => chart.container === container);
@@ -337,6 +443,7 @@ var DashboardPowerups = (function () {
     }
 
     pub.bannerPowerUp = function () {
+        if (!pub.config.Powerups.bannerPU) return;
         $(TAG_SELECTOR).each((i, el) => {
             let $tag = $(el);
             let title = $tag.attr("title");
@@ -354,6 +461,32 @@ var DashboardPowerups = (function () {
     }
 
     pub.colorPowerUp = function () {
+        if (!pub.config.Powerups.colorPU) return;
+        let class_norm = `powerup-color-normal`;
+        let class_warn = `powerup-color-warning`;
+        switch (pub.config.Powerups.animateWarning) {
+            case "3 Pulses":
+                class_warn += "-blink threeBlink";
+                break;
+            case "Always":
+                class_warn += "-blink";
+                break;
+            case "Never":
+            default:
+        }
+        let class_crit = `powerup-color-critical`;
+        switch (pub.config.Powerups.animateCritical) {
+            case "Always":
+                class_crit += "-blink";
+                break;
+            case "Never":
+                break;
+            case "3 Pulses":
+            default:
+                class_crit += "-blink threeBlink";
+        }
+
+
         $(TITLE_SELECTOR).each((i, el) => {
             let $title = $(el);
             let $tile = $title.parents(".grid-tile");
@@ -361,12 +494,12 @@ var DashboardPowerups = (function () {
 
             //Step1: change tile colors
             if ($title.text().includes(PU_COLOR)) { //example !PU(color):base=high;warn=90;crit=70
-                console.log("Powerup: color power-up found");
+                if (pub.config.Powerups.debug) console.log("Powerup: color power-up found");
                 let titletokens = $title.text().split(PU_COLOR);
                 let argstring = titletokens[1];
                 let args = argstring.split(";").map(x => x.split("="));
                 if (args.length < 3) {
-                    console.log("Powerup: invalid argstring: " + argstring);
+                    console.log("Powerup: ERROR - invalid argstring: " + argstring);
                     return false;
                 }
                 let base = args.find(x => x[0] == "base")[1];
@@ -374,16 +507,17 @@ var DashboardPowerups = (function () {
                 let crit = Number(args.find(x => x[0] == "crit")[1]);
                 let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g, ''));
 
-                let $target = $bignum; //or $tile
+                let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
                 $target.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
+                $target.removeClass("powerup-color-critical-blink powerup-color-warning-blink threeBlink");
                 if (base == "low") {
-                    if (val < warn) $target.addClass("powerup-color-normal");
-                    else if (val < crit) $target.addClass("powerup-color-warning");
-                    else $target.addClass("powerup-color-critical");
+                    if (val < warn) $target.addClass(class_norm);
+                    else if (val < crit) $target.addClass(class_warn);
+                    else $target.addClass(class_crit);
                 } else if (base == "high") {
-                    if (val > warn) $target.addClass("powerup-color-normal");
-                    else if (val > crit) $target.addClass("powerup-color-warning");
-                    else $target.addClass("powerup-color-critical");
+                    if (val > warn) $target.addClass(class_norm);
+                    else if (val > crit) $target.addClass(class_warn);
+                    else $target.addClass(class_crit);
                 }
 
                 let $trend = $tile.find(TREND_SELECTOR);
@@ -403,12 +537,37 @@ var DashboardPowerups = (function () {
     }
 
     pub.svgPowerUp = function () {
+        if (!pub.config.Powerups.svgPU) return;
+        let class_norm = `powerup-svg-normal`;
+        let class_warn = `powerup-svg-warning`;
+        switch (pub.config.Powerups.animateWarning) {
+            case "3 Pulses":
+                class_warn += "-blink threeBlink";
+                break;
+            case "Always":
+                class_warn += "-blink";
+                break;
+            case "Never":
+            default:
+        }
+        let class_crit = `powerup-svg-critical`;
+        switch (pub.config.Powerups.animateCritical) {
+            case "Always":
+                class_crit += "-blink";
+                break;
+            case "Never":
+                break;
+            case "3 Pulses":
+            default:
+                class_crit += "-blink threeBlink";
+        }
+
         $(SVG_SELECTOR).each((i, el) => {
             let $svgcontainer = $(el);
             let $tile = $svgcontainer.parents(".grid-tile");
 
             if ($svgcontainer.text().includes(PU_SVG)) {
-                console.log("Powerup: svg power-up found");
+                if (pub.config.Powerups.debug) console.log("Powerup: svg power-up found");
                 let argstring = $svgcontainer.text().split(PU_SVG)[1];
 
                 let args = argstring.split(";").map(x => x.split("="));
@@ -437,14 +596,15 @@ var DashboardPowerups = (function () {
                             .appendTo($svgcontainer);
 
                         $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
+                        $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
                         if (base == "low") {
-                            if (val < warn) $svg.addClass("powerup-svg-normal");
-                            else if (val < crit) $svg.addClass("powerup-svg-warning");
-                            else $svg.addClass("powerup-svg-critical");
+                            if (val < warn) $svg.addClass(class_norm);
+                            else if (val < crit) $svg.addClass(class_warn);
+                            else $svg.addClass(class_crit);
                         } else if (base == "high") {
-                            if (val > warn) $svg.addClass("powerup-svg-normal");
-                            else if (val > crit) $svg.addClass("powerup-svg-warning");
-                            else $svg.addClass("powerup-svg-critical");
+                            if (val > warn) $svg.addClass(class_norm);
+                            else if (val > crit) $svg.addClass(class_warn);
+                            else $svg.addClass(class_crit);
                         }
                     });
             }
@@ -452,6 +612,31 @@ var DashboardPowerups = (function () {
     }
 
     pub.updateSVGPowerUp = function () {
+        if (!pub.config.Powerups.svgPU) return;
+        let class_norm = `powerup-svg-normal`;
+        let class_warn = `powerup-svg-warning`;
+        switch (pub.config.Powerups.animateWarning) {
+            case "3 Pulses":
+                class_warn += "-blink threeBlink";
+                break;
+            case "Always":
+                class_warn += "-blink";
+                break;
+            case "Never":
+            default:
+        }
+        let class_crit = `powerup-svg-critical`;
+        switch (pub.config.Powerups.animateCritical) {
+            case "Always":
+                class_crit += "-blink";
+                break;
+            case "Never":
+                break;
+            case "3 Pulses":
+            default:
+                class_crit += "-blink threeBlink";
+        }
+
         $(SVG_SELECTOR).each((i, el) => {
             let $svgcontainer = $(el);
             let $tile = $svgcontainer.parents(".grid-tile");
@@ -464,14 +649,15 @@ var DashboardPowerups = (function () {
                 let val = pub.findLinkedVal(args.link);
 
                 $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
+                $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
                 if (args.base == "low") {
-                    if (val < args.warn) $svg.addClass("powerup-svg-normal");
-                    else if (val < args.crit) $svg.addClass("powerup-svg-warning");
-                    else $svg.addClass("powerup-svg-critical");
+                    if (val < args.warn) $svg.addClass(class_norm);
+                    else if (val < args.crit) $svg.addClass(class_warn);
+                    else $svg.addClass(class_crit);
                 } else if (args.base == "high") {
-                    if (val > args.warn) $svg.addClass("powerup-svg-normal");
-                    else if (val > args.crit) $svg.addClass("powerup-svg-warning");
-                    else $svg.addClass("powerup-svg-critical");
+                    if (val > args.warn) $svg.addClass(class_norm);
+                    else if (val > args.crit) $svg.addClass(class_warn);
+                    else $svg.addClass(class_crit);
                 }
             }
         });
@@ -489,7 +675,7 @@ var DashboardPowerups = (function () {
             }
         });
         if (typeof val == "undefined") {
-            console.log("Powerup: unable to match link: " + link_text);
+            console.log("Powerup: ERROR - unable to match link: " + link_text);
             return undefined;
         } else {
             return val;
@@ -498,7 +684,9 @@ var DashboardPowerups = (function () {
 
     pub.addToolTips = function () {
         if (typeof (pub.addPUHighchartsListener) == "undefined") {
-            console.log("Powerup: clientside.js not loaded yet");
+            waits++;
+            if (waits % 10 == 0)
+                console.log(`Powerup: WARN - clientside.js not loaded yet after ${waits / 5}s`);
             setTimeout(pub.addToolTips, 200);
         } else {
             pub.addPUHighchartsListener();
@@ -507,6 +695,7 @@ var DashboardPowerups = (function () {
     }
 
     pub.initMapPU = function () {
+        if (!pub.config.Powerups.worldmapPU) return;
         let observers = [];
         let targets = [];
         let dataTables = [];
@@ -556,6 +745,7 @@ var DashboardPowerups = (function () {
         }
 
         pub.mapPU = function (mutationsList, observer) {
+            if (!pub.config.Powerups.worldmapPU) return;
             let i = observers.findIndex((o) => observer === o);
             let target = targets[i];
             let $target = $(target);
@@ -617,11 +807,11 @@ var DashboardPowerups = (function () {
             }
 
             function hover() {
+                if (!pub.config.Powerups.worldmapPU) return;
                 let $tooltip = $tile.find(".powerupMapTooltip");
                 let $path = $(this);
                 let country = $path.attr("title");
                 let code = $path.attr("id").split('-')[1];
-                //let data = $path.attr("data-data");
                 let key = keys[keys.length - 1];
                 let countryData = normalTable.find(x => x.country == country);
                 let val;
@@ -662,8 +852,6 @@ var DashboardPowerups = (function () {
                 let country = $el.attr("title");
 
                 let data = normalTable.filter(x => x.country == country);
-                //.map(x=>x.)
-                //.reduce((acc,x)=>acc+x)
 
                 $el.attr("data-data", JSON.stringify(data));
                 let val = 0;
@@ -679,7 +867,7 @@ var DashboardPowerups = (function () {
             let maptitle = `World Map (${newTitle})`;
             $maptitle.text(maptitle);
 
-            console.log("Powerup: map powered-up");
+            if (pub.config.Powerups.debug) console.log("Powerup: map powered-up");
             observer.observe(target, MO_CONFIG); //done w/ initial power-up, resume observations
         }
 

@@ -6,10 +6,21 @@ $(document).ready(function () {
 
     $.when(config_p).done(function (config) {
         updateControls(config);
-        $('#save').on('click', writeConfig);
+        $('#save').on('click', saveAndClose);
     });
 
 });
+
+function saveAndClose() {
+    let p = writeConfig();
+    $.when(p).done(function () {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { Powerup: "UpdateConfig" }, () => {
+                window.close();
+            });
+        });
+    });
+}
 
 function loadConfig() {
     let p = $.Deferred();
@@ -20,7 +31,10 @@ function loadConfig() {
             svgPU: true,
             worldmapPU: true,
             bannerPU: true,
-            debug: false
+            debug: false,
+            colorPUTarget: "Text",
+            animateCritical: "3 Pulses",
+            animateWarning: "Never"
         }
     };
 
@@ -50,6 +64,9 @@ function writeConfig() {
             worldmapPU: $('#worldmapPU').prop("checked"),
             bannerPU: $('#bannerPU').prop("checked"),
             debug: $('#debug').prop("checked"),
+            colorPUTarget: $('#colorPUTarget').val(),
+            animateCritical: $('#animateCritical').val(),
+            animateWarning: $('#animateWarning').val()
         }
     }
 
@@ -62,18 +79,18 @@ function writeConfig() {
 }
 
 function updateDebugOutput(config_p) {
-    $.when(config_p).done(function(config){
-        $('p#notice').text(JSON.stringify(config));
+    $.when(config_p).done(function (config) {
+        $('#notice').val(JSON.stringify(config));
     })
 }
 
 function updateControls(config) {
     let powerups = config.Powerups || {};
-    Object.keys(config.Powerups).forEach((key)=>{
-        let selector = '#'+key;
+    Object.keys(config.Powerups).forEach((key) => {
+        let selector = '#' + key;
         let val = powerups[key];
-        if(typeof(val) == "boolean")
-            $(selector).prop("checked",val);
+        if (typeof (val) == "boolean")
+            $(selector).prop("checked", val);
         else
             $(selector).val(val);
     })

@@ -1,54 +1,36 @@
 {
-    "manifest_version": 2, 
+    "manifest_version": 2,
     "name": "Dynatrace Dashboard Powerups",
     "description": "Power-up existing dashboards with cool experimental features",
-    "version": "0.12",
+    "version": "0.13",
     "author": "Lucas Hocker",
     "background": {
-        "scripts": ["background.js"],
+        "scripts": [
+            "background.js"
+        ],
         "persistent": false
-      },
-    "page_action": {
-        "default_icon": {
-                "16": "Assets/powerup.png",
-                "48": "Assets/powerup.png",
-                "128": "Assets/powerup.png"
-            },
-            "default_popup": "popup.html"
     },
-
+    "page_action": {
+        "default_icon": "Assets/powerup_gray.png",
+        "default_popup": "popup.html"
+    },
     "icons": {
         "16": "Assets/powerup.png",
         "48": "Assets/powerup.png",
         "128": "Assets/powerup.png"
     },
-
-    "content_scripts":[{
-        "run_at": "document_end",
-        "js" : [
-            "3rdParty/jquery-3.5.1.min.js",
-            "extside.js"
-        ],
-        "css": [
-            "powerup.css"
-        ],
-        "matches":[
-            "https://*.live.dynatrace.com/*",
-            "https://*/e/*/*",
-            "https://*.sprint.dynatracelabs.com/*",
-            "https://*.dev.dynatracelabs.com/*"
-        ]
-    }],
-
     "web_accessible_resources": [
         "powerup.css",
         "3rdParty/node_modules/@dynatrace/barista-icons/*",
         "clientside.js"
     ],
-
     "permissions": [
-      "declarativeContent",
-      "activeTab",
-      "storage"
+        "webNavigation",
+        "activeTab",
+        "storage",
+        "https://*.live.dynatrace.com/*",
+        "https://*/e/*",
+        "https://*.sprint.dynatracelabs.com/*",
+        "https://*.dev.dynatracelabs.com/*"
     ]
 }

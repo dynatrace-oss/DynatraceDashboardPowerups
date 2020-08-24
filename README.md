@@ -17,11 +17,33 @@ Unzip to a local folder
 Enable in Chrome
 ![enable](Assets/loadext2.png)
 
+Click the puzzle icon and pin Powerups
+![puzzle](Assets/clickPuzzlePiece.png)
+![pin](Assets/pinExtension.png)
+
+The icon will change from gray to blue when active
+![inactive](Assets/inactive.png)
+![active](Assets/active.png)
+
+When a new update is released, repeat the above. Auto-update is currently in the backlog.
+
+## Configure extension
+Click blue powerup icon
+![active](Assets/active.png)
+
+Modify preferences
+![popupMenu](Assets/popupMenu.png)
+
+Click save. Note: you may need to refresh your page for changes to take effect.
+
 ## Powerup Howto
 Currently for the powerups you need to add additional markup text in your dashboard tile titles. Soon, you will be able to add thresholds etc directly in the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a> when you're deploying dashboards.
 
 ### Tooltips
 Nothing required, just enable the extension as per above and refresh your browser on a dashboard.
+
+Example:
+![Tooltips](Assets/tooltips.png)
 
 ### Colorize
 For Single Value Tiles, either custom chart or USQL, you can add color coding by adding markup to the title:
@@ -33,6 +55,9 @@ Explanation:
 - `warn=90` this is the warning threshold, once breached color coding will be yellow
 - `crit=80` this is the critical threshold, once breached color coding will be red
 So in the example of availability, high is better. Greater than 90 would be green, 90 to 80 yellow, and 80 or less red.
+
+Example:
+![Colors](Assets/colors.png)
 
 ### Icon indicators
 This powerup renders icons in place of Markdown tiles. These icons change color to give a quick visual indication of environment / business health. For example, if payment processing was beyond a threshold hold, you might have a creditcard icon turn red. Here's how that might look:
@@ -50,6 +75,9 @@ Explanation:
 - `crit=` this is the critical threshold, once breached color coding will be red
 Just be sure to include the `!PU(link):` with a matching string in the desired Single Value Tile
 
+Example:
+![Icons](Assets/icons.png)
+
 ### World maps
 This powerup reloads the data in world maps with that from a USQL table. This allows you to map arbitrary things like revenue. It also enables click or scrollwheel to zoom. Click in an ocean to reset zoom. Add markup to your USQL table's title like this:
 `Revenue !PU(map):color=green;link=Apdex`
@@ -60,6 +88,9 @@ Explanation:
 - `color=` what color scale to use, e.g. "green" or "#E9422F"
 - `link=` refers to the standard metric picked for the chart in the OOTB tile configuration. This allows you to have multiple worldmaps driven by multiple USQL tables
 
+Example:
+![World Map](Assets/worldmap.png)
+
 ### Banner
 If you have multiple environment with dashboards up on screens and need an easy way of telling which is say Production and which one is say QA, you can color code the top of the dashboard. Use a dashboard tag like this:
 `!PU(banner):color=purple`
@@ -67,3 +98,30 @@ If you have multiple environment with dashboards up on screens and need an easy 
 Explanation:
 - `!PU(banner):` indicates this dashboard tag is a banner powerup
 - `color=` what color background to make the banner, e.g. "purple" or "#B6E5F8"
+
+Example:
+![Banner](Assets/banner.png)
+
+### Line chart threshold
+If you would like a chart that shows as one color above a threshold but a different color below, this powerup enables that. Add markup to to the chart title like so:
+`!PU(line):thld=4000;hcol=green;lcol=red`
+
+Explanation:
+- `!PU(line):` indicates this linechart should have a threshold
+- `thld=4000;` the threshold (Note: does not currently support units)
+- `hcol=green;` the color above the threshold
+- `lcol=red` the color below
+
+Example:
+![Line chart threshold](Assets/linethreshold.png)
+
+### USQL Stacked Bar chart
+This powerup switches to a stacked bar chart for a USQL result instead of stacked xaxis labels. Change the title like this:
+`//example: !PU(usqlstack):color=green`
+
+Explanation:
+- `!PU(usqlstack):` indicates the powerup
+- `color=green` NOT YET IMPLEMENTED
+
+Example:
+![USQL Stacked Bar Chart](Assets/usqlstack.png)
