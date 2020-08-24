@@ -9,32 +9,32 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 *Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum or create an issue on Github*
 
 ## Installation
-Download the extension source
+1. Download the extension source
 ![click download](Assets/loadext1.png)
 
-Unzip to a local folder
+1. Unzip to a local folder
 
-Enable in Chrome
+1. Enable in Chrome
 ![enable](Assets/loadext2.png)
 
-Click the puzzle icon and pin Powerups
+1. Click the puzzle icon and pin Powerups
 ![puzzle](Assets/clickPuzzlePiece.png)
 ![pin](Assets/pinExtension.png)
 
-The icon will change from gray to blue when active
+1. The icon will change from gray to blue when active
 ![inactive](Assets/inactive.png)
 ![active](Assets/active.png)
 
-When a new update is released, repeat the above. Auto-update is currently in the backlog.
+1. When a new update is released, repeat the above. Auto-update is currently in the backlog.
 
 ## Configure extension
-Click blue powerup icon
+1. Click blue powerup icon
 ![active](Assets/active.png)
 
-Modify preferences
+1. Modify preferences
 ![popupMenu](Assets/popupMenu.png)
 
-Click save. Note: you may need to refresh your page for changes to take effect.
+1. Click save. Note: you may need to refresh your page for changes to take effect.
 
 ## Powerup Howto
 Currently for the powerups you need to add additional markup text in your dashboard tile titles. Soon, you will be able to add thresholds etc directly in the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a> when you're deploying dashboards.
