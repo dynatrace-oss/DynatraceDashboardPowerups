@@ -117,7 +117,7 @@ Example:
 
 ### USQL Stacked Bar chart
 This powerup switches to a stacked bar chart for a USQL result instead of stacked xaxis labels. Change the title like this:
-`//example: !PU(usqlstack):color=green`
+`!PU(usqlstack):color=green`
 
 Explanation:
 - `!PU(usqlstack):` indicates the powerup
@@ -125,3 +125,10 @@ Explanation:
 
 Example:
 ![USQL Stacked Bar Chart](Assets/usqlstack.png)
+
+### Heatmap (very experimental)
+Currently this powerup can display a heatmap based on a bar chart of web application apdex. Eventually, it will be more generic. In current form, it has some stability issues -- refresh if Technical Difficulties are encountered.
+`!PU(heatmap):`
+
+Example:
+![Apdex heatmap](Assets/heatmap.png)
