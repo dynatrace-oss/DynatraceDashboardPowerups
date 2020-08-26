@@ -1013,7 +1013,8 @@ var DashboardPowerups = (function () {
             },
 
             xAxis: {
-                categories: categories
+                categories: categories,
+                reversed: true
             },
 
             yAxis: {
@@ -1031,11 +1032,11 @@ var DashboardPowerups = (function () {
             },
             colorAxis: {
                 dataClasses: [
-                    { to: .5, name: "Unacceptable", color: "red" },
-                    { from: .5, to: .7, name: "Poor", color: "orange" },
-                    { from: .7, to: .85, name: "Fair", color: "yellow" },
-                    { from: .85, to: .94, name: "Good", color: "greenyellow" },
-                    { from: .94, name: "Excellent", color: "green" },
+                    { to: .5, name: "Unacceptable", color: "#dc172a" },
+                    { from: .5, to: .7, name: "Poor", color: "#ef651f" },
+                    { from: .7, to: .85, name: "Fair", color: "#ffe11c" },
+                    { from: .85, to: .94, name: "Good", color: "#6bcb8b" },
+                    { from: .94, name: "Excellent", color: "#2ab06f" },
                 ]
             },
         }
