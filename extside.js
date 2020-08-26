@@ -166,8 +166,17 @@ if (typeof (INJECTED) == "undefined") {
     }
 
     function injectHighchartsModules(config) {
-        if (config.Powerups.heatmapPU)
+        if (config.Powerups.heatmapPU){
             injectHighchartsModule("heatmap");
+            injectClientsideString(`
+            //Highcharts Heatmap bug workaround
+            Highcharts.charts
+                .filter(x=>typeof(x)!=="undefined")
+                .filter(x=>typeof(x.colorAxis)=="undefined")
+                .forEach(x=>{x.colorAxis=[];});
+            `);
+        }
+            
         if (config.Powerups.sankeyPU)
             injectHighchartsModule("sankey");
         if (config.Powerups.funnelPU)
