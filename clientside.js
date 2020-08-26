@@ -16,10 +16,11 @@ var DashboardPowerups = (function () {
     const PU_MAP = '!PU(map):';
     const PU_LINK = '!PU(link):';
     const PU_BANNER = '!PU(banner):';
-    const PU_LINE = '!PU(line):'; //To be implemented, green above / red below threshold
-    const PU_USQLSTACK = '!PU(usqlstack):'; //To be implemented, rebuid bar chart with stacking and better colors
+    const PU_LINE = '!PU(line):';
+    const PU_USQLSTACK = '!PU(usqlstack):'; //TODO: add color schemes
+    const PU_HEATMAP = '!PU(heatmap):'; //TBI
 
-    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK];
+    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP];
     const SERIES_OPTS = {
         "animation": true,
         "allowPointSelect": true,
@@ -83,6 +84,9 @@ var DashboardPowerups = (function () {
     };
     const MO_CONFIG = { attributes: true, childList: true, subtree: true }; //MutexObserver
     var waits = 0;
+    var observers = [];
+    var targets = [];
+    var dataTables = [];
 
 
     //Private methods
@@ -203,11 +207,7 @@ var DashboardPowerups = (function () {
                 $(".highcharts-container").css("z-index", 999);
                 if (pub.config.Powerups.debug) console.log("Powerup: " + PUcount + " Highcharts powered-up.");
                 //other dashboard powering-up here
-                pub.bannerPowerUp();
-                pub.colorPowerUp();
-                pub.updateSVGPowerUp();
-                pub.initMapPU();
-                pub.cleanMarkup();
+                pub.fireAllPowerUps(true);
                 mainPromise.resolve(true);
                 setTimeout(() => {
                     pub.PUHighchartsMutex.blocking = false;
@@ -238,10 +238,14 @@ var DashboardPowerups = (function () {
             let $tile = $container.parents(TILE_SELECTOR);
             let $title = $tile.find(TITLE_SELECTOR);
             let title = $title.text();
-            if(title.includes(PU_LINE)) pub.PULine(chart,title);
-            if(title.includes(PU_USQLSTACK)) setTimeout(()=>{
-                pub.PUUsqlStack(chart,title);
-            },100);
+            if (title.includes(PU_LINE)) pub.PULine(chart, title);
+            if (title.includes(PU_USQLSTACK)) setTimeout(() => {
+                pub.PUUsqlStack(chart, title);
+            }, 100);
+            if (title.includes(PU_HEATMAP)) setTimeout(() => {
+                if($(chart.container).is(":visible"))
+                    pub.PUHeatmap(chart, title);
+            }, 100);
 
             chart.redraw(false);
 
@@ -252,7 +256,8 @@ var DashboardPowerups = (function () {
         }
     }
 
-    pub.PULine = function(chart,title){ //example: !PU(line):thld=4000;hcol=green;lcol=red
+    pub.PULine = function (chart, title) { //example: !PU(line):thld=4000;hcol=green;lcol=red
+        if (!pub.config.Powerups.linePU) return;
         let titletokens = title.split(PU_LINE);
         let argstring = titletokens[1];
         let args = argstring.split(";").map(x => x.split("="));
@@ -264,7 +269,7 @@ var DashboardPowerups = (function () {
         let thld = args.find(x => x[0] == "thld")[1];
         let hcol = args.find(x => x[0] == "hcol")[1];
         let lcol = args.find(x => x[0] == "lcol")[1];
-        
+
         let series_opts = {
             threshold: thld,
             negativeColor: lcol,
@@ -279,7 +284,8 @@ var DashboardPowerups = (function () {
         });
     }
 
-    pub.PUUsqlStack = function(chart,title){ //example: !PU(usqlstack):color:green
+    pub.PUUsqlStack = function (chart, title) { //example: !PU(usqlstack):color:green
+        if (!pub.config.Powerups.usqlstackPU) return;
         let titletokens = title.split(PU_USQLSTACK);
         let argstring = titletokens[1];
         let args = argstring.split(";").map(x => x.split("="));
@@ -292,19 +298,19 @@ var DashboardPowerups = (function () {
 
         //get data
         console.log(chart.series[0].data);
-        if(chart.series.length!=1) return false; //if more than 1 series, this doesn't make sense; quit
-        if(!chart.series[0].data.length) return false; //no data, quit
-        if(!chart.series[0].data[0].name.includes(',')) return false; //if there's no splitting, quit
+        if (chart.series.length != 1) return false; //if more than 1 series, this doesn't make sense; quit
+        if (!chart.series[0].data.length) return false; //no data, quit
+        if (!chart.series[0].data[0].name.includes(',')) return false; //if there's no splitting, quit
         let splittings = [];
         let newSeries = [];
         let newCategories = [];
-        
-        chart.series[0].data.forEach((d)=>{
+
+        chart.series[0].data.forEach((d) => {
             let nameArr = d.name.split(',');
             let newName = nameArr[0];
             let split = nameArr[1].trim();
-            let i = splittings.findIndex((x)=>x==split);
-            if(i<0){
+            let i = splittings.findIndex((x) => x == split);
+            if (i < 0) {
                 splittings.push(split);
                 let newSerie = {
                     name: chart.series[0].name + `(${split})`,
@@ -326,17 +332,17 @@ var DashboardPowerups = (function () {
                     y: d.y
                 });
             }
-            if(newCategories.findIndex(x=>x==newName)<0)
+            if (newCategories.findIndex(x => x == newName) < 0)
                 newCategories.push(newName);
         });
-        
-        newSeries.forEach((ns)=>{
-            chart.addSeries(ns,false,false);
+
+        newSeries.forEach((ns) => {
+            chart.addSeries(ns, false, false);
         });
         //chart.series[0].hide();
-        chart.series[0].remove(false,false);
-        chart.axes[0].setCategories(newCategories,false);
-        
+        chart.series[0].remove(false, false);
+        chart.axes[0].setCategories(newCategories, false);
+
         chart.redraw(false);
     }
 
@@ -694,16 +700,14 @@ var DashboardPowerups = (function () {
         }
     }
 
-    pub.initMapPU = function () {
+    pub.mapPowerUp = function () {
         if (!pub.config.Powerups.worldmapPU) return;
-        let observers = [];
-        let targets = [];
-        let dataTables = [];
+
 
         const callback = function (mutationsList, observer) {
             observer.disconnect(); //stop listening while we make some changes
             setTimeout(() => {
-                pub.mapPU(mutationsList, observer);
+                transformMap(mutationsList, observer);
             }, 50); //Sleep a bit in case there was a lot of mutations
 
         }
@@ -744,7 +748,7 @@ var DashboardPowerups = (function () {
             return ({ keys: keys, normalTable: normalTable })
         }
 
-        pub.mapPU = function (mutationsList, observer) {
+        transformMap = function (mutationsList, observer) {
             if (!pub.config.Powerups.worldmapPU) return;
             let i = observers.findIndex((o) => observer === o);
             let target = targets[i];
@@ -882,26 +886,42 @@ var DashboardPowerups = (function () {
                 let color = args.find(x => x[0] == "color")[1] || "green";
                 color = d3.hsl(color);
                 let link = args.find(x => x[0] == "link")[1];
-                let dataTable = readTableData($tabletile);
-                dataTable.color = color;
-                dataTable.link = link;
-                dataTable.newTitle = titletokens[0].trim();
-                dataTables.push(dataTable);
 
                 // Start observing the target node for configured mutations
-                $(MAP_SELECTOR).find(`svg`).each(function (i, el) {
-                    let $maptile = $(el).parents(TILE_SELECTOR);
+                $(MAP_SELECTOR).find(`svg`).each(function (i, map) {
+                    let $maptile = $(map).parents(TILE_SELECTOR);
                     let $maptitle = $maptile.find(MAPTITLE_SELECTOR);
                     let maptitle = $maptitle.text();
                     if (maptitle.includes(link) || link == null) {
-                        const observer = new MutationObserver(callback);
-                        const target = el;
-                        observer.observe(el, MO_CONFIG);
-                        observers.push(observer);
-                        targets.push(target);
-                        callback(undefined, observer);
+                        let idx = targets.findIndex(x => x == map);
+                        if (idx > -1) {
+                            //replace the dataTable
+                            let dataTable = readTableData($tabletile);
+                            dataTable.color = color;
+                            dataTable.link = link;
+                            dataTable.newTitle = titletokens[0].trim();
+                            dataTables.splice(idx, 1, dataTable);
+
+                            const observer = observers[idx];
+                            callback(undefined, observer);
+                        } else {
+                            //insert the dataTable
+                            let dataTable = readTableData($tabletile);
+                            dataTable.color = color;
+                            dataTable.link = link;
+                            dataTable.newTitle = titletokens[0].trim();
+                            dataTables.push(dataTable);
+
+                            const observer = new MutationObserver(callback);
+                            observer.observe(el, MO_CONFIG);
+                            observers.push(observer);
+                            targets.push(map);
+                            callback(undefined, observer);
+                        }
                     }
                 });
+
+
             }
         });
 
@@ -909,6 +929,137 @@ var DashboardPowerups = (function () {
 
 
     };
+
+    pub.PUHeatmap = function (chart, title) { //example: !PU(heatmap):
+        //return;
+        if (!pub.config.Powerups.heatmapPU) return;
+        if (chart.series.length < 1 || chart.series[0].data.length < 1) return;
+        /*let titletokens = title.split(PU_HEATMAP);
+        let argstring = titletokens[1];
+        let args = argstring.split(";").map(x => x.split("="));*/
+        let oldContainer = chart.container;
+        let $tile = $(oldContainer).parents(TILE_SELECTOR);
+        let $newContainer = $("<div>")
+            .attr("id", "heatmap")
+            .insertAfter(oldContainer);
+        let newContainer = $newContainer[0];
+        let $legend = $tile.find(LEGEND_SELECTOR);
+
+        let newData = [];
+        let yNames = [];
+        let categories = [];
+        chart.series.forEach((s, sIdx) => {
+            if (s.type != "column") {
+                console.log("Powerup: ERROR - Please use a bar chart as a source for heatmap powerup.");
+                return;
+            }
+
+            //come up with a better y category
+            let series_name = s.name;
+            if ($legend.length) {
+                let name = $legend.find(`svg[fill='${s.color}']`).parents(".gwt-HTML").text();
+                if (name.length) series_name = name;
+            } 
+            yNames.push(series_name);
+
+            //map new X values
+            s.data.forEach((d) => {
+                const date = new Date(d.category);
+                d.newCat = date.toLocaleDateString();
+                d.newCatIdx = categories.findIndex(x => x === d.newCat);
+                if (d.newCatIdx < 0) {
+                    d.newCatIdx = categories.length;
+                    categories.push(d.newCat);
+                }
+            });
+
+            //aggregate
+            categories.forEach((c, cIdx) => {
+                let avg = s.data.filter((d) => d.newCatIdx === cIdx)
+                    .reduce((total, d, idx, arr) => {
+                        total += d.y;
+                        if (idx === arr.length - 1) {
+                            return total / arr.length;
+                        } else {
+                            return total;
+                        }
+                    }, 0);
+                newData.push([cIdx, sIdx, avg]);
+            });
+        });
+        //Highcharts expects data to be sorted
+        newData = newData.sort((a, b) => {
+            if (a[0] === b[0]) {
+                return a[1] - b[1];
+            } else {
+                return a[0] - b[0];
+            }
+        });
+        let newSeries = {
+            type: 'heatmap',
+            data: newData,
+            dataLabels: {
+                enabled: true,
+                color: '#000000',
+                format: '{point.value:.2f}'
+            },
+
+        }
+        let newChartOpts = {
+            type: 'heatmap',
+            series: [newSeries],
+            title: {
+                text: 'Apdex Heatmap'
+            },
+
+            xAxis: {
+                categories: categories
+            },
+
+            yAxis: {
+                categories: yNames,
+                title: null,
+                reversed: true
+            },
+            tooltip: {
+                enabled: true,
+                formatter: function () {
+                    return 'Date:<b>' + getPointCategoryName(this.point, 'x') + '</b><br>' +
+                        'App:<b>' + getPointCategoryName(this.point, 'y') + '</b><br>' +
+                        'Apdex:<b>' + this.point.value + '</b>';
+                }
+            },
+            colorAxis: {
+                dataClasses: [
+                    { to: .5, name: "Unacceptable", color: "red" },
+                    { from: .5, to: .7, name: "Poor", color: "orange" },
+                    { from: .7, to: .85, name: "Fair", color: "yellow" },
+                    { from: .85, to: .94, name: "Good", color: "greenyellow" },
+                    { from: .94, name: "Excellent", color: "green" },
+                ]
+            },
+        }
+
+        //$(oldContainer).css('z-index', -100);
+        $(oldContainer).hide();
+        $newContainer.html('');
+        let newChart = Highcharts.chart(newContainer, newChartOpts);
+        newChart.poweredup = true;
+    }
+
+    pub.fireAllPowerUps = function (update = false) {
+        if (update) pub.PUHighcharts();
+        else pub.addToolTips();
+        pub.bannerPowerUp();
+        pub.colorPowerUp();
+        pub.updateSVGPowerUp();
+        pub.svgPowerUp();
+        pub.mapPowerUp();
+
+        pub.cleanMarkup();
+        if (pub.config.Powerups.debug)
+            console.log("Powerup: DEBUG - fire all PowerUps" + (update ? " (update)" : ""));
+    }
 
     return pub;
 })();

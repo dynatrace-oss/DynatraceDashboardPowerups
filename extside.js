@@ -1,5 +1,5 @@
 if (typeof (INJECTED) == "undefined") {
-    const POWERUPDEBUG = false;
+    const POWERUPDEBUG = true;
     if (POWERUPDEBUG) console.log("Powerup: Dashboard powerups installed.");
     window.jQuery || console.log("Powerup: ERROR - No jQuery...");
     $(document).ready(function () {
@@ -17,7 +17,7 @@ if (typeof (INJECTED) == "undefined") {
         if (window.location.hash.startsWith("#dashboard;") ||
             window.location.hash.startsWith("#dashboard/dashboard;")) {
             if (POWERUPDEBUG) console.log("Powerup: on a dashboard, power-up!");
-            powerupDashboards();
+            window.requestAnimationFrame(powerupDashboards);
         } else {
             if (POWERUPDEBUG) console.log("Powerup: not a dashboard, quit.");
             return;
@@ -41,21 +41,11 @@ if (typeof (INJECTED) == "undefined") {
             if (POWERUPDEBUG) console.log("Powerup: clientside libs injected.");
 
             $.when(config_p).done(function (config) {
+                injectHighchartsModules(config);
                 injectClientsideString(`
             DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
             DashboardPowerups.config = ${JSON.stringify(config)};
-            
-            //Step1: color changes
-            DashboardPowerups.colorPowerUp();
-
-            //Step2: swap markdowns for SVGs
-            DashboardPowerups.svgPowerUp();
-
-            //Step3: add tooltips
-            DashboardPowerups.addToolTips();
-
-            //Last Step: cleanup ugly markup
-            DashboardPowerups.cleanMarkup();
+            DashboardPowerups.fireAllPowerUps();
             `);
 
                 console.log("Powerup: powerups complete.");
@@ -81,7 +71,7 @@ if (typeof (INJECTED) == "undefined") {
 
     function injectClientsideString(s) {
         let id = uniqId();
-        
+
         let wrapped = `
         function injectedFunction${id}(tries=0){
             if(typeof(DashboardPowerups) == "object"){
@@ -110,12 +100,14 @@ if (typeof (INJECTED) == "undefined") {
     })();
 
     function injectCSS() {
-        var $link = $("link")
-            .attr("id", "PowerUpCSS")
-            .attr("rel", "stylesheet")
-            .attr("type", "text/css")
-            .attr("href", ext_url + "powerup.css")
-            .appendTo("head");
+        if ($("#PowerUpCSS").length < 1) {
+            var $link = $("<link>")
+                .attr("id", "PowerUpCSS")
+                .attr("rel", "stylesheet")
+                .attr("type", "text/css")
+                .attr("href", ext_url + "powerup.css")
+                .appendTo("head");
+        }
     }
 
     function loadConfig() {
@@ -158,6 +150,30 @@ if (typeof (INJECTED) == "undefined") {
             if (defaultConfig.Powerups.debug)
                 console.log('Powerup: (extside) config storage set to ' + JSON.stringify(defaultConfig));
         });
+    }
+
+    function injectHighchartsModule(mod) {
+        let id = "HighchartsMod_" + mod;
+        let src = `${ext_url}3rdParty/Highcharts/modules/6.2.0/${mod}.js`;
+        if (!$('#' + id).length) {
+            let $s = $("<script>")
+                .attr("id", id)
+                .attr("src", src)
+                .appendTo("body");
+        } else {
+            //already injected
+        }
+    }
+
+    function injectHighchartsModules(config) {
+        if (config.Powerups.heatmapPU)
+            injectHighchartsModule("heatmap");
+        if (config.Powerups.sankeyPU)
+            injectHighchartsModule("sankey");
+        if (config.Powerups.funnelPU)
+            injectHighchartsModule("funnel");
+        if (config.Powerups.treemapPU)
+            injectHighchartsModule("treemap");
     }
 
     INJECTED = true;
