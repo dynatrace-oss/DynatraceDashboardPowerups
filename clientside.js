@@ -3,7 +3,7 @@ var DashboardPowerups = (function () {
     const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type';
     const TILE_SELECTOR = '.grid-tile';
     const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"]';
-    const SVG_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
+    const MARKDOWN_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
     const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, [uitestid="gwt-debug-kpiValue"] span';
     const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
@@ -18,7 +18,8 @@ var DashboardPowerups = (function () {
     const PU_BANNER = '!PU(banner):';
     const PU_LINE = '!PU(line):';
     const PU_USQLSTACK = '!PU(usqlstack):'; //TODO: add color schemes
-    const PU_HEATMAP = '!PU(heatmap):'; //TBI
+    const PU_HEATMAP = '!PU(heatmap):';
+    const PU_SANKEY = '!PU(sankey):';
 
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP];
     const SERIES_OPTS = {
@@ -162,6 +163,16 @@ var DashboardPowerups = (function () {
         }
     }
 
+    const waitForHCmod = (mod, fn, retries = 5) => {
+        if (retries < 1) {
+            console.log(`POWERUP: CRITICAL - failed to load Highcharts module ${mod}`);
+            return;
+        }
+        if (mod in Highcharts.seriesTypes) fn();
+        else
+            setTimeout(() => { waitForHCmod(mod, fn, retries - 1); }, 100);
+    }
+
 
 
     //Public methods
@@ -189,10 +200,12 @@ var DashboardPowerups = (function () {
             let PUcount = 0;
             let promises = [];
             let mainPromise = new $.Deferred();
-            Highcharts.charts.forEach(chart => {
-                if (typeof (chart) !== "undefined" &&
-                    !chart.poweredup &&
-                    typeof (chart.container) != "undefined") {
+            Highcharts.charts
+                .filter(x => typeof (x) != "undefined")
+                .filter(x => !x.poweredup)
+                .filter(x => typeof (x.container) != "undefined")
+                .filter(x => x.options.type != 'sankey' && x.options.type != 'heatmap')
+                .forEach(chart => {
                     let p = new $.Deferred();
                     promises.push(p);
                     setTimeout(function () {
@@ -201,8 +214,7 @@ var DashboardPowerups = (function () {
                             PUcount++;
                         p.resolve();
                     }, 100); //still hitting synchronicity issues, try waiting
-                }
-            });
+                });
             $.when.apply($, promises).then(function () {
                 $(".highcharts-container").css("z-index", 999);
                 if (pub.config.Powerups.debug) console.log("Powerup: " + PUcount + " Highcharts powered-up.");
@@ -243,7 +255,7 @@ var DashboardPowerups = (function () {
                 pub.PUUsqlStack(chart, title);
             }, 100);
             if (title.includes(PU_HEATMAP)) setTimeout(() => {
-                if($(chart.container).is(":visible"))
+                if ($(chart.container).is(":visible"))
                     pub.PUHeatmap(chart, title);
             }, 100);
 
@@ -376,7 +388,9 @@ var DashboardPowerups = (function () {
         if (!pub.config.Powerups.tooltipPU) return;
 
         const container = e.currentTarget;
-        const charts = Highcharts.charts.filter(x => typeof (x) != "undefined");
+        const charts = Highcharts.charts
+            .filter(x => typeof (x) != "undefined")
+            .filter(x => x.options.type != 'sankey' && x.options.type != 'heatmap');
         const chartIndex = charts.findIndex(chart => chart.container === container);
 
         if (chartIndex > -1) {
@@ -568,52 +582,52 @@ var DashboardPowerups = (function () {
                 class_crit += "-blink threeBlink";
         }
 
-        $(SVG_SELECTOR).each((i, el) => {
+        $(MARKDOWN_SELECTOR).each((i, el) => {
             let $svgcontainer = $(el);
             let $tile = $svgcontainer.parents(".grid-tile");
 
-            if ($svgcontainer.text().includes(PU_SVG)) {
-                if (pub.config.Powerups.debug) console.log("Powerup: svg power-up found");
-                let argstring = $svgcontainer.text().split(PU_SVG)[1];
+            if (!$svgcontainer.text().includes(PU_SVG)) return;
+            if (pub.config.Powerups.debug) console.log("Powerup: svg power-up found");
+            let argstring = $svgcontainer.text().split(PU_SVG)[1];
 
-                let args = argstring.split(";").map(x => x.split("="));
-                let icon = args.find(x => x[0] == "icon")[1];
-                let link = args.find(x => x[0] == "link")[1];
-                let base = args.find(x => x[0] == "base")[1];
-                let warn = Number(args.find(x => x[0] == "warn")[1]);
-                let crit = Number(args.find(x => x[0] == "crit")[1]);
-                let argObj = {
-                    icon: icon,
-                    link: link,
-                    base: base,
-                    warn: warn,
-                    crit: crit
-                }
-                let val = pub.findLinkedVal(link);
-
-                //swap in the svg
-                var imgURL = pub.POWERUP_EXT_URL + encodeURI(`3rdParty/node_modules/@dynatrace/barista-icons/${icon}.svg`);
-                fetch(imgURL)
-                    .then((response) => response.text())
-                    .then((svgtext) => {
-                        $svgcontainer.empty();
-                        let $svg = $(svgtext)
-                            .attr("data-args", JSON.stringify(argObj))
-                            .appendTo($svgcontainer);
-
-                        $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
-                        $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
-                        if (base == "low") {
-                            if (val < warn) $svg.addClass(class_norm);
-                            else if (val < crit) $svg.addClass(class_warn);
-                            else $svg.addClass(class_crit);
-                        } else if (base == "high") {
-                            if (val > warn) $svg.addClass(class_norm);
-                            else if (val > crit) $svg.addClass(class_warn);
-                            else $svg.addClass(class_crit);
-                        }
-                    });
+            let args = argstring.split(";").map(x => x.split("="));
+            let icon = args.find(x => x[0] == "icon")[1];
+            let link = args.find(x => x[0] == "link")[1];
+            let base = args.find(x => x[0] == "base")[1];
+            let warn = Number(args.find(x => x[0] == "warn")[1]);
+            let crit = Number(args.find(x => x[0] == "crit")[1]);
+            let argObj = {
+                icon: icon,
+                link: link,
+                base: base,
+                warn: warn,
+                crit: crit
             }
+            let val = pub.findLinkedVal(link);
+
+            //swap in the svg
+            var imgURL = pub.POWERUP_EXT_URL + encodeURI(`3rdParty/node_modules/@dynatrace/barista-icons/${icon}.svg`);
+            fetch(imgURL)
+                .then((response) => response.text())
+                .then((svgtext) => {
+                    $svgcontainer.empty();
+                    let $svg = $(svgtext)
+                        .attr("data-args", JSON.stringify(argObj))
+                        .appendTo($svgcontainer);
+
+                    $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
+                    $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
+                    if (base == "low") {
+                        if (val < warn) $svg.addClass(class_norm);
+                        else if (val < crit) $svg.addClass(class_warn);
+                        else $svg.addClass(class_crit);
+                    } else if (base == "high") {
+                        if (val > warn) $svg.addClass(class_norm);
+                        else if (val > crit) $svg.addClass(class_warn);
+                        else $svg.addClass(class_crit);
+                    }
+                });
+
         });
     }
 
@@ -643,7 +657,7 @@ var DashboardPowerups = (function () {
                 class_crit += "-blink threeBlink";
         }
 
-        $(SVG_SELECTOR).each((i, el) => {
+        $(MARKDOWN_SELECTOR).each((i, el) => {
             let $svgcontainer = $(el);
             let $tile = $svgcontainer.parents(".grid-tile");
             let $svg = $svgcontainer.find("svg:first-of-type");
@@ -698,6 +712,106 @@ var DashboardPowerups = (function () {
             pub.addPUHighchartsListener();
             pub.loadChartSync();
         }
+    }
+
+    pub.sankeyPowerUp = function () {
+        if (!pub.config.Powerups.sankeyPU) return;
+        let re = /\/\d+(\/.*)?$/;
+
+        function readTableData(table) {
+            let $table = $(table);
+            let dataTable = [];
+            let touples = [];
+            $table.find('span').each(function (j, el2) {
+                let row = $(el2).text();
+                if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return;
+                dataTable.push(row);
+
+                let arr = row.substr(1, row.length - 2).split(',');
+                for (let k = 0; k < arr.length - 1; k++) {
+                    let touple = { from: arr[k].trim(), to: arr[k + 1].trim() };
+                    if(touple.from === touple.to) continue; // ignore ugly loops
+                    touple.from = touple.from.replace(re,'/*$1'); //clean up individual strings at end of url
+                    touple.to = touple.to.replace(re,'/*$1');
+                    let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
+                    if (l < 0) {
+                        touple.weight = 1;
+                        touples.push(touple);
+                    } else {
+                        touples[l].weight++;
+                    }
+                }
+
+
+            });
+            touples = touples.sort((a, b) => b.weight - a.weight);
+
+            return(touples);
+            //return (touples.slice(0,25));
+        }
+
+        function newChart(touples, container) {
+            let options = {
+                type: 'sankey',
+                title: {
+                    text: 'UserAction Flow'
+                },
+                series: [{
+                    data: touples,
+                    type: 'sankey',
+                    name: 'UserAction Flow',
+                    //nodes: {
+                        //dataLables: {
+                        //    enabled: false
+                        //}
+                   // }
+                }]
+
+            }
+            let chart = Highcharts.chart(container, options);
+            return chart;
+        }
+
+        function findContainer(link) {
+            let container;
+            $(MARKDOWN_SELECTOR)
+                .each(function (i, el) {
+                    let $el = $(el);
+                    let text = $el.text();
+                    if (!text.includes(PU_LINK)) return;
+                    if (text.split(PU_LINK)[1].includes(link))
+                        container = el;
+                });
+
+            return container;
+        }
+
+        $(TABLE_SELECTOR)
+            .each(function (i, el) {
+                let $el = $(el);
+                let $tile = $el.parents(TILE_SELECTOR);
+                let $title = $tile.find(TITLE_SELECTOR);
+                let title = $title.text();
+                if (!title.includes(PU_SANKEY)) return;
+                let argstring = title.split(PU_SANKEY)[1];
+                let args = argstring.split(";").map(x => x.split("="));
+                if (args.length < 1) {
+                    if (pub.config.Powerups.debug)
+                        console.log("Powerup: ERROR - invalid argstring: " + argstring);
+                    return false;
+                }
+                let link = args.find(x => x[0] == "link")[1];
+
+                let container = findContainer(link);
+                if (typeof (container) == "undefined" ||
+                    $(container).is(`[data-highcharts-chart]`))
+                    return; //prevent multiple runs temp
+
+                let touples = readTableData(el);
+
+                let sankey = newChart(touples, container);
+                sankey.poweredup = true;
+            });
     }
 
     pub.mapPowerUp = function () {
@@ -959,7 +1073,7 @@ var DashboardPowerups = (function () {
             if ($legend.length) {
                 let name = $legend.find(`svg[fill='${s.color}']`).parents(".gwt-HTML").text();
                 if (name.length) series_name = name;
-            } 
+            }
             yNames.push(series_name);
 
             //map new X values
@@ -1056,6 +1170,7 @@ var DashboardPowerups = (function () {
         pub.updateSVGPowerUp();
         pub.svgPowerUp();
         pub.mapPowerUp();
+        waitForHCmod('sankey', pub.sankeyPowerUp);
 
         pub.cleanMarkup();
         if (pub.config.Powerups.debug)

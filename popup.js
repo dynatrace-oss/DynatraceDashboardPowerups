@@ -34,6 +34,7 @@ function loadConfig() {
             usqlstackPU: true,
             linePU: true,
             heatmapPU: true,
+            sankeyPU: true,
             debug: false,
             colorPUTarget: "Text",
             animateCritical: "3 Pulses",
@@ -45,11 +46,14 @@ function loadConfig() {
         console.log('Powerup: (popup) config from storage is: ' + JSON.stringify(result));
         if (result && result.Powerups &&
             Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length) {
-            //TODO: add some sort of new config merge
             p.resolve(result);
         }
         else {
             console.log("Powerup: stored config format didn't match, defaulting...");
+            for (const [key, value] of Object.entries(result.Powerups)) { //merge existing preferences
+                if (typeof (defaultConfig[key]) != "undefined")
+                    defaultConfig[key] = value;
+            }
             writeConfig(defaultConfig);
             p.resolve(defaultConfig);
         }
@@ -69,6 +73,7 @@ function writeConfig() {
             usqlstackPU: $('#usqlstackPU').prop("checked"),
             linePU: $('#linePU').prop("checked"),
             heatmapPU: $('#heatmapPU').prop("checked"),
+            sankeyPU: $('#sankeyPU').prop("checked"),
             debug: $('#debug').prop("checked"),
             colorPUTarget: $('#colorPUTarget').val(),
             animateCritical: $('#animateCritical').val(),
