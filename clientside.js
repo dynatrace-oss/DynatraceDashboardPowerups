@@ -8,7 +8,8 @@ var DashboardPowerups = (function () {
     const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
     const MAPTITLE_SELECTOR = 'span[uitestid="gwt-debug-WorldMapTile"]';
-    const TABLE_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div';
+    const TABLE_SELECTOR = '[uitestid="gwt-debug-tablePanel"]';
+    const TABLE_COL_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div';
     const BANNER_SELECTOR = '[uitestid="gwt-debug-dashboardNameLabel"]';
     const TAG_SELECTOR = '[uitestid="gwt-debug-showMoreTags"] ~ [title]';
     const PU_COLOR = '!PU(color):';
@@ -722,53 +723,149 @@ var DashboardPowerups = (function () {
             let $table = $(table);
             let dataTable = [];
             let touples = [];
-            $table.find('span').each(function (j, el2) {
-                let row = $(el2).text();
-                if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return;
-                dataTable.push(row);
+            let goals = [];
+            let apdexList = [];
+            $table
+                .children('div:first-of-type')
+                .children('div')
+                .each((colIdx, col) => {
+                    let $rows = $(col).find('span');
+                    let colName = $rows.eq(0).text();
+                    let rowCount = $rows.length;
+                    if (typeof (dataTable[colIdx]) == "undefined") dataTable[colIdx] = [];
 
-                let arr = row.substr(1, row.length - 2).split(',');
-                for (let k = 0; k < arr.length - 1; k++) {
-                    let touple = { from: arr[k].trim(), to: arr[k + 1].trim() };
-                    if(touple.from === touple.to) continue; // ignore ugly loops
-                    touple.from = touple.from.replace(re,'/*$1'); //clean up individual strings at end of url
-                    touple.to = touple.to.replace(re,'/*$1');
-                    let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
-                    if (l < 0) {
-                        touple.weight = 1;
-                        touples.push(touple);
-                    } else {
-                        touples[l].weight++;
-                    }
-                }
+                    $rows.each(function (rowIdx, rowEl) {
+                        if (typeof (dataTable[colIdx][rowIdx]) == "undefined") dataTable[colIdx][rowIdx] = [];
+                        let row = $(rowEl).text();
+                        if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return;
+                        let arr = row.substr(1, row.length - 2)
+                            .split(',')
+                            .map(x => x.trim())
+                            .map(x => x.replace(re, '/*$1'));//clean up strings
+                        dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
 
+                        if (colIdx == 0) for (let k = 0; k < arr.length - 1; k++) { //useraction.name
+                            let touple = { from: arr[k], to: arr[k + 1] };
+                            if (touple.from === touple.to) continue; // ignore ugly loops
+                            //touple.from = touple.from.replace(re, '/*$1'); 
+                            //touple.to = touple.to.replace(re, '/*$1');
+                            let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
+                            if (l < 0) {
+                                touple.weight = 1;
+                                touples.push(touple);
+                            } else {
+                                touples[l].weight++;
+                            }
+                        } else if (colIdx == 1) for (let k = 0; k < arr.length; k++) { //matchingConversion goals
+                            if (arr[k] !== "[]") {
+                                let actionName = dataTable[0][rowIdx][k];
+                                let goalsIdx = goals.findIndex(x => x.actionName == actionName);
+                                if (goalsIdx < 0) goals.push({ actionName: actionName, count: 1, emoji: '🏁' });
+                                else goals[goalsIdx].count++;
+                            }
+                        } else if (colIdx == 2) for (let k = 0; k < arr.length; k++) { //apdex
+                            let val = arr[k];
+                            if (val !== "") {
+                                let actionName = dataTable[0][rowIdx][k];
+                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
+                                if (apdexIdx < 0) {
+                                    let apdexObj = { actionName: actionName, satisfied: 0, tolerating: 0, frustrated: 0 };
+                                    apdexIdx = apdexList.length;
+                                    apdexList.push(apdexObj);
+                                }
+                                switch (val) {
+                                    case 'SATISFIED':
+                                        apdexList[apdexIdx].satisfied++;
+                                        break;
+                                    case 'TOLERATING':
+                                        apdexList[apdexIdx].tolerating++;
+                                        break;
+                                    case 'FRUSTRATED':
+                                        apdexList[apdexIdx].frustrated++;
+                                        break;
+                                }
+                            }
+                        } /*else if (colIdx == 3) for (let k = 0; k < arr.length; k++) { //entry actions
+                            let val = arr[k];
+                            if (val !== "") {
+                                let actionName = dataTable[0][rowIdx][k];
+                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+
+                                if (apdexIdx > -1) {
+                                    if(! apdexList[apdexIdx].entryAction)
+                                }
+                            }
+                        }*/
+                    })
+                });
+
+            apdexList.forEach((apdex)=>{
+                if (apdex.satisfied > Math.max(apdex.tolerating, apdex.frustrated)) apdex.emoji = '😀';
+                else if (apdex.tolerating > Math.max(apdex.satisfied, apdex.frustrated)) apdex.emoji = '😐';
+                else if (apdex.frustrated > Math.max(apdex.tolerating, apdex.satisfied)) apdex.emoji = '😡';
+                else apdex.emoji = "";
             });
             touples = touples.sort((a, b) => b.weight - a.weight);
 
-            return(touples);
-            //return (touples.slice(0,25));
+            return ({touples:touples,goals:goals,apdexList:apdexList});
         }
 
-        function newChart(touples, container) {
+        function newChart(data, container) {
+            let limit = 20;
+
+            let touples = data.touples;
             let options = {
                 type: 'sankey',
+                
                 title: {
                     text: 'UserAction Flow'
                 },
                 series: [{
-                    data: touples,
+                    data: touples.slice(0, limit),
                     type: 'sankey',
                     name: 'UserAction Flow',
-                    //nodes: {
-                        //dataLables: {
-                        //    enabled: false
-                        //}
-                   // }
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.weight}',
+                        //nodeFormat: 'UA:{point.from}{point.custom.apdexEmoji}{point.custom.goalEmoji}'
+                        nodeFormat: '{point.goalEmoji}<br>{point.apdexEmoji}',
+                    },
+                    nodes: []
                 }]
 
             }
+            data.apdexList.forEach(apdex=>{
+                let node = {
+                    id: apdex.actionName,
+                    apdexEmoji: apdex.emoji 
+                }
+                let goal = data.goals.find(x=>x.actionName==apdex.actionName);
+                if(typeof(goal)!="undefined") node.goalEmoji = goal.emoji;
+                options.series[0].nodes.push(node);
+            });
+
             let chart = Highcharts.chart(container, options);
+            chart.originalData = touples;
+            chart.limit = limit;
+            chart.renderer.button('-', 10, 5)
+                .attr({
+                    zIndex: 10000
+                })
+                .on('click', function () {
+                    chart.limit = chart.limit * .5;
+                    chart.series[0].setData(chart.originalData.slice(0, chart.limit));
+                })
+                .add();
+            chart.renderer.button('+', 40, 5)
+                .attr({
+                    zIndex: 10000
+                })
+                .on('click', function () {
+                    chart.limit = chart.limit * 2;
+                    chart.series[0].setData(chart.originalData.slice(0, chart.limit));
+                })
+                .add();
             return chart;
         }
 
@@ -807,9 +904,9 @@ var DashboardPowerups = (function () {
                     $(container).is(`[data-highcharts-chart]`))
                     return; //prevent multiple runs temp
 
-                let touples = readTableData(el);
+                let data = readTableData(el);
 
-                let sankey = newChart(touples, container);
+                let sankey = newChart(data, container);
                 sankey.poweredup = true;
             });
     }
@@ -833,7 +930,7 @@ var DashboardPowerups = (function () {
             let normalTable = [];
             let keys = [];
             $tabletile
-                .find(TABLE_SELECTOR)
+                .find(TABLE_COL_SELECTOR)
                 .each(function (i, el) {
                     let $el = $(el);
                     $el.find('span').each(function (j, el2) {
