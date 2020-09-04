@@ -5,140 +5,207 @@
 div.powerup-color-critical {
   background-color: red;
 }
+
 span.powerup-color-critical {
-    color: red;
+  color: red;
 }
 
 @keyframes powerup-color-critical-div-blink {
-    0% {background-color: darkred;}
-    50% {background-color: red;}
-    100% {background-color: darkred;}
+  0% {
+    background-color: darkred;
   }
-  @keyframes powerup-color-critical-span-blink {
-    0% {color: darkred;}
-    50% {color: red;}
-    100% {color: darkred;}
-  }
-  div.powerup-color-critical-blink {
-    animation-name: powerup-color-critical-div-blink;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
+  50% {
     background-color: red;
   }
-  span.powerup-color-critical-blink {
-    animation-name: powerup-color-critical-span-blink;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-      color: red;
+  100% {
+    background-color: darkred;
   }
+}
 
-  div.powerup-color-warning {
+@keyframes powerup-color-critical-span-blink {
+  0% {
+    color: darkred;
+  }
+  50% {
+    color: red;
+  }
+  100% {
+    color: darkred;
+  }
+}
+
+div.powerup-color-critical-blink {
+  animation-name: powerup-color-critical-div-blink;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  background-color: red;
+}
+
+span.powerup-color-critical-blink {
+  animation-name: powerup-color-critical-span-blink;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  color: red;
+}
+
+div.powerup-color-warning {
+  background-color: yellow;
+}
+
+span.powerup-color-warning {
+  color: yellow;
+}
+
+@keyframes powerup-color-warning-div-blink {
+  0% {
     background-color: yellow;
   }
-  span.powerup-color-warning {
-      color: yellow;
+  50% {
+    background-color: goldenrod;
   }
-  @keyframes powerup-color-warning-div-blink {
-    0% {background-color: yellow;}
-    50% {background-color: goldenrod;}
-    100% {background-color: yellow;}
-  }
-  @keyframes powerup-color-warning-span-blink {
-    0% {color: yellow;}
-    50% {color: goldenrod;}
-    100% {color: yellow;}
-  }
-  div.powerup-color-warning-blink {
-    animation-name: powerup-color-div-warning;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
+  100% {
     background-color: yellow;
   }
-  span.powerup-color-warning-blink {
-    animation-name: powerup-color-span-warning;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-      color: yellow;
-  }
+}
 
-  div.powerup-color-normal {
-      background-color: green;
+@keyframes powerup-color-warning-span-blink {
+  0% {
+    color: yellow;
   }
-  span.powerup-color-normal {
-      color: green;
+  50% {
+    color: goldenrod;
   }
+  100% {
+    color: yellow;
+  }
+}
 
+div.powerup-color-warning-blink {
+  animation-name: powerup-color-div-warning;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  background-color: yellow;
+}
 
-  .powerup-svg-critical {
+span.powerup-color-warning-blink {
+  animation-name: powerup-color-span-warning;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  color: yellow;
+}
+
+div.powerup-color-normal {
+  background-color: green;
+}
+
+span.powerup-color-normal {
+  color: green;
+}
+
+.powerup-svg-critical {
+  fill: red;
+}
+
+@keyframes powerup-svg-critical-blink {
+  0% {
+    fill: darkred;
+  }
+  50% {
     fill: red;
   }
-  @keyframes powerup-svg-critical-blink {
-    0% {fill: darkred;}
-    50% {fill: red;}
-    100% {fill: darkred;}
+  100% {
+    fill: darkred;
   }
-  .powerup-svg-critical-blink {
-    animation-name: powerup-svg-critical-blink;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-    fill: red;
-  }
+}
 
-  .powerup-svg-warning {
+.powerup-svg-critical-blink {
+  animation-name: powerup-svg-critical-blink;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  fill: red;
+}
+
+.powerup-svg-warning {
+  fill: yellow;
+}
+
+@keyframes powerup-svg-warning-blink {
+  0% {
     fill: yellow;
   }
-  @keyframes powerup-svg-warning-blink {
-    0% {fill: yellow;}
-    50% {fill: goldenrod;}
-    100% {fill: yellow;}
+  50% {
+    fill: goldenrod;
   }
-  .powerup-svg-warning-blink {
-    animation-name: powerup-svg-warning-blink;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
+  100% {
     fill: yellow;
   }
+}
 
-  .powerup-svg-normal {
-      fill: green;
-  }
+.powerup-svg-warning-blink {
+  animation-name: powerup-svg-warning-blink;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  fill: yellow;
+}
 
-  .powerup-markup {
-      display: none;
-  }
+.powerup-svg-normal {
+  fill: green;
+}
 
-  .country:hover {
-    fill: blue !important;
-    cursor: crosshair;
-  }
+.powerup-markup {
+  display: none;
+}
 
-  .powerupMapTooltip {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    z-index: 1000;
-    text-align: right;
-  }
+.country:hover {
+  fill: blue !important;
+  cursor: crosshair;
+}
 
-  .geoText, .valueText {
-    font-size: large;
-  }
+.powerupMapTooltip {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 1000;
+  text-align: right;
+}
 
-  .powerupLineTooltip {
-    display: flex;
-  }
+.geoText, .valueText {
+  font-size: large;
+}
 
-  .powerupLineTooltip .dot {
-    border-radius: 3px;
-  }
+.powerupLineTooltip {
+  display: flex;
+}
 
-  .powerupLineTooltip div {
-    flex: 0;
-    /*white-space: nowrap;*/
-  }
+.powerupLineTooltip .dot {
+  border-radius: 3px;
+}
 
-  .powerupLineTooltip .spacer{
-    flex: 1;
-  }
+.powerupLineTooltip div {
+  flex: 0;
+  /*white-space: nowrap;*/
+}
 
-  
+.powerupLineTooltip .spacer {
+  flex: 1;
+}
+
+.powerup-sankey-icon {
+  width: 20px;
+  height: 20px;
+  background-color: #242424;
+}
+
+.powerup-icon-yellow {fill:#ffe11c;}
+.powerup-icon-red {fill:#dc172a;}
+.powerup-icon-green {fill:#2ab06f;}
+.powerup-icon-white {fill:white;}
+.powerup-icon-purple {fill:#7c38a1;}
+
+.powerup-sankey-tooltip {
+  z-index: 1100;
+  background: white;
+  opacity: 0.8;
+  border: 1px solid #7c38a1;
+  border-radius: 3px;
+}

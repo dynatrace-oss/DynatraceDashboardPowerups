@@ -180,9 +180,18 @@ var DashboardPowerups = (function () {
     var pub = {};
 
     pub.POWERUP_EXT_URL = "";
+    pub.SVGLib = () => { return pub.POWERUP_EXT_URL + encodeURI(`3rdParty/node_modules/@dynatrace/barista-icons/`); };
     pub.config = {};
     pub.PUHighchartsMutex = { blocking: false, blocked: 0 }; //must be obj to ensure passby ref
     pub.PUHighchartsStatus = () => { return Highcharts.charts.filter(x => typeof (x) !== "undefined").map(x => x.poweredup); }
+    pub.SVGInject = (obj, attempts = 5) => {
+        if (typeof (SVGInject) == "undefined") {
+            if (attempts < 1) return false;
+            setTimeout(() => { pub.SVGInject(obj, attempts - 1); }, 100);
+        } else {
+            SVGInject(obj);
+        }
+    }
 
     pub.PUHighcharts = function () {
         //be sure not to leak off dashboards
@@ -607,7 +616,7 @@ var DashboardPowerups = (function () {
             let val = pub.findLinkedVal(link);
 
             //swap in the svg
-            var imgURL = pub.POWERUP_EXT_URL + encodeURI(`3rdParty/node_modules/@dynatrace/barista-icons/${icon}.svg`);
+            var imgURL = pub.SVGLib() + encodeURI(`${icon}.svg`);
             fetch(imgURL)
                 .then((response) => response.text())
                 .then((svgtext) => {
@@ -760,7 +769,12 @@ var DashboardPowerups = (function () {
                             if (arr[k] !== "[]") {
                                 let actionName = dataTable[0][rowIdx][k];
                                 let goalsIdx = goals.findIndex(x => x.actionName == actionName);
-                                if (goalsIdx < 0) goals.push({ actionName: actionName, count: 1, emoji: '🏁' });
+                                if (goalsIdx < 0) goals.push({
+                                    actionName: actionName,
+                                    count: 1,
+                                    svg: `<img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`,
+                                    goalName: arr[k].substr(1, arr[k].length - 2).trim()
+                                });
                                 else goals[goalsIdx].count++;
                             }
                         } else if (colIdx == 2) for (let k = 0; k < arr.length; k++) { //apdex
@@ -786,86 +800,171 @@ var DashboardPowerups = (function () {
                                         break;
                                 }
                             }
-                        } /*else if (colIdx == 3) for (let k = 0; k < arr.length; k++) { //entry actions
+                        } else if (colIdx == 3) for (let k = 0; k < arr.length; k++) { //entry actions
                             let val = arr[k];
-                            if (val !== "") {
+                            if (val === "true") {
                                 let actionName = dataTable[0][rowIdx][k];
                                 let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
                                 if (apdexIdx > -1) {
-                                    if(! apdexList[apdexIdx].entryAction)
+                                    if (!apdexList[apdexIdx].entryAction)
+                                        apdexList[apdexIdx].entryAction = true;
+                                    apdexList[apdexIdx].entryActionSVG = `<img src='${pub.SVGLib() + 'entry.svg'}'  onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
                                 }
                             }
-                        }*/
+                        }
+                        else if (colIdx == 4) for (let k = 0; k < arr.length; k++) { //exit actions
+                            let val = arr[k];
+                            if (val === "true") {
+                                let actionName = dataTable[0][rowIdx][k];
+                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+
+                                if (apdexIdx > -1) {
+                                    if (!apdexList[apdexIdx].exitAction)
+                                        apdexList[apdexIdx].exitAction = true;
+                                    apdexList[apdexIdx].exitActionSVG = `<img src='${pub.SVGLib() + 'exit.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
+                                }
+                            }
+                        }
                     })
                 });
 
-            apdexList.forEach((apdex)=>{
-                if (apdex.satisfied > Math.max(apdex.tolerating, apdex.frustrated)) apdex.emoji = '😀';
-                else if (apdex.tolerating > Math.max(apdex.satisfied, apdex.frustrated)) apdex.emoji = '😐';
-                else if (apdex.frustrated > Math.max(apdex.tolerating, apdex.satisfied)) apdex.emoji = '😡';
-                else apdex.emoji = "";
+            apdexList.forEach((apdex) => {
+                if (apdex.satisfied > Math.max(apdex.tolerating, apdex.frustrated)) apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
+                else if (apdex.tolerating > Math.max(apdex.satisfied, apdex.frustrated)) apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
+                else if (apdex.frustrated > Math.max(apdex.tolerating, apdex.satisfied)) apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
+                else apdex.svg = "";
             });
             touples = touples.sort((a, b) => b.weight - a.weight);
 
-            return ({touples:touples,goals:goals,apdexList:apdexList});
+            return ({ touples: touples, goals: goals, apdexList: apdexList });
         }
 
-        function newChart(data, container) {
-            let limit = 20;
-
-            let touples = data.touples;
+        function newChart(data, container, chartTitle, limit=20) {
             let options = {
                 type: 'sankey',
-                
                 title: {
-                    text: 'UserAction Flow'
+                    text: chartTitle
+                },
+                chart: {
+                    marginLeft: 100,
+                    marginBottom: 200,
+                    marginRight: 100
                 },
                 series: [{
-                    data: touples.slice(0, limit),
+                    data: data.touples.slice(0, limit),
                     type: 'sankey',
-                    name: 'UserAction Flow',
+                    name: 'UserActions',
+                    clip: false,
                     dataLabels: {
                         enabled: true,
-                        format: '{point.weight}',
-                        //nodeFormat: 'UA:{point.from}{point.custom.apdexEmoji}{point.custom.goalEmoji}'
-                        nodeFormat: '{point.goalEmoji}<br>{point.apdexEmoji}',
+                        useHTML: true,
+                        nodeFormat: '{point.display}',
+                        padding: 0
                     },
-                    nodes: []
-                }]
+                    nodes: [],
+                    tooltip: {
+                        nodeFormat: `<div class="powerup-sankey-tooltip">
+                            <b>{point.name}</b><br>
+                            UserActions in sample: {point.sum}<br>
+                            <u>Apdex</u><br>
+                            Satisfied: {point.apdexSatisfied}<br>
+                            Tolerating: {point.apdexTolerating}<br>
+                            Frustrated: {point.apdexFrustrated}<br>
+                            Is entry action: {point.entryAction}<br>
+                            Is exit action: {point.exitAction}<br>
+                            Goal: {point.conversionGoal}
+                            </div>
+                        `.trim(),
+                        pointFormat: `<div class="powerup-sankey-tooltip">
+                        {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>
+                        </div>
+                        `.trim(),
+                        headerFormat: ''
+                    }
+                }],
+                tooltip: {
+                    useHTML: true,
+                    outside: true,
+                    borderWidth: 0,
+                    backgroundColor: 'none',
+                    shadow: false,
+                    className: 'powerup-sankey-tooltip'
+                }
 
             }
-            data.apdexList.forEach(apdex=>{
+            data.apdexList.forEach(apdex => {
                 let node = {
                     id: apdex.actionName,
-                    apdexEmoji: apdex.emoji 
+                    apdex: apdex,
+                    apdexSatisfied: apdex.satisfied.toString(),
+                    apdexTolerating: apdex.tolerating.toString(),
+                    apdexFrustrated: apdex.frustrated.toString(),
+                    entryAction: (apdex.entryAction ? 'true' : 'false'),
+                    exitAction: (apdex.exitAction ? 'true' : 'false')
                 }
-                let goal = data.goals.find(x=>x.actionName==apdex.actionName);
-                if(typeof(goal)!="undefined") node.goalEmoji = goal.emoji;
+
+                //Conversion goal handling
+                let goal = data.goals.find(x => x.actionName == apdex.actionName);
+                if (typeof (goal) != "undefined") {
+                    node.goal = goal;
+                    node.conversionGoal = goal.goalName;
+                } else {
+                    node.conversionGoal = 'false';
+                }
+
+                //Node label
+                node.display = apdex.svg +
+                    (goal ? `<br>${goal.svg}` : "") +
+                    (apdex.entryActionSVG ? `<br>${apdex.entryActionSVG}` : '') +
+                    (apdex.exitActionSVG ? `<br>${apdex.exitActionSVG}` : '');
+
+                //Affect positioning (assume 5 columns)
+                /*if (apdex.entryAction) node.column = 0;
+                else if (apdex.exitAction) node.column = 4;
+                else if (data.touples
+                    .filter(x => x.from === apdex.actionName)
+                    .map(x => data.apdexList.find(y => x.to === y.actionName))
+                    .filter(y => y.exitAction)
+                    .length
+                ) node.column = 3; //connects to exit actions
+                else if (data.touples
+                    .filter(x => x.to === apdex.actionName)
+                    .map(x => data.apdexList.find(y => x.from === y.actionName))
+                    .filter(y => y.entryAction)
+                    .length
+                ) node.column = 1; //connects to entry actions
+                else
+                    node.column = 2; //ugly middle stuff*/
                 options.series[0].nodes.push(node);
             });
 
-            let chart = Highcharts.chart(container, options);
-            chart.originalData = touples;
-            chart.limit = limit;
-            chart.renderer.button('-', 10, 5)
-                .attr({
-                    zIndex: 10000
-                })
-                .on('click', function () {
-                    chart.limit = chart.limit * .5;
-                    chart.series[0].setData(chart.originalData.slice(0, chart.limit));
-                })
-                .add();
-            chart.renderer.button('+', 40, 5)
-                .attr({
-                    zIndex: 10000
-                })
-                .on('click', function () {
-                    chart.limit = chart.limit * 2;
-                    chart.series[0].setData(chart.originalData.slice(0, chart.limit));
-                })
-                .add();
+            let chart = Highcharts.chart(container, options, (chart) => {
+                chart.poweredup = true;
+                chart.limit = limit;
+                chart.renderer.button('-', 10, 5)
+                    .attr({
+                        zIndex: 1100
+                    })
+                    .on('click', function () {
+                        let newLimit = chart.limit * .5;
+                        chart.destroy();
+                        newChart(data, container, chartTitle, newLimit);
+                    })
+                    .add();
+                chart.renderer.button('+', 40, 5)
+                    .attr({
+                        zIndex: 1100
+                    })
+                    .on('click', function () {
+                        let newLimit = chart.limit * 2;
+                        chart.destroy();
+                        newChart(data, container, chartTitle, newLimit);
+                    })
+                    .add();
+                //chart.setSize(undefined, undefined, false);
+            });
+
             return chart;
         }
 
@@ -883,6 +982,7 @@ var DashboardPowerups = (function () {
             return container;
         }
 
+
         $(TABLE_SELECTOR)
             .each(function (i, el) {
                 let $el = $(el);
@@ -891,6 +991,7 @@ var DashboardPowerups = (function () {
                 let title = $title.text();
                 if (!title.includes(PU_SANKEY)) return;
                 let argstring = title.split(PU_SANKEY)[1];
+                let chartTitle = title.split(PU_SANKEY)[0];
                 let args = argstring.split(";").map(x => x.split("="));
                 if (args.length < 1) {
                     if (pub.config.Powerups.debug)
@@ -906,8 +1007,8 @@ var DashboardPowerups = (function () {
 
                 let data = readTableData(el);
 
-                let sankey = newChart(data, container);
-                sankey.poweredup = true;
+                let sankey = newChart(data, container, chartTitle);
+                
             });
     }
 

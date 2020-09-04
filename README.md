@@ -126,9 +126,28 @@ Explanation:
 Example:
 ![USQL Stacked Bar Chart](Assets/usqlstack.png)
 
-### Heatmap (very experimental)
-Currently this powerup can display a heatmap based on a bar chart of web application apdex. Eventually, it will be more generic. In current form, it has some stability issues -- refresh if Technical Difficulties are encountered.
+### Heatmap (experimental)
+Currently this powerup can display a heatmap based on a bar chart of web application apdex. Eventually, it will be more generic.
 `!PU(heatmap):`
 
 Example:
 ![Apdex heatmap](Assets/heatmap.png)
+
+### UserAction Sankey chart
+This powerup shows UserActions for your application, where they start, end, how many, do users circle in loops, etc. Create a USQL query, like this:
+`select useraction.name, useraction.matchingConversionGoals, useraction.apdexCategory, useraction.isEntryAction, useraction.isExitAction FROM usersession WHERE useraction.application="www.angular.easytravel.com"`
+encoded with a title like this:
+`Angular Easy Travel UserJourneys !PU(sankey):link=sankey1`
+and Markdown tile to get swapped out like this:
+```
+[Extension Needed](https://github.com/LucasHocker/DynatraceDashboardPowerups)
+!PU(link):sankey1
+```
+
+Example:
+![Sankey](Assets/sankey.png)
+
+Notes:
+- To increase/decrease the amount of clutter, use the plus and minus buttons. These slice the data in the USQL query.
+- To get even more data from the USQL query, edit the dashboard JSON and add to the USQL tile (default 50, max 5000, more can result in slower load):
+`"limit": 500`

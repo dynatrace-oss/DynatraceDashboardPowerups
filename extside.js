@@ -177,8 +177,18 @@ if (typeof (INJECTED) == "undefined") {
             `);
         }
             
-        if (config.Powerups.sankeyPU)
+        if (config.Powerups.sankeyPU){
+            let src = ext_url + encodeURI('3rdParty/node_modules/@iconfu/svg-inject/dist/svg-inject.min.js');
+            injectClientsideString(`
+            if (typeof (SVGInject) == "undefined" &&
+                ! $("#powerup_lib_SVGInject").length) {
+                $("<script>")
+                    .attr("id", "powerup_lib_SVGInject")
+                    .attr("src", "${src}" )
+                    .appendTo("body");
+            }`);
             injectHighchartsModule("sankey");
+        }
         if (config.Powerups.funnelPU)
             injectHighchartsModule("funnel");
         if (config.Powerups.treemapPU)
