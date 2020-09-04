@@ -10,18 +10,22 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 
 ## Installation
 1. Download the extension source
+
 ![click download](Assets/loadext1.png)
 
 1. Unzip to a local folder
 
 1. Enable in Chrome
+
 ![enable](Assets/loadext2.png)
 
 1. Click the puzzle icon and pin Powerups
+
 ![puzzle](Assets/clickPuzzlePiece.png)
 ![pin](Assets/pinExtension.png)
 
 1. The icon will change from gray to blue when active
+
 ![inactive](Assets/inactive.png)
 ![active](Assets/active.png)
 
@@ -29,9 +33,11 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 
 ## Configure extension
 1. Click blue powerup icon
+
 ![active](Assets/active.png)
 
 1. Modify preferences
+
 ![popupMenu](Assets/popupMenu.png)
 
 1. Click save. Note: you may need to refresh your page for changes to take effect.
