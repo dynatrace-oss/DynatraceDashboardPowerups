@@ -135,7 +135,9 @@ Example:
 
 ### UserAction Sankey chart
 This powerup shows UserActions for your application, where they start, end, how many, do users circle in loops, etc. Create a USQL query, like this:
-`select useraction.name, useraction.matchingConversionGoals, useraction.apdexCategory, useraction.isEntryAction, useraction.isExitAction FROM usersession WHERE useraction.application="www.angular.easytravel.com"`
+```
+select useraction.name, useraction.matchingConversionGoals, useraction.apdexCategory, useraction.isEntryAction, useraction.isExitAction FROM usersession WHERE useraction.application="www.angular.easytravel.com"
+```
 
 encoded with a title like this:
 `Angular Easy Travel UserJourneys !PU(sankey):link=sankey1`
