@@ -1,4 +1,5 @@
 var DashboardPowerups = (function () {
+    const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
     const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type';
     const TILE_SELECTOR = '.grid-tile';
@@ -133,7 +134,7 @@ var DashboardPowerups = (function () {
             return "white";
     }
 
-    const PUwatchdog = () => {
+    /*const PUwatchdog = () => {
         var timeout;
         var unpowered = pub.PUHighchartsStatus().filter(x => !x).length;
         //test for un-powereduped charts
@@ -155,7 +156,7 @@ var DashboardPowerups = (function () {
         }
         clearTimeout(timeout);
         timeout = setTimeout(PUwatchdog, 5000); //run every 5s
-    }
+    }*/
 
     const clearPowerup = (e) => {
         if (!pub.PUHighchartsMutex.blocked) {
@@ -212,18 +213,13 @@ var DashboardPowerups = (function () {
             let mainPromise = new $.Deferred();
             Highcharts.charts
                 .filter(x => typeof (x) != "undefined")
-                .filter(x => !x.poweredup)
+                //.filter(x => !x.poweredup)
                 .filter(x => typeof (x.container) != "undefined")
                 .filter(x => x.options.type != 'sankey' && x.options.type != 'heatmap')
                 .forEach(chart => {
-                    let p = new $.Deferred();
+                    let p = pub.PUHighchart(chart);
                     promises.push(p);
-                    setTimeout(function () {
-                        let pu = false;
-                        if (pub.PUHighchart(chart))
-                            PUcount++;
-                        p.resolve();
-                    }, 100); //still hitting synchronicity issues, try waiting
+                    $.when(p).done(val => { if (val) PUcount++; });
                 });
             $.when.apply($, promises).then(function () {
                 $(".highcharts-container").css("z-index", 999);
@@ -231,10 +227,8 @@ var DashboardPowerups = (function () {
                 //other dashboard powering-up here
                 pub.fireAllPowerUps(true);
                 mainPromise.resolve(true);
-                setTimeout(() => {
-                    pub.PUHighchartsMutex.blocking = false;
-                    pub.PUHighchartsMutex.blocked = 0;
-                }, 10000); //Don't do it again for at least 10s
+                pub.PUHighchartsMutex.blocking = false;
+                pub.PUHighchartsMutex.blocked = 0;
             });
             return mainPromise;
         } else {
@@ -245,34 +239,87 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUHighchart = function (chart) {
+        let pu = false;
+        const compare = function (optsNew, optsCurrent) {
+            //Loop through properties in new options, looking for 1-way equivalency
+            for (var p in optsNew) {
+                //Check property exists on both objects
+                if (optsNew.hasOwnProperty(p) !== optsCurrent.hasOwnProperty(p)) return false;
+
+                switch (typeof (optsNew[p])) {
+                    //Deep compare objects
+                    case 'object':
+                        if (!compare(optsNew[p], optsCurrent[p])) return false;
+                        break;
+                    //Compare function code
+                    case 'function':
+                        if (typeof (optsCurrent[p]) == 'undefined' || (p != 'compare' && optsNew[p].toString() != optsCurrent[p].toString())) return false;
+                        break;
+                    //Compare values
+                    default:
+                        if (optsNew[p] != optsCurrent[p]) return false;
+                }
+            }
+            return true;
+        }
+
+        var lineChartPU = function () {
+            chart.series.forEach(series => {
+                if (!compare(SERIES_OPTS, series.options)) {
+                    series.update(SERIES_OPTS, false);
+                    pu = true;
+                }
+            });
+            if (!compare(TOOLTIP_OPTS, chart.tooltip.options)) {
+                chart.update({ tooltip: TOOLTIP_OPTS }, false);
+                pu = true;
+            }
+            if (!compare(AXIS_OPTS, chart.xAxis[0].options)) {
+                chart.update({ xAxis: AXIS_OPTS }, false);
+                pu = true;
+            }
+            if (!compare(AXIS_OPTS, chart.yAxis[0].options)) {
+                chart.update({ yAxis: AXIS_OPTS }, false);
+                pu = true;
+            }
+        }
+
         if (pub.config.Powerups.tooltipPU &&
             typeof (chart) !== "undefined" &&
-            !chart.poweredup &&
+            //!chart.poweredup &&
             typeof (chart.container) != "undefined") {
-            chart.series.forEach(series => {
-                series.update(SERIES_OPTS, false);
-            });
-            chart.update({ tooltip: TOOLTIP_OPTS }, false);
-            chart.update({ xAxis: AXIS_OPTS }, false);
-            chart.update({ yAxis: AXIS_OPTS }, false);
+            let mainPromise = new $.Deferred();
+            let promises = [];
 
             let $container = $(chart.container);
             let $tile = $container.parents(TILE_SELECTOR);
             let $title = $tile.find(TITLE_SELECTOR);
             let title = $title.text();
-            if (title.includes(PU_LINE)) pub.PULine(chart, title);
-            if (title.includes(PU_USQLSTACK)) setTimeout(() => {
-                pub.PUUsqlStack(chart, title);
-            }, 100);
-            if (title.includes(PU_HEATMAP)) setTimeout(() => {
-                if ($(chart.container).is(":visible"))
-                    pub.PUHeatmap(chart, title);
-            }, 100);
+            if (title.includes(PU_LINE)) {
+                if (pub.PULine(chart, title)) {
+                    pu = true;
+                    lineChartPU();
+                }
+            } else if (title.includes(PU_USQLSTACK)) {
+                let p = pub.PUUsqlStack(chart, title);
+                promises.push(p);
+                $.when(p).done(val => {
+                    if (val) pu = true;
+                })
+            } else if (title.includes(PU_HEATMAP) &&
+                $(chart.container).is(":visible")) {
+                if (pub.PUHeatmap(chart, title))
+                    pu = true;
+            } else {
+                lineChartPU();
+            }
 
-            chart.redraw(false);
 
-            chart.poweredup = true;
-            return true;
+            $.when.apply($, promises).then(() => {
+                if (pu) chart.redraw(false);
+                mainPromise.resolve(true);
+            });
+            return mainPromise;
         } else {
             return false;
         }
@@ -304,10 +351,14 @@ var DashboardPowerups = (function () {
             color: 'yellow',
             width: 1
         });
+
+        //chart.poweredup = true;
+        return true;
     }
 
-    pub.PUUsqlStack = function (chart, title) { //example: !PU(usqlstack):color:green
-        if (!pub.config.Powerups.usqlstackPU) return;
+    pub.PUUsqlStack = function (chart, title, retries = 3) { //example: !PU(usqlstack):color:green
+        if (!pub.config.Powerups.usqlstackPU) return false;
+        let p = new $.Deferred();
         let titletokens = title.split(PU_USQLSTACK);
         let argstring = titletokens[1];
         let args = argstring.split(";").map(x => x.split("="));
@@ -319,9 +370,16 @@ var DashboardPowerups = (function () {
         let color = args.find(x => x[0] == "color")[1];
 
         //get data
-        console.log(chart.series[0].data);
         if (chart.series.length != 1) return false; //if more than 1 series, this doesn't make sense; quit
-        if (!chart.series[0].data.length) return false; //no data, quit
+        if (!chart.series[0].data.length) {//no data, try 3 more times then quit
+            if (retries) {
+                setTimeout(() => {
+                    let p0 = pub.PUUsqlStack(chart, title, retries - 1);
+                    $.when(p0).done((d0) => { p.resolve(d0); })
+                }, 50);
+                return p;
+            } else return false;
+        }
         if (!chart.series[0].data[0].name.includes(',')) return false; //if there's no splitting, quit
         let splittings = [];
         let newSeries = [];
@@ -358,17 +416,22 @@ var DashboardPowerups = (function () {
                 newCategories.push(newName);
         });
 
-        newSeries.forEach((ns) => {
-            chart.addSeries(ns, false, false);
-        });
-        //chart.series[0].hide();
         chart.series[0].remove(false, false);
         chart.axes[0].setCategories(newCategories, false);
+        newSeries.forEach((ns, idx) => {
+            chart.addSeries(ns, false, false);
+            //chart.series[idx].setData(ns.data);
+        });
+
+
 
         chart.redraw(false);
+        //chart.poweredup = true;
+        p.resolve(true);
+        return p;
     }
 
-    pub.addPUHighchartsListener = function () {
+    /*pub.addPUHighchartsListener = function () {
         if (pub.config.Powerups.debug) console.log("Powerup: added PUHighcharts listener");
         Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.PUHighcharts, pub.PUHighchartsMutex, 200));
         Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.PUHighcharts, pub.PUHighchartsMutex, 200));
@@ -392,7 +455,7 @@ var DashboardPowerups = (function () {
                 when done set mutex=false
 
         */
-    }
+    //}
 
     pub.highlightPointsInOtherCharts = function (e) {
         if (!pub.config.Powerups.tooltipPU) return;
@@ -446,6 +509,9 @@ var DashboardPowerups = (function () {
     }
 
     pub.loadChartSync = function () {
+        $('[uitestid="gwt-debug-dashboardGrid"]').off("mouseover", ".highcharts-container");
+        $('[uitestid="gwt-debug-dashboardGrid"]').off("mouseout", ".highcharts-container");
+
         $('[uitestid="gwt-debug-dashboardGrid"]').on("mouseover", ".highcharts-container", debounce(pub.highlightPointsInOtherCharts, 50));
         $('[uitestid="gwt-debug-dashboardGrid"]').on("mouseout", ".highcharts-container", pub.removeHighlightPointsInOtherCharts);
     }
@@ -474,6 +540,7 @@ var DashboardPowerups = (function () {
 
     pub.bannerPowerUp = function () {
         if (!pub.config.Powerups.bannerPU) return;
+        let powerupFound = false;
         $(TAG_SELECTOR).each((i, el) => {
             let $tag = $(el);
             let title = $tag.attr("title");
@@ -486,8 +553,14 @@ var DashboardPowerups = (function () {
 
                 $(BANNER_SELECTOR).css("background", color);
                 $(BANNER_SELECTOR).css("color", contrast(color));
+                powerupFound = true;
             }
         });
+
+        if (!powerupFound) {
+            $(BANNER_SELECTOR).css("background", '');
+            $(BANNER_SELECTOR).css("color", '');
+        }
     }
 
     pub.colorPowerUp = function () {
@@ -712,7 +785,7 @@ var DashboardPowerups = (function () {
         }
     }
 
-    pub.addToolTips = function () {
+    /*pub.addToolTips = function () {
         if (typeof (pub.addPUHighchartsListener) == "undefined") {
             waits++;
             if (waits % 10 == 0)
@@ -722,7 +795,7 @@ var DashboardPowerups = (function () {
             pub.addPUHighchartsListener();
             pub.loadChartSync();
         }
-    }
+    }*/
 
     pub.sankeyPowerUp = function () {
         if (!pub.config.Powerups.sankeyPU) return;
@@ -840,7 +913,7 @@ var DashboardPowerups = (function () {
             return ({ touples: touples, goals: goals, apdexList: apdexList });
         }
 
-        function newChart(data, container, chartTitle, limit=20) {
+        function newChart(data, container, chartTitle, limit = 20) {
             let options = {
                 type: 'sankey',
                 title: {
@@ -940,7 +1013,7 @@ var DashboardPowerups = (function () {
             });
 
             let chart = Highcharts.chart(container, options, (chart) => {
-                chart.poweredup = true;
+                //chart.poweredup = true;
                 chart.limit = limit;
                 chart.renderer.button('-', 10, 5)
                     .attr({
@@ -1008,8 +1081,9 @@ var DashboardPowerups = (function () {
                 let data = readTableData(el);
 
                 let sankey = newChart(data, container, chartTitle);
-                
+
             });
+        return true;
     }
 
     pub.mapPowerUp = function () {
@@ -1260,6 +1334,12 @@ var DashboardPowerups = (function () {
         let newData = [];
         let yNames = [];
         let categories = [];
+        function getPointCategoryName(point, dimension) {
+            var series = point.series,
+                isY = dimension === 'y',
+                axis = series[isY ? 'yAxis' : 'xAxis'];
+            return axis.categories[point[isY ? 'y' : 'x']];
+        }
         chart.series.forEach((s, sIdx) => {
             if (s.type != "column") {
                 console.log("Powerup: ERROR - Please use a bar chart as a source for heatmap powerup.");
@@ -1323,7 +1403,9 @@ var DashboardPowerups = (function () {
             title: {
                 text: 'Apdex Heatmap'
             },
-
+            credits: {
+                enabled: false
+            },
             xAxis: {
                 categories: categories,
                 reversed: true
@@ -1339,7 +1421,7 @@ var DashboardPowerups = (function () {
                 formatter: function () {
                     return 'Date:<b>' + getPointCategoryName(this.point, 'x') + '</b><br>' +
                         'App:<b>' + getPointCategoryName(this.point, 'y') + '</b><br>' +
-                        'Apdex:<b>' + this.point.value + '</b>';
+                        'Apdex:<b>' + this.point.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) + '</b>';
                 }
             },
             colorAxis: {
@@ -1357,23 +1439,102 @@ var DashboardPowerups = (function () {
         $(oldContainer).hide();
         $newContainer.html('');
         let newChart = Highcharts.chart(newContainer, newChartOpts);
-        newChart.poweredup = true;
+        //newChart.poweredup = true;
+        return true;
     }
 
     pub.fireAllPowerUps = function (update = false) {
-        if (update) pub.PUHighcharts();
-        else pub.addToolTips();
-        pub.bannerPowerUp();
-        pub.colorPowerUp();
-        pub.updateSVGPowerUp();
-        pub.svgPowerUp();
-        pub.mapPowerUp();
-        waitForHCmod('sankey', pub.sankeyPowerUp);
+        let mainPromise = new $.Deferred();
+        let promises = [];
 
-        pub.cleanMarkup();
-        if (pub.config.Powerups.debug)
-            console.log("Powerup: DEBUG - fire all PowerUps" + (update ? " (update)" : ""));
+        promises.push(pub.PUHighcharts());
+        promises.push(pub.bannerPowerUp());
+        promises.push(pub.colorPowerUp());
+        promises.push(pub.updateSVGPowerUp());
+        promises.push(pub.svgPowerUp());
+        promises.push(pub.mapPowerUp());
+        pub.loadChartSync();
+        waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
+
+        $.when.apply($, promises).then(function () {
+            pub.cleanMarkup();
+            if (pub.config.Powerups.debug)
+                console.log("Powerup: DEBUG - fire all PowerUps" + (update ? " (update)" : ""));
+            mainPromise.resolve();
+        });
+
+        return mainPromise;
     }
+
+    pub.GridObserver = (function () {
+        /* New method for deciding when to fire powerups
+            Step 1 (extside) - inject clientside lib, if not already
+            Step 2 (extside) - inject trigger to launch Mutation observer
+            Step 3 (clientside) - launch new observer on the dashboard grid, discard if already exists
+            Step 4 (clientside) - when a mutation occurs (this should be tiles loading), flag it, start timeout of 50ms
+            Step 5 - continue updating timeout to 50ms until mutation stop
+            Step 6 - once no mutations occur for 50ms, disable observer, fire powerups
+            Step 7 - once powerups are complete, reenable observer, repeat from step 4
+            */
+        const time = 50;
+        const MO_CONFIG = { attributes: true, childList: true, subtree: false };
+        var GO = {};
+        var observer = {};
+        var timeout = {};
+        const firstRunRaceTime = 2000;
+
+        const mutationHappening = (mutationsList, obs) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                mutationsDone(mutationsList, obs);
+            }, time);
+        }
+
+        const mutationsDone = (mutationsList, obs) => {
+            let p;
+            console.log("Powerup: DEBUG - mutations detected.");
+            //console.log(mutationsList);
+            observer.disconnect();
+            if (window.location.hash.startsWith("#dashboard;") ||
+                window.location.hash.startsWith("#dashboard/dashboard;")) {
+                if ($('[uitestid="gwt-debug-dashboardGrid"]').length &&        //grid is loaded
+                    !$(".loader").length &&                                    //main loading distractor gone
+                    !$('[uitestid="gwt-debug-tileLoader"]:visible').length) {  //tile distractors hidden)
+                    p = pub.fireAllPowerUps();
+                } else { //still loading apparently, wait and try again
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        mutationsDone(mutationsList, obs);
+                    }, firstRunRaceTime);
+                }
+
+                $.when(p).done(() => {
+                    GO.observeGrid();
+                })
+            }
+        }
+
+        GO.launchGridObserver = () => {
+            observer = new MutationObserver(mutationHappening);
+            GO.observeGrid();
+
+            //backstop initial race condition
+            timeout = setTimeout(() => {
+                mutationsDone(undefined, undefined);
+            }, firstRunRaceTime);
+        };
+
+        GO.observeGrid = () => {
+            let $grid = $(GRID_SELECTOR);
+            if ($grid.length < 1) return false;
+            $grid.each((i, grid) => {
+                observer.observe(grid, MO_CONFIG);
+            });
+        }
+
+        return GO;
+    })();
 
     return pub;
 })();
+

@@ -45,7 +45,8 @@ if (typeof (INJECTED) == "undefined") {
                 injectClientsideString(`
             DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
             DashboardPowerups.config = ${JSON.stringify(config)};
-            DashboardPowerups.fireAllPowerUps();
+            //DashboardPowerups.fireAllPowerUps();
+            DashboardPowerups.GridObserver.launchGridObserver();
             `);
 
                 console.log("Powerup: powerups complete.");
