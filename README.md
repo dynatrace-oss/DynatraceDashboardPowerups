@@ -161,3 +161,13 @@ Notes:
 - To increase/decrease the amount of clutter, use the plus and minus buttons. These slice the data in the USQL query.
 - To get even more data from the USQL query, edit the dashboard JSON and add to the USQL tile (default 50, max 5000, more can result in slower load):
 `"limit": 500`
+
+### Vertical Funnel
+This powerup changes the Dynatrace horizontal funnel into a vertical funnel. To utilize encode your title like so:
+`Angular UserJourney !PU(funnel):mode=height`
+
+Explanation:
+- `mode=height` - which type of funnel visualization, options are `height`, `slope`, `bar`
+
+Example:
+![Funnel](Assets/funnel-height.png)
