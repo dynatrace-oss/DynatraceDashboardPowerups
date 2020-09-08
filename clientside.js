@@ -13,6 +13,7 @@ var DashboardPowerups = (function () {
     const TABLE_COL_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div';
     const BANNER_SELECTOR = '[uitestid="gwt-debug-dashboardNameLabel"]';
     const TAG_SELECTOR = '[uitestid="gwt-debug-showMoreTags"] ~ [title]';
+    const FUNNEL_SELECTOR = '[uitestid="gwt-debug-funnelPanel"]';
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
     const PU_MAP = '!PU(map):';
@@ -22,10 +23,12 @@ var DashboardPowerups = (function () {
     const PU_USQLSTACK = '!PU(usqlstack):'; //TODO: add color schemes
     const PU_HEATMAP = '!PU(heatmap):';
     const PU_SANKEY = '!PU(sankey):';
+    const PU_FUNNEL = '!PU(funnel):';
 
-    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP];
+    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL];
     const SERIES_OPTS = {
-        "animation": true,
+        //"animation": true,
+        "animation": false,
         "allowPointSelect": true,
         "enableMouseTracking": true,
         "states": {
@@ -90,6 +93,7 @@ var DashboardPowerups = (function () {
     var observers = [];
     var targets = [];
     var dataTables = [];
+    var D3MutexBlocking = false;
 
 
     //Private methods
@@ -1317,7 +1321,6 @@ var DashboardPowerups = (function () {
     };
 
     pub.PUHeatmap = function (chart, title) { //example: !PU(heatmap):
-        //return;
         if (!pub.config.Powerups.heatmapPU) return;
         if (chart.series.length < 1 || chart.series[0].data.length < 1) return;
         /*let titletokens = title.split(PU_HEATMAP);
@@ -1443,6 +1446,166 @@ var DashboardPowerups = (function () {
         return true;
     }
 
+    pub.PUfunnel = function () {
+        if (!pub.config.Powerups.funnelPU) return;
+        let mainPromise = new $.Deferred();
+        if (D3MutexBlocking) {
+            console.log("Powerup: D3MutexBlocked Funnel Powerup");
+            return false;
+        } else {
+            D3MutexBlocking = true;
+            $.when(mainPromise).always(() => {
+                D3MutexBlocking = false;
+            })
+        }
+
+
+        const options = {
+            chart: {
+                curve: {
+                    enabled: true,
+                    height: 40
+                },
+                //animate: 50,
+                bottomPinch: 1
+            },
+            block: {
+                minHeight: 100,
+                dynamicHeight: false,
+                dynamicSlope: false,
+                barOverlay: false,
+                fill: {
+                    type: 'gradient'
+                },
+                highlight: true
+            },
+            label: {
+                fill: "#fff",
+                enabled: false
+            },
+            //tooltip: {
+            //    enabled: true,
+            //},
+            //events: {
+            //click: {
+            //    block: funnelClickHandler
+            //}
+            //}
+        }
+
+        $(FUNNEL_SELECTOR).each((i, el) => {
+            let $funnelpanel = $(el);
+            let $tile = $funnelpanel.parents(TILE_SELECTOR);
+            let $title = $tile.find(TITLE_SELECTOR);
+
+            if ($title.text().includes(PU_FUNNEL)) {
+                let titletokens = $title.text().split(PU_FUNNEL);
+                let argstring = titletokens[1];
+                let args = argstring.split(";").map(x => x.split("="));
+                let mode = args.find(x => x[0] == "mode")[1];
+
+                //styling
+                switch (mode) {
+                    case "slope":
+                        options.block.dynamicSlope = true;
+                        options.block.dynamicHeight = false;
+                        options.block.barOverlay = false;
+                        break;
+                    case "bar":
+                        options.block.dynamicSlope = false;
+                        options.block.dynamicHeight = false;
+                        options.block.barOverlay = true;
+                        break;
+                    case "height":
+                    default:
+                        options.block.dynamicSlope = false;
+                        options.block.dynamicHeight = true;
+                        options.block.barOverlay = false;
+                        break;
+                }
+
+                //get the data
+                let $steps = $funnelpanel.children(`div:nth-of-type(2)`).children();
+                let numSteps = $steps.length;
+                let steps = [];
+                $steps.each((i, stepEl) => {
+                    let $stepEl = $(stepEl);
+                    let step = {};
+                    step.abs = Number($stepEl.find(`div:first-of-type > span:nth-of-type(1)`).text().replace(/[,]*/g,''));
+                    step.percent = Number($stepEl.find(`div:first-of-type > span:nth-of-type(2)`).text().replace(/[()%]*/g, ''));
+                    step.dPercent = Number($stepEl.children(`span:nth-of-type(1)`).text().replace(/[()%]*/g, ''));
+                    step.dTime = $stepEl.children(`span:nth-of-type(2)`).text();
+                    step.name = $stepEl.children(`div:nth-of-type(2)`).text();
+
+                    step.label = step.name;
+                    step.value = step.abs;
+                    step.customFormattedValue = `
+                        ${step.name}: <b>${step.abs}</b> (${step.percent}%)<br>
+                        <small><span class="${(step.dPercent < 0 ? 'powerupDeltaNeg' : 'powerupDeltaPos')}">${step.dPercent}</span> ${step.dTime}</small>
+                        `.trim();
+                    steps.push(step);
+                })
+
+                //hide old stuff
+                $funnelpanel.find(`div:nth-of-type(1)`).hide();
+                $funnelpanel.find(`div:nth-of-type(2)`).hide();
+
+                //new funnel
+                let $funnelContainer = $("#powerupFunnelContainer");
+                if (!$funnelContainer.length)
+                    $funnelContainer = $("<div>")
+                        .attr("id", "powerupFunnelContainer")
+                        .appendTo($funnelpanel);
+
+                let chart = new D3Funnel($funnelContainer[0]);
+                chart.draw(steps, options);
+
+                //add HTML labels
+                let tries = 5;
+                function updateLabels() {
+                    steps.forEach((step, idx) => {
+                        let path = $funnelContainer.find(`svg g:nth-of-type(${idx + 1}) path`).get(0);
+                        let pathBBox = path.getBBox();
+                        let $label = $("<div>")
+                            .addClass("powerupFunnelLabel")
+                            .html(step.customFormattedValue)
+                            .appendTo($funnelContainer);
+
+                        let cp = $funnelContainer.position();
+                        //let rects = e.node.getClientRects();
+                        let x = cp.left + $funnelContainer.width() / 2 - $label.width() / 2;
+                        //let x = 0;
+                        let y = pathBBox.y + pathBBox.height / 2 - $label.height() / 2;
+                        console.log([pathBBox.y, pathBBox.height / 2, $label.height() / 2]);
+                        //console.log([fw.position().left, fw.width() / 2, lf.width() / 2]);
+                        //console.log([rects[0].y, rects[0].height / 2, lf.height() / 2]);
+                        //let fill = e.fill.raw;
+                        $label.css({ top: y, left: x });
+                    });
+                    mainPromise.resolve(true);
+                }
+                function checkForDoneDrawing() {
+                    if (!tries) {
+                        mainPromise.resolve(false);
+                        return false;
+                    }
+                    let funnelLen = $funnelContainer.find(`svg g`).length;
+                    if (funnelLen == steps.length)
+                        updateLabels();
+                    else {
+                        tries--;
+                        console.log(`checkForDoneDrawing: ${funnelLen} < ${steps.length}, tries: ${tries}`);
+                        setTimeout(checkForDoneDrawing, 100);
+                    }
+                }
+                checkForDoneDrawing();
+            } else {
+                mainPromise.resolve(false);
+            }
+        });
+        return mainPromise;
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -1453,6 +1616,7 @@ var DashboardPowerups = (function () {
         promises.push(pub.updateSVGPowerUp());
         promises.push(pub.svgPowerUp());
         promises.push(pub.mapPowerUp());
+        promises.push(pub.PUfunnel());
         pub.loadChartSync();
         waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
 
@@ -1481,7 +1645,7 @@ var DashboardPowerups = (function () {
         var GO = {};
         var observer = {};
         var timeout = {};
-        const firstRunRaceTime = 2000;
+        const firstRunRaceTime = 1000;
 
         const mutationHappening = (mutationsList, obs) => {
             clearTimeout(timeout);

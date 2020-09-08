@@ -42,6 +42,7 @@ if (typeof (INJECTED) == "undefined") {
 
             $.when(config_p).done(function (config) {
                 injectHighchartsModules(config);
+                injectD3Modules(config);
                 injectClientsideString(`
             DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
             DashboardPowerups.config = ${JSON.stringify(config)};
@@ -190,10 +191,27 @@ if (typeof (INJECTED) == "undefined") {
             }`);
             injectHighchartsModule("sankey");
         }
-        if (config.Powerups.funnelPU)
-            injectHighchartsModule("funnel");
+        
         if (config.Powerups.treemapPU)
             injectHighchartsModule("treemap");
+    }
+
+    function injectD3Modules(config) {
+        if (config.Powerups.funnelPU)
+        injectD3Module("d3-funnel.js");
+    }
+
+    function injectD3Module(mod) {
+        let id = "D3_" + mod;
+        let src = `${ext_url}3rdParty/D3/${mod}`;
+        if (!$('#' + id).length) {
+            let $s = $("<script>")
+                .attr("id", id)
+                .attr("src", src)
+                .appendTo("body");
+        } else {
+            //already injected
+        }
     }
 
     INJECTED = true;

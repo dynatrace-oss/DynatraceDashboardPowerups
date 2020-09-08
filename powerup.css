@@ -209,3 +209,32 @@ span.powerup-color-normal {
   border: 1px solid #7c38a1;
   border-radius: 3px;
 }
+
+#powerupFunnelContainer {
+  height: 100%;
+  width: 100%;
+  z-index: 999;
+  position: absolute;
+}
+
+.powerupFunnelLabel {
+  position: absolute;
+  /*width: 100%;*/
+  text-align: center;
+}
+
+.powerupDeltaNeg {
+  color: #ef651f;
+  background-color: #6d6d6d;
+  padding: 2px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.powerupDeltaPos {
+  color: #2ab06f;
+  background-color: #6d6d6d;
+  padding: 2px;
+  border-radius: 3px;
+  font-weight: bold;
+}
