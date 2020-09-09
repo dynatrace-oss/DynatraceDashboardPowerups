@@ -320,7 +320,18 @@ var DashboardPowerups = (function () {
 
 
             $.when.apply($, promises).then(() => {
-                if (pu) chart.redraw(false);
+                if (pu) {
+                    try {
+                        if (Object.keys(chart).length)
+                            chart.redraw(false);
+                        else
+                            console.log("Powerup: DEBUG - ignoring empty chart");
+                    } catch (e) {
+                        console.log("Powerup: CRITICAL - failed to redraw, error:");
+                        console.log(e);
+                        console.log(chart);
+                    }
+                }
                 mainPromise.resolve(true);
             });
             return mainPromise;
@@ -1449,14 +1460,25 @@ var DashboardPowerups = (function () {
     pub.PUfunnel = function () {
         if (!pub.config.Powerups.funnelPU) return;
         let mainPromise = new $.Deferred();
-        if (D3MutexBlocking) {
-            console.log("Powerup: D3MutexBlocked Funnel Powerup");
-            return false;
-        } else {
-            D3MutexBlocking = true;
-            $.when(mainPromise).always(() => {
+        let $funnels = $(FUNNEL_SELECTOR);
+        if (!$funnels.length) { //no funnels on this dashboard
+            if (D3MutexBlocking) { //old Mutex
+                console.log("Powerup: DEBUG - D3MutexBlocking but no D3s. Clear it.");
                 D3MutexBlocking = false;
-            })
+                return false;
+            } else { //nothing to do
+                return false;
+            }
+        } else { //funnels found
+            if (D3MutexBlocking) { //already running, block it
+                console.log("Powerup: D3MutexBlocked Funnel Powerup");
+                return false;
+            } else { //normal
+                D3MutexBlocking = true;
+                $.when(mainPromise).always(() => { //be sure to clear mutex when done
+                    D3MutexBlocking = false;
+                })
+            }
         }
 
 
@@ -1531,7 +1553,7 @@ var DashboardPowerups = (function () {
                 $steps.each((i, stepEl) => {
                     let $stepEl = $(stepEl);
                     let step = {};
-                    step.abs = Number($stepEl.find(`div:first-of-type > span:nth-of-type(1)`).text().replace(/[,]*/g,''));
+                    step.abs = Number($stepEl.find(`div:first-of-type > span:nth-of-type(1)`).text().replace(/[,]*/g, ''));
                     step.percent = Number($stepEl.find(`div:first-of-type > span:nth-of-type(2)`).text().replace(/[()%]*/g, ''));
                     step.dPercent = Number($stepEl.children(`span:nth-of-type(1)`).text().replace(/[()%]*/g, ''));
                     step.dTime = $stepEl.children(`span:nth-of-type(2)`).text();
@@ -1572,14 +1594,8 @@ var DashboardPowerups = (function () {
                             .appendTo($funnelContainer);
 
                         let cp = $funnelContainer.position();
-                        //let rects = e.node.getClientRects();
                         let x = cp.left + $funnelContainer.width() / 2 - $label.width() / 2;
-                        //let x = 0;
                         let y = pathBBox.y + pathBBox.height / 2 - $label.height() / 2;
-                        console.log([pathBBox.y, pathBBox.height / 2, $label.height() / 2]);
-                        //console.log([fw.position().left, fw.width() / 2, lf.width() / 2]);
-                        //console.log([rects[0].y, rects[0].height / 2, lf.height() / 2]);
-                        //let fill = e.fill.raw;
                         $label.css({ top: y, left: x });
                     });
                     mainPromise.resolve(true);
@@ -1640,7 +1656,7 @@ var DashboardPowerups = (function () {
             Step 6 - once no mutations occur for 50ms, disable observer, fire powerups
             Step 7 - once powerups are complete, reenable observer, repeat from step 4
             */
-        const time = 50;
+        const time = 200;
         const MO_CONFIG = { attributes: true, childList: true, subtree: false };
         var GO = {};
         var observer = {};
@@ -1656,8 +1672,10 @@ var DashboardPowerups = (function () {
 
         const mutationsDone = (mutationsList, obs) => {
             let p;
-            console.log("Powerup: DEBUG - mutations detected.");
-            //console.log(mutationsList);
+            if (pub.config.Powerups.debug) {
+                console.log("Powerup: DEBUG - mutations detected.");
+                console.log(mutationsList);
+            }
             observer.disconnect();
             if (window.location.hash.startsWith("#dashboard;") ||
                 window.location.hash.startsWith("#dashboard/dashboard;")) {
