@@ -1,5 +1,5 @@
 var DashboardPowerups = (function () {
-    const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard';
+    const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard, [uitestid="gwt-debug-title"]';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
     const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type';
     const TILE_SELECTOR = '.grid-tile';
