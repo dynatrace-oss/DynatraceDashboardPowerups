@@ -322,10 +322,15 @@ var DashboardPowerups = (function () {
             $.when.apply($, promises).then(() => {
                 if (pu) {
                     try {
-                        if (Object.keys(chart).length)
+                        if (Object.keys(chart).length) {
+                            //Highcharts Heatmap bug workaround
+                            if ("heatmap" in Highcharts.seriesTypes &&
+                                typeof (chart.colorAxis) === "undefined")
+                                chart.colorAxis = [];
                             chart.redraw(false);
-                        else
+                        } else {
                             console.log("Powerup: DEBUG - ignoring empty chart");
+                        }
                     } catch (e) {
                         console.log("Powerup: CRITICAL - failed to redraw, error:");
                         console.log(e);
@@ -453,22 +458,22 @@ var DashboardPowerups = (function () {
         Highcharts.addEvent(Highcharts.Chart, 'redraw', clearPowerup);
         pub.PUHighcharts();
         PUwatchdog();
-
+    
         /*
             custom charts are destroyed and loaded on new data, fires load event
             usql charts are redrawn on new data, fires redraw event
-
+    
             listen for either event and begin powering-up
             we will get several of these events, so need to debounce
                 start a timer
                 throw away all but last event until timer expires
-
+    
             at the end of powering-up, we must redraw the chart(s) ourselves, which again fires redraw
                 handle by using a crude mutex
                 if mutex == true, we're already powering-up, abort
                 else set mutex=true and power-up
                 when done set mutex=false
-
+    
         */
     //}
 
