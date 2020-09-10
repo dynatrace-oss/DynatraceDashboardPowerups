@@ -6,6 +6,7 @@ if (typeof (INJECTED) == "undefined") {
         if (POWERUPDEBUG) console.log("Powerup: document ready");
         $(window).on("load hashchange", powerupListener);
         if (POWERUPDEBUG) console.log("Powerup: listener loaded");
+        powerupListener();
     });
 
     const ext_url = chrome.runtime.getURL("");
