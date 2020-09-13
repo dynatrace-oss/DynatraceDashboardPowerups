@@ -1,5 +1,5 @@
 var DashboardPowerups = (function () {
-    const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard, [uitestid="gwt-debug-title"]';
+    const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
     const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type';
     const TILE_SELECTOR = '.grid-tile';
@@ -25,12 +25,17 @@ var DashboardPowerups = (function () {
     const PU_SANKEY = '!PU(sankey):';
     const PU_FUNNEL = '!PU(funnel):';
 
-    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL];
+    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL, PU_SANKEY];
+    const CHART_OPTS = {
+        plotBackgroundColor: '#343434'
+    }
     const SERIES_OPTS = {
         //"animation": true,
         "animation": false,
         "allowPointSelect": true,
+        cursor: 'crosshair',
         "enableMouseTracking": true,
+        stickyTracking: true,
         "states": {
             "hover": {
                 "enabled": true,
@@ -229,7 +234,7 @@ var DashboardPowerups = (function () {
                 $(".highcharts-container").css("z-index", 999);
                 if (pub.config.Powerups.debug) console.log("Powerup: " + PUcount + " Highcharts powered-up.");
                 //other dashboard powering-up here
-                pub.fireAllPowerUps(true);
+                //pub.fireAllPowerUps(true); //don't think this is needed anymore, thanks to MO
                 mainPromise.resolve(true);
                 pub.PUHighchartsMutex.blocking = false;
                 pub.PUHighchartsMutex.blocked = 0;
@@ -274,6 +279,10 @@ var DashboardPowerups = (function () {
                     pu = true;
                 }
             });
+            if (!compare(CHART_OPTS, chart.options)) {
+                chart.update({ chart: CHART_OPTS }, false);
+                pu = true;
+            }
             if (!compare(TOOLTIP_OPTS, chart.tooltip.options)) {
                 chart.update({ tooltip: TOOLTIP_OPTS }, false);
                 pu = true;
@@ -310,10 +319,14 @@ var DashboardPowerups = (function () {
                 $.when(p).done(val => {
                     if (val) pu = true;
                 })
-            } else if (title.includes(PU_HEATMAP) &&
-                $(chart.container).is(":visible")) {
-                if (pub.PUHeatmap(chart, title))
+            } else if (title.includes(PU_HEATMAP)) {
+                if ($(chart.container).is(":visible")) {
+                    if (pub.PUHeatmap(chart, title))
+                        pu = true;
+                } else {
+                    if ( pub.PUHeatmap(chart, title, $("#heatmap").get(0)) )
                     pu = true;
+                }
             } else {
                 lineChartPU();
             }
@@ -537,8 +550,11 @@ var DashboardPowerups = (function () {
     }
 
     pub.cleanMarkup = function () {
+        let p = new $.Deferred();
+        if (pub.config.Powerups.debug) console.log("Powerup: DEBUG - clean power-up markup");
         $(TITLE_SELECTOR).each((i, el) => {
             let $title = $(el);
+            if ($title.children('.powerup-markup').length) return true; //already done
             let title = $title.text();
             let idx = title.length;
 
@@ -556,6 +572,16 @@ var DashboardPowerups = (function () {
             if (idx < title.length)
                 $title.html(newTitle);
         });
+        $(TAG_SELECTOR).each((i, el) => {
+            let $tag = $(el);
+            let title = $tag.attr("title");
+
+            if (title.includes(PU_BANNER)) {
+                $tag.hide();
+            }
+        });
+        p.resolve(true);
+        return p;
     }
 
     pub.bannerPowerUp = function () {
@@ -580,6 +606,8 @@ var DashboardPowerups = (function () {
         if (!powerupFound) {
             $(BANNER_SELECTOR).css("background", '');
             $(BANNER_SELECTOR).css("color", '');
+        } else {
+            if (pub.config.Powerups.debug) console.log("Powerup: DEBUG - banner power-up found");
         }
     }
 
@@ -765,7 +793,8 @@ var DashboardPowerups = (function () {
             let $tile = $svgcontainer.parents(".grid-tile");
             let $svg = $svgcontainer.find("svg:first-of-type");
 
-            if ($svg.length) {
+            if ($svg.length &&
+                !$svg.hasClass('highcharts-root')) {
                 let args = $svg.attr("data-args") || "{}";
                 args = JSON.parse(args);
 
@@ -1062,27 +1091,64 @@ var DashboardPowerups = (function () {
         }
 
         function findContainer(link) {
-            let container;
+            let container, markdown;
             $(MARKDOWN_SELECTOR)
                 .each(function (i, el) {
                     let $el = $(el);
                     let text = $el.text();
                     if (!text.includes(PU_LINK)) return;
                     if (text.split(PU_LINK)[1].includes(link))
-                        container = el;
+                        markdown = el;
                 });
 
+            if (markdown) { // change behavior here. instead of swapping out the markdown, hide it and add a container div
+                let $containers = $(markdown).siblings("[data-highcharts-chart]").children(".highcharts-container");
+                $containers.each((i, c) => { //sankey already exists, destroy and recreate later
+                    let oldChart = Highcharts.charts
+                        .filter(x => typeof (x) !== "undefined")
+                        .find(x => x.container === c);
+                    container = $(c).parent().get(0);
+                    if (oldChart) oldChart.destroy();
+                });
+                if (!$containers.length) { //hide the markdown, add a container
+                    $(markdown).hide();
+                    let $c = $("<div>")
+                        .addClass("powerupHighchartsContainer")
+                        .insertAfter(markdown);
+                    container = $c.get(0);
+                }
+            }
             return container;
         }
 
+        function destroyChartsAndContainers(tile) {
+            let $tile = $(tile);
+            let $containers = $tile.find(".highcharts-container");
 
-        $(TABLE_SELECTOR)
+            $containers.each((i, c) => {
+                let oldChart = Highcharts.charts
+                    .filter(x => typeof (x) !== "undefined")
+                    .find(x => x.container === c);
+                if (oldChart) oldChart.destory();
+                $(c).remove();
+            })
+        }
+
+
+        //$(TABLE_SELECTOR)
+        $(TITLE_SELECTOR)
             .each(function (i, el) {
-                let $el = $(el);
+                /*let $el = $(el);
                 let $tile = $el.parents(TILE_SELECTOR);
                 let $title = $tile.find(TITLE_SELECTOR);
                 let title = $title.text();
+                if (!title.includes(PU_SANKEY)) return;*/
+                let $title = $(el);
+                let title = $title.text();
                 if (!title.includes(PU_SANKEY)) return;
+                let $tile = $title.parents(TILE_SELECTOR);
+                let $table = $tile.find(TABLE_SELECTOR);
+
                 let argstring = title.split(PU_SANKEY)[1];
                 let chartTitle = title.split(PU_SANKEY)[0];
                 let args = argstring.split(";").map(x => x.split("="));
@@ -1094,11 +1160,22 @@ var DashboardPowerups = (function () {
                 let link = args.find(x => x[0] == "link")[1];
 
                 let container = findContainer(link);
-                if (typeof (container) == "undefined" ||
-                    $(container).is(`[data-highcharts-chart]`))
-                    return; //prevent multiple runs temp
+                if (typeof (container) == "undefined") {
+                    console.log("Powerup: WARN - Sankey container is undefined.");
+                    return false;
+                }
+                if (!$table.length) { //USQL error or no data
+                    //destroyChartsAndContainers($tile.get(0));
+                    return false;
+                }
+                /*if ($(container).is(`[data-highcharts-chart]`)) { //sankey already exists, destroy and recreate
+                    let oldChart = Highcharts.charts
+                        .filter(x => typeof (x) !== "undefined")
+                        .find(x => x.container === container);
+                    if (oldChart) oldChart.destory();
+                }*/
 
-                let data = readTableData(el);
+                let data = readTableData($table.get(0));
 
                 let sankey = newChart(data, container, chartTitle);
 
@@ -1336,7 +1413,7 @@ var DashboardPowerups = (function () {
 
     };
 
-    pub.PUHeatmap = function (chart, title) { //example: !PU(heatmap):
+    pub.PUHeatmap = function (chart, title, newContainer) { //example: !PU(heatmap):
         if (!pub.config.Powerups.heatmapPU) return;
         if (chart.series.length < 1 || chart.series[0].data.length < 1) return;
         /*let titletokens = title.split(PU_HEATMAP);
@@ -1344,10 +1421,19 @@ var DashboardPowerups = (function () {
         let args = argstring.split(";").map(x => x.split("="));*/
         let oldContainer = chart.container;
         let $tile = $(oldContainer).parents(TILE_SELECTOR);
-        let $newContainer = $("<div>")
-            .attr("id", "heatmap")
-            .insertAfter(oldContainer);
-        let newContainer = $newContainer[0];
+        let $newContainer;
+        if (typeof (newContainer) !== "undefined") {
+            let oldChart = Highcharts.charts
+            .filter(x=> typeof(x)!=="undefined")
+            .find(x=> x.renderTo===newContainer);
+            if (oldChart) oldChart.destroy();
+            $newContainer = $(newContainer);
+        } else {
+            $newContainer = $("<div>")
+                .attr("id", "heatmap")
+                .insertAfter(oldContainer);
+            newContainer = $newContainer[0];
+        }
         let $legend = $tile.find(LEGEND_SELECTOR);
 
         let newData = [];
@@ -1603,6 +1689,7 @@ var DashboardPowerups = (function () {
                         let y = pathBBox.y + pathBBox.height / 2 - $label.height() / 2;
                         $label.css({ top: y, left: x });
                     });
+                    console.log("Powerup: Funnel power up found");
                     mainPromise.resolve(true);
                 }
                 function checkForDoneDrawing() {
@@ -1641,11 +1728,13 @@ var DashboardPowerups = (function () {
         pub.loadChartSync();
         waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
 
-        $.when.apply($, promises).then(function () {
-            pub.cleanMarkup();
+        $.when.apply($, promises).always(function () {
+            let p = pub.cleanMarkup();
             if (pub.config.Powerups.debug)
                 console.log("Powerup: DEBUG - fire all PowerUps" + (update ? " (update)" : ""));
-            mainPromise.resolve();
+            $.when(p).always(() => {
+                mainPromise.resolve();
+            });
         });
 
         return mainPromise;
@@ -1669,6 +1758,10 @@ var DashboardPowerups = (function () {
         const firstRunRaceTime = 1000;
 
         const mutationHappening = (mutationsList, obs) => {
+            if (pub.config.Powerups.debug) {
+                console.log("Powerup: DEBUG - mutations happening:");
+                console.log(mutationsList);
+            }
             clearTimeout(timeout);
             timeout = setTimeout(() => {
                 mutationsDone(mutationsList, obs);
@@ -1678,14 +1771,13 @@ var DashboardPowerups = (function () {
         const mutationsDone = (mutationsList, obs) => {
             let p;
             if (pub.config.Powerups.debug) {
-                console.log("Powerup: DEBUG - mutations detected.");
-                console.log(mutationsList);
+                console.log("Powerup: DEBUG - mutations have stopped.");
             }
             observer.disconnect();
             if (window.location.hash.startsWith("#dashboard;") ||
                 window.location.hash.startsWith("#dashboard/dashboard;")) {
                 if ($('[uitestid="gwt-debug-dashboardGrid"]').length &&        //grid is loaded
-                    !$(".loader").length &&                                    //main loading distractor gone
+                    !$(".loader:visible").length &&                            //main loading distractor gone
                     !$('[uitestid="gwt-debug-tileLoader"]:visible').length) {  //tile distractors hidden)
                     p = pub.fireAllPowerUps();
                 } else { //still loading apparently, wait and try again
@@ -1712,11 +1804,21 @@ var DashboardPowerups = (function () {
         };
 
         GO.observeGrid = () => {
+            const GRID_SELECTOR = '.grid-dashboard';
+            const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
+
             let $grid = $(GRID_SELECTOR);
             if ($grid.length < 1) return false;
             $grid.each((i, grid) => {
-                observer.observe(grid, MO_CONFIG);
+                observer.observe(grid, { attributes: true, childList: true, subtree: false });
             });
+
+            let $titles = $(TITLE_SELECTOR);
+            if ($titles.length) {
+                $titles.each((i, title) => {
+                    observer.observe(title, { attributes: true, childList: true, subtree: false });
+                })
+            }
         }
 
         return GO;
