@@ -27,7 +27,7 @@ var DashboardPowerups = (function () {
 
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL, PU_SANKEY];
     const CHART_OPTS = {
-        plotBackgroundColor: '#343434'
+        plotBackgroundColor: '#343434',
     }
     const SERIES_OPTS = {
         //"animation": true,
@@ -295,6 +295,23 @@ var DashboardPowerups = (function () {
                 chart.update({ yAxis: AXIS_OPTS }, false);
                 pu = true;
             }
+            //try to restore normal chart interactions, preventing navigation from plot
+            $(chart.container).find(".highcharts-plot-background")
+                .off("touchstart.powerup")
+                .on("touchstart.powerup", (e) => {
+                    chart.pointer.onContainerTouchStart(e);
+                    e.stopImmediatePropagation();
+                })
+                .off("touchmove.powerup")
+                .on("touchmove.powerup", (e) => {
+                    chart.pointer.onContainerTouchMove(e);
+                    e.stopImmediatePropagation();
+                })
+                .off("click.powerup")
+                .on("click.powerup", (e) => {
+                    console.log("Powerup: clicked plot background");
+                    e.stopImmediatePropagation();
+                })
         }
 
         if (pub.config.Powerups.tooltipPU &&
@@ -324,8 +341,8 @@ var DashboardPowerups = (function () {
                     if (pub.PUHeatmap(chart, title))
                         pu = true;
                 } else {
-                    if ( pub.PUHeatmap(chart, title, $("#heatmap").get(0)) )
-                    pu = true;
+                    if (pub.PUHeatmap(chart, title, $("#heatmap").get(0)))
+                        pu = true;
                 }
             } else {
                 lineChartPU();
@@ -1424,8 +1441,8 @@ var DashboardPowerups = (function () {
         let $newContainer;
         if (typeof (newContainer) !== "undefined") {
             let oldChart = Highcharts.charts
-            .filter(x=> typeof(x)!=="undefined")
-            .find(x=> x.renderTo===newContainer);
+                .filter(x => typeof (x) !== "undefined")
+                .find(x => x.renderTo === newContainer);
             if (oldChart) oldChart.destroy();
             $newContainer = $(newContainer);
         } else {
