@@ -306,7 +306,7 @@ var DashboardPowerups = (function () {
                 });
         }
 
-        const restoreHandlers = function() {
+        const restoreHandlers = function () {
             let $container = $(chart.container);
             //try to restore normal chart interactions, preventing navigation from plot
             $container.find(".highcharts-plot-background")
@@ -355,7 +355,7 @@ var DashboardPowerups = (function () {
             }
             restoreHandlers();
 
-            
+
         }
 
         if (pub.config.Powerups.tooltipPU &&
@@ -1045,6 +1045,7 @@ var DashboardPowerups = (function () {
                     data: data.touples.slice(0, limit),
                     type: 'sankey',
                     name: 'UserActions',
+                    cursor: 'crosshair',
                     clip: false,
                     dataLabels: {
                         enabled: true,
@@ -1164,6 +1165,8 @@ var DashboardPowerups = (function () {
                     })
                     .add();
                 //chart.setSize(undefined, undefined, false);
+                $(container).find(".highcharts-plot-background")
+                    .addClass("powerupPlotBackground");
             });
 
             return chart;
