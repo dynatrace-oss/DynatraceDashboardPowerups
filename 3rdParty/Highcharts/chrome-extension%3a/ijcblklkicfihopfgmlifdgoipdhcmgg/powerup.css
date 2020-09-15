@@ -249,10 +249,7 @@ span.powerup-color-normal {
 
 .highcharts-exporting-group {
   visibility: hidden;
-}
-
-.highcharts-menu {
-  overflow: visible!important;
+  overflow: visible;
 }
 
 .powerupVisible {

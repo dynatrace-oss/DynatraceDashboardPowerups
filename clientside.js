@@ -27,7 +27,7 @@ var DashboardPowerups = (function () {
 
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL, PU_SANKEY];
     const CHART_OPTS = {
-        plotBackgroundColor: '#343434',
+        plotBackgroundColor: '#454646',
     }
     const SERIES_OPTS = {
         //"animation": true,
@@ -143,30 +143,6 @@ var DashboardPowerups = (function () {
             return "white";
     }
 
-    /*const PUwatchdog = () => {
-        var timeout;
-        var unpowered = pub.PUHighchartsStatus().filter(x => !x).length;
-        //test for un-powereduped charts
-        if (unpowered) {
-            //if we we're not doing it, then do it
-            if (!pub.PUHighchartsMutex.blocking) {
-                if (pub.config.Powerups.debug)
-                    console.log(`Powerup: WARN - Watchdog found ${unpowered} Highcharts w/o powerup. Kicking off powerup.`);
-                pub.PUHighcharts();
-            }
-
-            if (pub.PUHighchartsMutex.blocking &&
-                pub.PUHighchartsMutex.blocked > 100) {
-                console.log(`Powerup: ERROR - Watchdog saw Mutex blocked too long ${PUHighchartsMutex.blocked}. Reset.`)
-                pub.PUHighchartsMutex.blocking = false;
-                pub.PUHighchartsMutex.blocked = 0;
-                pub.PUHighcharts();
-            }
-        }
-        clearTimeout(timeout);
-        timeout = setTimeout(PUwatchdog, 5000); //run every 5s
-    }*/
-
     const clearPowerup = (e) => {
         if (!pub.PUHighchartsMutex.blocked) {
             let chart = e.target;
@@ -204,6 +180,32 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUHighcharts = function () {
+        function wrapExporting() {
+            Highcharts.wrap(Highcharts.Chart.prototype, 'contextMenu', function (proceed) { //Highcharts bug fix, https://github.com/highcharts/highcharts/issues/9800
+                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+                if (typeof (this.exportContextMenu.style.originalTop) == "undefined") {
+                    // Correct for chart position
+                    var pos = Highcharts.offset(this.container);
+                    var defaultPadding = 5 * 2;
+                    this.exportContextMenu.style.top = (parseInt(this.exportContextMenu.style.top) + pos.top) + 'px';
+                    this.exportContextMenu.style.left = (pos.left + this.chartWidth - this.exportMenuWidth - parseInt(this.exportContextMenu.style.padding) - defaultPadding) + 'px';
+                    this.exportContextMenu.style.width = this.exportMenuWidth + 'px';
+
+                    //safe store
+                    this.exportContextMenu.style.originalTop = this.exportContextMenu.style.top;
+
+                    // Move it to the body
+                    Highcharts.doc.body.appendChild(this.exportContextMenu);
+                    this.exportContextMenu.poweredup = true;
+                } else {
+                    var pos = Highcharts.offset(this.container);
+                    var defaultPadding = 5 * 2;
+                    this.exportContextMenu.style.top = this.exportContextMenu.style.originalTop;
+                }
+            });
+        }
+
         //be sure not to leak off dashboards
         if (window.location.hash.startsWith("#dashboard;") ||
             window.location.hash.startsWith("#dashboard/dashboard;")) {
@@ -220,6 +222,7 @@ var DashboardPowerups = (function () {
             let PUcount = 0;
             let promises = [];
             let mainPromise = new $.Deferred();
+            wrapExporting();
             Highcharts.charts
                 .filter(x => typeof (x) != "undefined")
                 //.filter(x => !x.poweredup)
@@ -235,6 +238,7 @@ var DashboardPowerups = (function () {
                 if (pub.config.Powerups.debug) console.log("Powerup: " + PUcount + " Highcharts powered-up.");
                 //other dashboard powering-up here
                 //pub.fireAllPowerUps(true); //don't think this is needed anymore, thanks to MO
+
                 mainPromise.resolve(true);
                 pub.PUHighchartsMutex.blocking = false;
                 pub.PUHighchartsMutex.blocked = 0;
@@ -249,6 +253,17 @@ var DashboardPowerups = (function () {
 
     pub.PUHighchart = function (chart) {
         let pu = false;
+        var EXPORT_OPTS = {
+            enabled: true,
+            fallbackToExportServer: true,
+            libURL: pub.POWERUP_EXT_URL + '3rdParty/Highcharts/lib',
+            buttons: {
+                contextButton: {
+                    //    ["printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG", "separator", "downloadCSV", "downloadXLS", "viewData", "openInCloud"]
+                    menuItems: ["downloadSVG", "downloadPDF", "separator", "downloadCSV", "downloadXLS", "printChart"]
+                }
+            }
+        }
         const compare = function (optsNew, optsCurrent) {
             //Loop through properties in new options, looking for 1-way equivalency
             for (var p in optsNew) {
@@ -272,31 +287,29 @@ var DashboardPowerups = (function () {
             return true;
         }
 
-        var lineChartPU = function () {
-            chart.series.forEach(series => {
-                if (!compare(SERIES_OPTS, series.options)) {
-                    series.update(SERIES_OPTS, false);
-                    pu = true;
-                }
-            });
-            if (!compare(CHART_OPTS, chart.options)) {
-                chart.update({ chart: CHART_OPTS }, false);
+        const enableExporting = function () {
+            let $container = $(chart.container);
+
+            if (!compare(EXPORT_OPTS, chart.options.exporting)) { //enable exporting
+                //if bigger than XYZ, allow
+                chart.update({ exporting: EXPORT_OPTS }, false);
                 pu = true;
             }
-            if (!compare(TOOLTIP_OPTS, chart.tooltip.options)) {
-                chart.update({ tooltip: TOOLTIP_OPTS }, false);
-                pu = true;
-            }
-            if (!compare(AXIS_OPTS, chart.xAxis[0].options)) {
-                chart.update({ xAxis: AXIS_OPTS }, false);
-                pu = true;
-            }
-            if (!compare(AXIS_OPTS, chart.yAxis[0].options)) {
-                chart.update({ yAxis: AXIS_OPTS }, false);
-                pu = true;
-            }
+            $container //enable exporting
+                .off("mouseenter.powerup")
+                .on("mouseenter.powerup", (e) => {
+                    $container.find(".highcharts-exporting-group").addClass("powerupVisible");
+                })
+                .off("mouseleave.powerup")
+                .on("mouseleave.powerup", (e) => {
+                    $container.find(".highcharts-exporting-group").removeClass("powerupVisible");
+                });
+        }
+
+        const restoreHandlers = function() {
+            let $container = $(chart.container);
             //try to restore normal chart interactions, preventing navigation from plot
-            $(chart.container).find(".highcharts-plot-background")
+            $container.find(".highcharts-plot-background")
                 .off("touchstart.powerup")
                 .on("touchstart.powerup", (e) => {
                     chart.pointer.onContainerTouchStart(e);
@@ -312,6 +325,37 @@ var DashboardPowerups = (function () {
                     console.log("Powerup: clicked plot background");
                     e.stopImmediatePropagation();
                 })
+                .addClass("powerupPlotBackground"); //change cursor
+        }
+
+        var lineChartPU = function () {
+            let $container = $(chart.container);
+
+            chart.series.forEach(series => {
+                if (!compare(SERIES_OPTS, series.options)) {
+                    series.update(SERIES_OPTS, false);
+                    pu = true;
+                }
+            });
+            if (!compare(CHART_OPTS, chart.options.chart)) {
+                chart.update({ chart: CHART_OPTS }, false);
+                pu = true;
+            }
+            if (!compare(TOOLTIP_OPTS, chart.tooltip.options)) {
+                chart.update({ tooltip: TOOLTIP_OPTS }, false);
+                pu = true;
+            }
+            if (!compare(AXIS_OPTS, chart.xAxis[0].options)) {
+                chart.update({ xAxis: AXIS_OPTS }, false);
+                pu = true;
+            }
+            if (!compare(AXIS_OPTS, chart.yAxis[0].options)) {
+                chart.update({ yAxis: AXIS_OPTS }, false);
+                pu = true;
+            }
+            restoreHandlers();
+
+            
         }
 
         if (pub.config.Powerups.tooltipPU &&
@@ -329,11 +373,14 @@ var DashboardPowerups = (function () {
                 if (pub.PULine(chart, title)) {
                     pu = true;
                     lineChartPU();
+                    enableExporting();
                 }
             } else if (title.includes(PU_USQLSTACK)) {
                 let p = pub.PUUsqlStack(chart, title);
                 promises.push(p);
                 $.when(p).done(val => {
+                    restoreHandlers();
+                    enableExporting();
                     if (val) pu = true;
                 })
             } else if (title.includes(PU_HEATMAP)) {
@@ -346,6 +393,7 @@ var DashboardPowerups = (function () {
                 }
             } else {
                 lineChartPU();
+                enableExporting();
             }
 
 
@@ -445,6 +493,7 @@ var DashboardPowerups = (function () {
                 let newSerie = {
                     name: chart.series[0].name + `(${split})`,
                     type: 'bar',
+                    cursor: 'crosshair',
                     stacking: 'normal',
                     data: [
                         {
@@ -474,9 +523,11 @@ var DashboardPowerups = (function () {
         });
 
 
+        chart.update({ chart: CHART_OPTS }, false);
 
         chart.redraw(false);
         //chart.poweredup = true;
+        $(".highcharts-exporting-group").addClass("powerupVisible");
         p.resolve(true);
         return p;
     }
@@ -1029,6 +1080,17 @@ var DashboardPowerups = (function () {
                     backgroundColor: 'none',
                     shadow: false,
                     className: 'powerup-sankey-tooltip'
+                },
+                exporting: {
+                    enabled: true,
+                    fallbackToExportServer: true,
+                    libURL: pub.POWERUP_EXT_URL + '3rdParty/Highcharts/lib',
+                    buttons: {
+                        contextButton: {
+                            //    ["printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG", "separator", "downloadCSV", "downloadXLS", "viewData", "openInCloud"]
+                            menuItems: ["downloadSVG", "downloadPDF", "separator", "printChart"]
+                        }
+                    }
                 }
 
             }
@@ -1195,7 +1257,7 @@ var DashboardPowerups = (function () {
                 let data = readTableData($table.get(0));
 
                 let sankey = newChart(data, container, chartTitle);
-
+                $(".highcharts-exporting-group").addClass("powerupVisible");
             });
         return true;
     }
@@ -1555,6 +1617,17 @@ var DashboardPowerups = (function () {
                     { from: .94, name: "Excellent", color: "#2ab06f" },
                 ]
             },
+            exporting: {
+                enabled: true,
+                fallbackToExportServer: true,
+                libURL: pub.POWERUP_EXT_URL + '3rdParty/Highcharts/lib',
+                buttons: {
+                    contextButton: {
+                        //    ["printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG", "separator", "downloadCSV", "downloadXLS", "viewData", "openInCloud"]
+                        menuItems: ["downloadSVG", "downloadPDF", "separator", "downloadCSV", "downloadXLS", "printChart"]
+                    }
+                }
+            }
         }
 
         //$(oldContainer).css('z-index', -100);
@@ -1562,6 +1635,7 @@ var DashboardPowerups = (function () {
         $newContainer.html('');
         let newChart = Highcharts.chart(newContainer, newChartOpts);
         //newChart.poweredup = true;
+        $(".highcharts-exporting-group").addClass("powerupVisible");
         return true;
     }
 
