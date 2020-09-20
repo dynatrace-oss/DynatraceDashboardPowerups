@@ -24,8 +24,9 @@ var DashboardPowerups = (function () {
     const PU_HEATMAP = '!PU(heatmap):';
     const PU_SANKEY = '!PU(sankey):';
     const PU_FUNNEL = '!PU(funnel):';
+    const PU_MATH = '!PU(math):';
 
-    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL, PU_SANKEY];
+    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL, PU_SANKEY, PU_MATH];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
     }
@@ -1808,6 +1809,69 @@ var DashboardPowerups = (function () {
         return mainPromise;
     }
 
+    pub.PUMath = function () {  //example: !PU(math):exp=(x1+x2+x3+x4)/4;scope=x1,x2,x3,x4:link4;color=blue
+        if (!pub.config.Powerups.mathPU) return;
+
+        //find math PUs
+        $(MARKDOWN_SELECTOR).each((i, el) => {
+            let $container = $(el);
+            let $tile = $container.parents(".grid-tile");
+            let text = $container.text();
+
+            if (!text.includes(PU_MATH)) return;
+            if (pub.config.Powerups.debug) console.log("Powerup: math power-up found");
+            let argstring = text.split(PU_MATH)[1];
+
+            let args = argstring.split(";").map(x => x.split("="));
+            let exp = args.find(x => x[0] == "exp")[1];
+            let scopeStr = args.find(x => x[0] == "scope")[1];
+            let color = args.find(x => x[0] == "color")[1];
+
+            let scope = scopeStr.trim().split(',')
+                .map(x => (x.includes(':')
+                    ? {
+                        name: x.split(':')[0],
+                        link: x.split(':')[1],
+                    }
+                    : {
+                        name: x,
+                        link: x
+                    })
+                )
+
+            scope.forEach(s=>{
+                s.val = pub.findLinkedVal(s.link);
+            });
+            
+
+            //generate weird mexp formats
+            let tokens = scope.map(x=>({
+                    type: 3,
+                    token: x.name,
+                    show: x.name,
+                    value: x.name
+            }));
+            let pairs = {}
+            scope.forEach(x=>{
+                let token = x.name;
+                pairs[token] = x.val;
+            });
+
+            //calculate
+            let calcVal = mexp.eval(exp,tokens,pairs);
+
+            //swap markdown content
+            $container.hide();
+            let $newContainer = $("<div>")
+                .addClass("powerupMath")
+                .insertAfter($container);
+            let h1 = $("<h1>")
+                .text(calcVal)
+                .css("color",color)
+                .appendTo($newContainer);
+        });
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -1819,6 +1883,7 @@ var DashboardPowerups = (function () {
         promises.push(pub.svgPowerUp());
         promises.push(pub.mapPowerUp());
         promises.push(pub.PUfunnel());
+        promises.push(pub.PUMath());
         pub.loadChartSync();
         waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
 

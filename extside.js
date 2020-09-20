@@ -42,6 +42,7 @@ if (typeof (INJECTED) == "undefined") {
             if (POWERUPDEBUG) console.log("Powerup: clientside libs injected.");
 
             $.when(config_p).done(function (config) {
+                injectOtherModules(config);
                 injectHighchartsModules(config);
                 injectD3Modules(config);
                 injectClientsideString(`
@@ -169,7 +170,7 @@ if (typeof (INJECTED) == "undefined") {
     }
 
     function injectHighchartsModules(config) {
-        if (config.Powerups.heatmapPU){
+        if (config.Powerups.heatmapPU) {
             injectHighchartsModule("heatmap");
             injectClientsideString(`
             //Highcharts Heatmap bug workaround
@@ -179,27 +180,18 @@ if (typeof (INJECTED) == "undefined") {
                 .forEach(x=>{x.colorAxis=[];});
             `);
         }
-            
-        if (config.Powerups.sankeyPU){
-            let src = ext_url + encodeURI('3rdParty/node_modules/@iconfu/svg-inject/dist/svg-inject.min.js');
-            injectClientsideString(`
-            if (typeof (SVGInject) == "undefined" &&
-                ! $("#powerup_lib_SVGInject").length) {
-                $("<script>")
-                    .attr("id", "powerup_lib_SVGInject")
-                    .attr("src", "${src}" )
-                    .appendTo("body");
-            }`);
+
+        if (config.Powerups.sankeyPU) {
             injectHighchartsModule("sankey");
         }
-        
+
         if (config.Powerups.treemapPU)
             injectHighchartsModule("treemap");
     }
 
     function injectD3Modules(config) {
         if (config.Powerups.funnelPU)
-        injectD3Module("d3-funnel.js");
+            injectD3Module("d3-funnel.js");
     }
 
     function injectD3Module(mod) {
@@ -213,6 +205,27 @@ if (typeof (INJECTED) == "undefined") {
         } else {
             //already injected
         }
+    }
+
+    function injectOtherModules(config) {
+        if (config.Powerups.sankeyPU) {
+            injectOtherModule('3rdParty/node_modules/@iconfu/svg-inject/dist/svg-inject.min.js',"SVGInject");
+        }
+        if (config.Powerups.mathPU) {
+            injectOtherModule("3rdParty/node_modules/math-expression-evaluator/dist/browser/math-expression-evaluator.min.js","mexp");
+        }
+    }
+
+    function injectOtherModule(mod,glob){
+        let src = ext_url + encodeURI(mod);
+        injectClientsideString(`
+        if (typeof (${glob}) == "undefined" &&
+            ! $("#powerup_lib_${glob}").length) {
+            $("<script>")
+                .attr("id", "powerup_lib_${glob}")
+                .attr("src", "${src}" )
+                .appendTo("body");
+        }`);
     }
 
     INJECTED = true;

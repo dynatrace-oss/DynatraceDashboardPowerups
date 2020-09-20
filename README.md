@@ -171,3 +171,16 @@ Explanation:
 
 Example:
 ![Funnel](Assets/funnel-height.png)
+
+### Math
+This powerup allows you to do complex math based on other values on the dashboard. See [math-expression-evaluator](http://bugwheels94.github.io/math-expression-evaluator/#supported-maths-symbols) for help with math expressions. Syntax:
+`!PU(math):exp=(x1+x2+x3+x4)/4;scope=x1,x2,x3,x4:link4;color=blue`
+
+Explanation:
+- `!PU(math):` - denotes a math powerup
+- `exp=` - a math expression
+- `scope=` - list of any variables used in your expression. Optionally, you may have seperate variable names from link name, e.g. `x4:link4`, otherwise assume var and link are the same string e.g. `x1`
+- `color=` - a valid CSS color
+
+Example:
+![Math](Assets/mathPU.png)
