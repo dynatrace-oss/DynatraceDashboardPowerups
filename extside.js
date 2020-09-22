@@ -214,6 +214,9 @@ if (typeof (INJECTED) == "undefined") {
         if (config.Powerups.mathPU) {
             injectOtherModule("3rdParty/node_modules/math-expression-evaluator/dist/browser/math-expression-evaluator.min.js","mexp");
         }
+        if (config.Powerups.datePU){
+            injectOtherModule("3rdParty/date_fns.min.js","dateFns");
+        }
     }
 
     function injectOtherModule(mod,glob){

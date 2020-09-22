@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Dynatrace Dashboard Powerups",
     "description": "Power-up existing dashboards with cool experimental features",
-    "version": "1.03",
+    "version": "1.04",
     "author": "Lucas Hocker",
     "background": {
         "scripts": [
@@ -27,7 +27,8 @@
         "3rdParty/Highcharts/lib/*",
         "3rdParty/node_modules/@iconfu/svg-inject/dist/*",
         "3rdParty/D3/*",
-        "3rdParty/node_modules/math-expression-evaluator/dist/browser/*"
+        "3rdParty/node_modules/math-expression-evaluator/dist/browser/*",
+        "3rdParty/date_fns.min.js*"
     ],
     "permissions": [
         "webNavigation",

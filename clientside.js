@@ -25,8 +25,9 @@ var DashboardPowerups = (function () {
     const PU_SANKEY = '!PU(sankey):';
     const PU_FUNNEL = '!PU(funnel):';
     const PU_MATH = '!PU(math):';
+    const PU_DATE = '!PU(date):';
 
-    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL, PU_SANKEY, PU_MATH];
+    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
     }
@@ -1872,6 +1873,43 @@ var DashboardPowerups = (function () {
         });
     }
 
+    pub.puDate = function(){ //example: !PU(date):res=now-7d/d;fmt=yyyy-mm-dd;color=blue
+        if (!pub.config.Powerups.datePU) return;
+
+        //find math PUs
+        $(MARKDOWN_SELECTOR).each((i, el) => {
+            let $container = $(el);
+            let $tile = $container.parents(".grid-tile");
+            let text = $container.text();
+
+            if (!text.includes(PU_DATE)) return;
+            if (pub.config.Powerups.debug) console.log("Powerup: math power-up found");
+            let argstring = text.split(PU_DATE)[1];
+
+            let args = argstring.split(";").map(x => x.split("="));
+            let res = args.find(x => x[0] == "res")[1];
+            let fmt = args.find(x => x[0] == "fmt")[1];
+            let color = args.find(x => x[0] == "color")[1];
+
+            let dtDate = dtDateMath.resolve(res);
+            let from = dtDate[0];
+            let to = dtDate[1];
+            let dateMs = dtDate[2].start;
+
+            let formattedDate = dateFns.format(dateMs,fmt);
+
+            //swap markdown content
+            $container.hide();
+            let $newContainer = $("<div>")
+                .addClass("powerupDate")
+                .insertAfter($container);
+            let h1 = $("<h2>")
+                .text(formattedDate)
+                .css("color",color)
+                .appendTo($newContainer);
+        });
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -1884,6 +1922,7 @@ var DashboardPowerups = (function () {
         promises.push(pub.mapPowerUp());
         promises.push(pub.PUfunnel());
         promises.push(pub.PUMath());
+        promises.push(pub.puDate());
         pub.loadChartSync();
         waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
 

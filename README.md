@@ -184,3 +184,16 @@ Explanation:
 
 Example:
 ![Math](Assets/mathPU.png)
+
+### Date
+This powerup allows you to use Dynatrace date format strings and format in Markdown tiles. Syntax:
+`!PU(date):res=now-7d/d;fmt=YYYY-MM-DD;color=green`
+
+Explanation:
+- `!PU(date):` - denotes the date powerup
+- `res=` - resolve this date string, click on global time selector for help with syntax
+- `fmt=` - display format, see [date-fns](https://date-fns.org/v1.9.0/docs/format)
+- `color=` - a valid CSS color
+
+Example:
+![Date](Assets/datePU.png)
