@@ -223,7 +223,7 @@ span.powerup-color-normal {
   text-align: center;
 }
 
-.powerupDeltaNeg {
+/*.powerupDeltaNeg {
   color: #ef651f;
   background-color: #6d6d6d;
   padding: 2px;
@@ -237,6 +237,10 @@ span.powerup-color-normal {
   padding: 2px;
   border-radius: 3px;
   font-weight: bold;
+}*/
+
+.powerupFunnelContainer svg g:hover path, #powerupFunnelContainer  svg g:hover path {
+  fill: #008cdb;
 }
 
 .powerupTileDrillin {
@@ -249,7 +253,10 @@ span.powerup-color-normal {
 
 .highcharts-exporting-group {
   visibility: hidden;
-  overflow: visible;
+}
+
+.highcharts-menu {
+  overflow: visible!important;
 }
 
 .powerupVisible {

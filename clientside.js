@@ -888,6 +888,7 @@ var DashboardPowerups = (function () {
     pub.findLinkedVal = function (link) {
         //find val
         let link_text = PU_LINK + link;
+        let val;
         $(TITLE_SELECTOR).each((i_link, el_link) => {
             let $linktitle = $(el_link);
 
@@ -901,6 +902,23 @@ var DashboardPowerups = (function () {
             return undefined;
         } else {
             return val;
+        }
+    }
+
+    pub.findLinkedMarkdown = function (link) {
+        //find val
+        let link_text = PU_LINK + link;
+        let tile;
+        $(MARKDOWN_SELECTOR).each((i, el) => {
+            if ($(el).text().includes(link_text)) {
+                tile = el;
+            }
+        });
+        if (typeof tile == "undefined") {
+            console.log("Powerup: ERROR - unable to match markdown with link: " + link_text);
+            return undefined;
+        } else {
+            return tile;
         }
     }
 
@@ -1684,13 +1702,14 @@ var DashboardPowerups = (function () {
                 dynamicSlope: false,
                 barOverlay: false,
                 fill: {
-                    type: 'gradient'
+                    type: 'gradient',
+                    //scale: 
                 },
-                highlight: true
+                //highlight: true
             },
             label: {
                 fill: "#fff",
-                enabled: false
+                enabled: false //make html ones instead
             },
             //tooltip: {
             //    enabled: true,
@@ -1712,6 +1731,15 @@ var DashboardPowerups = (function () {
                 let argstring = titletokens[1];
                 let args = argstring.split(";").map(x => x.split("="));
                 let mode = args.find(x => x[0] == "mode")[1];
+                let small = Number(args.find(x => x[0] == "small")[1]);
+                let big = Number(args.find(x => x[0] == "big")[1]);
+                let links = args.find(x => x[0] == "links")[1];
+
+                let linkstile = pub.findLinkedMarkdown(links);
+                let mdtext = $(linkstile).text();
+                const linkRE = /^(?:\d+=)(.*)/gm;
+                let linkList = Array.from(mdtext.matchAll(linkRE))
+                    .map(x => x[1]);
 
                 //styling
                 switch (mode) {
@@ -1750,8 +1778,9 @@ var DashboardPowerups = (function () {
                     step.value = step.abs;
                     step.customFormattedValue = `
                         ${step.name}: <b>${step.abs}</b> (${step.percent}%)<br>
-                        <small><span class="${(step.dPercent < 0 ? 'powerupDeltaNeg' : 'powerupDeltaPos')}">${step.dPercent}</span> ${step.dTime}</small>
+                        <small>${step.dPercent}% ${step.dTime}</small>
                         `.trim();
+
                     steps.push(step);
                 })
 
@@ -1773,7 +1802,8 @@ var DashboardPowerups = (function () {
                 let tries = 5;
                 function updateLabels() {
                     steps.forEach((step, idx) => {
-                        let path = $funnelContainer.find(`svg g:nth-of-type(${idx + 1}) path`).get(0);
+                        let $path = $funnelContainer.find(`svg g:nth-of-type(${idx + 1}) path`);
+                        let path = $path.get(0);
                         let pathBBox = path.getBBox();
                         let $label = $("<div>")
                             .addClass("powerupFunnelLabel")
@@ -1784,6 +1814,67 @@ var DashboardPowerups = (function () {
                         let x = cp.left + $funnelContainer.width() / 2 - $label.width() / 2;
                         let y = pathBBox.y + pathBBox.height / 2 - $label.height() / 2;
                         $label.css({ top: y, left: x });
+
+
+                        //update background color too
+                        let $grad = $funnelContainer.find(`svg linearGradient:nth-of-type(${idx + 1})`).eq(0);
+                        let color;
+                        if (step.dPercent < big * -1)
+                            color = "#dc172a"; //bold red
+                        else if (step.dPercent > big)
+                            color = "#54c27d"; //bold green
+                        else if (step.dPercent < small * -1)
+                            color = "#f28289"; //light red
+                        else if (step.dPercent > small)
+                            color = "#99dea8"; //light green
+                        else
+                            color = "#898989"; //gray
+
+                        function shade(c1) {
+                            const { r, g, b } = d3.color(c1);
+                            const shade = -0.2;
+                            const t = shade < 0 ? 0 : 255;
+                            const p = shade < 0 ? shade * -1 : shade;
+                            const converted = 0x1000000 +
+                                ((Math.round((t - r) * p) + r) * 0x10000) +
+                                ((Math.round((t - g) * p) + g) * 0x100) +
+                                (Math.round((t - b) * p) + b);
+                            return `#${converted.toString(16).slice(1)}`; //replicate logic from d3-funnel gradient
+                        }
+                        let sideColor = shade(color);
+
+                        function updateGradients(c1, c2) {
+                            $grad.find("stop").each((stopI, stopEl) => {
+                                switch (stopI) {
+                                    case 0:
+                                    case 3:
+                                        $(stopEl).css("stop-color", c2);
+                                        break;
+                                    case 1:
+                                    case 2:
+                                    default:
+                                        $(stopEl).css("stop-color", c1);
+                                }
+                            });
+                        }
+                        updateGradients(color, sideColor);
+                        if (idx === 0) { //pain the back of funnel
+                            let $back = $funnelContainer.find("svg > path").eq(0);
+                            $back.attr("fill", sideColor);
+                        }
+
+                        //fix hovering
+                        let hColor = "#008cdb";
+                        let hSideColor = shade(hColor);
+                        $path.add($label).hover(
+                            () => { updateGradients(hColor, hSideColor); },
+                            () => { updateGradients(color, sideColor); });
+
+
+                        //add drilldowns
+                        $path.add($label).click(
+                            () => { window.location.href = linkList[idx] });
+
                     });
                     console.log("Powerup: Funnel power up found");
                     mainPromise.resolve(true);
@@ -1840,26 +1931,26 @@ var DashboardPowerups = (function () {
                     })
                 )
 
-            scope.forEach(s=>{
+            scope.forEach(s => {
                 s.val = pub.findLinkedVal(s.link);
             });
-            
+
 
             //generate weird mexp formats
-            let tokens = scope.map(x=>({
-                    type: 3,
-                    token: x.name,
-                    show: x.name,
-                    value: x.name
+            let tokens = scope.map(x => ({
+                type: 3,
+                token: x.name,
+                show: x.name,
+                value: x.name
             }));
             let pairs = {}
-            scope.forEach(x=>{
+            scope.forEach(x => {
                 let token = x.name;
                 pairs[token] = x.val;
             });
 
             //calculate
-            let calcVal = mexp.eval(exp,tokens,pairs);
+            let calcVal = mexp.eval(exp, tokens, pairs);
 
             //swap markdown content
             $container.hide();
@@ -1868,12 +1959,12 @@ var DashboardPowerups = (function () {
                 .insertAfter($container);
             let h1 = $("<h1>")
                 .text(calcVal)
-                .css("color",color)
+                .css("color", color)
                 .appendTo($newContainer);
         });
     }
 
-    pub.puDate = function(){ //example: !PU(date):res=now-7d/d;fmt=yyyy-mm-dd;color=blue
+    pub.puDate = function () { //example: !PU(date):res=now-7d/d;fmt=yyyy-mm-dd;color=blue
         if (!pub.config.Powerups.datePU) return;
 
         //find math PUs
@@ -1896,7 +1987,7 @@ var DashboardPowerups = (function () {
             let to = dtDate[1];
             let dateMs = dtDate[2].start;
 
-            let formattedDate = dateFns.format(dateMs,fmt);
+            let formattedDate = dateFns.format(dateMs, fmt);
 
             //swap markdown content
             $container.hide();
@@ -1905,7 +1996,7 @@ var DashboardPowerups = (function () {
                 .insertAfter($container);
             let h1 = $("<h2>")
                 .text(formattedDate)
-                .css("color",color)
+                .css("color", color)
                 .appendTo($newContainer);
         });
     }

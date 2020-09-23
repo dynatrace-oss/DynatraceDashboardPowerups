@@ -164,13 +164,16 @@ Notes:
 
 ### Vertical Funnel
 This powerup changes the Dynatrace horizontal funnel into a vertical funnel. To utilize encode your title like so:
-`Angular UserJourney !PU(funnel):mode=height`
+`Angular UserJourney !PU(funnel):mode=height;small=5;big=20;links=funnelinks`
 
 Explanation:
 - `mode=height` - which type of funnel visualization, options are `height`, `slope`, `bar`
+- `small=` - minimum percentage to treat as a small positive or negative change, ie gray below this and light green/red above
+- `big=` - minimum percentage to treat as a big positive or negative change, ie bold green/red above this
+- `links=` - link to markdown tile with drilldown urls
 
 Example:
-![Funnel](Assets/funnel-height.png)
+![Funnel](Assets/colorFunnel.png) ![FunnelLinks](Assets/funnelLinks.png)
 
 ### Math
 This powerup allows you to do complex math based on other values on the dashboard. See [math-expression-evaluator](http://bugwheels94.github.io/math-expression-evaluator/#supported-maths-symbols) for help with math expressions. Syntax:

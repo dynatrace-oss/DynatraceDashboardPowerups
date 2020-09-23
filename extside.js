@@ -190,8 +190,12 @@ if (typeof (INJECTED) == "undefined") {
     }
 
     function injectD3Modules(config) {
-        if (config.Powerups.funnelPU)
-            injectD3Module("d3-funnel.js");
+        if (config.Powerups.funnelPU){
+            injectD3Module("d3-funnel.min.js");
+            //injectD3Module("d3-color.min.js");
+            //injectD3Module("d3-interpolate.min.js");
+            //injectD3Module("d3-scale-chromatic.min.js");
+        }
     }
 
     function injectD3Module(mod) {
