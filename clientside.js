@@ -1735,8 +1735,9 @@ var DashboardPowerups = (function () {
                 let big = Number(args.find(x => x[0] == "big")[1]);
                 let links = args.find(x => x[0] == "links")[1];
 
-                let linkstile = pub.findLinkedMarkdown(links);
-                let mdtext = $(linkstile).text();
+                let $linkstile = $(pub.findLinkedMarkdown(links));
+                let mdtext = $linkstile.text();
+                $linkstile.hide();
                 const linkRE = /^(?:\d+=)(.*)/gm;
                 let linkList = Array.from(mdtext.matchAll(linkRE))
                     .map(x => x[1]);
