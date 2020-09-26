@@ -944,6 +944,13 @@ var DashboardPowerups = (function () {
             let touples = [];
             let goals = [];
             let apdexList = [];
+            let UAPs = {
+                strings: [], //{actionName, key, val, count}
+                doubles: [], //{actionName, key, sum, count}
+                longs: [], //{actionName, key, sum, count}
+                dates: [] //{actionName, key, val, count}
+            };
+
             $table
                 .children('div:first-of-type')
                 .children('div')
@@ -965,7 +972,7 @@ var DashboardPowerups = (function () {
 
                         if (colIdx == 0) for (let k = 0; k < arr.length - 1; k++) { //useraction.name
                             let touple = { from: arr[k], to: arr[k + 1] };
-                            if (touple.from === touple.to) continue; // ignore ugly loops
+                            if (touple.from === touple.to) continue; // ignore self actions
                             //touple.from = touple.from.replace(re, '/*$1'); 
                             //touple.to = touple.to.replace(re, '/*$1');
                             let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
@@ -1035,6 +1042,124 @@ var DashboardPowerups = (function () {
                                     apdexList[apdexIdx].exitActionSVG = `<img src='${pub.SVGLib() + 'exit.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
                                 }
                             }
+                        } else if (colIdx == 5) { //UAP-String
+                            let uapRow;
+
+                            try {
+                                uapRow = JSON.parse(row);
+                            } catch (e) {
+                                console.log("Powerup: Sankey - String: unable to parse JSON");
+                            }
+                            if (typeof (uapRow) == "undefined") return;
+
+                            uapRow.forEach((uapCol, uapColIdx) => {
+                                uapCol.forEach((uapVal, uapValIdx) => {
+                                    let actionName = dataTable[0][rowIdx][uapColIdx];
+                                    let uapIdx = UAPs.strings.findIndex(x =>
+                                        x.actionName == actionName &&
+                                        x.key == uapVal.key &&
+                                        x.val == uapVal.value
+                                    );
+
+                                    if (uapIdx < 0) {
+                                        let uapObj = { actionName: actionName, key: uapVal.key, val: uapVal.value, count: 1 };
+                                        UAPs.strings.push(uapObj);
+                                    } else {
+                                        let uap = UAPs.strings[uapIdx];
+                                        uap.count++;
+                                    }
+
+                                });
+                            });
+                        } else if (colIdx == 6) { //UAP-Double
+                            let uapRow;
+
+                            try {
+                                uapRow = JSON.parse(row);
+                            } catch (e) {
+                                console.log("Powerup: Sankey - String: unable to parse JSON");
+                            }
+                            if (typeof (uapRow) == "undefined") return;
+
+                            uapRow.forEach((uapCol, uapColIdx) => {
+                                uapCol.forEach((uapVal, uapValIdx) => {
+                                    let actionName = dataTable[0][rowIdx][uapColIdx];
+                                    let uapIdx = UAPs.doubles.findIndex(x =>
+                                        x.actionName == actionName &&
+                                        x.key == uapVal.key
+                                    );
+                                    let val = Number(uapVal.value);
+
+                                    if (uapIdx < 0) {
+                                        let uapObj = { actionName: actionName, key: uapVal.key, sum: val, count: 1 };
+                                        UAPs.doubles.push(uapObj);
+                                    } else {
+                                        let uap = UAPs.doubles[uapIdx];
+                                        uap.count++;
+                                        uap.sum += val;
+                                    }
+
+                                });
+                            });
+                        } else if (colIdx == 7) for (let k = 0; k < arr.length; k++) { //UAP-Long
+                            let uapRow;
+
+                            try {
+                                uapRow = JSON.parse(row);
+                            } catch (e) {
+                                console.log("Powerup: Sankey - String: unable to parse JSON");
+                            }
+                            if (typeof (uapRow) == "undefined") return;
+
+                            uapRow.forEach((uapCol, uapColIdx) => {
+                                uapCol.forEach((uapVal, uapValIdx) => {
+                                    let actionName = dataTable[0][rowIdx][uapColIdx];
+                                    let uapIdx = UAPs.longs.findIndex(x =>
+                                        x.actionName == actionName &&
+                                        x.key == uapVal.key
+                                    );
+                                    let val = Number(uapVal.value);
+
+                                    if (uapIdx < 0) {
+                                        let uapObj = { actionName: actionName, key: uapVal.key, sum: val, count: 1 };
+                                        UAPs.longs.push(uapObj);
+                                    } else {
+                                        let uap = UAPs.longs[uapIdx];
+                                        uap.count++;
+                                        uap.sum += val;
+                                    }
+
+                                });
+                            });
+                        } else if (colIdx == 8) for (let k = 0; k < arr.length; k++) { //UAP-Date
+                            let uapRow;
+
+                            try {
+                                uapRow = JSON.parse(row);
+                            } catch (e) {
+                                console.log("Powerup: Sankey - String: unable to parse JSON");
+                            }
+                            if (typeof (uapRow) == "undefined") return;
+
+                            uapRow.forEach((uapCol, uapColIdx) => {
+                                uapCol.forEach((uapVal, uapValIdx) => {
+                                    let actionName = dataTable[0][rowIdx][uapColIdx];
+                                    let uapIdx = UAPs.dates.findIndex(x =>
+                                        x.actionName == actionName &&
+                                        x.key == uapVal.key &&
+                                        x.val == uapVal.value
+                                    );
+
+                                    if (uapIdx < 0) {
+                                        let uapObj = { actionName: actionName, key: uapVal.key, val: uapVal.value, count: 1 };
+                                        UAPs.dates.push(uapObj);
+                                    } else {
+                                        let uap = UAPs.dates[uapIdx];
+                                        uap.count++;
+                                    }
+
+                                });
+                            });
                         }
                     })
                 });
@@ -1047,7 +1172,7 @@ var DashboardPowerups = (function () {
             });
             touples = touples.sort((a, b) => b.weight - a.weight);
 
-            return ({ touples: touples, goals: goals, apdexList: apdexList });
+            return ({ touples: touples, goals: goals, apdexList: apdexList, UAPs: UAPs });
         }
 
         function newChart(data, container, chartTitle, limit = 20) {
@@ -1079,12 +1204,13 @@ var DashboardPowerups = (function () {
                             <b>{point.name}</b><br>
                             UserActions in sample: {point.sum}<br>
                             <u>Apdex</u><br>
-                            Satisfied: {point.apdexSatisfied}<br>
-                            Tolerating: {point.apdexTolerating}<br>
-                            Frustrated: {point.apdexFrustrated}<br>
+                            &nbsp;&nbsp; Satisfied: {point.apdexSatisfied}<br>
+                            &nbsp;&nbsp; Tolerating: {point.apdexTolerating}<br>
+                            &nbsp;&nbsp; Frustrated: {point.apdexFrustrated}<br>
                             Is entry action: {point.entryAction}<br>
                             Is exit action: {point.exitAction}<br>
-                            Goal: {point.conversionGoal}
+                            Goal: {point.conversionGoal}<br>
+                            Revenue: {point.revenue}
                             </div>
                         `.trim(),
                         pointFormat: `<div class="powerup-sankey-tooltip">
@@ -1115,6 +1241,7 @@ var DashboardPowerups = (function () {
                 }
 
             }
+
             data.apdexList.forEach(apdex => {
                 let node = {
                     id: apdex.actionName,
@@ -1135,58 +1262,166 @@ var DashboardPowerups = (function () {
                     node.conversionGoal = 'false';
                 }
 
+                //Revenue (UAPs)
+                let rev = data.UAPs.doubles.find(x =>
+                    x.actionName == apdex.actionName &&
+                    x.key == "revenue");
+                if (typeof (rev) != "undefined") {
+                    node.revenue = Intl.NumberFormat('en-us', { style: 'currency', currency: 'USD' }).format(rev.sum);
+                } else {
+                    node.revenue = `$0.00`;
+                }
+
+
                 //Node label
                 node.display = apdex.svg +
                     (goal ? `<br>${goal.svg}` : "") +
                     (apdex.entryActionSVG ? `<br>${apdex.entryActionSVG}` : '') +
                     (apdex.exitActionSVG ? `<br>${apdex.exitActionSVG}` : '');
 
-                //Affect positioning (assume 5 columns)
-                /*if (apdex.entryAction) node.column = 0;
-                else if (apdex.exitAction) node.column = 4;
-                else if (data.touples
-                    .filter(x => x.from === apdex.actionName)
-                    .map(x => data.apdexList.find(y => x.to === y.actionName))
-                    .filter(y => y.exitAction)
-                    .length
-                ) node.column = 3; //connects to exit actions
-                else if (data.touples
-                    .filter(x => x.to === apdex.actionName)
-                    .map(x => data.apdexList.find(y => x.from === y.actionName))
-                    .filter(y => y.entryAction)
-                    .length
-                ) node.column = 1; //connects to entry actions
-                else
-                    node.column = 2; //ugly middle stuff*/
                 options.series[0].nodes.push(node);
             });
 
             let chart = Highcharts.chart(container, options, (chart) => {
+                let $container = $(container);
                 //chart.poweredup = true;
-                chart.limit = limit;
+                chart.limit = limit = Math.min(limit,data.touples.length);
                 chart.renderer.button('-', 10, 5)
-                    .attr({
-                        zIndex: 1100
-                    })
+                    .attr({ zIndex: 1100 })
                     .on('click', function () {
-                        let newLimit = chart.limit * .5;
+                        let newLimit = Math.max(Math.round(chart.limit * .5), 2);
                         chart.destroy();
                         newChart(data, container, chartTitle, newLimit);
                     })
                     .add();
                 chart.renderer.button('+', 40, 5)
-                    .attr({
-                        zIndex: 1100
-                    })
+                    .attr({ zIndex: 1100 })
                     .on('click', function () {
-                        let newLimit = chart.limit * 2;
+                        let newLimit = Math.min(chart.limit * 2, data.touples.length);
                         chart.destroy();
                         newChart(data, container, chartTitle, newLimit);
                     })
                     .add();
-                //chart.setSize(undefined, undefined, false);
-                $(container).find(".highcharts-plot-background")
+                chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
+                    .add();
+
+                $container.find(".highcharts-plot-background")
                     .addClass("powerupPlotBackground");
+
+                $container.find(".highcharts-node")
+                    .click(filterPopup);
+                $container.find(".highcharts-data-label")
+                    .click(filterPopup);
+
+
+                function filterPopup(e) {
+                    let el = e.target;
+                    let $el = $(el);
+                    let node;
+                    if ($el.is(".highcharts-node"))
+                        node = chart.series[0].nodes.find(x => x.graphic.element === el);
+                    else if ($el.parents(".highcharts-data-label").length)
+                        node = chart.series[0].nodes.find(x => x.dataLabel.div === $el.parents(".highcharts-data-label")[0]);
+                    else
+                        return false;
+
+                    if (typeof (node) === "undefined") return false;
+                    let name = node.apdex.actionName;
+                    let fmt = Intl.NumberFormat().format;
+                    let html = `<p><b>${name}</b>:</p><ul>`;
+
+                    if (data.UAPs.doubles.length) {
+                        html += `<li>Double Properties:<ul>`;
+                        data.UAPs.doubles
+                            .filter(x => x.actionName === name)
+                            .sort((a, b) => {
+                                if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
+                                else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
+                                else return a.sum - b.sum;
+                            })
+                            .forEach(x => {
+                                html += `<li>${x.key}: <ul>`
+                                    + `<li>sum: ${fmt(x.sum)}</li>`
+                                    + `<li>count: ${fmt(x.count)}</li>`
+                                    + `<li>avg: ${fmt(x.sum / x.count)}</li>`
+                                    + `</ul></li>`;
+                            });
+                        html += `</ul></li>` //end double
+                    }
+
+                    if (data.UAPs.longs.length) {
+                        html += `<li>Long Properties:<ul>`;
+                        data.UAPs.longs
+                            .filter(x => x.actionName === name)
+                            .sort((a, b) => {
+                                if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
+                                else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
+                                else return a.sum - b.sum;
+                            })
+                            .forEach(x => {
+                                html += `<li>${x.key}: <ul>`
+                                    + `<li>sum: ${fmt(x.sum)}</li>`
+                                    + `<li>count: ${fmt(x.count)}</li>`
+                                    + `<li>avg: ${fmt(x.sum / x.count)}</li>`
+                                    + `</ul></li>`;
+                            });
+                        html += `</ul></li>` //end long
+                    }
+
+                    if (data.UAPs.strings.length) {
+                        html += `<li>String Properties:<ul>`;
+                        let lastKey, list = "";
+                        data.UAPs.strings
+                            .filter(x => x.actionName === name)
+                            .sort((a, b) => {
+                                if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
+                                else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
+                                else return b.count - a.count;
+                            })
+                            .forEach(x => {
+                                if (x.key !== lastKey) {
+                                    if (list.length) list += `</ul></li>`;
+                                    html += list;
+                                    list = `<li>${x.key}:<ul>`;
+                                }
+                                list += `<li>${x.val} (${x.count})</li>`;
+                                lastKey = x.key;
+                            });
+                        if (list.length) list += `</ul></li>`;
+                        html += list;
+                        html += `</ul></li>` //end string
+                    }
+
+                    if (data.UAPs.dates.length) {
+                        html += `<li>Date Properties:<ul>`;
+                        lastKey = ""; list = "";
+                        data.UAPs.dates
+                            .filter(x => x.actionName === name)
+                            .sort((a, b) => {
+                                if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
+                                else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
+                                else return b.count - a.count;
+                            })
+                            .forEach(x => {
+                                if (x.key !== lastKey) {
+                                    if (list.length) list += `</ul></li>`;
+                                    html += list;
+                                    list = `<li>${x.key}:<ul>`;
+                                }
+                                list += `<li>${x.val} (${x.count})</li>`;
+                                lastKey = x.key;
+                            });
+                        if (list.length) list += `</ul></li>`;
+                        html += list;
+                        html += `</ul></li>` //end date
+                    }
+
+                    let $popup = $("<div>")
+                        .addClass("powerupSankeyDetailPopup")
+                        .html(html)
+                        .click(() => { $popup.remove(); })
+                        .appendTo(container);
+                }
             });
 
             return chart;

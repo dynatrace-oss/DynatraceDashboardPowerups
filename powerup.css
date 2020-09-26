@@ -251,8 +251,24 @@ span.powerup-color-normal {
   cursor: pointer;
 }
 
-.powerupPlotBackground {
+.powerupPlotBackground, .powerupHighchartsContainer {
   cursor: default;
+}
+
+.powerupHighchartsContainer .highcharts-sankey-series .highcharts-node,
+.powerupHighchartsContainer .highcharts-sankey-series .highcharts-data-label * {
+  cursor: context-menu;
+}
+
+.powerupSankeyDetailPopup {
+  z-index: 1200;
+  background: #242424;
+  opacity: 0.8;
+  height: 80%;
+  width: 80%;
+  margin: 50px 20px;
+  overflow: auto !important;
+  padding: 10px;
 }
 
 .highcharts-exporting-group {
