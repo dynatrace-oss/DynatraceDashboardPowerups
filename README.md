@@ -134,7 +134,13 @@ Example:
 
 ### Heatmap (experimental)
 Currently this powerup can display a heatmap based on a bar chart of web application apdex. Eventually, it will be more generic.
-`!PU(heatmap):`
+`Apdex (by app) !PU(heatmap):vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f`
+
+Explanation:
+- `!PU(heatmap):` - denotes the heatmap powerup, anything prior to this is treated as the title
+- `vals=` - thresholds, should be N-1 of them
+- `names=` - names for each area on the color axis, should be N of them
+- `colors=` - CSS colors, should be N of them
 
 Example:
 ![Apdex heatmap](Assets/heatmap.png)

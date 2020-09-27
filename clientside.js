@@ -1285,7 +1285,7 @@ var DashboardPowerups = (function () {
             let chart = Highcharts.chart(container, options, (chart) => {
                 let $container = $(container);
                 //chart.poweredup = true;
-                chart.limit = limit = Math.min(limit,data.touples.length);
+                chart.limit = limit = Math.min(limit, data.touples.length);
                 chart.renderer.button('-', 10, 5)
                     .attr({ zIndex: 1100 })
                     .on('click', function () {
@@ -1750,12 +1750,38 @@ var DashboardPowerups = (function () {
 
     };
 
-    pub.PUHeatmap = function (chart, title, newContainer) { //example: !PU(heatmap):
+    pub.PUHeatmap = function (chart, title, newContainer) { //example: !PU(heatmap):vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f
         if (!pub.config.Powerups.heatmapPU) return;
         if (chart.series.length < 1 || chart.series[0].data.length < 1) return;
-        /*let titletokens = title.split(PU_HEATMAP);
+        let titletokens = title.split(PU_HEATMAP);
         let argstring = titletokens[1];
-        let args = argstring.split(";").map(x => x.split("="));*/
+        let args = argstring.split(";").map(x => x.split("="));
+        if (args.length != 3) {
+            console.log("Powerup: WARN - Heatmap PU should have 3 args");
+            return false;
+        }
+        let vals = (args.find(x => x[0] == "vals")[1] || ".5,.7,.85,.94").split(',');
+        let names = (args.find(x => x[0] == "names")[1] || "Unacceptable,Poor,Fair,Good,Excellent").split(',');
+        let colors = (args.find(x => x[0] == "colors")[1] || "#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f").split(',');
+
+        let colorAxis = [];
+        for (let i = 0; i < vals.length; i++) {
+            let obj = {};
+            if (i === 0) {
+                obj.to = vals[i];
+                obj.name = names[i];
+                obj.color = colors[i];
+                colorAxis.push(obj);
+                obj = {};
+            }
+            
+            obj.from = vals[i];
+            obj.name = names[i + 1];
+            obj.color = colors[i + 1];
+            if (i < vals.length - 1) obj.to = vals[i + 1];
+            colorAxis.push(obj);
+        }
+
         let oldContainer = chart.container;
         let $tile = $(oldContainer).parents(TILE_SELECTOR);
         let $newContainer;
@@ -1843,7 +1869,7 @@ var DashboardPowerups = (function () {
             type: 'heatmap',
             series: [newSeries],
             title: {
-                text: 'Apdex Heatmap'
+                text: title.split(PU_HEATMAP)[0] + " Heatmap"
             },
             credits: {
                 enabled: false
@@ -1863,17 +1889,18 @@ var DashboardPowerups = (function () {
                 formatter: function () {
                     return 'Date:<b>' + getPointCategoryName(this.point, 'x') + '</b><br>' +
                         'App:<b>' + getPointCategoryName(this.point, 'y') + '</b><br>' +
-                        'Apdex:<b>' + this.point.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) + '</b>';
+                        title.split(' ')[0] + ':<b>' + this.point.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) + '</b>';
                 }
             },
             colorAxis: {
-                dataClasses: [
+                /*dataClasses: [
                     { to: .5, name: "Unacceptable", color: "#dc172a" },
                     { from: .5, to: .7, name: "Poor", color: "#ef651f" },
                     { from: .7, to: .85, name: "Fair", color: "#ffe11c" },
                     { from: .85, to: .94, name: "Good", color: "#6bcb8b" },
                     { from: .94, name: "Excellent", color: "#2ab06f" },
-                ]
+                ]*/
+                dataClasses: colorAxis
             },
             exporting: {
                 enabled: true,
