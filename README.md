@@ -132,7 +132,7 @@ Explanation:
 Example:
 ![USQL Stacked Bar Chart](Assets/usqlstack.png)
 
-### Heatmap (experimental)
+### Heatmap
 Currently this powerup can display a heatmap based on a bar chart of web application apdex. Eventually, it will be more generic.
 `Apdex (by app) !PU(heatmap):vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f`
 
