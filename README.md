@@ -9,15 +9,10 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 *Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum or create an issue on Github*
 
 ## Installation
-1. Download the extension source
+1. Download the extension
+[Chrome Store](https://chrome.google.com/webstore/detail/dynatrace-dashboard-power/dmpgdhbpdodhddciokonbahhbpaalmco)
 
-![click download](Assets/loadext1.png)
-
-1. Unzip to a local folder
-
-1. Enable in Chrome
-
-![enable](Assets/loadext2.png)
+![Chrome Store](Assets/chromeStore.png)
 
 1. Click the puzzle icon and pin Powerups
 
