@@ -9,7 +9,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 *Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum or create an issue on Github*
 
 ## Installation
-1. Download the extension
+1. Install the extension from the
 [Chrome Store](https://chrome.google.com/webstore/detail/dynatrace-dashboard-power/dmpgdhbpdodhddciokonbahhbpaalmco)
 
 ![Chrome Store](Assets/chromeStore.png)
