@@ -147,7 +147,9 @@ select useraction.name, useraction.matchingConversionGoals, useraction.apdexCate
 ```
 
 encoded with a title like this:
-`Angular Easy Travel UserJourneys !PU(sankey):link=sankey1;kpi=revenue;kpicurr=EUR`
+```
+Angular Easy Travel UserJourneys !PU(sankey):link=sankey1;kpi=revenue;kpicurr=EUR
+```
 
 and Markdown tile to get swapped out like this:
 ```
