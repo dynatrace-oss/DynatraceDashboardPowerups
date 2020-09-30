@@ -68,7 +68,7 @@ if (typeof (INJECTED) == "undefined") {
         if (!$("#DashboardPowerupsTag").length) {
             var $s = $("<script>")
                 .attr("id", "DashboardPowerupsTag")
-                .attr("src", chrome.runtime.getURL("clientside.js")) //execute in webpage context, not extension
+                .attr("src", chrome.runtime.getURL("clientside.min.js")) //execute in webpage context, not extension
                 .appendTo("body");
         }
     }

@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Dynatrace Dashboard Powerups",
     "description": "Power-up existing dashboards with cool experimental features",
-    "version": "1.07",
+    "version": "1.08",
     "author": "Lucas Hocker",
     "background": {
         "scripts": [
@@ -22,7 +22,7 @@
     "web_accessible_resources": [
         "powerup.css",
         "3rdParty/node_modules/@dynatrace/barista-icons/*",
-        "clientside.js",
+        "clientside.*js",
         "3rdParty/Highcharts/modules/6.2.0/*",
         "3rdParty/Highcharts/lib/*",
         "3rdParty/node_modules/@iconfu/svg-inject/dist/*",

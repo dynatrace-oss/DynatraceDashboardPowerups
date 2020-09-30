@@ -1175,11 +1175,11 @@ var DashboardPowerups = (function () {
             return ({ touples: touples, goals: goals, apdexList: apdexList, UAPs: UAPs });
         }
 
-        function newChart(data, container, chartTitle, limit = 20) {
+        function newChart(data, container, params, limit = 20) {
             let options = {
                 type: 'sankey',
                 title: {
-                    text: chartTitle
+                    text: params.title
                 },
                 chart: {
                     marginLeft: 100,
@@ -1210,7 +1210,7 @@ var DashboardPowerups = (function () {
                             Is entry action: {point.entryAction}<br>
                             Is exit action: {point.exitAction}<br>
                             Goal: {point.conversionGoal}<br>
-                            Revenue: {point.revenue}
+                            ${uc(params.kpi)}: {point.${params.kpi}}
                             </div>
                         `.trim(),
                         pointFormat: `<div class="powerup-sankey-tooltip">
@@ -1239,7 +1239,10 @@ var DashboardPowerups = (function () {
                         }
                     }
                 }
+            }
 
+            function uc(str) {
+                return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
             }
 
             data.apdexList.forEach(apdex => {
@@ -1263,13 +1266,17 @@ var DashboardPowerups = (function () {
                 }
 
                 //Revenue (UAPs)
+                let locale = navigator.language;
                 let rev = data.UAPs.doubles.find(x =>
                     x.actionName == apdex.actionName &&
-                    x.key == "revenue");
+                    x.key == params.kpi);
+                let style = { maximumFractionDigits: 2 };
+                if (params.kpicurr && params.kpicurr.length)
+                    style = { style: 'currency', currency: params.kpicurr };
                 if (typeof (rev) != "undefined") {
-                    node.revenue = Intl.NumberFormat('en-us', { style: 'currency', currency: 'USD' }).format(rev.sum);
+                    node.revenue = Intl.NumberFormat(locale, style).format(rev.sum);
                 } else {
-                    node.revenue = `$0.00`;
+                    node.revenue = Intl.NumberFormat(locale, style).format(0);
                 }
 
 
@@ -1495,6 +1502,8 @@ var DashboardPowerups = (function () {
                     return false;
                 }
                 let link = args.find(x => x[0] == "link")[1];
+                let kpi = (args.find(x => x[0] == "kpi") || [])[1];
+                let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
 
                 let container = findContainer(link);
                 if (typeof (container) == "undefined") {
@@ -1505,16 +1514,15 @@ var DashboardPowerups = (function () {
                     //destroyChartsAndContainers($tile.get(0));
                     return false;
                 }
-                /*if ($(container).is(`[data-highcharts-chart]`)) { //sankey already exists, destroy and recreate
-                    let oldChart = Highcharts.charts
-                        .filter(x => typeof (x) !== "undefined")
-                        .find(x => x.container === container);
-                    if (oldChart) oldChart.destory();
-                }*/
 
                 let data = readTableData($table.get(0));
 
-                let sankey = newChart(data, container, chartTitle);
+                let params = {
+                    title = chartTitle,
+                    kpi = kpi,
+                    kpicurr = kpicurr
+                };
+                let sankey = newChart(data, container, params);
                 $(".highcharts-exporting-group").addClass("powerupVisible");
             });
         return true;
@@ -1774,7 +1782,7 @@ var DashboardPowerups = (function () {
                 colorAxis.push(obj);
                 obj = {};
             }
-            
+
             obj.from = vals[i];
             obj.name = names[i + 1];
             obj.color = colors[i + 1];
@@ -2264,10 +2272,39 @@ var DashboardPowerups = (function () {
         });
     }
 
+    pub.extDisclaimer = function () {
+        const DISC_HEIGHT = 76;
+        const DISC_TEXT = 'Powerup Enabled Dashboard';
+
+        //hide the disclaimer, since the user has the ext
+        $(MARKDOWN_SELECTOR).each((i, el) => {
+            let $md = $(el);
+            if ($md.text().includes(DISC_TEXT) &&
+                $md.is(':visible')) {
+                $md.hide();
+                moveTilesUp();
+            }
+        })
+
+        //move everything up
+        function moveTilesUp() {
+            $(TILE_SELECTOR).each((i, el) => {
+                let $tile = $(el);
+                let top = $tile.css("top");
+                top = top.substr(0, top.length - 2);
+                top = Number(top);
+                top -= DISC_HEIGHT;
+                top = top + 'px';
+                $(el).css("top", top);
+            });
+        }
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
 
+        promises.push(pub.extDisclaimer());
         promises.push(pub.PUHighcharts());
         promises.push(pub.bannerPowerUp());
         promises.push(pub.colorPowerUp());

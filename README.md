@@ -143,17 +143,23 @@ Example:
 ### UserAction Sankey chart
 This powerup shows UserActions for your application, where they start, end, how many, do users circle in loops, etc. Create a USQL query, like this:
 ```
-select useraction.name, useraction.matchingConversionGoals, useraction.apdexCategory, useraction.isEntryAction, useraction.isExitAction FROM usersession WHERE useraction.application="www.angular.easytravel.com"
+select useraction.name, useraction.matchingConversionGoals, useraction.apdexCategory, useraction.isEntryAction, useraction.isExitAction, useraction.stringProperties, useraction.doubleProperties, useraction.longProperties, useraction.dateProperties, useraction.duration, useraction.errorCount, userExperienceScore FROM usersession WHERE useraction.application="www.angular.easytravel.com" 
 ```
 
 encoded with a title like this:
-`Angular Easy Travel UserJourneys !PU(sankey):link=sankey1`
+`Angular Easy Travel UserJourneys !PU(sankey):link=sankey1;kpi=revenue;kpicurr=EUR`
 
 and Markdown tile to get swapped out like this:
 ```
 [Extension Needed](https://github.com/LucasHocker/DynatraceDashboardPowerups)
 !PU(link):sankey1
 ```
+
+Explanation:
+- `!PU(sankey):` - denotes the powerup source
+- `link=` - points to markdown tile via the link powerup
+- `kpi=` - the name of a User Action Property to be displayed in the main tooltip, usually something like revenue
+- `kpicurr=` - (optional) how to format the KPI if its a currency, e.g. USD, EUR, CNY. If omitted, will format with max 2 fractional digits
 
 Example:
 ![Sankey](Assets/sankey.png)
