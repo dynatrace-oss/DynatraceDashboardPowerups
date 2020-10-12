@@ -129,16 +129,28 @@ Example:
 
 ### Heatmap
 Currently this powerup can display a heatmap based on a bar chart of web application apdex. Eventually, it will be more generic.
-`Apdex (by app) !PU(heatmap):vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f`
+```
+Apdex (by app) !PU(heatmap):vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f
+```
+```
+Apdex (by app) !PU(heatmap):min=1;max=1000;minColor=#ffffff;maxColor=red
+```
 
 Explanation:
 - `!PU(heatmap):` - denotes the heatmap powerup, anything prior to this is treated as the title
+- `txtColor=` - (optional) what color text to use for data labels, defaults to white
+&nbsp;&nbsp; Option 1 - Color classes:
 - `vals=` - thresholds, should be N-1 of them
 - `names=` - names for each area on the color axis, should be N of them
 - `colors=` - CSS colors, should be N of them
+&nbsp;&nbsp; Option 2 - Color gradient:
+- `min=` & `max=` - (optional) min and max values for color axis, defaults to extreme values in the dataset
+- `minColor` & `maxColor` - (optional) min and max colors, colors will be interpolated between these, defaults to white and blue
 
-Example:
+Examples:
 ![Apdex heatmap](Assets/heatmap.png)
+
+![Gradient heatmap](Assets/heatmap2.png)
 
 ### UserAction Sankey chart
 This powerup shows UserActions for your application, where they start, end, how many, do users circle in loops, etc. Create a USQL query, like this:

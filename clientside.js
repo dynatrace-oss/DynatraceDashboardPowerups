@@ -897,7 +897,7 @@ var DashboardPowerups = (function () {
 
             if ($linktitle.text().includes(link_text)) {
                 let $linktile = $linktitle.parents(".grid-tile");
-                val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g,''));
+                val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g, ''));
             }
         });
         if (typeof val == "undefined") {
@@ -953,7 +953,7 @@ var DashboardPowerups = (function () {
                 longs: [], //{actionName, key, sum, count}
                 dates: [] //{actionName, key, val, count}
             };
-    
+
             $table
                 .children('div:first-of-type')
                 .children('div')
@@ -1774,38 +1774,49 @@ var DashboardPowerups = (function () {
         let titletokens = title.split(PU_HEATMAP);
         let argstring = titletokens[1];
         let args = argstring.split(";").map(x => x.split("="));
-        if (args.length != 3) {
-            console.log("Powerup: WARN - Heatmap PU should have 3 args");
-            return false;
-        }
-        let vals = (args.find(x => x[0] == "vals")[1] || ".5,.7,.85,.94").split(',').map(x=>Number(x));
-        let names = (args.find(x => x[0] == "names")[1] || "Unacceptable,Poor,Fair,Good,Excellent").split(',');
-        let colors = (args.find(x => x[0] == "colors")[1] || "#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f").split(',');
+        let txtColor = (args.find(x => x[0] == "txtColor") || [])[1] || "#ffffff";
+        let colorAxis = {};
 
-        let sorted = !!vals.reduce((n, item) => n !== false && item >= n && item);
-        if(!sorted) {
-            console.log("Powerup: ERROR - Heatmap PU must have vals sorted ascending");
-            return false;
-        }
+        if (argstring.includes("vals")) {
+            let dataClasses = colorAxis.dataClasses = [];
+            let vals = ((args.find(x => x[0] == "vals") || [])[1] || ".5,.7,.85,.94").split(',').map(x => Number(x));
+            let names = ((args.find(x => x[0] == "names") || [])[1] || "Unacceptable,Poor,Fair,Good,Excellent").split(',');
+            let colors = ((args.find(x => x[0] == "colors") || [])[1] || "#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f").split(',');
 
-        let colorAxis = [];
-        for (let i = 0; i < vals.length; i++) {
-            let obj = {};
-            if (i === 0) {
-                obj.to = vals[i];
-                obj.name = names[i];
-                obj.color = colors[i];
-                colorAxis.push(obj);
-                obj = {};
+            let sorted = !!vals.reduce((n, item) => n !== false && item >= n && item);
+            if (!sorted) {
+                console.log("Powerup: ERROR - Heatmap PU must have vals sorted ascending");
+                return false;
             }
 
-            obj.from = vals[i];
-            obj.name = names[i + 1];
-            obj.color = colors[i + 1];
-            if (i < vals.length - 1) obj.to = vals[i + 1];
-            colorAxis.push(obj);
+            for (let i = 0; i < vals.length; i++) {
+                let obj = {};
+                if (i === 0) {
+                    obj.to = vals[i];
+                    obj.name = names[i];
+                    obj.color = colors[i];
+                    dataClasses.push(obj);
+                    obj = {};
+                }
+
+                obj.from = vals[i];
+                obj.name = names[i + 1];
+                obj.color = colors[i + 1];
+                if (i < vals.length - 1) obj.to = vals[i + 1];
+                dataClasses.push(obj);
+            }
+        } else {
+            let min = (args.find(x => x[0] == "min") || [])[1];
+            let max = (args.find(x => x[0] == "max") || [])[1];
+            let minColor = (args.find(x => x[0] == "minColor") || [])[1];
+            let maxColor = (args.find(x => x[0] == "maxColor") || [])[1];
+
+            colorAxis = {};
+            if(typeof(min)!=="undefined") colorAxis.min = min;
+            if(typeof(max)!=="undefined") colorAxis.max = max;
+            if(typeof(minColor)!=="undefined") colorAxis.minColor = d3.rgb(minColor).toString();
+            if(typeof(maxColor)!=="undefined") colorAxis.maxColor = d3.rgb(maxColor).toString();
         }
-        
 
         let oldContainer = chart.container;
         let $tile = $(oldContainer).parents(TILE_SELECTOR);
@@ -1858,7 +1869,7 @@ var DashboardPowerups = (function () {
                     categories.push(d.newCat);
                 }
             });
- 
+
             //aggregate
             categories.forEach((c, cIdx) => {
                 let avg = s.data.filter((d) => d.newCatIdx === cIdx)
@@ -1889,8 +1900,7 @@ var DashboardPowerups = (function () {
                 color: '#000000',
                 format: '{point.value:.2f}',
                 crop: true,
-                overflow: "justify",
-                //inside: false
+                overflow: "justify"
             },
 
         }
@@ -1907,7 +1917,6 @@ var DashboardPowerups = (function () {
                 categories: categories,
                 reversed: true
             },
-
             yAxis: {
                 categories: yNames,
                 title: null,
@@ -1921,16 +1930,7 @@ var DashboardPowerups = (function () {
                         title.split(' ')[0] + ':<b>' + this.point.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) + '</b>';
                 }
             },
-            colorAxis: {
-                /*dataClasses: [
-                    { to: .5, name: "Unacceptable", color: "#dc172a" },
-                    { from: .5, to: .7, name: "Poor", color: "#ef651f" },
-                    { from: .7, to: .85, name: "Fair", color: "#ffe11c" },
-                    { from: .85, to: .94, name: "Good", color: "#6bcb8b" },
-                    { from: .94, name: "Excellent", color: "#2ab06f" },
-                ]*/
-                dataClasses: colorAxis
-            },
+            colorAxis: colorAxis,
             exporting: {
                 enabled: true,
                 fallbackToExportServer: true,
@@ -1948,12 +1948,12 @@ var DashboardPowerups = (function () {
         $(oldContainer).hide();
         $newContainer.html('');
         let newChart = Highcharts.chart(newContainer, newChartOpts, () => {
-            $(".powerupHeatmap tspan").attr("stroke", "");
-            $(".powerupHeatmap .highcharts-data-label text")
+            $newContainer.find("tspan").attr("stroke", "");
+            $newContainer.find(".highcharts-data-label text")
                 .css("font-weight", "")
-                .css("fill", "white")
+                .css("fill", txtColor)
                 .css("font-size", "10px");
-            $(".powerupHeatmap rect.highcharts-point").attr("stroke", "gray");
+            $newContainer.find("rect.highcharts-point").attr("stroke", "gray");
         });
         //newChart.poweredup = true;
         $(".highcharts-exporting-group").addClass("powerupVisible");
