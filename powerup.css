@@ -271,6 +271,15 @@ span.powerup-color-normal {
   padding: 10px;
 }
 
+.powerupSankeyDetailPopup a{
+  color: white;
+  text-decoration: none;
+}
+.powerupSankeyDetailPopup a:hover{
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .highcharts-exporting-group {
   visibility: hidden;
 }
@@ -281,4 +290,8 @@ span.powerup-color-normal {
 
 .powerupVisible {
   visibility: visible;
+}
+
+.powerupHeatmap {
+  font-family: BerninaSansWeb, sans-serif !important;
 }

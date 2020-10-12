@@ -27,6 +27,7 @@ var DashboardPowerups = (function () {
     const PU_MATH = '!PU(math):';
     const PU_DATE = '!PU(date):';
 
+    const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
@@ -386,13 +387,15 @@ var DashboardPowerups = (function () {
                     if (val) pu = true;
                 })
             } else if (title.includes(PU_HEATMAP)) {
-                if ($(chart.container).is(":visible")) {
+                /*if ($(chart.container).is(":visible")) {
                     if (pub.PUHeatmap(chart, title))
                         pu = true;
                 } else {
                     if (pub.PUHeatmap(chart, title, $("#heatmap").get(0)))
                         pu = true;
-                }
+                }*/
+                if (pub.PUHeatmap(chart, title, chart.newContainer))
+                    pu = true;
             } else {
                 lineChartPU();
                 enableExporting();
@@ -894,7 +897,7 @@ var DashboardPowerups = (function () {
 
             if ($linktitle.text().includes(link_text)) {
                 let $linktile = $linktitle.parents(".grid-tile");
-                val = Number($linktile.find(VAL_SELECTOR).text());
+                val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g,''));
             }
         });
         if (typeof val == "undefined") {
@@ -950,7 +953,7 @@ var DashboardPowerups = (function () {
                 longs: [], //{actionName, key, sum, count}
                 dates: [] //{actionName, key, val, count}
             };
-
+    
             $table
                 .children('div:first-of-type')
                 .children('div')
@@ -1298,7 +1301,7 @@ var DashboardPowerups = (function () {
                     .on('click', function () {
                         let newLimit = Math.max(Math.round(chart.limit * .5), 2);
                         chart.destroy();
-                        newChart(data, container, chartTitle, newLimit);
+                        newChart(data, container, params, newLimit);
                     })
                     .add();
                 chart.renderer.button('+', 40, 5)
@@ -1306,7 +1309,7 @@ var DashboardPowerups = (function () {
                     .on('click', function () {
                         let newLimit = Math.min(chart.limit * 2, data.touples.length);
                         chart.destroy();
-                        newChart(data, container, chartTitle, newLimit);
+                        newChart(data, container, params, newLimit);
                     })
                     .add();
                 chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
@@ -1335,7 +1338,8 @@ var DashboardPowerups = (function () {
                     if (typeof (node) === "undefined") return false;
                     let name = node.apdex.actionName;
                     let fmt = Intl.NumberFormat().format;
-                    let html = `<p><b>${name}</b>:</p><ul>`;
+                    let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name}"`);
+                    let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
 
                     if (data.UAPs.doubles.length) {
                         html += `<li>Double Properties:<ul>`;
@@ -1347,7 +1351,8 @@ var DashboardPowerups = (function () {
                                 else return a.sum - b.sum;
                             })
                             .forEach(x => {
-                                html += `<li>${x.key}: <ul>`
+                                let sublink = link + encodeURIComponent(` AND useraction.doubleProperties.${x.key} IS NOT NULL`);
+                                html += `<li><a href="${sublink}">${x.key}</a>: <ul>`
                                     + `<li>sum: ${fmt(x.sum)}</li>`
                                     + `<li>count: ${fmt(x.count)}</li>`
                                     + `<li>avg: ${fmt(x.sum / x.count)}</li>`
@@ -1366,7 +1371,8 @@ var DashboardPowerups = (function () {
                                 else return a.sum - b.sum;
                             })
                             .forEach(x => {
-                                html += `<li>${x.key}: <ul>`
+                                let sublink = link + encodeURIComponent(` AND useraction.longProperties.${x.key} IS NOT NULL`);
+                                html += `<li><a href="${sublink}">${x.key}</a>: <ul>`
                                     + `<li>sum: ${fmt(x.sum)}</li>`
                                     + `<li>count: ${fmt(x.count)}</li>`
                                     + `<li>avg: ${fmt(x.sum / x.count)}</li>`
@@ -1389,9 +1395,11 @@ var DashboardPowerups = (function () {
                                 if (x.key !== lastKey) {
                                     if (list.length) list += `</ul></li>`;
                                     html += list;
-                                    list = `<li>${x.key}:<ul>`;
+                                    let sublink = link + encodeURIComponent(` AND useraction.stringProperties.${x.key} IS NOT NULL`);
+                                    list = `<li><a href="${sublink}">${x.key}</a>:<ul>`;
                                 }
-                                list += `<li>${x.val} (${x.count})</li>`;
+                                let sublink = link + encodeURIComponent(` AND useraction.stringProperties.${x.key} = "${x.val}"`);
+                                list += `<li><a href="${sublink}">${x.val}</a> (${x.count})</li>`;
                                 lastKey = x.key;
                             });
                         if (list.length) list += `</ul></li>`;
@@ -1413,9 +1421,11 @@ var DashboardPowerups = (function () {
                                 if (x.key !== lastKey) {
                                     if (list.length) list += `</ul></li>`;
                                     html += list;
-                                    list = `<li>${x.key}:<ul>`;
+                                    let sublink = link + encodeURIComponent(` AND useraction.dateProperties.${x.key} IS NOT NULL`);
+                                    list = `<li><a href="${sublink}">${x.key}</a>:<ul>`;
                                 }
-                                list += `<li>${x.val} (${x.count})</li>`;
+                                let sublink = link + encodeURIComponent(` AND useraction.dateProperties.${x.key} = ${x.val}`);
+                                list += `<li><a href="${sublink}">${x.val}</a> (${x.count})</li>`;
                                 lastKey = x.key;
                             });
                         if (list.length) list += `</ul></li>`;
@@ -1518,9 +1528,9 @@ var DashboardPowerups = (function () {
                 let data = readTableData($table.get(0));
 
                 let params = {
-                    title = chartTitle,
-                    kpi = kpi,
-                    kpicurr = kpicurr
+                    title: chartTitle,
+                    kpi: kpi,
+                    kpicurr: kpicurr
                 };
                 let sankey = newChart(data, container, params);
                 $(".highcharts-exporting-group").addClass("powerupVisible");
@@ -1768,9 +1778,15 @@ var DashboardPowerups = (function () {
             console.log("Powerup: WARN - Heatmap PU should have 3 args");
             return false;
         }
-        let vals = (args.find(x => x[0] == "vals")[1] || ".5,.7,.85,.94").split(',');
+        let vals = (args.find(x => x[0] == "vals")[1] || ".5,.7,.85,.94").split(',').map(x=>Number(x));
         let names = (args.find(x => x[0] == "names")[1] || "Unacceptable,Poor,Fair,Good,Excellent").split(',');
         let colors = (args.find(x => x[0] == "colors")[1] || "#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f").split(',');
+
+        let sorted = !!vals.reduce((n, item) => n !== false && item >= n && item);
+        if(!sorted) {
+            console.log("Powerup: ERROR - Heatmap PU must have vals sorted ascending");
+            return false;
+        }
 
         let colorAxis = [];
         for (let i = 0; i < vals.length; i++) {
@@ -1789,6 +1805,7 @@ var DashboardPowerups = (function () {
             if (i < vals.length - 1) obj.to = vals[i + 1];
             colorAxis.push(obj);
         }
+        
 
         let oldContainer = chart.container;
         let $tile = $(oldContainer).parents(TILE_SELECTOR);
@@ -1801,9 +1818,10 @@ var DashboardPowerups = (function () {
             $newContainer = $(newContainer);
         } else {
             $newContainer = $("<div>")
-                .attr("id", "heatmap")
+                .addClass("powerupHeatmap")
                 .insertAfter(oldContainer);
             newContainer = $newContainer[0];
+            chart.newContainer = newContainer;
         }
         let $legend = $tile.find(LEGEND_SELECTOR);
 
@@ -1840,7 +1858,7 @@ var DashboardPowerups = (function () {
                     categories.push(d.newCat);
                 }
             });
-
+ 
             //aggregate
             categories.forEach((c, cIdx) => {
                 let avg = s.data.filter((d) => d.newCatIdx === cIdx)
@@ -1869,7 +1887,10 @@ var DashboardPowerups = (function () {
             dataLabels: {
                 enabled: true,
                 color: '#000000',
-                format: '{point.value:.2f}'
+                format: '{point.value:.2f}',
+                crop: true,
+                overflow: "justify",
+                //inside: false
             },
 
         }
@@ -1926,7 +1947,14 @@ var DashboardPowerups = (function () {
         //$(oldContainer).css('z-index', -100);
         $(oldContainer).hide();
         $newContainer.html('');
-        let newChart = Highcharts.chart(newContainer, newChartOpts);
+        let newChart = Highcharts.chart(newContainer, newChartOpts, () => {
+            $(".powerupHeatmap tspan").attr("stroke", "");
+            $(".powerupHeatmap .highcharts-data-label text")
+                .css("font-weight", "")
+                .css("fill", "white")
+                .css("font-size", "10px");
+            $(".powerupHeatmap rect.highcharts-point").attr("stroke", "gray");
+        });
         //newChart.poweredup = true;
         $(".highcharts-exporting-group").addClass("powerupVisible");
         return true;

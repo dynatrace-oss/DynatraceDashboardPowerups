@@ -1,5 +1,5 @@
 if (typeof (INJECTED) == "undefined") {
-    const POWERUPDEBUG = true;
+    const POWERUPDEBUG = false;
     if (POWERUPDEBUG) console.log("Powerup: Dashboard powerups installed.");
     window.jQuery || console.log("Powerup: ERROR - No jQuery...");
     $(document).ready(function () {
@@ -66,9 +66,10 @@ if (typeof (INJECTED) == "undefined") {
 
     function injectClientsideLib() {
         if (!$("#DashboardPowerupsTag").length) {
+            let lib = (POWERUPDEBUG? chrome.runtime.getURL("clientside.js") : chrome.runtime.getURL("clientside.min.js"));
             var $s = $("<script>")
                 .attr("id", "DashboardPowerupsTag")
-                .attr("src", chrome.runtime.getURL("clientside.min.js")) //execute in webpage context, not extension
+                .attr("src", lib) //execute in webpage context, not extension
                 .appendTo("body");
         }
     }
