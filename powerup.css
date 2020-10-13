@@ -295,3 +295,12 @@ span.powerup-color-normal {
 .powerupHeatmap {
   font-family: BerninaSansWeb, sans-serif !important;
 }
+
+.powerupMath {
+  display: flex;
+  padding-left: 20px;
+}
+
+.powerupMath {
+  align-items: center;
+}

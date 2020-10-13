@@ -118,17 +118,17 @@ Example:
 
 ### USQL Stacked Bar chart
 This powerup switches to a stacked bar chart for a USQL result instead of stacked xaxis labels. Change the title like this:
-`!PU(usqlstack):color=green`
+`!PU(usqlstack):colors=green,blue,#aabbcc`
 
 Explanation:
-- `!PU(usqlstack):` indicates the powerup
-- `color=green` NOT YET IMPLEMENTED
+- `!PU(usqlstack):` - indicates the powerup
+- `colors=green,blue,#aabbcc` - assigns colors to each series
 
 Example:
 ![USQL Stacked Bar Chart](Assets/usqlstack.png)
 
 ### Heatmap
-Currently this powerup can display a heatmap based on a bar chart of web application apdex. Eventually, it will be more generic.
+Currently this powerup can display a heatmap based on a **bar chart**. Eventually, it will be more generic.
 ```
 Apdex (by app) !PU(heatmap):vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f
 ```
@@ -139,10 +139,12 @@ Apdex (by app) !PU(heatmap):min=1;max=1000;minColor=#ffffff;maxColor=red
 Explanation:
 - `!PU(heatmap):` - denotes the heatmap powerup, anything prior to this is treated as the title
 - `txtColor=` - (optional) what color text to use for data labels, defaults to white
+
 &nbsp;&nbsp; Option 1 - Color classes:
 - `vals=` - thresholds, should be N-1 of them
 - `names=` - names for each area on the color axis, should be N of them
 - `colors=` - CSS colors, should be N of them
+
 &nbsp;&nbsp; Option 2 - Color gradient:
 - `min=` & `max=` - (optional) min and max values for color axis, defaults to extreme values in the dataset
 - `minColor` & `maxColor` - (optional) min and max colors, colors will be interpolated between these, defaults to white and blue
@@ -205,7 +207,8 @@ Explanation:
 - `!PU(math):` - denotes a math powerup
 - `exp=` - a math expression
 - `scope=` - list of any variables used in your expression. Optionally, you may have seperate variable names from link name, e.g. `x4:link4`, otherwise assume var and link are the same string e.g. `x1`
-- `color=` - a valid CSS color
+- `color=` - (optional) a valid CSS color, defaults to white
+- `size=` - (optional) a valid CSS font-size, defaults to 36px
 
 Example:
 ![Math](Assets/mathPU.png)

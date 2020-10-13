@@ -470,10 +470,28 @@ var DashboardPowerups = (function () {
                 console.log("Powerup: ERROR - invalid argstring: " + argstring);
             return false;
         }
-        let color = args.find(x => x[0] == "color")[1];
+        let colors = ((args.find(x => x[0] == "colors") || [])[1]);
+        if (colors) colors = colors.split(',');
 
         //get data
-        if (chart.series.length != 1) return false; //if more than 1 series, this doesn't make sense; quit
+        if (chart.series.length > 1) { //magically the data is actually already split, just stack it
+            chart.series.forEach((s, i) => {
+                let opts = {
+                    stacking: "normal",
+                    groupPadding: 0
+                }
+                if (colors && Array.isArray(colors) && colors[i])
+                    opts.color = colors[i];
+                s.update(opts, false);
+            });
+            chart.redraw(false);
+            return true;
+        } else if (chart.series.length < 1) { //something's broken, just abort
+            console.log("Powerup: WARN - USQLStack did not find a series, aborting.");
+            return false;
+        }
+
+
         if (!chart.series[0].data.length) {//no data, try 3 more times then quit
             if (retries) {
                 setTimeout(() => {
@@ -508,6 +526,9 @@ var DashboardPowerups = (function () {
                         }
                     ]
                 }
+                let seriesNum = newSeries.length;
+                if (colors && Array.isArray(colors) && colors[seriesNum])
+                    newSerie.color = colors[seriesNum];
                 newSeries.push(newSerie);
             } else {
                 newSeries[i].data.push({
@@ -973,6 +994,7 @@ var DashboardPowerups = (function () {
                             .map(x => x.replace(re, '/*$1'));//clean up strings
                         dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
 
+                        //TODO: relace colIdx IFs with colNames
                         if (colIdx == 0) for (let k = 0; k < arr.length - 1; k++) { //useraction.name
                             let touple = { from: arr[k], to: arr[k + 1] };
                             if (touple.from === touple.to) continue; // ignore self actions
@@ -1338,6 +1360,12 @@ var DashboardPowerups = (function () {
                     if (typeof (node) === "undefined") return false;
                     let name = node.apdex.actionName;
                     let fmt = Intl.NumberFormat().format;
+                    let currFmt = fmt;
+                    if (params.kpicurr && params.kpicurr.length) {
+                        let locale = navigator.language;
+                        let style = { style: 'currency', currency: params.kpicurr };
+                        currFmt = Intl.NumberFormat(locale, style).format;
+                    }
                     let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name}"`);
                     let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
 
@@ -1351,11 +1379,12 @@ var DashboardPowerups = (function () {
                                 else return a.sum - b.sum;
                             })
                             .forEach(x => {
+                                let fmter = (x.key === params.kpi ? currFmt : fmt);
                                 let sublink = link + encodeURIComponent(` AND useraction.doubleProperties.${x.key} IS NOT NULL`);
                                 html += `<li><a href="${sublink}">${x.key}</a>: <ul>`
-                                    + `<li>sum: ${fmt(x.sum)}</li>`
+                                    + `<li>sum: ${fmter(x.sum)}</li>`
                                     + `<li>count: ${fmt(x.count)}</li>`
-                                    + `<li>avg: ${fmt(x.sum / x.count)}</li>`
+                                    + `<li>avg: ${fmter(x.sum / x.count)}</li>`
                                     + `</ul></li>`;
                             });
                         html += `</ul></li>` //end double
@@ -1812,10 +1841,10 @@ var DashboardPowerups = (function () {
             let maxColor = (args.find(x => x[0] == "maxColor") || [])[1];
 
             colorAxis = {};
-            if(typeof(min)!=="undefined") colorAxis.min = min;
-            if(typeof(max)!=="undefined") colorAxis.max = max;
-            if(typeof(minColor)!=="undefined") colorAxis.minColor = d3.rgb(minColor).toString();
-            if(typeof(maxColor)!=="undefined") colorAxis.maxColor = d3.rgb(maxColor).toString();
+            if (typeof (min) !== "undefined") colorAxis.min = min;
+            if (typeof (max) !== "undefined") colorAxis.max = max;
+            if (typeof (minColor) !== "undefined") colorAxis.minColor = d3.rgb(minColor).toString();
+            if (typeof (maxColor) !== "undefined") colorAxis.maxColor = d3.rgb(maxColor).toString();
         }
 
         let oldContainer = chart.container;
@@ -2216,7 +2245,8 @@ var DashboardPowerups = (function () {
             let args = argstring.split(";").map(x => x.split("="));
             let exp = args.find(x => x[0] == "exp")[1];
             let scopeStr = args.find(x => x[0] == "scope")[1];
-            let color = args.find(x => x[0] == "color")[1];
+            let color = (args.find(x => x[0] == "color") || [])[1] || "white";
+            let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
 
             let scope = scopeStr.trim().split(',')
                 .map(x => (x.includes(':')
@@ -2249,7 +2279,8 @@ var DashboardPowerups = (function () {
             });
 
             //calculate
-            let calcVal = mexp.eval(exp, tokens, pairs);
+            let fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format;
+            let calcVal = fmt(mexp.eval(exp, tokens, pairs));
 
             //swap markdown content
             $container.hide();
@@ -2259,6 +2290,7 @@ var DashboardPowerups = (function () {
             let h1 = $("<h1>")
                 .text(calcVal)
                 .css("color", color)
+                .css("font-size", size)
                 .appendTo($newContainer);
         });
     }
