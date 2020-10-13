@@ -48,7 +48,6 @@ if (typeof (INJECTED) == "undefined") {
                 injectClientsideString(`
             DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
             DashboardPowerups.config = ${JSON.stringify(config)};
-            //DashboardPowerups.fireAllPowerUps();
             DashboardPowerups.GridObserver.launchGridObserver();
             `);
 
@@ -66,7 +65,7 @@ if (typeof (INJECTED) == "undefined") {
 
     function injectClientsideLib() {
         if (!$("#DashboardPowerupsTag").length) {
-            let lib = (POWERUPDEBUG? chrome.runtime.getURL("clientside.js") : chrome.runtime.getURL("clientside.min.js"));
+            let lib = (POWERUPDEBUG ? chrome.runtime.getURL("clientside.js") : chrome.runtime.getURL("clientside.min.js"));
             var $s = $("<script>")
                 .attr("id", "DashboardPowerupsTag")
                 .attr("src", lib) //execute in webpage context, not extension
@@ -118,19 +117,40 @@ if (typeof (INJECTED) == "undefined") {
     function loadConfig() {
         let p = $.Deferred();
         let defaultConfig = {
-            Powerups: {}
+            Powerups: {
+                tooltipPU: true,
+                colorPU: true,
+                svgPU: true,
+                worldmapPU: true,
+                bannerPU: true,
+                usqlstackPU: true,
+                linePU: true,
+                heatmapPU: true,
+                sankeyPU: true,
+                funnelPU: true,
+                mathPU: true,
+                datePU: true,
+                gaugePU: true,
+                debug: false,
+                colorPUTarget: "Text",
+                animateCritical: "3 Pulses",
+                animateWarning: "Never"
+            }
         }
 
         chrome.storage.local.get(['Powerups'], function (result) {
-            if (result && result.Powerups) {//&&
-                //Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length) {
+            if (result && result.Powerups &&
+                Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length) {
                 if (result.Powerups.debug)
-                    console.log('Powerup: POWERUPDEBUG - (extside) config from storage is: ' + JSON.stringify(result));
-                //TODO: add some sort of new config merge
+                    console.log('Powerup: DEBUG - (extside) config from storage is: ' + JSON.stringify(result));
                 p.resolve(result);
             }
             else {
-                console.log("Powerup: WARN - stored config format didn't match, defaulting...");
+                console.log("Powerup: WARN - stored config format didn't match, merging...");
+                for (const [key, value] of Object.entries(result.Powerups)) { //merge existing preferences
+                    if (typeof (defaultConfig[key]) != "undefined")
+                        defaultConfig[key] = value;
+                }
                 writeConfig(defaultConfig);
                 p.resolve(defaultConfig);
             }
@@ -181,17 +201,17 @@ if (typeof (INJECTED) == "undefined") {
                 .forEach(x=>{x.colorAxis=[];});
             `);
         }
-
         if (config.Powerups.sankeyPU) {
             injectHighchartsModule("sankey");
         }
-
         if (config.Powerups.treemapPU)
             injectHighchartsModule("treemap");
+        if (config.Powerups.gaugePU)
+            injectHighchartsModule("solid-gauge");
     }
 
     function injectD3Modules(config) {
-        if (config.Powerups.funnelPU){
+        if (config.Powerups.funnelPU) {
             injectD3Module("d3-funnel.min.js");
             //injectD3Module("d3-color.min.js");
             //injectD3Module("d3-interpolate.min.js");
@@ -214,17 +234,17 @@ if (typeof (INJECTED) == "undefined") {
 
     function injectOtherModules(config) {
         if (config.Powerups.sankeyPU) {
-            injectOtherModule('3rdParty/node_modules/@iconfu/svg-inject/dist/svg-inject.min.js',"SVGInject");
+            injectOtherModule('3rdParty/node_modules/@iconfu/svg-inject/dist/svg-inject.min.js', "SVGInject");
         }
         if (config.Powerups.mathPU) {
-            injectOtherModule("3rdParty/node_modules/math-expression-evaluator/dist/browser/math-expression-evaluator.min.js","mexp");
+            injectOtherModule("3rdParty/node_modules/math-expression-evaluator/dist/browser/math-expression-evaluator.min.js", "mexp");
         }
-        if (config.Powerups.datePU){
-            injectOtherModule("3rdParty/date_fns.min.js","dateFns");
+        if (config.Powerups.datePU) {
+            injectOtherModule("3rdParty/date_fns.min.js", "dateFns");
         }
     }
 
-    function injectOtherModule(mod,glob){
+    function injectOtherModule(mod, glob) {
         let src = ext_url + encodeURI(mod);
         injectClientsideString(`
         if (typeof (${glob}) == "undefined" &&

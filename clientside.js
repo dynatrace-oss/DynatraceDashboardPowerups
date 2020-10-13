@@ -14,6 +14,9 @@ var DashboardPowerups = (function () {
     const BANNER_SELECTOR = '[uitestid="gwt-debug-dashboardNameLabel"]';
     const TAG_SELECTOR = '[uitestid="gwt-debug-showMoreTags"] ~ [title]';
     const FUNNEL_SELECTOR = '[uitestid="gwt-debug-funnelPanel"]';
+    const SVT_PANEL_SELECTOR = '[uitestid="gwt-debug-chartPanel"]';
+    const SVT_METRIC_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-title"]';
+    const SVT_UNITS_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:nth-of-type(2), [uitestid="gwt-debug-kpiValue"] > span:nth-of-type(2)';
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
     const PU_MAP = '!PU(map):';
@@ -26,9 +29,12 @@ var DashboardPowerups = (function () {
     const PU_FUNNEL = '!PU(funnel):';
     const PU_MATH = '!PU(math):';
     const PU_DATE = '!PU(date):';
+    const PU_GAUGE = '!PU(gauge):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
-    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE];
+    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, 
+        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE
+    ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
     }
@@ -396,6 +402,14 @@ var DashboardPowerups = (function () {
                 }*/
                 if (pub.PUHeatmap(chart, title, chart.newContainer))
                     pu = true;
+            } else if (title.includes(PU_GAUGE)) {
+                let p = pub.puGauge(chart, title);
+                promises.push(p);
+                $.when(p).done(val => {
+                    //restoreHandlers();
+                    //enableExporting();
+                    if (val) pu = true;
+                })
             } else {
                 lineChartPU();
                 enableExporting();
@@ -459,7 +473,7 @@ var DashboardPowerups = (function () {
         return true;
     }
 
-    pub.PUUsqlStack = function (chart, title, retries = 3) { //example: !PU(usqlstack):color:green
+    pub.PUUsqlStack = function (chart, title, retries = 3) { //example: !PU(usqlstack):colors=green,yellow,red
         if (!pub.config.Powerups.usqlstackPU) return false;
         let p = new $.Deferred();
         let titletokens = title.split(PU_USQLSTACK);
@@ -2305,7 +2319,7 @@ var DashboardPowerups = (function () {
             let text = $container.text();
 
             if (!text.includes(PU_DATE)) return;
-            if (pub.config.Powerups.debug) console.log("Powerup: math power-up found");
+            if (pub.config.Powerups.debug) console.log("Powerup: date power-up found");
             let argstring = text.split(PU_DATE)[1];
 
             let args = argstring.split(";").map(x => x.split("="));
@@ -2330,6 +2344,125 @@ var DashboardPowerups = (function () {
                 .css("color", color)
                 .appendTo($newContainer);
         });
+    }
+
+    pub.puGauge = function (chart, title, retries = 3) {
+        if (!pub.config.Powerups.gaugePU) return false;
+
+        //prep gauges
+        let p = new $.Deferred();
+        let $container = $(chart.container);
+        let $tile = $container.parents(TILE_SELECTOR);
+        let $panel = $tile.find(SVT_PANEL_SELECTOR);
+        let titletokens = title.split(PU_GAUGE);
+        let argstring = titletokens[1];
+        let args = argstring.split(";").map(x => x.split("="));
+        if (args.length < 2) {
+            if (pub.config.Powerups.debug)
+                console.log("Powerup: ERROR - invalid argstring: " + argstring);
+            return false;
+        }
+        let vals = ((args.find(x => x[0] == "stops") || [])[1]);
+        if (vals) vals = vals.split(',').map(x => Number(x.replace(/,/g, '')));
+        else return false;
+        let colors = ((args.find(x => x[0] == "colors") || [])[1]);
+        if (colors) colors = colors.split(',');
+        else return false;
+        let min = Number(((args.find(x => x[0] == "min") || [])[1]) || 0);
+        let max = Number(((args.find(x => x[0] == "max") || [])[1]) || 100);
+        let stops = [];
+        vals.forEach((v, i) => {
+            let stop = [v, colors[i]];
+            stops.push(stop);
+        });
+        
+        
+
+        //swap
+        $panel.hide();
+        let val = Number($panel.find(VAL_SELECTOR).text().replace(/,/g,''));
+        let metric = $panel.find(SVT_METRIC_SELECTOR).text();
+        let units = $panel.find(SVT_UNITS_SELECTOR).text();
+        let $newContainer = $("<div>")
+            .addClass("powerupGauge")
+            .insertAfter($panel);
+        
+        //new chart
+        //default options
+        var gaugeOptions = {
+            chart: {
+                type: 'solidgauge',
+                backgroundColor: '#353535'
+            },
+            title: null,
+            pane: {
+                center: ['50%', '35%'],
+                //size: '140%',
+                startAngle: -90,
+                endAngle: 90,
+                background: {
+                    backgroundColor: '#454646',
+                    innerRadius: '60%',
+                    outerRadius: '100%',
+                    shape: 'arc',
+                    borderColor: '#454646'
+                }
+            },
+            exporting: {
+                enabled: false
+            },
+            tooltip: {
+                enabled: false
+            },
+            yAxis: {
+                stops: stops,
+                lineWidth: 0,
+                tickWidth: 0,
+                minorTickInterval: null,
+                tickAmount: 2,
+                //tickInterval: 1,
+                labels: {
+                    y: 16,
+                    style: {
+                        color: '#ffffff'
+                    }
+                },
+                title: {
+                    text: metric,
+                    y: -70,
+                    style: {
+                        color: '#ffffff'
+                    }
+                },
+                min: min,
+                max: max
+            },
+            series: [{
+                name: metric,
+                data: [val],
+                dataLabels: {
+                    format:
+                    '<div style="text-align:center">' +
+                    '<span style="font-size:25px">{y:.1f}</span>' +
+                    `<span style="font-size:12px;opacity:0.4">${units}</span>` +
+                    '</div>',
+                    color: '#ffffff',
+                    borderWidth: 0,
+                    y: -20
+                },
+                tooltip: {
+                    valueSuffix: ` ${units}`
+                }
+            }]
+        }
+        let gaugeChart = Highcharts.charts
+            .filter(x=>typeof(x)!="undefined")
+            .filter(x=>x.container===$newContainer[0])
+            [0];
+        if(gaugeChart)
+            gaugeChart.update(gaugeOptions);
+        else
+            gaugeChart = Highcharts.chart($newContainer[0],gaugeOptions,()=>{});
     }
 
     pub.extDisclaimer = function () {

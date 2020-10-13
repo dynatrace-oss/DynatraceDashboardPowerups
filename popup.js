@@ -38,6 +38,7 @@ function loadConfig() {
             funnelPU: true,
             mathPU: true,
             datePU: true,
+            gaugePU: true,
             debug: false,
             colorPUTarget: "Text",
             animateCritical: "3 Pulses",
@@ -52,7 +53,7 @@ function loadConfig() {
             p.resolve(result);
         }
         else {
-            console.log("Powerup: stored config format didn't match, defaulting...");
+            console.log("Powerup: (popup) stored config format didn't match, defaulting...");
             for (const [key, value] of Object.entries(result.Powerups)) { //merge existing preferences
                 if (typeof (defaultConfig[key]) != "undefined")
                     defaultConfig[key] = value;
@@ -80,6 +81,7 @@ function writeConfig() {
             funnelPU: $('#funnelPU').prop("checked"),
             mathPU: $('#mathPU').prop("checked"),
             datePU: $('#datePU').prop("checked"),
+            gaugePU: $('#gaugePU').prop("checked"),
             debug: $('#debug').prop("checked"),
             colorPUTarget: $('#colorPUTarget').val(),
             animateCritical: $('#animateCritical').val(),
