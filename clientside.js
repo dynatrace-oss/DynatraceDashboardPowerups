@@ -2460,7 +2460,7 @@ var DashboardPowerups = (function () {
             .filter(x=>x.container===$newContainer[0])
             [0];
         if(gaugeChart)
-            gaugeChart.update(gaugeOptions);
+            gaugeChart.update(gaugeOptions,true,false);
         else
             gaugeChart = Highcharts.chart($newContainer[0],gaugeOptions,()=>{});
     }
