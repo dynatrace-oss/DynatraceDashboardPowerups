@@ -32,14 +32,13 @@ var DashboardPowerups = (function () {
     const PU_GAUGE = '!PU(gauge):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
-    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP, 
+    const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
     }
     const SERIES_OPTS = {
-        //"animation": true,
         "animation": false,
         "allowPointSelect": true,
         cursor: 'crosshair',
@@ -54,7 +53,6 @@ var DashboardPowerups = (function () {
                 }
             }
         },
-
     };
     const TOOLTIP_OPTS = {
         enabled: true,
@@ -94,6 +92,33 @@ var DashboardPowerups = (function () {
 
                 return tip;
             }, '<b>' + Highcharts.dateFormat("%H:%M", this.x) + '</b>');
+        },
+    };
+    const PIE_TOOLTIP_OPTS = {
+        enabled: true,
+        animation: false,
+        outside: true,
+        useHTML: true,
+        hideDelay: 100,
+        shared: true,
+        formatter: undefined,
+        pointFormat: `<span style="color:{point.color}">●</span>: <b>{point.percentage:.1f}%</b><br/>`
+    }
+    const PIE_SERIES_OPTS = {
+        "animation": false,
+        "allowPointSelect": true,
+        cursor: 'crosshair',
+        "enableMouseTracking": true,
+        stickyTracking: true,
+        tooltip: PIE_TOOLTIP_OPTS,
+        "states": {
+            "hover": {
+                "enabled": true,
+                "halo": {
+                    "opacity": 0.25,
+                    "size": 3
+                }
+            }
         },
     };
     const AXIS_OPTS = {
@@ -363,8 +388,32 @@ var DashboardPowerups = (function () {
                 pu = true;
             }
             restoreHandlers();
+        }
 
-
+        var pieChartPU = function () {
+            chart.series.forEach(series => {
+                if (!compare(PIE_SERIES_OPTS, series.options)) {
+                    series.update(PIE_SERIES_OPTS, false);
+                    pu = true;
+                }
+            });
+            /*if (!compare(CHART_OPTS, chart.options.chart)) {
+                chart.update({ chart: CHART_OPTS }, false);
+                pu = true;
+            }*/
+            /*if (!compare(PIE_TOOLTIP_OPTS, chart.series[0].tooltipOptions)) {
+                chart.series[0].update({ tooltipOptions: PIE_TOOLTIP_OPTS }, true);
+                pu = true;
+            }*/
+            /*if (!compare(AXIS_OPTS, chart.xAxis[0].options)) {
+                chart.update({ xAxis: AXIS_OPTS }, false);
+                pu = true;
+            }
+            if (!compare(AXIS_OPTS, chart.yAxis[0].options)) {
+                chart.update({ yAxis: AXIS_OPTS }, false);
+                pu = true;
+            }*/
+            restoreHandlers();
         }
 
         if (pub.config.Powerups.tooltipPU &&
@@ -410,6 +459,8 @@ var DashboardPowerups = (function () {
                     //enableExporting();
                     if (val) pu = true;
                 })
+            } else if(chart.series[0].type =="pie") {
+                pieChartPU();
             } else {
                 lineChartPU();
                 enableExporting();
@@ -757,39 +808,51 @@ var DashboardPowerups = (function () {
                 let titletokens = $title.text().split(PU_COLOR);
                 let argstring = titletokens[1];
                 let args = argstring.split(";").map(x => x.split("="));
-                if (args.length < 3) {
+                /*if (args.length < 3) {
                     console.log("Powerup: ERROR - invalid argstring: " + argstring);
                     return false;
-                }
-                let base = args.find(x => x[0] == "base")[1];
-                let warn = Number(args.find(x => x[0] == "warn")[1]);
-                let crit = Number(args.find(x => x[0] == "crit")[1]);
-                let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g, ''));
+                }*/
+                let base = (args.find(x => x[0] == "base") || [])[1] || "low";
+                let warn = Number(
+                    (args.find(x => x[0] == "warn") || [])
+                    [1]);
+                let crit = Number(
+                    (args.find(x => x[0] == "crit") || [])
+                    [1]);
+                let val = Number(
+                    $tile.find(VAL_SELECTOR)
+                        .text().replace(/,/g, ''));
+                let color = (args.find(x => x[0] == "color") || [])[1];
 
                 let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
-                $target.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
-                $target.removeClass("powerup-color-critical-blink powerup-color-warning-blink threeBlink");
-                if (base == "low") {
-                    if (val < warn) $target.addClass(class_norm);
-                    else if (val < crit) $target.addClass(class_warn);
-                    else $target.addClass(class_crit);
-                } else if (base == "high") {
-                    if (val > warn) $target.addClass(class_norm);
-                    else if (val > crit) $target.addClass(class_warn);
-                    else $target.addClass(class_crit);
-                }
+                if (!isNaN(warn) && !isNaN(crit)) {
 
-                let $trend = $tile.find(TREND_SELECTOR);
-                if ($trend.length) {
-                    let trend = Number($trend.text().replace(/%/, ''));
-                    $trend.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
+                    $target.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
+                    $target.removeClass("powerup-color-critical-blink powerup-color-warning-blink threeBlink");
                     if (base == "low") {
-                        if (trend > 0) $trend.addClass("powerup-color-warning");
-                        else if (trend < 0) $trend.addClass("powerup-color-normal");
+                        if (val < warn) $target.addClass(class_norm);
+                        else if (val < crit) $target.addClass(class_warn);
+                        else $target.addClass(class_crit);
                     } else if (base == "high") {
-                        if (trend < 0) $trend.addClass("powerup-color-warning");
-                        else if (trend > 0) $trend.addClass("powerup-color-normal");
+                        if (val > warn) $target.addClass(class_norm);
+                        else if (val > crit) $target.addClass(class_warn);
+                        else $target.addClass(class_crit);
                     }
+
+                    let $trend = $tile.find(TREND_SELECTOR);
+                    if ($trend.length) {
+                        let trend = Number($trend.text().replace(/%/, ''));
+                        $trend.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
+                        if (base == "low") {
+                            if (trend > 0) $trend.addClass("powerup-color-warning");
+                            else if (trend < 0) $trend.addClass("powerup-color-normal");
+                        } else if (base == "high") {
+                            if (trend < 0) $trend.addClass("powerup-color-warning");
+                            else if (trend > 0) $trend.addClass("powerup-color-normal");
+                        }
+                    }
+                } else if (typeof (color) != "undefined") {
+                    $target.css("color", color);
                 }
             }
         });
@@ -959,18 +1022,6 @@ var DashboardPowerups = (function () {
             return tile;
         }
     }
-
-    /*pub.addToolTips = function () {
-        if (typeof (pub.addPUHighchartsListener) == "undefined") {
-            waits++;
-            if (waits % 10 == 0)
-                console.log(`Powerup: WARN - clientside.js not loaded yet after ${waits / 5}s`);
-            setTimeout(pub.addToolTips, 200);
-        } else {
-            pub.addPUHighchartsListener();
-            pub.loadChartSync();
-        }
-    }*/
 
     pub.sankeyPowerUp = function () {
         if (!pub.config.Powerups.sankeyPU) return;
@@ -2375,18 +2426,18 @@ var DashboardPowerups = (function () {
             let stop = [v, colors[i]];
             stops.push(stop);
         });
-        
-        
+
+
 
         //swap
         $panel.hide();
-        let val = Number($panel.find(VAL_SELECTOR).text().replace(/,/g,''));
+        let val = Number($panel.find(VAL_SELECTOR).text().replace(/,/g, ''));
         let metric = $panel.find(SVT_METRIC_SELECTOR).text();
         let units = $panel.find(SVT_UNITS_SELECTOR).text();
         let $newContainer = $("<div>")
             .addClass("powerupGauge")
             .insertAfter($panel);
-        
+
         //new chart
         //default options
         var gaugeOptions = {
@@ -2442,10 +2493,10 @@ var DashboardPowerups = (function () {
                 data: [val],
                 dataLabels: {
                     format:
-                    '<div style="text-align:center">' +
-                    '<span style="font-size:25px">{y:.1f}</span>' +
-                    `<span style="font-size:12px;opacity:0.4">${units}</span>` +
-                    '</div>',
+                        '<div style="text-align:center">' +
+                        '<span style="font-size:25px">{y:.1f}</span>' +
+                        `<span style="font-size:12px;opacity:0.4">${units}</span>` +
+                        '</div>',
                     color: '#ffffff',
                     borderWidth: 0,
                     y: -20
@@ -2456,13 +2507,13 @@ var DashboardPowerups = (function () {
             }]
         }
         let gaugeChart = Highcharts.charts
-            .filter(x=>typeof(x)!="undefined")
-            .filter(x=>x.container===$newContainer[0])
-            [0];
-        if(gaugeChart)
-            gaugeChart.update(gaugeOptions,true,false);
+            .filter(x => typeof (x) != "undefined")
+            .filter(x => x.container === $newContainer[0])
+        [0];
+        if (gaugeChart)
+            gaugeChart.update(gaugeOptions, true, false);
         else
-            gaugeChart = Highcharts.chart($newContainer[0],gaugeOptions,()=>{});
+            gaugeChart = Highcharts.chart($newContainer[0], gaugeOptions, () => { });
     }
 
     pub.extDisclaimer = function () {
