@@ -134,7 +134,8 @@ if (typeof (INJECTED) == "undefined") {
                 debug: false,
                 colorPUTarget: "Text",
                 animateCritical: "3 Pulses",
-                animateWarning: "Never"
+                animateWarning: "Never",
+                sunburnMode: false
             }
         }
 

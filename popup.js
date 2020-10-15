@@ -42,7 +42,8 @@ function loadConfig() {
             debug: false,
             colorPUTarget: "Text",
             animateCritical: "3 Pulses",
-            animateWarning: "Never"
+            animateWarning: "Never",
+            sunburnMode: false
         }
     };
 
@@ -85,7 +86,8 @@ function writeConfig() {
             debug: $('#debug').prop("checked"),
             colorPUTarget: $('#colorPUTarget').val(),
             animateCritical: $('#animateCritical').val(),
-            animateWarning: $('#animateWarning').val()
+            animateWarning: $('#animateWarning').val(),
+            sunburnMode: $('#sunburnMode').prop("checked")
         }
     }
 

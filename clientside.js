@@ -459,7 +459,7 @@ var DashboardPowerups = (function () {
                     //enableExporting();
                     if (val) pu = true;
                 })
-            } else if(chart.series[0].type =="pie") {
+            } else if (chart.series[0].type == "pie") {
                 pieChartPU();
             } else {
                 lineChartPU();
@@ -676,7 +676,10 @@ var DashboardPowerups = (function () {
                         for (let s = 0; s < charts[i].series.length; s++) {
                             const points = charts[i].series[s].points;
                             for (let p = 0; p < points.length; p++) {
-                                if (points[p].x === x) {
+                                if (points[p].x === x
+                                    && points[p].series.xAxis
+                                    && points[p].series.yAxis
+                                    ) {
                                     //points[p].onMouseOver();
                                     points[p].series.xAxis.drawCrosshair(undefined, points[p]);
                                     points[p].series.yAxis.drawCrosshair(undefined, points[p]);
@@ -2544,6 +2547,49 @@ var DashboardPowerups = (function () {
         }
     }
 
+    pub.sunburnMode = function () {
+        if (!pub.config.Powerups.sunburnMode) return false;
+
+        //make white text black
+        $('[data-page-content="canvas"]').find('*')
+            .filter((i, el) => {
+                //console.log($(el).css('background-color'));
+                return $(el).css('color') === d3.rgb('white').toString();
+            })
+            .css('color', "black");
+
+        //make greys white
+        $('[data-page-content="canvas"]').find('div')
+            .filter((i, el) => {
+                let color = $(el).css('background-color');
+                if (color === d3.rgb('#343434').toString()) return true;
+                if (color === d3.rgb('#242424').toString()) return true;
+                if (color === d3.rgb('#353535').toString()) return true;
+                return false;
+            })
+            .css('background-color', "white");
+
+        //same for chart backgrounds
+        $('[data-page-content="canvas"]').find('rect')
+            .filter((i, el) => {
+                let color = $(el).css('fill');
+                if (color === d3.rgb('#454646').toString()) return true;
+                if (color === d3.rgb('#242424').toString()) return true;
+                if (color === d3.rgb('#353535').toString()) return true;
+                return false;
+            })
+            .css('fill', "white");
+        $('.powerupPlotBackground').css('fill', "white");
+
+        //and weird grey borders
+        $('[data-custom-charting-item-id-hash] div')
+            .filter((i,el) => {
+                let color = $(el).css('border-color');
+                if (color === d3.rgb('#353535').toString()) return true;
+            })
+            .css('border-color', "white");
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -2558,6 +2604,7 @@ var DashboardPowerups = (function () {
         promises.push(pub.PUfunnel());
         promises.push(pub.PUMath());
         promises.push(pub.puDate());
+        promises.push(pub.sunburnMode());
         pub.loadChartSync();
         waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
 
