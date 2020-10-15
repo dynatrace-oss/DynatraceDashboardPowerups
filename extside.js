@@ -147,9 +147,11 @@ if (typeof (INJECTED) == "undefined") {
             }
             else {
                 console.log("Powerup: WARN - stored config format didn't match, merging...");
-                for (const [key, value] of Object.entries(result.Powerups)) { //merge existing preferences
-                    if (typeof (defaultConfig[key]) != "undefined")
-                        defaultConfig[key] = value;
+                if (typeof (result) == "object" && typeof (result.Powerups) == "object") {
+                    for (const [key, value] of Object.entries(result.Powerups)) { //merge existing preferences
+                        if (typeof (defaultConfig[key]) != "undefined")
+                            defaultConfig[key] = value;
+                    }
                 }
                 writeConfig(defaultConfig);
                 p.resolve(defaultConfig);
