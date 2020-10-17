@@ -1,3 +1,11 @@
+## Alert: version 1.12 has a bug!
+New users may not see Powerups working at all. You may also see this error message in console: `TypeError: Cannot convert undefined or null to object`. The fix was published to Google Chrome Store several days ago; however, Google has been slow to approve the update. Whenever Google approves the fix (1.12.1) it should automatically update in your browser and Powerups should work again.
+
+### Workaround
+Download `extside.min.js` from GitHub above and replace the existing file.
+- Mac: `~/Library/Application\ Support/Google/Chrome/Default/Extensions/dmpgdhbpdodhddciokonbahhbpaalmco/`
+- Windows: `C:\Users\[login_name]\AppData\Local\Google\Chrome\User Data\Default\Extensions\dmpgdhbpdodhddciokonbahhbpaalmco`
+
 # Dynatrace Dashboard Powerups
 
 This extension powers-up Dynatrace dashboards to enable cool new experimental features live, such as:
