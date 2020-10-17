@@ -40,6 +40,10 @@
             <td><input type="checkbox" id="usqlstackPU" checked></td>
         </tr>
         <tr>
+            <td>USQL color</td>
+            <td><input type="checkbox" id="usqlcolorPU" checked></td>
+        </tr>
+        <tr>
             <td>Line chart threshold</td>
             <td><input type="checkbox" id="linePU" checked></td>
         </tr>
@@ -110,7 +114,7 @@
             <td colspan=2><u>Debugging</u></td>
         </tr>
         <tr>
-            <td>Debug Logging:</td>
+            <td>Debug Logging (F12):</td>
             <td><input type="checkbox" id="debug"></td>
         </tr>
     </table>
@@ -124,15 +128,13 @@
 
 
 
-    <!--<p>Use the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a> for deploying dashboards.
-    </p>-->
+    <p><a target="_blank" href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a> now deploys Powerup-enabled dashboards.</p>
 
     <p><i>Please note: this is a community developed demonstration application. It is provided without any
             representations, warranties, or support from Dynatrace. If you have questions about this app, please post on
             our forum</i> </p>
 
     <script src="3rdParty/jquery-3.5.1.min.js"></script>
-    <script src="popup.js"></script>
+    <script src="popup.min.js"></script>
 </body>
-
 </html>

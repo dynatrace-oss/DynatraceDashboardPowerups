@@ -124,6 +124,7 @@ if (typeof (INJECTED) == "undefined") {
                 worldmapPU: true,
                 bannerPU: true,
                 usqlstackPU: true,
+                usqlcolorPU: true,
                 linePU: true,
                 heatmapPU: true,
                 sankeyPU: true,

@@ -127,6 +127,17 @@ Explanation:
 Example:
 ![USQL Stacked Bar Chart](Assets/usqlstack.png)
 
+### USQL colors
+This powerup switches the color palette for a USQL chart . Change the title like this:
+`!PU(usqlcolor):colors=green,blue,#aabbcc`
+
+Explanation:
+- `!PU(usqlcolor):` - indicates the powerup
+- `colors=green,blue,#aabbcc` - assigns colors to each series
+
+Example:
+![USQL Color](Assets/usqlcolor.png)
+
 ### Heatmap
 Currently this powerup can display a heatmap based on a **bar chart**. Eventually, it will be more generic.
 ```

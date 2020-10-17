@@ -23,7 +23,8 @@ var DashboardPowerups = (function () {
     const PU_LINK = '!PU(link):';
     const PU_BANNER = '!PU(banner):';
     const PU_LINE = '!PU(line):';
-    const PU_USQLSTACK = '!PU(usqlstack):'; //TODO: add color schemes
+    const PU_USQLSTACK = '!PU(usqlstack):';
+    const PU_USQLCOLOR = '!PU(usqlcolor):';
     const PU_HEATMAP = '!PU(heatmap):';
     const PU_SANKEY = '!PU(sankey):';
     const PU_FUNNEL = '!PU(funnel):';
@@ -33,7 +34,7 @@ var DashboardPowerups = (function () {
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
-        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE
+        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
@@ -441,14 +442,20 @@ var DashboardPowerups = (function () {
                     enableExporting();
                     if (val) pu = true;
                 })
+            } else if (title.includes(PU_USQLCOLOR)) {
+                let p = pub.PUUsqlColor(chart, title);
+                promises.push(p);
+                $.when(p).done(val => {
+                    if (chart.series[0].type == "pie") {
+                        pieChartPU();
+                    } else {
+                        lineChartPU();
+                        enableExporting();
+                    }
+                    restoreHandlers();
+                    if (val) pu = true;
+                })
             } else if (title.includes(PU_HEATMAP)) {
-                /*if ($(chart.container).is(":visible")) {
-                    if (pub.PUHeatmap(chart, title))
-                        pu = true;
-                } else {
-                    if (pub.PUHeatmap(chart, title, $("#heatmap").get(0)))
-                        pu = true;
-                }*/
                 if (pub.PUHeatmap(chart, title, chart.newContainer))
                     pu = true;
             } else if (title.includes(PU_GAUGE)) {
@@ -623,31 +630,30 @@ var DashboardPowerups = (function () {
         return p;
     }
 
-    /*pub.addPUHighchartsListener = function () {
-        if (pub.config.Powerups.debug) console.log("Powerup: added PUHighcharts listener");
-        Highcharts.addEvent(Highcharts.Chart, 'load', debounceMutex(pub.PUHighcharts, pub.PUHighchartsMutex, 200));
-        Highcharts.addEvent(Highcharts.Chart, 'redraw', debounceMutex(pub.PUHighcharts, pub.PUHighchartsMutex, 200));
-        Highcharts.addEvent(Highcharts.Chart, 'redraw', clearPowerup);
-        pub.PUHighcharts();
-        PUwatchdog();
-    
-        /*
-            custom charts are destroyed and loaded on new data, fires load event
-            usql charts are redrawn on new data, fires redraw event
-    
-            listen for either event and begin powering-up
-            we will get several of these events, so need to debounce
-                start a timer
-                throw away all but last event until timer expires
-    
-            at the end of powering-up, we must redraw the chart(s) ourselves, which again fires redraw
-                handle by using a crude mutex
-                if mutex == true, we're already powering-up, abort
-                else set mutex=true and power-up
-                when done set mutex=false
-    
-        */
-    //}
+    pub.PUUsqlColor = function (chart, title, retries = 3) { //example: !PU(usqlcolor):colors=green,yellow,red
+        if (!pub.config.Powerups.usqlcolorPU) return false;
+        let p = new $.Deferred();
+        let titletokens = title.split(PU_USQLCOLOR);
+        let argstring = titletokens[1];
+        let args = argstring.split(";").map(x => x.split("="));
+        if (args.length < 1) {
+            if (pub.config.Powerups.debug)
+                console.log("Powerup: ERROR - invalid argstring: " + argstring);
+            return false;
+        }
+        let colors = ((args.find(x => x[0] == "colors") || [])[1]);
+        if (colors) colors = colors.split(',');
+        else return false;
+
+        let opts = {
+            //stacking: "normal",
+            //groupPadding: 0
+            colors: colors
+        }
+        chart.update(opts, false);
+        chart.redraw(false);
+        return true;
+    }
 
     pub.highlightPointsInOtherCharts = function (e) {
         if (!pub.config.Powerups.tooltipPU) return;
@@ -2590,7 +2596,7 @@ var DashboardPowerups = (function () {
                         border-color: white !important;
                     }
                 `)
-                .attr("id","powerupSunburnMode")
+                .attr("id", "powerupSunburnMode")
                 .appendTo("head");
         }
     }
