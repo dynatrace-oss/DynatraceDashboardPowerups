@@ -55,9 +55,11 @@ function loadConfig() {
         }
         else {
             console.log("Powerup: (popup) stored config format didn't match, defaulting...");
-            for (const [key, value] of Object.entries(result.Powerups)) { //merge existing preferences
-                if (typeof (defaultConfig[key]) != "undefined")
-                    defaultConfig[key] = value;
+            if (typeof (result) == "object" && typeof (result.Powerups) == "object") {
+                for (const [key, value] of Object.entries(result.Powerups)) { //merge existing preferences
+                    if (typeof (defaultConfig[key]) != "undefined")
+                        defaultConfig[key] = value;
+                }
             }
             writeConfig(defaultConfig);
             p.resolve(defaultConfig);

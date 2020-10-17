@@ -679,7 +679,7 @@ var DashboardPowerups = (function () {
                                 if (points[p].x === x
                                     && points[p].series.xAxis
                                     && points[p].series.yAxis
-                                    ) {
+                                ) {
                                     //points[p].onMouseOver();
                                     points[p].series.xAxis.drawCrosshair(undefined, points[p]);
                                     points[p].series.yAxis.drawCrosshair(undefined, points[p]);
@@ -2582,12 +2582,17 @@ var DashboardPowerups = (function () {
         $('.powerupPlotBackground').css('fill', "white");
 
         //and weird grey borders
-        $('[data-custom-charting-item-id-hash] div')
-            .filter((i,el) => {
-                let color = $(el).css('border-color');
-                if (color === d3.rgb('#353535').toString()) return true;
-            })
-            .css('border-color', "white");
+        if (!$('#powerupSunburnMode').length) {
+            $("<style>")
+                .html(
+                    `
+                    [data-custom-charting-item-id-hash] div {
+                        border-color: white !important;
+                    }
+                `)
+                .attr("id","powerupSunburnMode")
+                .appendTo("head");
+        }
     }
 
     pub.fireAllPowerUps = function (update = false) {
