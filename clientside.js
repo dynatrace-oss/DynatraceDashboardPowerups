@@ -2601,6 +2601,14 @@ var DashboardPowerups = (function () {
         }
     }
 
+    pub.fixPublicDashboards = function () {
+        $('.grid-tile').each((i,el)=>{
+            let $el = $(el);
+            if($el.css("pointer-events")==="none")
+                $el.css("pointer-events","auto");
+        });
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -2616,6 +2624,7 @@ var DashboardPowerups = (function () {
         promises.push(pub.PUMath());
         promises.push(pub.puDate());
         promises.push(pub.sunburnMode());
+        promises.push(pub.fixPublicDashboards());
         pub.loadChartSync();
         waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
 
