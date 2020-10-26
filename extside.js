@@ -10,6 +10,7 @@ if (typeof (INJECTED) == "undefined") {
     });
 
     const ext_url = chrome.runtime.getURL("");
+    const GH_URL = 'https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/';
     var waits = 0;
     var timeout;
 
@@ -36,22 +37,25 @@ if (typeof (INJECTED) == "undefined") {
         ) {
             if (POWERUPDEBUG) console.log("Powerup: things look ready, begin power-ups...");
             let config_p = loadConfig();
-            //Load functions to call in client context
-            injectClientsideLib();
-            injectCSS();
-            if (POWERUPDEBUG) console.log("Powerup: clientside libs injected.");
 
             $.when(config_p).done(function (config) {
-                injectOtherModules(config);
-                injectHighchartsModules(config);
-                injectD3Modules(config);
-                injectClientsideString(`
-            DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
-            DashboardPowerups.config = ${JSON.stringify(config)};
-            DashboardPowerups.GridObserver.launchGridObserver();
-            `);
+                //Load functions to call in client context
+                let clientside_p = injectClientsideLib(config);
+                injectCSS();
+                if (POWERUPDEBUG) console.log("Powerup: clientside libs injected.");
 
-                console.log("Powerup: powerups complete.");
+                $.when(clientside_p).then(() => {
+                    injectOtherModules(config);
+                    injectHighchartsModules(config);
+                    injectD3Modules(config);
+                    injectClientsideString(`
+                    DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
+                    DashboardPowerups.config = ${JSON.stringify(config)};
+                    DashboardPowerups.GridObserver.launchGridObserver();
+                    `);
+
+                    console.log("Powerup: powerups complete.");
+                });
             });
             return;
         } else {
@@ -63,14 +67,37 @@ if (typeof (INJECTED) == "undefined") {
         }
     };
 
-    function injectClientsideLib() {
+    function injectClientsideLib(config) {
+        let p = $.Deferred();
         if (!$("#DashboardPowerupsTag").length) {
-            let lib = (POWERUPDEBUG ? chrome.runtime.getURL("clientside.js") : chrome.runtime.getURL("clientside.min.js"));
-            var $s = $("<script>")
-                .attr("id", "DashboardPowerupsTag")
-                .attr("src", lib) //execute in webpage context, not extension
-                .appendTo("body");
+            console.log(`Loading libs from: ${config.Powerups.libLocation}...`);
+            if (config.Powerups.libLocation == "gh") { //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
+                fetch('https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/clientside.min.js')
+                    .then(function (response) {
+                        if (!response.ok) {
+                            //default back to local copy
+                        } else return response.text();
+                    })
+                    .then(function (text) { // read response body as text
+                        var $s = $("<script>")
+                            .attr("id", "DashboardPowerupsTag")
+                            .text(text) //execute in webpage context, not extension
+                            .appendTo("body");
+                        p.resolve(true);
+                    });
+            } else {
+                let lib = (config.Powerups.libLocation == "gh" ? GH_URL : ext_url)
+                    + (POWERUPDEBUG ? "clientside.js" : "clientside.min.js");
+                var $s = $("<script>")
+                    .attr("id", "DashboardPowerupsTag")
+                    .attr("src", lib) //execute in webpage context, not extension
+                    .appendTo("body");
+                p.resolve(true);
+            }
+        } else {
+            p.resolve(false);
         }
+        return p;
     }
 
     function injectClientsideString(s) {
@@ -136,7 +163,8 @@ if (typeof (INJECTED) == "undefined") {
                 colorPUTarget: "Text",
                 animateCritical: "3 Pulses",
                 animateWarning: "Never",
-                sunburnMode: false
+                sunburnMode: false,
+                libLocation: "ext"
             }
         }
 

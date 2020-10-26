@@ -44,7 +44,8 @@ function loadConfig() {
             colorPUTarget: "Text",
             animateCritical: "3 Pulses",
             animateWarning: "Never",
-            sunburnMode: false
+            sunburnMode: false,
+            libLocation: "ext"
         }
     };
 
@@ -91,7 +92,8 @@ function writeConfig() {
             colorPUTarget: $('#colorPUTarget').val(),
             animateCritical: $('#animateCritical').val(),
             animateWarning: $('#animateWarning').val(),
-            sunburnMode: $('#sunburnMode').prop("checked")
+            sunburnMode: $('#sunburnMode').prop("checked"),
+            libLocation: $('#libLocation').val()
         }
     }
 

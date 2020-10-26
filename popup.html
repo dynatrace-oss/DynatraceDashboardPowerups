@@ -117,6 +117,19 @@
             <td>Debug Logging (F12):</td>
             <td><input type="checkbox" id="debug"></td>
         </tr>
+        <tr>
+            <td>Library Location:</td>
+            <td>
+                <!--<input type="radio" name="libLocation" id="libLocation_ext" value="ext" checked>
+                <label for="libLocation_ext">Extension</label><br>
+                <input type="radio" name="libLocation" id="libLocation_gh" value="gh">
+                <label for="libLocation_ext">GitHub</label>-->
+                <select id="libLocation">
+                    <option value="ext" selected>Extension (faster)</option>
+                    <option value="gh">GitHub (newer)</option>
+                </select>
+            </td>
+        </tr>
     </table>
 
     <input type="button" id="save" value="Save">

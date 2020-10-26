@@ -224,6 +224,10 @@ Explanation:
 Example:
 ![Math](Assets/mathPU.png)
 
+Note:
+- If you encounter issues with dissimilar units, change the units in the chart
+![Units](Assets/units.png)
+
 ### Date
 This powerup allows you to use Dynatrace date format strings and format in Markdown tiles. Syntax:
 `!PU(date):res=now-7d/d;fmt=YYYY-MM-DD;color=green`
