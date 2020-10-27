@@ -6,7 +6,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 - Tooltips on charts
 - USQL values on world maps
    
-*Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum or create an issue on Github*
+*Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum or create an [issue](https://github.com/LucasHocker/DynatraceDashboardPowerups/issues) on Github*
 
 ## Installation
 1. Install the extension from the
@@ -24,7 +24,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 ![inactive](Assets/inactive.png)
 ![active](Assets/active.png)
 
-4. When a new update is released, repeat the above. Auto-update is currently in the backlog.
+4. When a new update is released via Chrome Web Store it will automatically be updated. Google can take several days to approve an update to an Extension. If you wish to run the very latest version, change Library Location to GitHub in the Extension preferences.
 
 ## Configure extension
 5. Click blue powerup icon
@@ -38,7 +38,25 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 7. Click save. Note: you may need to refresh your page for changes to take effect.
 
 ## Powerup Howto
-Currently for the powerups you need to add additional markup text in your dashboard tile titles. Soon, you will be able to add thresholds etc directly in the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a> when you're deploying dashboards.
+To add Powerups to your existing dashboards, you may add markup text in your dashboard tile titles. Alternatively, you may deploy dashboard packs with Powerups already included via the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a>.
+
+If you manually add markup, it is best practice to add a Powerup disclaimer tile so that users who do not yet have the Extension, will be directed to install it. To add the disclaimer, add the following to your dashboard JSON:
+```
+{
+    "name": "Markdown",
+    "tileType": "MARKDOWN",
+    "configured": true,
+    "bounds": {
+        "top": 0,
+        "left": 0,
+        "width": 1254,
+        "height": 76
+    },
+    "tileFilter": {},
+    "markdown": "##\uD83D\uDC8E Powerup Enabled Dashboard \uD83D\uDC8E\n\n##  [Install Chrome Extension](https://chrome.google.com/webstore/detail/dynatrace-dashboard-power/dmpgdhbpdodhddciokonbahhbpaalmco)"
+}
+```
+If you deploy dashboard packs from the BizOpsConfigurator, this tile is already added for you. Once the Extension loads this tile is hidden.
 
 ### Tooltips
 Nothing required, just enable the extension as per above and refresh your browser on a dashboard.
@@ -254,3 +272,18 @@ Explanation:
 
 Example:
 ![Gauge](Assets/gauge.png)
+
+### Compare
+This powerup compares a Single Value Tile (SVT) to another SVT and applies coloring based on the comparison. Syntax:
+`Active users !PU(compare):link=link2;lt=red;gt=green;eq=yellow !PU(link):link1`
+
+Explanation:
+- `!PU(compare):` - denotes the compare powerup
+- `link=link2` - references another SVT to compare against
+- `lt=red` - a color if this SVT is less than the other
+- `gt=green` - a color if this SVT is greater than the other
+- `eq=yellow` - a color if this SVT is equal to the other
+- `!PU(link):link1` - this is a reference back from the other SVT which is also using !PU(compare)
+
+Example:
+![Compare](Assets/compare.png)
