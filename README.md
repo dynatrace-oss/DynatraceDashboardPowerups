@@ -40,6 +40,25 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 ## Powerup Howto
 To add Powerups to your existing dashboards, you may add markup text in your dashboard tile titles. Alternatively, you may deploy dashboard packs with Powerups already included via the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a>.
 
+### Powerup List
+- [Disclaimer](#Disclaimer)
+- [Tooltips](#Tooltips)
+- [Colorize](#Colorize)
+- [Icons](#Icons)
+- [Worldmaps](#Worldmaps)
+- [Banner](#Banner)
+- [Line chart threshold](#Line-chart-threshold)
+- [USQL stacked bar chart](#USQL-Stacked-Bar-chart)
+- [USQL colors](#USQL-colors)
+- [Heatmap](#heatmap)
+- [Sankey](#UserAction-Sankey-chart)
+- [Vertical funnel](#Vertical-Funnel)
+- [Math](#Math)
+- [Date](#Date)
+- [Gauge](#Gauge)
+- [Compare](#Compare)
+
+### Disclaimer
 If you manually add markup, it is best practice to add a Powerup disclaimer tile so that users who do not yet have the Extension, will be directed to install it. To add the disclaimer, add the following to your dashboard JSON:
 ```
 {
@@ -78,7 +97,7 @@ So in the example of availability, high is better. Greater than 90 would be gree
 Example:
 ![Colors](Assets/colors.png)
 
-### Icon indicators
+### Icons
 This powerup renders icons in place of Markdown tiles. These icons change color to give a quick visual indication of environment / business health. For example, if payment processing was beyond a threshold hold, you might have a creditcard icon turn red. Here's how that might look:
 ```
 [Extension Needed](https://github.com/LucasHocker/DynatraceDashboardPowerups)
@@ -97,7 +116,7 @@ Just be sure to include the `!PU(link):` with a matching string in the desired S
 Example:
 ![Icons](Assets/icons.png)
 
-### World maps
+### Worldmaps
 This powerup reloads the data in world maps with that from a USQL table. This allows you to map arbitrary things like revenue. It also enables click or scrollwheel to zoom. Click in an ocean to reset zoom. Add markup to your USQL table's title like this:
 `Revenue !PU(map):color=green;link=Apdex`
 
