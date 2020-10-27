@@ -578,7 +578,7 @@ var DashboardPowerups = (function () {
         let splittings = [];
         let newSeries = [];
         let newCategories = [... new Set(chart.series[0].data.map(x => x.category.split(',')[0]))];
-
+ 
         chart.series[0].data.forEach((d) => {
             let nameArr = d.name.split(',');
             let newName = nameArr[0];
