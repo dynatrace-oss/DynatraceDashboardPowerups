@@ -577,7 +577,7 @@ var DashboardPowerups = (function () {
         if (!chart.series[0].data[0].name.includes(',')) return false; //if there's no splitting, quit
         let splittings = [];
         let newSeries = [];
-        let newCategories = [... new Set(chart.series[0].data.map(x=>x.category.split(',')[0]))];
+        let newCategories = [... new Set(chart.series[0].data.map(x => x.category.split(',')[0]))];
 
         chart.series[0].data.forEach((d) => {
             let nameArr = d.name.split(',');
@@ -594,7 +594,7 @@ var DashboardPowerups = (function () {
                     data: [
                         {
                             name: newName,
-                            x: newCategories.findIndex(x=>x===newName),
+                            x: newCategories.findIndex(x => x === newName),
                             y: d.y
                         }
                     ]
@@ -606,7 +606,7 @@ var DashboardPowerups = (function () {
             } else {
                 newSeries[i].data.push({
                     name: newName,
-                    x: newCategories.findIndex(x=>x===newName),
+                    x: newCategories.findIndex(x => x === newName),
                     y: d.y
                 });
             }
@@ -2318,7 +2318,7 @@ var DashboardPowerups = (function () {
             let argstring = text.split(PU_MATH)[1];
 
             let args = argstring.split(";").map(x => x.split("="));
-            let exp = args.find(x => x[0] == "exp")[1].replace(/ /g,'');
+            let exp = args.find(x => x[0] == "exp")[1].replace(/ /g, '');
             let scopeStr = args.find(x => x[0] == "scope")[1];
             let color = (args.find(x => x[0] == "color") || [])[1] || "white";
             let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
@@ -2396,9 +2396,9 @@ var DashboardPowerups = (function () {
 
             //let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
 
-            if(val < linkval) $bignum.css("color",lt);
-            else if(val > linkval) $bignum.css("color",gt);
-            else if (val === linkval) $bignum.css("color",eq);
+            if (val < linkval) $bignum.css("color", lt);
+            else if (val > linkval) $bignum.css("color", gt);
+            else if (val === linkval) $bignum.css("color", eq);
             else return false;
             count++;
             return true;
@@ -2639,10 +2639,10 @@ var DashboardPowerups = (function () {
     }
 
     pub.fixPublicDashboards = function () {
-        $('.grid-tile').each((i,el)=>{
+        $('.grid-tile').each((i, el) => {
             let $el = $(el);
-            if($el.css("pointer-events")==="none")
-                $el.css("pointer-events","auto");
+            if ($el.css("pointer-events") === "none")
+                $el.css("pointer-events", "auto");
         });
     }
 
