@@ -31,10 +31,11 @@ var DashboardPowerups = (function () {
     const PU_MATH = '!PU(math):';
     const PU_DATE = '!PU(date):';
     const PU_GAUGE = '!PU(gauge):';
+    const PU_COMPARE = '!PU(compare):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
-        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR
+        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
@@ -576,7 +577,7 @@ var DashboardPowerups = (function () {
         if (!chart.series[0].data[0].name.includes(',')) return false; //if there's no splitting, quit
         let splittings = [];
         let newSeries = [];
-        let newCategories = [];
+        let newCategories = [... new Set(chart.series[0].data.map(x=>x.category.split(',')[0]))];
 
         chart.series[0].data.forEach((d) => {
             let nameArr = d.name.split(',');
@@ -593,7 +594,7 @@ var DashboardPowerups = (function () {
                     data: [
                         {
                             name: newName,
-                            x: 0,
+                            x: newCategories.findIndex(x=>x===newName),
                             y: d.y
                         }
                     ]
@@ -605,7 +606,7 @@ var DashboardPowerups = (function () {
             } else {
                 newSeries[i].data.push({
                     name: newName,
-                    x: newSeries[i].data.length,
+                    x: newCategories.findIndex(x=>x===newName),
                     y: d.y
                 });
             }
@@ -2317,7 +2318,7 @@ var DashboardPowerups = (function () {
             let argstring = text.split(PU_MATH)[1];
 
             let args = argstring.split(";").map(x => x.split("="));
-            let exp = args.find(x => x[0] == "exp")[1];
+            let exp = args.find(x => x[0] == "exp")[1].replace(/ /g,'');
             let scopeStr = args.find(x => x[0] == "scope")[1];
             let color = (args.find(x => x[0] == "color") || [])[1] || "white";
             let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
@@ -2367,6 +2368,42 @@ var DashboardPowerups = (function () {
                 .css("font-size", size)
                 .appendTo($newContainer);
         });
+    }
+
+    pub.PUCompare = function () {  //example: !PU(compare):link=link1;lt=green;gt=red;eq=yellow
+        if (!pub.config.Powerups.comparePU) return;
+        let count = 0;
+
+        //find compare PUs
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let $tile = $title.parents(".grid-tile");
+            let text = $title.text();
+            let $bignum = $tile.find(BIGNUM_SELECTOR);
+
+            if (!text.includes(PU_COMPARE)) return;
+            if (pub.config.Powerups.debug) console.log("Powerup: compare power-up found");
+            let argstring = text.split(PU_COMPARE)[1];
+
+            let args = argstring.split(";").map(x => x.split("="));
+            let link = args.find(x => x[0] == "link")[1];
+            let lt = (args.find(x => x[0] == "lt") || [])[1] || "green";
+            let gt = (args.find(x => x[0] == "gt") || [])[1] || "red";
+            let eq = (args.find(x => x[0] == "eq") || [])[1] || "yellow";
+
+            let linkval = pub.findLinkedVal(link);
+            let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g, ''));
+
+            //let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
+
+            if(val < linkval) $bignum.css("color",lt);
+            else if(val > linkval) $bignum.css("color",gt);
+            else if (val === linkval) $bignum.css("color",eq);
+            else return false;
+            count++;
+            return true;
+        });
+        return count;
     }
 
     pub.puDate = function () { //example: !PU(date):res=now-7d/d;fmt=yyyy-mm-dd;color=blue
@@ -2623,6 +2660,7 @@ var DashboardPowerups = (function () {
         promises.push(pub.PUfunnel());
         promises.push(pub.PUMath());
         promises.push(pub.puDate());
+        promises.push(pub.PUCompare());
         promises.push(pub.sunburnMode());
         promises.push(pub.fixPublicDashboards());
         pub.loadChartSync();
