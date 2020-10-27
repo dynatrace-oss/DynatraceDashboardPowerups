@@ -3,150 +3,172 @@
 
 <head>
     <title>Dynatrace Dashboard Powerup</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="popup.css">
 </head>
 
 <body style="width: 300px; max-width: 400px">
     <h2>Dynatrace Dashboard Powerup</h2>
-    <p>This extension powers-up dashboards to enable cool new experimental features live.</p>
+    <p>This extension powers-up dashboards to enable cool new experimental features.</p>
 
-    <h3>Preferences</h3>
+
     <table>
-        <tr>
-            <td colspan=2><u>Powerup On/Off</u></td>
-        </tr>
-        <tr>
-            <td>ToolTips</td>
-            <td><input type="checkbox" id="tooltipPU" checked></td>
-        </tr>
-        <tr>
-            <td>Color thresholds</td>
-            <td><input type="checkbox" id="colorPU" checked></td>
-        </tr>
-        <tr>
-            <td>Icons</td>
-            <td><input type="checkbox" id="svgPU" checked></td>
-        </tr>
-        <tr>
-            <td>WorldMap</td>
-            <td><input type="checkbox" id="worldmapPU" checked></td>
-        </tr>
-        <tr>
-            <td>Color Banners</td>
-            <td><input type="checkbox" id="bannerPU" checked></td>
-        </tr>
-        <tr>
-            <td>Stacked USQL bar charts</td>
-            <td><input type="checkbox" id="usqlstackPU" checked></td>
-        </tr>
-        <tr>
-            <td>USQL color</td>
-            <td><input type="checkbox" id="usqlcolorPU" checked></td>
-        </tr>
-        <tr>
-            <td>Line chart threshold</td>
-            <td><input type="checkbox" id="linePU" checked></td>
-        </tr>
-        <tr>
-            <td>Heatmap</td>
-            <td><input type="checkbox" id="heatmapPU" checked></td>
-        </tr>
-        <tr>
-            <td>Sankey</td>
-            <td><input type="checkbox" id="sankeyPU" checked></td>
-        </tr>
-        <tr>
-            <td>Funnel</td>
-            <td><input type="checkbox" id="funnelPU" checked></td>
-        </tr>
-        <tr>
-            <td>Math</td>
-            <td><input type="checkbox" id="mathPU" checked></td>
-        </tr>
-        <tr>
-            <td>Date</td>
-            <td><input type="checkbox" id="datePU" checked></td>
-        </tr>
-        <tr>
-            <td>Compare</td>
-            <td><input type="checkbox" id="comparePU" checked></td>
-        </tr>
-        <tr>
-            <td>Gauge</td>
-            <td><input type="checkbox" id="gaugePU" checked></td>
-        </tr>
-    </table>
-    <table id="colorizeOptions">
-        <tr>
-            <td colspan=2><u>Color threshold options</u></td>
-        </tr>
-        <tr>
-            <td>Colorize:</td>
-            <td>
-                <select id="colorPUTarget">
-                    <option>Text</option>
-                    <option>Border</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Pulse on Critical:</td>
-            <td><select id="animateCritical">
-                    <option>3 Pulses</option>
-                    <option>Always</option>
-                    <option>Never</option>
-                </select></td>
-        </tr>
-        <tr>
-            <td>Pulse on Warning:</td>
-            <td><select id="animateWarning">
-                    <option>Never</option>
-                    <option>3 Pulses</option>
-                    <option>Always</option>
-                </select></td>
-        </tr>
+        <thead>
+            <tr>
+                <th colspan=2>Preferences</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan=2><u>Powerup On/Off</u></td>
+            </tr>
+            <tr>
+                <td>ToolTips</td>
+                <td><input type="checkbox" id="tooltipPU" checked></td>
+            </tr>
+            <tr>
+                <td>Color thresholds</td>
+                <td><input type="checkbox" id="colorPU" checked></td>
+            </tr>
+            <tr>
+                <td>Icons</td>
+                <td><input type="checkbox" id="svgPU" checked></td>
+            </tr>
+            <tr>
+                <td>WorldMap</td>
+                <td><input type="checkbox" id="worldmapPU" checked></td>
+            </tr>
+            <tr>
+                <td>Color Banners</td>
+                <td><input type="checkbox" id="bannerPU" checked></td>
+            </tr>
+            <tr>
+                <td>Stacked USQL bar charts</td>
+                <td><input type="checkbox" id="usqlstackPU" checked></td>
+            </tr>
+            <tr>
+                <td>USQL color</td>
+                <td><input type="checkbox" id="usqlcolorPU" checked></td>
+            </tr>
+            <tr>
+                <td>Line chart threshold</td>
+                <td><input type="checkbox" id="linePU" checked></td>
+            </tr>
+            <tr>
+                <td>Heatmap</td>
+                <td><input type="checkbox" id="heatmapPU" checked></td>
+            </tr>
+            <tr>
+                <td>Sankey</td>
+                <td><input type="checkbox" id="sankeyPU" checked></td>
+            </tr>
+            <tr>
+                <td>Funnel</td>
+                <td><input type="checkbox" id="funnelPU" checked></td>
+            </tr>
+            <tr>
+                <td>Math</td>
+                <td><input type="checkbox" id="mathPU" checked></td>
+            </tr>
+            <tr>
+                <td>Date</td>
+                <td><input type="checkbox" id="datePU" checked></td>
+            </tr>
+            <tr>
+                <td>Compare</td>
+                <td><input type="checkbox" id="comparePU" checked></td>
+            </tr>
+            <tr>
+                <td>Gauge</td>
+                <td><input type="checkbox" id="gaugePU" checked></td>
+            </tr>
+        </tbody>
+        <tbody id="colorizeOptions">
+            <tr>
+                <td colspan=2><u>Color threshold options</u></td>
+            </tr>
+            <tr>
+                <td>Colorize:</td>
+                <td>
+                    <select id="colorPUTarget">
+                        <option>Text</option>
+                        <option>Border</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Pulse on Critical:</td>
+                <td><select id="animateCritical">
+                        <option>3 Pulses</option>
+                        <option>Always</option>
+                        <option>Never</option>
+                    </select></td>
+            </tr>
+            <tr>
+                <td>Pulse on Warning:</td>
+                <td><select id="animateWarning">
+                        <option>Never</option>
+                        <option>3 Pulses</option>
+                        <option>Always</option>
+                    </select></td>
+            </tr>
+            <tr>
+                <td colspan=2><u>Other Preferences</u></td>
+            </tr>
+            <tr>
+                <td>Sunburn Mode:</td>
+                <td><input type="checkbox" id="sunburnMode"></td>
+            </tr>
+            <tr>
+                <td colspan=2><u>Debugging</u></td>
+            </tr>
+            <tr>
+                <td>Debug Logging (F12):</td>
+                <td><input type="checkbox" id="debug"></td>
+            </tr>
+            <tr>
+                <td>Library Location:</td>
+                <td>
+                    <select id="libLocation">
+                        <option value="ext" selected>Extension (faster)</option>
+                        <option value="gh">GitHub (newer)</option>
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan=2><input type="button" id="save" value="Save"></td>
+            </tr>
+            <tr>
+                <td colspan=2>
+                    <!--<textarea id="notice"></textarea>-->
+                </td>
+            </tr>
+        </tfoot>
     </table>
     <table>
-        <tr>
-            <td colspan=2><u>Other Preferences</u></td>
-        </tr>
-        <tr>
-            <td>Sunburn Mode:</td>
-            <td><input type="checkbox" id="sunburnMode"></td>
-        </tr>
-        <tr>
-            <td colspan=2><u>Debugging</u></td>
-        </tr>
-        <tr>
-            <td>Debug Logging (F12):</td>
-            <td><input type="checkbox" id="debug"></td>
-        </tr>
-        <tr>
-            <td>Library Location:</td>
-            <td>
-                <!--<input type="radio" name="libLocation" id="libLocation_ext" value="ext" checked>
-                <label for="libLocation_ext">Extension</label><br>
-                <input type="radio" name="libLocation" id="libLocation_gh" value="gh">
-                <label for="libLocation_ext">GitHub</label>-->
-                <select id="libLocation">
-                    <option value="ext" selected>Extension (faster)</option>
-                    <option value="gh">GitHub (newer)</option>
-                </select>
-            </td>
-        </tr>
+        <tbody>
+            <tr>
+                <td class="big">⍰</td>
+                <td class="big"><a target="_blank"
+                        href="https://github.com/LucasHocker/DynatraceDashboardPowerups#powerup-howto">Markup help <img
+                            src="Assets/link.svg"></a></td>
+            </tr>
+            <tr>
+                <td class="big">📣</td>
+                <td class="big"><a target="_blank"
+                        href="https://forms.office.com/Pages/ResponsePage.aspx?id=o-PrcDBbXUOdZ3cW10yhkA_rQa6CqWJHnTWLRE8tiiBUNVpNU0syVFdIWTNSNTFSS0E3SkM1UUFGRS4u">Feedback
+                        <img src="Assets/link.svg"></a></td>
+            </tr>
+            <tr>
+                <td class="big">⚙️</td>
+                <td><span class="big"><a target="_blank"
+                            href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator <img
+                                src="Assets/link.svg"></a></span> now deploys Powerup-enabled dashboards.</td>
+            </tr>
+        </tbody>
     </table>
-
-    <input type="button" id="save" value="Save">
-
-    <!--<textarea id="notice"></textarea>-->
-
-    <p><a target="_blank" href="https://github.com/LucasHocker/DynatraceDashboardPowerups#powerup-howto">Markup help</a></p>
-
-
-
-
-    <p><a target="_blank" href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a> now deploys Powerup-enabled dashboards.</p>
-
     <p><i>Please note: this is a community developed demonstration application. It is provided without any
             representations, warranties, or support from Dynatrace. If you have questions about this app, please post on
             our forum</i> </p>
@@ -154,4 +176,5 @@
     <script src="3rdParty/jquery-3.5.1.min.js"></script>
     <script src="popup.min.js"></script>
 </body>
+
 </html>

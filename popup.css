@@ -1,20 +1,52 @@
-body{
+body {
 	width: 500px;
 	height: 100%;
 }
-/*
-.centre {
+
+.big {
+	font-size: x-large;
+}
+
+span.big {
 	display: block;
-	margin-left: auto;
-	margin-right: auto;
+}
+
+.big a, .big a:visited {
+	color: #00b9cc;
+	font-size: large;
+	text-decoration: none;
+}
+
+.big a:hover {
+	text-decoration: underline;
+}
+
+.big a img {
+	width: 15px;
+}
+
+td:first-of-type{
+	white-space: nowrap;
+}
+
+td.big:first-of-type {
 	text-align: center;
 }
 
-.green {
-	color: green;
+thead th {
+	border-bottom: 1px solid gray;
 }
 
-.label {
-	font-weight: bold;
+tfoot tr:first-of-type td {
+	border-top: 1px solid gray;
+	padding-top: 5px;
+	text-align: center;
 }
-*/
+
+select {
+	width: 100%;
+}
+
+input[type=button] {
+	width: 50%;
+}
