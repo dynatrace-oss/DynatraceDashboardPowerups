@@ -52,8 +52,10 @@ function loadConfig() {
 
     chrome.storage.local.get(['Powerups'], function (result) {
         console.log('Powerup: (popup) config from storage is: ' + JSON.stringify(result));
-        if (result && result.Powerups &&
-            Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length) {
+        if (result && result.Powerups
+            && Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length
+            && result.Powerups.ackedVersion === chrome.runtime.getManifest().version
+            ) {
             p.resolve(result);
         }
         else {
@@ -64,6 +66,7 @@ function loadConfig() {
                         defaultConfig[key] = value;
                 }
             }
+            defaultConfig.ackedVersion = chrome.runtime.getManifest().version;
             writeConfig(defaultConfig);
             p.resolve(defaultConfig);
         }
@@ -95,7 +98,8 @@ function writeConfig() {
             animateCritical: $('#animateCritical').val(),
             animateWarning: $('#animateWarning').val(),
             sunburnMode: $('#sunburnMode').prop("checked"),
-            libLocation: $('#libLocation').val()
+            libLocation: $('#libLocation').val(),
+            ackedVersion: chrome.runtime.getManifest().version
         }
     }
 
