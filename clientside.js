@@ -999,7 +999,7 @@ var DashboardPowerups = (function () {
     pub.findLinkedVal = function (link) {
         //find val
         //let link_text = PU_LINK + link;
-        let link_text = `!PU\\(link\\)` + link;
+        let link_text = `!PU\\(link\\):` + link;
         let re = new RegExp(link_text + '(?!\\w)');
         let val;
         $(TITLE_SELECTOR).each((i_link, el_link) => {
