@@ -19,7 +19,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 ![puzzle](Assets/clickPuzzlePiece.png)
 ![pin](Assets/pinExtension.png)
 
-3. The icon will change from gray to blue when active
+3. The icon will change from gray to blue when active (and purple when the extension has updated)
 
 ![inactive](Assets/inactive.png)
 ![active](Assets/active.png)
@@ -27,7 +27,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 4. When a new update is released via Chrome Web Store it will automatically be updated. Google can take several days to approve an update to an Extension. If you wish to run the very latest version, change Library Location to GitHub in the Extension preferences.
 
 ## Configure extension
-5. Click blue powerup icon
+5. Click blue (or purple) powerup icon
 
 ![active](Assets/active.png)
 
