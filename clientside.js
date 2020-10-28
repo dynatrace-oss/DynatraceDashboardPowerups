@@ -2402,9 +2402,8 @@ var DashboardPowerups = (function () {
             if (val < linkval) $bignum.css("color", lt);
             else if (val > linkval) $bignum.css("color", gt);
             else if (val === linkval) $bignum.css("color", eq);
-            else return false;
+            else return true;
             count++;
-            return true;
         });
         return count;
     }
