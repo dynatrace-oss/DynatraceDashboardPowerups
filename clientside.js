@@ -578,7 +578,7 @@ var DashboardPowerups = (function () {
         let splittings = [];
         let newSeries = [];
         let newCategories = [... new Set(chart.series[0].data.map(x => x.category.split(',')[0]))];
- 
+
         chart.series[0].data.forEach((d) => {
             let nameArr = d.name.split(',');
             let newName = nameArr[0];
@@ -1000,13 +1000,13 @@ var DashboardPowerups = (function () {
         //find val
         //let link_text = PU_LINK + link;
         let link_text = `!PU\\(link\\)` + link;
-        let re = new RegExp(link_text+'(?!\w)');
+        let re = new RegExp(link_text + '(?!\w)');
         let val;
         $(TITLE_SELECTOR).each((i_link, el_link) => {
             let $linktitle = $(el_link);
 
             //if ($linktitle.text().includes(link_text)) {
-            if ($linktitle.text().match(re)) {
+            if (re.test($linktitle.text())) {
                 let $linktile = $linktitle.parents(".grid-tile");
                 val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g, ''));
             }
