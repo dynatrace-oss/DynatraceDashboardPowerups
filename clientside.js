@@ -999,11 +999,13 @@ var DashboardPowerups = (function () {
     pub.findLinkedVal = function (link) {
         //find val
         let link_text = PU_LINK + link;
+        let re = new RegExp(link_text+'(?!\w)');
         let val;
         $(TITLE_SELECTOR).each((i_link, el_link) => {
             let $linktitle = $(el_link);
 
-            if ($linktitle.text().includes(link_text)) {
+            //if ($linktitle.text().includes(link_text)) {
+            if ($linktitle.text().match(re)) {
                 let $linktile = $linktitle.parents(".grid-tile");
                 val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g, ''));
             }
