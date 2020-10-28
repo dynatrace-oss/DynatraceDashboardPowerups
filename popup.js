@@ -55,7 +55,7 @@ function loadConfig() {
         if (result && result.Powerups
             && Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length
             && result.Powerups.ackedVersion === chrome.runtime.getManifest().version
-            ) {
+        ) {
             p.resolve(result);
         }
         else {
@@ -68,6 +68,7 @@ function loadConfig() {
             }
             defaultConfig.ackedVersion = chrome.runtime.getManifest().version;
             writeConfig(defaultConfig);
+            updateIcon();
             p.resolve(defaultConfig);
         }
     });
@@ -127,4 +128,10 @@ function updateControls(config) {
         else
             $(selector).val(val);
     })
+}
+
+function updateIcon() {
+    chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+        chrome.pageAction.setIcon({ tabId: tab.id, path: 'Assets/powerup.png' });
+    });
 }
