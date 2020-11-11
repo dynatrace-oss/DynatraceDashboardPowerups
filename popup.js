@@ -22,7 +22,7 @@ function saveAndClose() {
     });
 }
 
-function loadConfig() {
+function loadConfig(alreadyWritten = false) {
     let p = $.Deferred();
     let defaultConfig = {
         Powerups: {
@@ -58,8 +58,10 @@ function loadConfig() {
             && result.Powerups.ackedVersion === chrome.runtime.getManifest().version
         ) {
             p.resolve(result);
-        }
-        else {
+        } else if(alreadyWritten){
+            console.log("Powerup: (popup) FATAL - write/read did not match.");
+            p.resolve(defaultConfig);
+        } else {
             console.log("Powerup: (popup) stored config format didn't match, defaulting...");
             if (typeof (result) == "object" && typeof (result.Powerups) == "object") {
                 for (const [key, value] of Object.entries(result.Powerups)) { //merge existing preferences
@@ -108,7 +110,7 @@ function writeConfig() {
     chrome.storage.local.set(config, function () {
         p.resolve(true);
         console.log('Powerup: (popup) config storage set to ' + JSON.stringify(config));
-        updateDebugOutput(loadConfig());
+        updateDebugOutput(loadConfig(true));
     });
     return p;
 }
@@ -116,6 +118,7 @@ function writeConfig() {
 function updateDebugOutput(config_p) {
     $.when(config_p).done(function (config) {
         $('#notice').val(JSON.stringify(config));
+        $(`#version`).text(`version: ${config.Powerups.ackedVersion}`);
     })
 }
 

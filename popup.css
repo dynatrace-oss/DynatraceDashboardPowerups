@@ -50,3 +50,7 @@ select {
 input[type=button] {
 	width: 50%;
 }
+
+#version {
+	font-size: x-small;
+}
