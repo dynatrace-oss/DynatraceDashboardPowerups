@@ -2679,7 +2679,7 @@ var DashboardPowerups = (function () {
     pub.PUvlookup = function () {
         $(MARKDOWN_SELECTOR).each((i, el) => {
             let $markdown = $(el);
-            let $tile = $title.parents(TILE_SELECTOR);
+            let $tile = $markdown.parents(TILE_SELECTOR);
 
             if ($markdown.text().includes(PU_VLOOKUP)) {
                 let argstring = $markdown.text().split(PU_VLOOKUP)[1].split('!')[0];
