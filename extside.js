@@ -228,6 +228,7 @@ if (typeof (INJECTED) == "undefined") {
             injectHighchartsModule("heatmap");
             injectClientsideString(`
             //Highcharts Heatmap bug workaround
+            if(Highcharts && Highcharts.)
             Highcharts.charts
                 .filter(x=>typeof(x)!=="undefined")
                 .filter(x=>typeof(x.colorAxis)=="undefined")

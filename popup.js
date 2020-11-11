@@ -46,7 +46,8 @@ function loadConfig() {
             animateCritical: "3 Pulses",
             animateWarning: "Never",
             sunburnMode: false,
-            libLocation: "ext"
+            libLocation: "ext",
+            ackedVersion: "0.0"
         }
     };
 
