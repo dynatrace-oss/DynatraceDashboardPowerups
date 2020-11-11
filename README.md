@@ -175,6 +175,9 @@ Explanation:
 Example:
 ![USQL Color](Assets/usqlcolor.png)
 
+Note:
+- You may need to use `order by` to get consistent coloring, e.g. `order by apdexCategory` to ensure you always get "**F**rustrated, **S**atisfied, **T**olerated"
+
 ### Heatmap
 Currently this powerup can display a heatmap based on a **bar chart**. Eventually, it will be more generic.
 ```
