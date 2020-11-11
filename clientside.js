@@ -652,7 +652,7 @@ var DashboardPowerups = (function () {
             data.forEach(pt=>{
                 let idx = vals.findIndex(x=>x.toLowerCase()===pt.name.toLowerCase());
                 if(idx>-1){
-                    data.update({color: colors[idx]},false);
+                    pt.update({color: colors[idx]},false);
                 }
             });
             chart.redraw;
