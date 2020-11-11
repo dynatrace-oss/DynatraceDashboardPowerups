@@ -7,6 +7,7 @@ $(document).ready(function () {
     $.when(config_p).done(function (config) {
         updateControls(config);
         $('#save').on('click', saveAndClose);
+        $('#prefsCloser').on('click', togglePrefs);
     });
 
 });
@@ -138,4 +139,10 @@ function updateIcon() {
     chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
         chrome.pageAction.setIcon({ tabId: tab.id, path: 'Assets/powerup.png' });
     });
+}
+
+function togglePrefs() {
+    let $closer = $("#prefsCloser");
+    $closer.parent("thead").siblings().toggle();
+    $closer.toggleClass("open");
 }

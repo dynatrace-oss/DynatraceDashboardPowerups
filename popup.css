@@ -54,3 +54,7 @@ input[type=button] {
 #version {
 	font-size: x-small;
 }
+
+.open {
+	transform: rotate(90deg);
+}
