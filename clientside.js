@@ -200,6 +200,7 @@ var DashboardPowerups = (function () {
     //Read data from USQL table
     function readTableData(tabletile) {
         let $tabletile = $(tabletile);
+        if(! $tabletile.length)return false;
         let dataTable = [];
         let normalTable = [];
         let keys = [];
@@ -1066,20 +1067,20 @@ var DashboardPowerups = (function () {
         //find val
         let link_text = `!PU\\(link\\):` + link;
         let re = new RegExp(link_text + '(?!\\w)');
-        let val;
+        let $tile;
         $(TITLE_SELECTOR).each((i_link, el_link) => {
             let $linktitle = $(el_link);
 
             if (re.test($linktitle.text())) {
                 let $linktile = $linktitle.parents(".grid-tile");
-                return $linktile;
+                $tile = $linktile;
             }
         });
-        if (typeof val == "undefined") {
+        if (typeof $tile == "undefined") {
             console.log("Powerup: ERROR - unable to match link: " + link_text);
             return undefined;
         } else {
-            return val;
+            return $tile;
         }
     }
 
