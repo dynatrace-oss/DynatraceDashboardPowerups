@@ -634,7 +634,6 @@ var DashboardPowerups = (function () {
     pub.PUUsqlColor = function (chart, title, retries = 3) { //example: !PU(usqlcolor):vals=satisfied,tolerated,frustrated;colors=green,yellow,red
         if (!pub.config.Powerups.usqlcolorPU) return false;
         let p = new $.Deferred();
-        //let titletokens = title.split(PU_USQLCOLOR);
         let argstring = title.split(PU_USQLCOLOR)[1].split('!')[0];
         let args = argstring.split(";").map(x => x.split("="));
         if (args.length < 1) {
@@ -773,7 +772,6 @@ var DashboardPowerups = (function () {
             let title = $tag.attr("title");
 
             if (title.includes(PU_BANNER)) {
-                //let titletokens = title.split(PU_BANNER);
                 let argstring = title.split(PU_BANNER)[1].split('!')[0];
                 let args = argstring.split(";").map(x => x.split("="));
                 let color = args.find(x => x[0] == "color")[1];
@@ -827,7 +825,6 @@ var DashboardPowerups = (function () {
             //Step1: change tile colors
             if ($title.text().includes(PU_COLOR)) { //example !PU(color):base=high;warn=90;crit=70
                 if (pub.config.Powerups.debug) console.log("Powerup: color power-up found");
-                //let titletokens = $title.text().split(PU_COLOR);
                 let argstring = $title.text().split(PU_COLOR)[1].split('!')[0];
                 let args = argstring.split(";").map(x => x.split("="));
                 /*if (args.length < 3) {
@@ -1837,7 +1834,7 @@ var DashboardPowerups = (function () {
             let $tabletile = $tabletitle.parents(TILE_SELECTOR);
 
             if ($tabletitle.text().includes(PU_MAP)) {
-                //let titletokens = $tabletitle.text().split(PU_MAP);
+                let titletokens = $tabletitle.text().split(PU_MAP);
                 let argstring = $tabletitle.text().split(PU_MAP)[1].split('!')[0];
                 let args = argstring.split(";").map(x => x.split("="));
                 let color = args.find(x => x[0] == "color")[1] || "green";
