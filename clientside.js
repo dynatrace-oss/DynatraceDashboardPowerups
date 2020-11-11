@@ -631,7 +631,7 @@ var DashboardPowerups = (function () {
         return p;
     }
 
-    pub.PUUsqlColor = function (chart, title, retries = 3) { //example: !PU(usqlcolor):colors=green,yellow,red
+    pub.PUUsqlColor = function (chart, title, retries = 3) { //example: !PU(usqlcolor):vals=satisfied,tolerated,frustrated;colors=green,yellow,red
         if (!pub.config.Powerups.usqlcolorPU) return false;
         let p = new $.Deferred();
         //let titletokens = title.split(PU_USQLCOLOR);
@@ -645,14 +645,26 @@ var DashboardPowerups = (function () {
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
         if (colors) colors = colors.split(',');
         else return false;
-
-        let opts = {
-            //stacking: "normal",
-            //groupPadding: 0
-            colors: colors
+        let vals = ((args.find(x => x[0] == "vals") || [])[1]);
+        if (vals) {
+            vals = vals.split(',');
+            let data = chart.series[0].data;
+            data.forEach(pt=>{
+                let idx = vals.findIndex(x=>x===pt.name);
+                if(idx>-1){
+                    data.update({color: colors[idx]},false);
+                }
+            });
+            chart.redraw;
+        } else { //assign colors in series order
+            let opts = {
+                //stacking: "normal",
+                //groupPadding: 0
+                colors: colors
+            }
+            chart.update(opts, false);
+            chart.redraw(false);
         }
-        chart.update(opts, false);
-        chart.redraw(false);
         return true;
     }
 
