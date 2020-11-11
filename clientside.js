@@ -650,7 +650,7 @@ var DashboardPowerups = (function () {
             vals = vals.split(',');
             let data = chart.series[0].data;
             data.forEach(pt=>{
-                let idx = vals.findIndex(x=>x===pt.name);
+                let idx = vals.findIndex(x=>x.toLowerCase()===pt.name.toLowerCase());
                 if(idx>-1){
                     data.update({color: colors[idx]},false);
                 }
