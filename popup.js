@@ -7,7 +7,7 @@ $(document).ready(function () {
     $.when(config_p).done(function (config) {
         updateControls(config);
         $('#save').on('click', saveAndClose);
-        $('#prefsCloser').on('click', togglePrefs);
+        $('#prefCloser').on('click', togglePrefs);
     });
 
 });
@@ -142,7 +142,7 @@ function updateIcon() {
 }
 
 function togglePrefs() {
-    let $closer = $("#prefsCloser");
+    let $closer = $("#prefCloser");
     $closer.parent("thead").siblings().toggle();
     $closer.toggleClass("open");
 }
