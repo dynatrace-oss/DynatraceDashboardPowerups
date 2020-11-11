@@ -2677,13 +2677,12 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUvlookup = function () {
-        $(TITLE_SELECTOR).each((i, el) => {
-            let $title = $(el);
+        $(MARKDOWN_SELECTOR).each((i, el) => {
+            let $markdown = $(el);
             let $tile = $title.parents(TILE_SELECTOR);
 
-            if ($title.text().includes(PU_VLOOKUP)) {
-                let titletokens = $title.text().split(PU_VLOOKUP);
-                let argstring = $title.text().split(PU_VLOOKUP)[1].split('!')[0];
+            if ($markdown.text().includes(PU_VLOOKUP)) {
+                let argstring = $markdown.text().split(PU_VLOOKUP)[1].split('!')[0];
                 let args = argstring.split(";").map(x => x.split("="));
                 let color = args.find(x => x[0] == "color")[1] || "white";
                 //color = d3.hsl(color);
