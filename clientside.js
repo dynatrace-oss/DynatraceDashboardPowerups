@@ -2700,6 +2700,7 @@ var DashboardPowerups = (function () {
 
             }
         });
+        return true;
     }
 
     pub.fireAllPowerUps = function (update = false) {
@@ -2717,6 +2718,7 @@ var DashboardPowerups = (function () {
         promises.push(pub.PUMath());
         promises.push(pub.puDate());
         promises.push(pub.PUCompare());
+        promises.push(pub.PUvlookup());
         promises.push(pub.sunburnMode());
         promises.push(pub.fixPublicDashboards());
         pub.loadChartSync();
