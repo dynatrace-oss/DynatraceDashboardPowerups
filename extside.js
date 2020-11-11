@@ -170,6 +170,7 @@ if (typeof (INJECTED) == "undefined") {
             }
         }
 
+        if(!chrome || !chrome.storage || !chrome.storage.local)return false;
         chrome.storage.local.get(['Powerups'], function (result) {
             if (result && result.Powerups &&
                 Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length) {
@@ -205,6 +206,7 @@ if (typeof (INJECTED) == "undefined") {
     }
 
     function writeConfig(defaultConfig) {
+        if(!chrome || !chrome.storage || !chrome.storage.local)return false;
         chrome.storage.local.set(defaultConfig, function () {
             if (defaultConfig.Powerups.debug)
                 console.log('Powerup: (extside) config storage set to ' + JSON.stringify(defaultConfig));

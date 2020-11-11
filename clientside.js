@@ -32,10 +32,11 @@ var DashboardPowerups = (function () {
     const PU_DATE = '!PU(date):';
     const PU_GAUGE = '!PU(gauge):';
     const PU_COMPARE = '!PU(compare):';
+    const PU_VLOOKUP = '!PU(vlookup):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
-        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE
+        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
@@ -1041,17 +1042,37 @@ var DashboardPowerups = (function () {
 
     pub.findLinkedVal = function (link) {
         //find val
-        //let link_text = PU_LINK + link;
+        //TODO: refactor to call findLinkedTile
         let link_text = `!PU\\(link\\):` + link;
         let re = new RegExp(link_text + '(?!\\w)');
         let val;
         $(TITLE_SELECTOR).each((i_link, el_link) => {
             let $linktitle = $(el_link);
 
-            //if ($linktitle.text().includes(link_text)) {
             if (re.test($linktitle.text())) {
                 let $linktile = $linktitle.parents(".grid-tile");
                 val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g, ''));
+            }
+        });
+        if (typeof val == "undefined") {
+            console.log("Powerup: ERROR - unable to match link: " + link_text);
+            return undefined;
+        } else {
+            return val;
+        }
+    }
+
+    pub.findLinkedTile = function (link) {
+        //find val
+        let link_text = `!PU\\(link\\):` + link;
+        let re = new RegExp(link_text + '(?!\\w)');
+        let val;
+        $(TITLE_SELECTOR).each((i_link, el_link) => {
+            let $linktitle = $(el_link);
+
+            if (re.test($linktitle.text())) {
+                let $linktile = $linktitle.parents(".grid-tile");
+                return $linktile;
             }
         });
         if (typeof val == "undefined") {
@@ -2652,6 +2673,32 @@ var DashboardPowerups = (function () {
             let $el = $(el);
             if ($el.css("pointer-events") === "none")
                 $el.css("pointer-events", "auto");
+        });
+    }
+
+    pub.PUvlookup = function () {
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let $tile = $title.parents(TILE_SELECTOR);
+
+            if ($title.text().includes(PU_VLOOKUP)) {
+                let titletokens = $title.text().split(PU_VLOOKUP);
+                let argstring = $title.text().split(PU_VLOOKUP)[1].split('!')[0];
+                let args = argstring.split(";").map(x => x.split("="));
+                let color = args.find(x => x[0] == "color")[1] || "white";
+                //color = d3.hsl(color);
+                let link = args.find(x => x[0] == "link")[1];
+                let val = args.find(x => x[0] == "val")[1];
+                let col = args.find(x => x[0] == "col")[1];
+
+                //find the table
+                let $tabletile = $(pub.findLinkedTile(link));
+                let dataTable = readTableData($tabletile);
+
+                console.log("POWERUP: DEBUG - readTableData:");
+                console.log(dataTable);
+
+            }
         });
     }
 
