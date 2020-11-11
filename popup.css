@@ -55,6 +55,12 @@ input[type=button] {
 	font-size: x-small;
 }
 
+#prefCloser {
+	font-size: large;
+	font-weight: bold;
+	color: #471e64;
+	display: inline-block;
+}
 .open {
 	transform: rotate(90deg);
 }

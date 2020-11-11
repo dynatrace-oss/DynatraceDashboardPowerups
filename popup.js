@@ -8,6 +8,7 @@ $(document).ready(function () {
         updateControls(config);
         $('#save').on('click', saveAndClose);
         $('#prefCloser').on('click', togglePrefs);
+        togglePrefs();
     });
 
 });
