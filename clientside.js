@@ -196,7 +196,41 @@ var DashboardPowerups = (function () {
             setTimeout(() => { waitForHCmod(mod, fn, retries - 1); }, 100);
     }
 
+    //Read data from USQL table
+    function readTableData(tabletile) {
+        let $tabletile = $(tabletile);
+        let dataTable = [];
+        let normalTable = [];
+        let keys = [];
+        $tabletile
+            .find(TABLE_COL_SELECTOR)
+            .each(function (i, el) {
+                let $el = $(el);
+                $el.find('span').each(function (j, el2) {
+                    if (typeof (dataTable[i]) == "undefined") dataTable[i] = [];
+                    dataTable[i][j] = $(el2).text();
+                });
+            });
 
+        let numKeys = dataTable.length;
+        let numRows = dataTable[0].length;
+        for (let i = 0; i < numKeys; i++) {
+            keys.push(dataTable[i].shift());
+        }
+
+        for (let i = 0; i < numRows; i++) {
+            let obj = {};
+            for (let j = 0; j < numKeys; j++) {
+                let key = keys[j];
+                if (j == numKeys - 1 && dataTable[j][i] != null) //Last column should be a number
+                    obj[key] = Number(dataTable[j][i].replace(/,/g, ''));
+                else
+                    obj[key] = dataTable[j][i] || 0;
+            }
+            normalTable.push(obj);
+        }
+        return ({ keys: keys, normalTable: normalTable })
+    }
 
     //Public methods
     var pub = {};
@@ -648,10 +682,10 @@ var DashboardPowerups = (function () {
         if (vals) {
             vals = vals.split(',');
             let data = chart.series[0].data;
-            data.forEach(pt=>{
-                let idx = vals.findIndex(x=>x.toLowerCase()===pt.name.toLowerCase());
-                if(idx>-1){
-                    pt.update({color: colors[idx]},false);
+            data.forEach(pt => {
+                let idx = vals.findIndex(x => x.toLowerCase() === pt.name.toLowerCase());
+                if (idx > -1) {
+                    pt.update({ color: colors[idx] }, false);
                 }
             });
             chart.redraw;
@@ -1664,42 +1698,6 @@ var DashboardPowerups = (function () {
                 transformMap(mutationsList, observer);
             }, 50); //Sleep a bit in case there was a lot of mutations
 
-        }
-
-        //Read data from table
-        function readTableData(tabletile) {
-            let $tabletile = $(tabletile);
-            let dataTable = [];
-            let normalTable = [];
-            let keys = [];
-            $tabletile
-                .find(TABLE_COL_SELECTOR)
-                .each(function (i, el) {
-                    let $el = $(el);
-                    $el.find('span').each(function (j, el2) {
-                        if (typeof (dataTable[i]) == "undefined") dataTable[i] = [];
-                        dataTable[i][j] = $(el2).text();
-                    });
-                });
-
-            let numKeys = dataTable.length;
-            let numRows = dataTable[0].length;
-            for (let i = 0; i < numKeys; i++) {
-                keys.push(dataTable[i].shift());
-            }
-
-            for (let i = 0; i < numRows; i++) {
-                let obj = {};
-                for (let j = 0; j < numKeys; j++) {
-                    let key = keys[j];
-                    if (j == numKeys - 1 && dataTable[j][i] != null) //Last column should be a number
-                        obj[key] = Number(dataTable[j][i].replace(/,/g, ''));
-                    else
-                        obj[key] = dataTable[j][i] || 0;
-                }
-                normalTable.push(obj);
-            }
-            return ({ keys: keys, normalTable: normalTable })
         }
 
         transformMap = function (mutationsList, observer) {
