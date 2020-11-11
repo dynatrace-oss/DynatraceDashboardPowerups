@@ -25,6 +25,10 @@ span.big {
 	width: 15px;
 }
 
+table {
+	width: 100%;
+}
+
 td:first-of-type{
 	white-space: nowrap;
 }
@@ -55,12 +59,17 @@ input[type=button] {
 	font-size: x-small;
 }
 
+#prefs {
+	cursor: pointer;
+}
+
 #prefCloser {
 	font-size: large;
 	font-weight: bold;
 	color: #471e64;
 	display: inline-block;
 }
+
 .open {
 	transform: rotate(90deg);
 }

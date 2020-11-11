@@ -7,7 +7,7 @@ $(document).ready(function () {
     $.when(config_p).done(function (config) {
         updateControls(config);
         $('#save').on('click', saveAndClose);
-        $('#prefCloser').on('click', togglePrefs);
+        $('#prefs').on('click', togglePrefs);
         togglePrefs();
     });
 
