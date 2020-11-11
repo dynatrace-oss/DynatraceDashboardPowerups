@@ -144,6 +144,6 @@ function updateIcon() {
 
 function togglePrefs() {
     let $closer = $("#prefCloser");
-    $closer.parent("thead").siblings().toggle();
+    $closer.parents("thead").siblings().toggle();
     $closer.toggleClass("open");
 }
