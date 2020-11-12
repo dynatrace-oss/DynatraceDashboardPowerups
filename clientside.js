@@ -2709,6 +2709,7 @@ var DashboardPowerups = (function () {
                 let vlookupVal = dataTable.normalTable[rowIdx][colName];
 
                 $markdown.children().hide();
+                $markdown.children(".powerupVlookup").remove();
                 $("<h2>")
                     .addClass("powerupVlookup")
                     .css("color",color)
