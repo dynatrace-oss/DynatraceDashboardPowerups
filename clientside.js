@@ -2705,7 +2705,7 @@ var DashboardPowerups = (function () {
                     console.log("POWERUP: WARN - vlookup val not found in table.");
                     return false;
                 }
-                let colName = (Number(col).isNaN()?col:dataTable.keys[col]);
+                let colName = (Number.isNaN(col)?col:dataTable.keys[col]);
                 let vlookupVal = dataTable.normalTable[rowIdx][colName];
 
                 $markdown.children().hide();
