@@ -2701,7 +2701,12 @@ var DashboardPowerups = (function () {
 
                 let firstColName = dataTable.keys[0];
                 let rowIdx = dataTable.normalTable.findIndex(x=>x[firstColName]===val);
-                let vlookupVal = dataTable.normalTable[rowIdx][col];
+                if(rowIdx<0){
+                    console.log("POWERUP: WARN - vlookup val not found in table.");
+                    return false;
+                }
+                let colName = (Number(col).isNaN()?col:dataTable.keys[col]);
+                let vlookupVal = dataTable.normalTable[rowIdx][colName];
 
                 $markdown.children().hide();
                 $("<h2>")
