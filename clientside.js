@@ -2726,15 +2726,15 @@ var DashboardPowerups = (function () {
                     }
                     let compareFirstColName = compareTable.keys[0];
                     let compareRowIdx = compareTable.normalTable.findIndex(x => x[compareFirstColName] === compareVal);
-                    if (rowIdx < 0) {
-                        console.log("POWERUP: WARN - vlookup val not found in table.");
-                        return false;
+                    if (compareRowIdx < 0) {
+                        console.log("POWERUP: WARN - vlookup compareVal not found in table.");
+                    } else {
+                        let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
+                        let compareVlookupVal = dataTable.normalTable[compareRowIdx][compareColName];
+                        if (vlookupVal < compareVlookupVal) color = lt;
+                        else if (vlookupVal === compareVlookupVal) color = eq;
+                        else if (vlookupVal > compareVlookupVal) color = gt;
                     }
-                    let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
-                    let compareVlookupVal = dataTable.normalTable[compareRowIdx][compareColName];
-                    if(vlookupVal < compareVlookupVal) color=lt;
-                    else if(vlookupVal === compareVlookupVal) color=eq;
-                    else if(vlookupVal > compareVlookupVal) color=gt;
                 }
 
                 //display val
