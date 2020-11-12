@@ -2685,7 +2685,7 @@ var DashboardPowerups = (function () {
             let $tile = $markdown.parents(TILE_SELECTOR);
 
             if ($markdown.text().includes(PU_VLOOKUP)) {
-                let argstring = $markdown.text().split(PU_VLOOKUP)[1].split('!')[0];
+                let argstring = $markdown.text().split(PU_VLOOKUP)[1].split(/[!\n]/)[0];
                 let args = argstring.split(";").map(x => x.split("="));
                 let color = (args.find(x => x[0] == "color") || ["white"])[1];
                 let link = (args.find(x => x[0] == "link") || [])[1];
