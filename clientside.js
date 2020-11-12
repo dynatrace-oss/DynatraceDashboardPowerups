@@ -202,7 +202,7 @@ var DashboardPowerups = (function () {
     //Read data from USQL table
     function readTableData(tabletile) {
         let $tabletile = $(tabletile);
-        if(! $tabletile.length)return false;
+        if (!$tabletile.length) return false;
         let dataTable = [];
         let normalTable = [];
         let keys = [];
@@ -2699,21 +2699,51 @@ var DashboardPowerups = (function () {
                 console.log("POWERUP: DEBUG - readTableData:");
                 console.log(dataTable);
 
+                //lookup val in table
                 let firstColName = dataTable.keys[0];
-                let rowIdx = dataTable.normalTable.findIndex(x=>x[firstColName]===val);
-                if(rowIdx<0){
+                let rowIdx = dataTable.normalTable.findIndex(x => x[firstColName] === val);
+                if (rowIdx < 0) {
                     console.log("POWERUP: WARN - vlookup val not found in table.");
                     return false;
                 }
-                let colName = (Number.isNaN(col)?col:dataTable.keys[col]);
+                let colName = (Number.isNaN(col) ? col : dataTable.keys[col]);
                 let vlookupVal = dataTable.normalTable[rowIdx][colName];
 
+                //optionally compare to another table value
+                //compareTable=table;compareVal=/easytravel/rest/journeys/;compareCol=2;lt=red;gt=green;eq=yellow
+                let compareLink = (args.find(x => x[0] == "compareTable") || [])[1];
+                let compareVal = (args.find(x => x[0] == "compareVal") || [])[1];
+                if (compareLink && compareVal) {
+                    let compareCol = (args.find(x => x[0] == "compareCol") || [1])[1];
+                    let lt = (args.find(x => x[0] == "lt") || ['red'])[1];
+                    let eq = (args.find(x => x[0] == "eq") || ['yellow'])[1];
+                    let gt = (args.find(x => x[0] == "gt") || ['green'])[1];
+                    let compareTable;
+                    if (link === compareLink) compareTable = dataTable;
+                    else {
+                        let $comparetabletile = $(pub.findLinkedTile(compareLink));
+                        compareTable = readTableData($comparetabletile);
+                    }
+                    let compareFirstColName = compareTable.keys[0];
+                    let compareRowIdx = compareTable.normalTable.findIndex(x => x[compareFirstColName] === compareVal);
+                    if (rowIdx < 0) {
+                        console.log("POWERUP: WARN - vlookup val not found in table.");
+                        return false;
+                    }
+                    let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
+                    let compareVlookupVal = dataTable.normalTable[compareRowIdx][compareColName];
+                    if(vlookupVal < compareVlookupVal) color=lt;
+                    else if(vlookupVal === compareVlookupVal) color=eq;
+                    else if(vlookupVal > compareVlookupVal) color=gt;
+                }
+
+                //display val
                 $markdown.children().hide();
                 $markdown.children(".powerupVlookup").remove();
                 $("<h1>")
                     .addClass("powerupVlookup")
-                    .css("color",color)
-                    .css("font-size","36px")
+                    .css("color", color)
+                    .css("font-size", "36px")
                     .text(vlookupVal)
                     .appendTo($markdown);
             }
