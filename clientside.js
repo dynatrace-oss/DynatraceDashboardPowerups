@@ -267,7 +267,7 @@ var DashboardPowerups = (function () {
     }
 
     function endBeacon() {
-        if (!OpenKitBuilder || !openKit) return false;
+        if (!OpenKitBuilder || !pub.openKit) return false;
         console.log("POWERUP: DEBUG - OpenKit end beacon");
         if (pub.openKitAction) pub.openKitAction.leaveAction();
         if (pub.openKitSession) pub.openKitSession.end();
