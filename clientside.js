@@ -2731,9 +2731,15 @@ var DashboardPowerups = (function () {
                     } else {
                         let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
                         let compareVlookupVal = dataTable.normalTable[compareRowIdx][compareColName];
-                        if (vlookupVal < compareVlookupVal) color = lt;
-                        else if (vlookupVal === compareVlookupVal) color = eq;
-                        else if (vlookupVal > compareVlookupVal) color = gt;
+                        let a = Number(vlookupVal.replace(/[,a-zA-Z]/g,""));
+                        let b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g,""));
+                        if(Number.isNaN(a) || Number.isNaN(b)){
+                            console.log("POWERUP: WARN - vlookup could not compare vals.");
+                        } else {
+                            if (a < b) color = lt;
+                            else if (a === b) color = eq;
+                            else if (a > b) color = gt;
+                        }
                     }
                 }
 
