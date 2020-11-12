@@ -2710,9 +2710,10 @@ var DashboardPowerups = (function () {
 
                 $markdown.children().hide();
                 $markdown.children(".powerupVlookup").remove();
-                $("<h2>")
+                $("<h1>")
                     .addClass("powerupVlookup")
                     .css("color",color)
+                    .css("font-size","36px")
                     .text(vlookupVal)
                     .appendTo($markdown);
             }
