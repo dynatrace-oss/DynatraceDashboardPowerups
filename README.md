@@ -57,6 +57,7 @@ To add Powerups to your existing dashboards, you may add markup text in your das
 - [Date](#Date)
 - [Gauge](#Gauge)
 - [Compare](#Compare)
+- [VLookup](#VLookup)
 
 ### Disclaimer
 If you manually add markup, it is best practice to add a Powerup disclaimer tile so that users who do not yet have the Extension, will be directed to install it. To add the disclaimer, add the following to your dashboard JSON:
@@ -309,3 +310,28 @@ Explanation:
 
 Example:
 ![Compare](Assets/compare.png)
+
+### VLookup
+This powerup extracts a value from a USQL table, and optionally compares it to another table value.
+Syntax:
+`!PU(vlookup):link=table;val=/easytravel/rest/journeys/;col=1;compareTable=table;compareVal=/easytravel/rest/locations;compareCol=1;lt=green;gt=red;eq=yellow`
+
+Explanation:
+- `!PU(vlookup):` - denotes this powerup
+- `link=table` - reference the table tile, ie put `!PU(link):table` in the title of the USQL tile
+- `val=...` - value to look for in the first column of the table
+- `col=1` - column number (or name) of where to look up the value, ie 1 is 2nd column of the table
+
+Options:
+- `color=blue` - what color to make the text
+
+Optional comparison:
+- `compareTable=table` - reference the table tile, ie put `!PU(link):table` in the title of the USQL tile
+- `compareVal=...` - value to look for in the first column of the table
+- `compareCol=1` - column number (or name) of where to look up the value, ie 1 is 2nd column of the table
+- `lt=green` - color to make the text, if the value is lower than the comparison value
+- `eq=yellow` - color to make the text, if the value is equal than the comparison value
+- `gt=red` - color to make the text, if the value is greater than the comparison value
+
+Example:
+![vlookup](Assets/vlookup.png)
