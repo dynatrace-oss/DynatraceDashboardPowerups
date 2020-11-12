@@ -2820,9 +2820,9 @@ var DashboardPowerups = (function () {
 
         $.when.apply($, promises).always(function () {
             let p = pub.cleanMarkup();
+            if (!pub.config.beaconOptOut) endBeacon();
             if (pub.config.Powerups.debug)
                 console.log("Powerup: DEBUG - fire all PowerUps" + (update ? " (update)" : ""));
-            if (!pub.config.beaconOptOut) endBeacon();
             $.when(p).always(() => {
                 mainPromise.resolve();
             });
