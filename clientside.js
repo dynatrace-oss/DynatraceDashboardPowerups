@@ -1,4 +1,6 @@
 var DashboardPowerups = (function () {
+    const OPENKIT_URL = 'https://bf49960xxn.bf-sprint.dynatracelabs.com/mbeacon';
+    const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
     const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
     const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type';
@@ -2685,11 +2687,10 @@ var DashboardPowerups = (function () {
             if ($markdown.text().includes(PU_VLOOKUP)) {
                 let argstring = $markdown.text().split(PU_VLOOKUP)[1].split('!')[0];
                 let args = argstring.split(";").map(x => x.split("="));
-                let color = args.find(x => x[0] == "color")[1] || "white";
-                //color = d3.hsl(color);
-                let link = args.find(x => x[0] == "link")[1];
-                let val = args.find(x => x[0] == "val")[1];
-                let col = args.find(x => x[0] == "col")[1];
+                let color = (args.find(x => x[0] == "color") || ["white"])[1];
+                let link = (args.find(x => x[0] == "link") || [])[1];
+                let val = (args.find(x => x[0] == "val") || [""])[1];
+                let col = (args.find(x => x[0] == "col") || [1])[1];
 
                 //find the table
                 let $tabletile = $(pub.findLinkedTile(link));
@@ -2698,6 +2699,16 @@ var DashboardPowerups = (function () {
                 console.log("POWERUP: DEBUG - readTableData:");
                 console.log(dataTable);
 
+                let firstColName = dataTable.keys[0];
+                let rowIdx = dataTable.normalTable.findIndex(x=>x[firstColName]===val);
+                let vlookupVal = dataTable.normalTable[rowIdx][col];
+
+                $markdown.children().hide();
+                $("<h2>")
+                    .addClass("powerupVlookup")
+                    .css("color",color)
+                    .text(vlookupVal)
+                    .appendTo($markdown);
             }
         });
         return true;
