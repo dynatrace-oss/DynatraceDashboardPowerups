@@ -10,6 +10,7 @@ if (typeof (INJECTED) == "undefined") {
     });
 
     const ext_url = chrome.runtime.getURL("");
+    const version = chrome.runtime.getManifest().version;
     const GH_URL = 'https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/';
     var waits = 0;
     var timeout;
@@ -50,6 +51,7 @@ if (typeof (INJECTED) == "undefined") {
                     injectD3Modules(config);
                     injectClientsideString(`
                     DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
+                    DashboardPowerups.VERSION='${version}';
                     DashboardPowerups.config = ${JSON.stringify(config)};
                     DashboardPowerups.GridObserver.launchGridObserver();
                     `);
@@ -170,7 +172,7 @@ if (typeof (INJECTED) == "undefined") {
             }
         }
 
-        if(!chrome || !chrome.storage || !chrome.storage.local)return false;
+        if (!chrome || !chrome.storage || !chrome.storage.local) return false;
         chrome.storage.local.get(['Powerups'], function (result) {
             if (result && result.Powerups &&
                 Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length) {
@@ -206,7 +208,7 @@ if (typeof (INJECTED) == "undefined") {
     }
 
     function writeConfig(defaultConfig) {
-        if(!chrome || !chrome.storage || !chrome.storage.local)return false;
+        if (!chrome || !chrome.storage || !chrome.storage.local) return false;
         chrome.storage.local.set(defaultConfig, function () {
             if (defaultConfig.Powerups.debug)
                 console.log('Powerup: (extside) config storage set to ' + JSON.stringify(defaultConfig));
@@ -270,6 +272,9 @@ if (typeof (INJECTED) == "undefined") {
     }
 
     function injectOtherModules(config) {
+        if (!config.Powerups.BeaconOptOut) {
+            injectOtherModule('3rdParty/node_modules/@dynatrace/openkit-js/dist/browser/openkit.js');
+        }
         if (config.Powerups.sankeyPU) {
             injectOtherModule('3rdParty/node_modules/@iconfu/svg-inject/dist/svg-inject.min.js', "SVGInject");
         }

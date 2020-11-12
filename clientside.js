@@ -1,6 +1,7 @@
 var DashboardPowerups = (function () {
     const OPENKIT_URL = 'https://bf49960xxn.bf-sprint.dynatracelabs.com/mbeacon';
     const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
+    const OPENKIT_DEVICEID = 42;
     const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
     const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type';
@@ -138,6 +139,7 @@ var DashboardPowerups = (function () {
     var targets = [];
     var dataTables = [];
     var D3MutexBlocking = false;
+    var openKit;
 
 
     //Private methods
@@ -234,6 +236,39 @@ var DashboardPowerups = (function () {
             normalTable.push(obj);
         }
         return ({ keys: keys, normalTable: normalTable })
+    }
+
+    function startBeacon() {
+        if (!OpenKitBuilder) return false;
+        if (pub.config.Powerups.BeaconOptOut) return false;
+        pub.openKit = new OpenKitBuilder(OPENKIT_URL, OPENKIT_APPID, OPENKIT_DEVICEID)
+            //.withApplicationName(applicationName)
+            .withApplicationVersion(pub.VERSION)
+            .withOperatingSystem(navigator.userAgent.match(/\(([^)]+)\)/)[1])
+            .withManufacturer('Chrome')
+            .withModelId(navigator.userAgent.match(/Chrome[^ ]+/)[0])
+            .build();
+        if (pub.openKit) {
+            pub.openKitSession = pub.openKit.createSession();
+            if (pub.openKitSession) {
+                let email = $(`[debugid="userEmail"]`).text();
+                let name = (email > "" ? email : $(`[debugid="userName"]`).text());
+                pub.openKitSession.identifyUser(name);
+                pub.openKitAction = pub.openKitSession.enterAction('PowerUp');
+                if (pub.openKitAction) {
+                    if (tenantId)
+                        pub.openKitAction.reportValue('tenantId', tenantId);
+                    pub.openKitAction.reportValue('host', location.host);
+                    pub.openKitAction.reportValue('dashboardID', location.hash.match(/id=([0-9a-f-]+)/)[1]);
+                }
+            }
+        }
+    }
+
+    function endBeacon() {
+        if (!OpenKitBuilder || !openKit) return false;
+        if (pub.openKitAction) pub.openKitAction.leaveAction();
+        if (pub.openKitSession) pub.openKitSession.end();
     }
 
     //Public methods
@@ -2731,9 +2766,9 @@ var DashboardPowerups = (function () {
                     } else {
                         let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
                         let compareVlookupVal = dataTable.normalTable[compareRowIdx][compareColName];
-                        let a = Number(vlookupVal.replace(/[,a-zA-Z]/g,""));
-                        let b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g,""));
-                        if(Number.isNaN(a) || Number.isNaN(b)){
+                        let a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
+                        let b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
+                        if (Number.isNaN(a) || Number.isNaN(b)) {
                             console.log("POWERUP: WARN - vlookup could not compare vals.");
                         } else {
                             if (a < b) color = lt;
@@ -2761,6 +2796,8 @@ var DashboardPowerups = (function () {
         let mainPromise = new $.Deferred();
         let promises = [];
 
+        if (!pub.config.beaconOptOut) startBeacon();
+
         promises.push(pub.extDisclaimer());
         promises.push(pub.PUHighcharts());
         promises.push(pub.bannerPowerUp());
@@ -2782,6 +2819,7 @@ var DashboardPowerups = (function () {
             let p = pub.cleanMarkup();
             if (pub.config.Powerups.debug)
                 console.log("Powerup: DEBUG - fire all PowerUps" + (update ? " (update)" : ""));
+            if (!pub.config.beaconOptOut) endBeacon();
             $.when(p).always(() => {
                 mainPromise.resolve();
             });
