@@ -241,6 +241,7 @@ var DashboardPowerups = (function () {
     function startBeacon() {
         if (!OpenKitBuilder) return false;
         if (pub.config.Powerups.BeaconOptOut) return false;
+        console.log("POWERUP: DEBUG - OpenKit start beacon");
         pub.openKit = new OpenKitBuilder(OPENKIT_URL, OPENKIT_APPID, OPENKIT_DEVICEID)
             //.withApplicationName(applicationName)
             .withApplicationVersion(pub.VERSION)
@@ -267,8 +268,10 @@ var DashboardPowerups = (function () {
 
     function endBeacon() {
         if (!OpenKitBuilder || !openKit) return false;
+        console.log("POWERUP: DEBUG - OpenKit end beacon");
         if (pub.openKitAction) pub.openKitAction.leaveAction();
         if (pub.openKitSession) pub.openKitSession.end();
+        if (pub.openKit) pub.openKit.shutdown();
     }
 
     //Public methods
