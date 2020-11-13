@@ -249,7 +249,7 @@ var DashboardPowerups = (function () {
             .withOperatingSystem(navigator.userAgent.match(/\(([^)]+)\)/)[1])
             .withManufacturer('Chrome')
             .withModelId(navigator.userAgent.match(/Chrome[^ ]+/)[0])
-            .withScreenResolution(`${window.innerWidth}x${window.innerHeight}`)
+            .withScreenResolution(window.innerWidth,window.innerHeight)
             .build();
         if (pub.openKit) {
             pub.openKitSession = pub.openKit.createSession();
@@ -2474,7 +2474,7 @@ var DashboardPowerups = (function () {
             if (!text.includes(PU_COMPARE)) return;
             if (pub.config.Powerups.debug) console.log("Powerup: compare power-up found");
             let argstring = text.split(PU_COMPARE)[1].split('!')[0];
-myFakeError[foo];
+
             let args = argstring.split(";").map(x => x.split("="));
             let link = args.find(x => x[0] == "link")[1];
             let lt = (args.find(x => x[0] == "lt") || [])[1] || "green";
