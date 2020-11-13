@@ -262,6 +262,7 @@ var DashboardPowerups = (function () {
                         pub.openKitAction.reportValue('tenantId', tenantId);
                     pub.openKitAction.reportValue('host', location.host);
                     pub.openKitAction.reportValue('dashboardID', location.hash.match(/id=([0-9a-f-]+)/)[1]);
+                    pub.openKitAction.reportValue(`mypowerup`, 42);
                 }
             }
         }
@@ -275,7 +276,6 @@ var DashboardPowerups = (function () {
                 pub.openKitAction.reportValue(x, powerupsFired[x]);
             });
             powerupsFired = {};
-            pub.openKitAction.reportValue(`mypowerup`, 42);
             pub.openKitAction.leaveAction();
         }
         if (pub.openKitSession) pub.openKitSession.end();
