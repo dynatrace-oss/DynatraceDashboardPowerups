@@ -140,6 +140,7 @@ var DashboardPowerups = (function () {
     var dataTables = [];
     var D3MutexBlocking = false;
     var openKit;
+    var powerupsFired = {};
 
 
     //Private methods
@@ -510,6 +511,7 @@ var DashboardPowerups = (function () {
                     pu = true;
                     lineChartPU();
                     enableExporting();
+                    powerupsFired['PU_LINE'] ? powerupsFired['PU_LINE']++ : powerupsFired['PU_LINE'] = 1;
                 }
             } else if (title.includes(PU_USQLSTACK)) {
                 let p = pub.PUUsqlStack(chart, title);
@@ -518,6 +520,7 @@ var DashboardPowerups = (function () {
                     restoreHandlers();
                     enableExporting();
                     if (val) pu = true;
+                    powerupsFired['PU_USQLSTACK'] ? powerupsFired['PU_USQLSTACK']++ : powerupsFired['PU_USQLSTACK'] = 1;
                 })
             } else if (title.includes(PU_USQLCOLOR)) {
                 let p = pub.PUUsqlColor(chart, title);
@@ -531,10 +534,12 @@ var DashboardPowerups = (function () {
                     }
                     restoreHandlers();
                     if (val) pu = true;
+                    powerupsFired['PU_USQLCOLOR'] ? powerupsFired['PU_USQLCOLOR']++ : powerupsFired['PU_USQLCOLOR'] = 1;
                 })
             } else if (title.includes(PU_HEATMAP)) {
                 if (pub.PUHeatmap(chart, title, chart.newContainer))
                     pu = true;
+                powerupsFired['PU_HEATMAP'] ? powerupsFired['PU_HEATMAP']++ : powerupsFired['PU_HEATMAP'] = 1;
             } else if (title.includes(PU_GAUGE)) {
                 let p = pub.puGauge(chart, title);
                 promises.push(p);
@@ -542,6 +547,7 @@ var DashboardPowerups = (function () {
                     //restoreHandlers();
                     //enableExporting();
                     if (val) pu = true;
+                    powerupsFired['PU_GAUGE'] ? powerupsFired['PU_GAUGE']++ : powerupsFired['PU_GAUGE'] = 1;
                 })
             } else if (chart.series[0].type == "pie") {
                 pieChartPU();
@@ -855,6 +861,7 @@ var DashboardPowerups = (function () {
                 $(BANNER_SELECTOR).css("background", color);
                 $(BANNER_SELECTOR).css("color", contrast(color));
                 powerupFound = true;
+                powerupsFired['PU_BANNER'] ? powerupsFired['PU_BANNER']++ : powerupsFired['PU_BANNER'] = 1;
             }
         });
 
@@ -949,6 +956,7 @@ var DashboardPowerups = (function () {
                 } else if (typeof (color) != "undefined") {
                     $target.css("color", color);
                 }
+                powerupsFired['PU_COLOR'] ? powerupsFired['PU_COLOR']++ : powerupsFired['PU_COLOR'] = 1;
             }
         });
     }
@@ -1024,7 +1032,7 @@ var DashboardPowerups = (function () {
                         else $svg.addClass(class_crit);
                     }
                 });
-
+            powerupsFired['PU_SVG'] ? powerupsFired['PU_SVG']++ : powerupsFired['PU_SVG'] = 1;
         });
     }
 
@@ -1450,6 +1458,7 @@ var DashboardPowerups = (function () {
             }
 
             function uc(str) {
+                if(!str)return false;
                 return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
             }
 
