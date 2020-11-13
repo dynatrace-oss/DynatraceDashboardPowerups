@@ -276,6 +276,7 @@ var DashboardPowerups = (function () {
                 pub.openKitAction.reportValue(x, powerupsFired[x]);
             });
             powerupsFired = {};
+            pub.openKitAction.reportValue(`myotherpowerup`, "42");
             pub.openKitAction.leaveAction();
         }
         if (pub.openKitSession) pub.openKitSession.end();
