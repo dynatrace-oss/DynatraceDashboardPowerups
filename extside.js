@@ -1,4 +1,3 @@
-console.log(uuidv4());
 if (typeof (INJECTED) == "undefined") {
     const POWERUPDEBUG = false;
     if (POWERUPDEBUG) console.log("Powerup: Dashboard powerups installed.");
@@ -170,7 +169,8 @@ if (typeof (INJECTED) == "undefined") {
                 sunburnMode: false,
                 libLocation: "ext",
                 ackedVersion: "0.0",
-                BeaconOptOut: false
+                BeaconOptOut: false,
+                uuid: uuidv4()
             }
         }
 

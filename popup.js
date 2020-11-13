@@ -50,7 +50,8 @@ function loadConfig(alreadyWritten = false) {
             sunburnMode: false,
             libLocation: "ext",
             ackedVersion: "0.0",
-            BeaconOptOut: false
+            BeaconOptOut: false,
+            uuid: uuidv4()
         }
     };
 
@@ -107,7 +108,8 @@ function writeConfig() {
             sunburnMode: $('#sunburnMode').prop("checked"),
             libLocation: $('#libLocation').val(),
             ackedVersion: chrome.runtime.getManifest().version,
-            BeaconOptOut: $('#BeaconOptOut').prop("checked")
+            BeaconOptOut: $('#BeaconOptOut').prop("checked"),
+            uuid: $('#uuid').val()
         }
     }
 
