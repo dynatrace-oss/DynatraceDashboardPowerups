@@ -249,6 +249,7 @@ var DashboardPowerups = (function () {
             .withOperatingSystem(navigator.userAgent.match(/\(([^)]+)\)/)[1])
             .withManufacturer('Chrome')
             .withModelId(navigator.userAgent.match(/Chrome[^ ]+/)[0])
+            .withScreenResolution(`${window.innerWidth}x${window.innerHeight}`)
             .build();
         if (pub.openKit) {
             pub.openKitSession = pub.openKit.createSession();
@@ -2822,23 +2823,28 @@ var DashboardPowerups = (function () {
 
         if (!pub.config.beaconOptOut) startBeacon();
 
-        promises.push(pub.extDisclaimer());
-        promises.push(pub.PUHighcharts());
-        promises.push(pub.bannerPowerUp());
-        promises.push(pub.colorPowerUp());
-        promises.push(pub.updateSVGPowerUp());
-        promises.push(pub.svgPowerUp());
-        promises.push(pub.mapPowerUp());
-        promises.push(pub.PUfunnel());
-        promises.push(pub.PUMath());
-        promises.push(pub.puDate());
-        promises.push(pub.PUCompare());
-        promises.push(pub.PUvlookup());
-        promises.push(pub.sunburnMode());
-        promises.push(pub.fixPublicDashboards());
-        pub.loadChartSync();
-        waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
-
+        try {
+            promises.push(pub.extDisclaimer());
+            promises.push(pub.PUHighcharts());
+            promises.push(pub.bannerPowerUp());
+            promises.push(pub.colorPowerUp());
+            promises.push(pub.updateSVGPowerUp());
+            promises.push(pub.svgPowerUp());
+            promises.push(pub.mapPowerUp());
+            promises.push(pub.PUfunnel());
+            promises.push(pub.PUMath());
+            promises.push(pub.puDate());
+            promises.push(pub.PUCompare());
+            promises.push(pub.PUvlookup());
+            promises.push(pub.sunburnMode());
+            promises.push(pub.fixPublicDashboards());
+            pub.loadChartSync();
+            waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
+        } catch (e) {
+            if (pub.openKitSession)
+                pub.openKitSession.reportCrash(e.name, e.message, e.stack);
+            console.warn({ msg: "POWERUP: ERROR", e: e });
+        }
         $.when.apply($, promises).always(function () {
             let p = pub.cleanMarkup();
             if (!pub.config.beaconOptOut) endBeacon();
