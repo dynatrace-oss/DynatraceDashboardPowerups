@@ -19,6 +19,7 @@ function hashListener(details) {
                 });
                 
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/jquery-3.5.1.min.js', runAt: "document_end" });
+                chrome.tabs.executeScript(details.tabId, { file: '3rdParty/node_modules/uuid/dist/umd/uuidv4.min.js', runAt: "document_end" });
                 chrome.tabs.executeScript(details.tabId, { file: 'extside.min.js', runAt: "document_end" });
             }
         });

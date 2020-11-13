@@ -1,5 +1,4 @@
-const { v5: uuidv5 } = require('uuid');
-console.log(uuidv5());
+console.log(uuidv4());
 if (typeof (INJECTED) == "undefined") {
     const POWERUPDEBUG = false;
     if (POWERUPDEBUG) console.log("Powerup: Dashboard powerups installed.");
