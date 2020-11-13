@@ -1761,8 +1761,8 @@ var DashboardPowerups = (function () {
                 };
                 let sankey = newChart(data, container, params);
                 $(".highcharts-exporting-group").addClass("powerupVisible");
+                powerupsFired['PU_SANKEY'] ? powerupsFired['PU_SANKEY']++ : powerupsFired['PU_SANKEY'] = 1;
             });
-        powerupsFired['PU_SANKEY'] ? powerupsFired['PU_SANKEY']++ : powerupsFired['PU_SANKEY'] = 1;
         return true;
     }
 
@@ -1950,8 +1950,8 @@ var DashboardPowerups = (function () {
                         }
                     }
                 });
+                powerupsFired['PU_MAP'] ? powerupsFired['PU_MAP']++ : powerupsFired['PU_MAP'] = 1;
             }
-            powerupsFired['PU_MAP'] ? powerupsFired['PU_MAP']++ : powerupsFired['PU_MAP'] = 1;
         });
 
 
