@@ -241,9 +241,9 @@ var DashboardPowerups = (function () {
     function startBeacon() {
         if (!OpenKitBuilder) return false;
         if (pub.config.Powerups.BeaconOptOut) return false;
-        console.log("POWERUP: DEBUG - OpenKit start beacon");
+
+        if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
         pub.openKit = new OpenKitBuilder(OPENKIT_URL, OPENKIT_APPID, pub.config.Powerups.uuid)
-            //.withApplicationName(applicationName)
             .withApplicationVersion(pub.VERSION)
             .withOperatingSystem(navigator.userAgent.match(/\(([^)]+)\)/)[1])
             .withManufacturer('Chrome')
@@ -255,6 +255,7 @@ var DashboardPowerups = (function () {
             if (pub.openKitSession) {
                 let email = $(`[debugid="userEmail"]`).text();
                 let name = (email > "" ? email : $(`[debugid="userName"]`).text());
+                let internalUser = (name.includes('@dynatrace.com')?"true":"false");
                 pub.openKitSession.identifyUser(name);
                 pub.openKitAction = pub.openKitSession.enterAction('PowerUp');
                 if (pub.openKitAction) {
@@ -262,7 +263,7 @@ var DashboardPowerups = (function () {
                         pub.openKitAction.reportValue('tenantId', tenantId);
                     pub.openKitAction.reportValue('host', location.host);
                     pub.openKitAction.reportValue('dashboardID', location.hash.match(/id=([0-9a-f-]+)/)[1]);
-                    pub.openKitAction.reportValue(`mypowerup`, 42);
+                    pub.openKitAction.reportValue(`internalUser`, internalUser);
                 }
             }
         }
@@ -270,13 +271,12 @@ var DashboardPowerups = (function () {
 
     function endBeacon() {
         if (!OpenKitBuilder || !pub.openKit) return false;
-        console.log("POWERUP: DEBUG - OpenKit end beacon");
+        if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end beacon");
         if (pub.openKitAction) {
             Object.keys(powerupsFired).forEach(x => {
                 pub.openKitAction.reportValue(x, powerupsFired[x]);
             });
             powerupsFired = {};
-            pub.openKitAction.reportValue(`myotherpowerup`, "42");
             pub.openKitAction.leaveAction();
         }
         if (pub.openKitSession) pub.openKitSession.end();
