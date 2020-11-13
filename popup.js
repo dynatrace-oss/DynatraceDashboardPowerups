@@ -109,7 +109,7 @@ function writeConfig() {
             libLocation: $('#libLocation').val(),
             ackedVersion: chrome.runtime.getManifest().version,
             BeaconOptOut: $('#BeaconOptOut').prop("checked"),
-            uuid: $('#uuid').val()
+            uuid: $('#uuid').val() || uuidv4()
         }
     }
 
