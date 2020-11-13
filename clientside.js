@@ -270,7 +270,12 @@ var DashboardPowerups = (function () {
     function endBeacon() {
         if (!OpenKitBuilder || !pub.openKit) return false;
         console.log("POWERUP: DEBUG - OpenKit end beacon");
-        if (pub.openKitAction) pub.openKitAction.leaveAction();
+        if (pub.openKitAction){
+            Object.keys(powerupsFired).forEach(x=>{
+                pub.openKitAction.reportValue(x,powerupsFired[x]);
+            });
+            pub.openKitAction.leaveAction();
+        } 
         if (pub.openKitSession) pub.openKitSession.end();
         if (pub.openKit) pub.openKit.shutdown();
     }
@@ -1458,7 +1463,7 @@ var DashboardPowerups = (function () {
             }
 
             function uc(str) {
-                if(!str)return false;
+                if (!str) return false;
                 return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
             }
 
@@ -1756,6 +1761,7 @@ var DashboardPowerups = (function () {
                 let sankey = newChart(data, container, params);
                 $(".highcharts-exporting-group").addClass("powerupVisible");
             });
+        powerupsFired['PU_SANKEY'] ? powerupsFired['PU_SANKEY']++ : powerupsFired['PU_SANKEY'] = 1;
         return true;
     }
 
@@ -1943,9 +1949,8 @@ var DashboardPowerups = (function () {
                         }
                     }
                 });
-
-
             }
+            powerupsFired['PU_MAP'] ? powerupsFired['PU_MAP']++ : powerupsFired['PU_MAP'] = 1;
         });
 
 
@@ -2361,6 +2366,7 @@ var DashboardPowerups = (function () {
 
                     });
                     console.log("Powerup: Funnel power up found");
+                    powerupsFired['PU_FUNNEL'] ? powerupsFired['PU_FUNNEL']++ : powerupsFired['PU_FUNNEL'] = 1;
                     mainPromise.resolve(true);
                 }
                 function checkForDoneDrawing() {
@@ -2448,6 +2454,7 @@ var DashboardPowerups = (function () {
                 .css("color", color)
                 .css("font-size", size)
                 .appendTo($newContainer);
+            powerupsFired['PU_MATH'] ? powerupsFired['PU_MATH']++ : powerupsFired['PU_MATH'] = 1;
         });
     }
 
@@ -2482,6 +2489,7 @@ var DashboardPowerups = (function () {
             else if (val === linkval) $bignum.css("color", eq);
             else return true;
             count++;
+            powerupsFired['PU_COMPARE'] ? powerupsFired['PU_COMPARE']++ : powerupsFired['PU_COMPARE'] = 1;
         });
         return count;
     }
@@ -2520,6 +2528,7 @@ var DashboardPowerups = (function () {
                 .text(formattedDate)
                 .css("color", color)
                 .appendTo($newContainer);
+            powerupsFired['PU_DATE'] ? powerupsFired['PU_DATE']++ : powerupsFired['PU_DATE'] = 1;
         });
     }
 
@@ -2716,6 +2725,7 @@ var DashboardPowerups = (function () {
                 .attr("id", "powerupSunburnMode")
                 .appendTo("head");
         }
+        powerupsFired['PU_SUNBURN'] ? powerupsFired['PU_SUNBURN']++ : powerupsFired['PU_SUNBURN'] = 1;
     }
 
     pub.fixPublicDashboards = function () {
@@ -2799,6 +2809,7 @@ var DashboardPowerups = (function () {
                     .css("font-size", "36px")
                     .text(vlookupVal)
                     .appendTo($markdown);
+                powerupsFired['PU_VLOOKUP'] ? powerupsFired['PU_VLOOKUP']++ : powerupsFired['PU_VLOOKUP'] = 1;
             }
         });
         return true;
