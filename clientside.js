@@ -270,12 +270,13 @@ var DashboardPowerups = (function () {
     function endBeacon() {
         if (!OpenKitBuilder || !pub.openKit) return false;
         console.log("POWERUP: DEBUG - OpenKit end beacon");
-        if (pub.openKitAction){
-            Object.keys(powerupsFired).forEach(x=>{
-                pub.openKitAction.reportValue(x,powerupsFired[x]);
+        if (pub.openKitAction) {
+            Object.keys(powerupsFired).forEach(x => {
+                pub.openKitAction.reportValue(x, powerupsFired[x]);
             });
+            powerupsFired = {};
             pub.openKitAction.leaveAction();
-        } 
+        }
         if (pub.openKitSession) pub.openKitSession.end();
         if (pub.openKit) pub.openKit.shutdown();
     }
