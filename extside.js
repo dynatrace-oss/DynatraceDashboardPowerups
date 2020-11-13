@@ -168,7 +168,8 @@ if (typeof (INJECTED) == "undefined") {
                 animateWarning: "Never",
                 sunburnMode: false,
                 libLocation: "ext",
-                ackedVersion: "0.0"
+                ackedVersion: "0.0",
+                BeaconOptOut: false
             }
         }
 

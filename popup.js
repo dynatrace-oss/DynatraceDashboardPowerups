@@ -49,7 +49,8 @@ function loadConfig(alreadyWritten = false) {
             animateWarning: "Never",
             sunburnMode: false,
             libLocation: "ext",
-            ackedVersion: "0.0"
+            ackedVersion: "0.0",
+            BeaconOptOut: false
         }
     };
 
@@ -105,7 +106,8 @@ function writeConfig() {
             animateWarning: $('#animateWarning').val(),
             sunburnMode: $('#sunburnMode').prop("checked"),
             libLocation: $('#libLocation').val(),
-            ackedVersion: chrome.runtime.getManifest().version
+            ackedVersion: chrome.runtime.getManifest().version,
+            BeaconOptOut: $('#BeaconOptOut').prop("checked")
         }
     }
 
