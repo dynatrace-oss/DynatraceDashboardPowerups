@@ -1,7 +1,6 @@
 var DashboardPowerups = (function () {
     const OPENKIT_URL = 'https://bf49960xxn.bf-sprint.dynatracelabs.com/mbeacon';
     const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
-    const OPENKIT_DEVICEID = 42;
     const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
     const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type';
@@ -243,7 +242,7 @@ var DashboardPowerups = (function () {
         if (!OpenKitBuilder) return false;
         if (pub.config.Powerups.BeaconOptOut) return false;
         console.log("POWERUP: DEBUG - OpenKit start beacon");
-        pub.openKit = new OpenKitBuilder(OPENKIT_URL, OPENKIT_APPID, OPENKIT_DEVICEID)
+        pub.openKit = new OpenKitBuilder(OPENKIT_URL, OPENKIT_APPID, pub.config.Powerups.uuid)
             //.withApplicationName(applicationName)
             .withApplicationVersion(pub.VERSION)
             .withOperatingSystem(navigator.userAgent.match(/\(([^)]+)\)/)[1])
