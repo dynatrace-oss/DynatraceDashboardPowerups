@@ -248,7 +248,7 @@ var DashboardPowerups = (function () {
             .withApplicationVersion(pub.VERSION)
             .withOperatingSystem(navigator.userAgent.match(/\(([^)]+)\)/)[1])
             .withManufacturer('Chrome')
-            .withModelId(navigator.userAgent.match(/Chrome[^ ]+/)[0])
+            .withModelId(navigator.userAgent.match(/Chrome\/([^ ]+)/)[1])
             .withScreenResolution(window.innerWidth,window.innerHeight)
             .build();
         if (pub.openKit) {
