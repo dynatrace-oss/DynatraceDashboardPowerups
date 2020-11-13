@@ -1,3 +1,5 @@
+import { v5 as uuidv5 } from 'uuid';
+console.log(uuidv5());
 if (typeof (INJECTED) == "undefined") {
     const POWERUPDEBUG = false;
     if (POWERUPDEBUG) console.log("Powerup: Dashboard powerups installed.");

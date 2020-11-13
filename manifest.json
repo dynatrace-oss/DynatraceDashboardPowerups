@@ -29,7 +29,8 @@
         "3rdParty/D3/*",
         "3rdParty/node_modules/math-expression-evaluator/dist/browser/*",
         "3rdParty/date_fns.min.js*",
-        "3rdParty/node_modules/@dynatrace/openkit-js/dist/browser/openkit.js"
+        "3rdParty/node_modules/@dynatrace/openkit-js/dist/browser/openkit.js",
+        "3rdParty/node_modules/uuid/*.js"
     ],
     "permissions": [
         "webNavigation",
