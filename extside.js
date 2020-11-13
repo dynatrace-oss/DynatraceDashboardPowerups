@@ -1,4 +1,4 @@
-import { v5 as uuidv5 } from 'uuid';
+const { v5: uuidv5 } = require('uuid');
 console.log(uuidv5());
 if (typeof (INJECTED) == "undefined") {
     const POWERUPDEBUG = false;
