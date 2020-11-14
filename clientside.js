@@ -2828,6 +2828,7 @@ var DashboardPowerups = (function () {
             if ($title.text().includes(PU_STDEV)) {
                 let argstring = $title.text().split(PU_STDEV)[1].split(/[!\n]/)[0];
                 let args = argstring.split(";").map(x => x.split("="));
+                let color = (args.find(x => x[0] == "color") || ["white"])[1];
 
                 //find the table
                 let dataTable = readTableData($tile);
@@ -2852,7 +2853,7 @@ var DashboardPowerups = (function () {
                 $tile.children(".powerupVlookup").remove();
                 $("<h1>")
                     .addClass("powerupVlookup")
-                    //.css("color", color)
+                    .css("color", color)
                     .css("font-size", "36px")
                     .text(stdevF)
                     .insertAfter($table);
