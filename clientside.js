@@ -2850,7 +2850,7 @@ var DashboardPowerups = (function () {
                 //display val
                 let $table = $tile.find(TABLE_SELECTOR);
                 $table.hide();
-                $tile.children(".powerupVlookup").remove();
+                $tile.find(".powerupVlookup").remove();
                 $("<h1>")
                     .addClass("powerupVlookup")
                     .css("color", color)
