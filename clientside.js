@@ -2833,13 +2833,14 @@ var DashboardPowerups = (function () {
 
                 console.log("POWERUP: DEBUG - readTableData:");
                 console.log(dataTable);
+                let vlookupVal = "FOO!";
 
                 //display val
                 $tile.children(TABLE_SELECTOR).hide();
                 $tile.children(".powerupVlookup").remove();
                 $("<h1>")
                     .addClass("powerupVlookup")
-                    .css("color", color)
+                    //.css("color", color)
                     .css("font-size", "36px")
                     .text(vlookupVal)
                     .appendTo($tile);
