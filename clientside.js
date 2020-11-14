@@ -230,7 +230,7 @@ var DashboardPowerups = (function () {
             for (let j = 0; j < numKeys; j++) {
                 let key = keys[j];
                 if (j == numKeys - 1 && dataTable[j][i] != null) //Last column should be a number
-                    obj[key] = Number(dataTable[j][i].replace(/,/g, ''));
+                    obj[key] = Number(dataTable[j][i].replace(/[,a-z ]/g, ''));
                 else
                     obj[key] = dataTable[j][i] || 0;
             }
