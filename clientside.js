@@ -229,10 +229,10 @@ var DashboardPowerups = (function () {
             let obj = {};
             for (let j = 0; j < numKeys; j++) {
                 let key = keys[j];
-                if (j == numKeys - 1 && dataTable[j][i] != null) //Last column should be a number
+                if (j == numKeys - 1 && dataTable[j][i] != null) {//Last column should be a number
                     obj[key] = Number(dataTable[j][i].replace(/[,a-z ]/g, ''));
-                else{
-                    //obj[key] = dataTable[j][i] || 0;
+                } else {
+                    obj[key] = dataTable[j][i] || 0;
                 }
             }
             normalTable.push(obj);
@@ -250,14 +250,14 @@ var DashboardPowerups = (function () {
             .withOperatingSystem(navigator.userAgent.match(/\(([^)]+)\)/)[1])
             .withManufacturer('Chrome')
             .withModelId(navigator.userAgent.match(/Chrome\/([^ ]+)/)[1])
-            .withScreenResolution(window.innerWidth,window.innerHeight)
+            .withScreenResolution(window.innerWidth, window.innerHeight)
             .build();
         if (pub.openKit) {
             pub.openKitSession = pub.openKit.createSession();
             if (pub.openKitSession) {
                 let email = $(`[debugid="userEmail"]`).text();
                 let name = (email > "" ? email : $(`[debugid="userName"]`).text());
-                let internalUser = (name.includes('@dynatrace.com')?"true":"false");
+                let internalUser = (name.includes('@dynatrace.com') ? "true" : "false");
                 pub.openKitSession.identifyUser(name);
                 pub.openKitAction = pub.openKitSession.enterAction('PowerUp');
                 if (pub.openKitAction) {
