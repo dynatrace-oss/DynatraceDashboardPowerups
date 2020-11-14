@@ -2868,7 +2868,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.puDate());
             promises.push(pub.PUCompare());
             promises.push(pub.PUvlookup());
-            promises.push(pub.PUstdev());
+            //promises.push(pub.PUstdev());
             promises.push(pub.sunburnMode());
             promises.push(pub.fixPublicDashboards());
             pub.loadChartSync();
