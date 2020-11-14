@@ -35,10 +35,11 @@ var DashboardPowerups = (function () {
     const PU_GAUGE = '!PU(gauge):';
     const PU_COMPARE = '!PU(compare):';
     const PU_VLOOKUP = '!PU(vlookup):';
+    const PU_STDEV = '!PU(stdev):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
-        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP
+        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
@@ -2756,8 +2757,8 @@ var DashboardPowerups = (function () {
                 let $tabletile = $(pub.findLinkedTile(link));
                 let dataTable = readTableData($tabletile);
 
-                console.log("POWERUP: DEBUG - readTableData:");
-                console.log(dataTable);
+                //console.log("POWERUP: DEBUG - readTableData:");
+                //console.log(dataTable);
 
                 //lookup val in table
                 let firstColName = dataTable.keys[0];
@@ -2818,6 +2819,36 @@ var DashboardPowerups = (function () {
         return true;
     }
 
+    pub.PUstdev = function () {
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let $tile = $title.parents(TILE_SELECTOR);
+
+            if ($title.text().includes(PU_STDEV)) {
+                let argstring = $title.text().split(PU_STDEV)[1].split(/[!\n]/)[0];
+                let args = argstring.split(";").map(x => x.split("="));
+
+                //find the table
+                let dataTable = readTableData($tile);
+
+                console.log("POWERUP: DEBUG - readTableData:");
+                console.log(dataTable);
+
+                //display val
+                $tile.children(TABLE_SELECTOR).hide();
+                $tile.children(".powerupVlookup").remove();
+                $("<h1>")
+                    .addClass("powerupVlookup")
+                    .css("color", color)
+                    .css("font-size", "36px")
+                    .text(vlookupVal)
+                    .appendTo($tile);
+            }
+        });
+        powerupsFired['PU_STDEV'] ? powerupsFired['PU_STDEV']++ : powerupsFired['PU_STDEV'] = 1;
+        return true;
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -2837,6 +2868,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.puDate());
             promises.push(pub.PUCompare());
             promises.push(pub.PUvlookup());
+            promises.push(pub.PUstdev());
             promises.push(pub.sunburnMode());
             promises.push(pub.fixPublicDashboards());
             pub.loadChartSync();
