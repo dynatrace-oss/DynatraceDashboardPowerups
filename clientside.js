@@ -2834,7 +2834,16 @@ var DashboardPowerups = (function () {
 
                 console.log("POWERUP: DEBUG - readTableData:");
                 console.log(dataTable);
-                let vlookupVal = "FOO!";
+                let key = dataTable.keys[0];
+                let sum = dataTable.normalTable.reduce((agg, x) => agg + x[key], 0);
+                let avg = sum / dataTable.normalTable.length;
+                let sumsqdeltas = dataTable.normalTable
+                    .map(x => {
+                        let delta = x[key] - avg;
+                        return delta * delta;
+                    })
+                    .reduce((agg, x) => agg + x, 0);
+                let stdev = Math.sqrt(sumsqdeltas);
 
                 //display val
                 $tile.children(TABLE_SELECTOR).hide();
@@ -2843,7 +2852,7 @@ var DashboardPowerups = (function () {
                     .addClass("powerupVlookup")
                     //.css("color", color)
                     .css("font-size", "36px")
-                    .text(vlookupVal)
+                    .text(stdev)
                     .appendTo($tile);
             }
         });
