@@ -2843,8 +2843,7 @@ var DashboardPowerups = (function () {
                         return delta * delta;
                     })
                     .reduce((agg, x) => agg + x, 0);
-                let stdev = Math.sqrt(sumsqdeltas);
-                let locale = navigator.language;
+                let stdev = Math.sqrt(sumsqdeltas/ataTable.normalTable.length);
                 let stdevF = stdev.toLocaleString(undefined, { maximumFractionDigits: 2 });
 
                 //display val
