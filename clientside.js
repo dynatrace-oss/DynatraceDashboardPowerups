@@ -2845,7 +2845,7 @@ var DashboardPowerups = (function () {
                     .reduce((agg, x) => agg + x, 0);
                 let stdev = Math.sqrt(sumsqdeltas);
                 let locale = navigator.language;
-                let stdevF = Intl.NumberFormat(locale, style).format(stdev);
+                let stdevF = stdev.toLocaleString(undefined, { maximumFractionDigits: 2 });
 
                 //display val
                 let $table = $tile.find(TABLE_SELECTOR);
