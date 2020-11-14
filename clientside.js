@@ -2846,14 +2846,15 @@ var DashboardPowerups = (function () {
                 let stdev = Math.sqrt(sumsqdeltas);
 
                 //display val
-                $tile.children(TABLE_SELECTOR).hide();
+                let $table = $tile.find(TABLE_SELECTOR);
+                $table.hide();
                 $tile.children(".powerupVlookup").remove();
                 $("<h1>")
                     .addClass("powerupVlookup")
                     //.css("color", color)
                     .css("font-size", "36px")
                     .text(stdev)
-                    .appendTo($tile);
+                    .insertAfter($table);
             }
         });
         powerupsFired['PU_STDEV'] ? powerupsFired['PU_STDEV']++ : powerupsFired['PU_STDEV'] = 1;
