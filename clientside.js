@@ -2844,6 +2844,7 @@ var DashboardPowerups = (function () {
                     })
                     .reduce((agg, x) => agg + x, 0);
                 let stdev = Math.sqrt(sumsqdeltas);
+                let stdevF = Intl.NumberFormat(locale, style).format(stdev);
 
                 //display val
                 let $table = $tile.find(TABLE_SELECTOR);
@@ -2853,7 +2854,7 @@ var DashboardPowerups = (function () {
                     .addClass("powerupVlookup")
                     //.css("color", color)
                     .css("font-size", "36px")
-                    .text(stdev)
+                    .text(stdevF)
                     .insertAfter($table);
             }
         });
