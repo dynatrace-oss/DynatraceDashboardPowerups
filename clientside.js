@@ -2834,9 +2834,10 @@ var DashboardPowerups = (function () {
 
                 //find the table
                 let dataTable = readTableData($tile);
+                if(!dataTable) return false;
 
-                console.log("POWERUP: DEBUG - readTableData:");
-                console.log(dataTable);
+                //console.log("POWERUP: DEBUG - readTableData:");
+                //console.log(dataTable);
                 let key = dataTable.keys[0];
                 let sum = dataTable.normalTable.reduce((agg, x) => agg + x[key], 0);
                 let avg = sum / dataTable.normalTable.length;
