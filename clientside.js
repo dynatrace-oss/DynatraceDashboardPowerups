@@ -220,6 +220,7 @@ var DashboardPowerups = (function () {
             });
 
         let numKeys = dataTable.length;
+        if (!numKeys) return false;
         for (let i = 0; i < numKeys; i++) {
             keys.push(dataTable[i].shift());
         }
