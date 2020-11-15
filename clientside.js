@@ -2846,11 +2846,11 @@ var DashboardPowerups = (function () {
                     })
                     .reduce((agg, x) => agg + x, 0);
                 let stdev = Math.sqrt(sumsqdeltas / dataTable.normalTable.length);
-                let max = dataTable.normalTable.reduce((agg, x) => Math.max(x[key]));
-                let min = dataTable.normalTable.reduce((agg, x) => Math.min(x[key]));
                 let sorted = dataTable.normalTable
                     .sort((a, b) => a[key] - b[key]);
                 let len = sorted.length;
+                let max = sorted[len-1];
+                let min = sorted[0];
                 const quantile = (q) => {
                     const pos = (len - 1) * q;
                     const base = Math.floor(pos);
