@@ -242,7 +242,7 @@ var DashboardPowerups = (function () {
     }
 
     function startBeacon() {
-        if (!OpenKitBuilder) return false;
+        if (typeof(OpenKitBuilder)==="undefined") return false;
         if (pub.config.Powerups.BeaconOptOut) return false;
 
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
