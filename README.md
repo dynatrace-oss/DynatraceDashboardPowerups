@@ -1,3 +1,6 @@
+# Warning - Critical bug in version 1.27 / 1.28
+**Workaround:** Please change Library Location to "GitHub (newer)". Follow issue [here](https://github.com/LucasHocker/DynatraceDashboardPowerups/issues/6).
+
 # Dynatrace Dashboard Powerups
 
 This extension powers-up Dynatrace dashboards to enable cool new experimental features live, such as:
