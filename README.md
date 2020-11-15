@@ -58,6 +58,7 @@ To add Powerups to your existing dashboards, you may add markup text in your das
 - [Gauge](#Gauge)
 - [Compare](#Compare)
 - [VLookup](#VLookup)
+- [Stdev](#Stdev)
 
 ### Disclaimer
 If you manually add markup, it is best practice to add a Powerup disclaimer tile so that users who do not yet have the Extension, will be directed to install it. To add the disclaimer, add the following to your dashboard JSON:
@@ -335,3 +336,16 @@ Optional comparison:
 
 Example:
 ![vlookup](Assets/vlookup.png)
+
+### Stdev
+This powerup computes standard deviation (or other value) over a series. Apply to a USQL table.
+Syntax:
+`!PU(stdev):color=orange;output=min,avg,median,90%,max,sum,stdev`
+
+Explanation:
+- `!PU(stdev):` - denotes this powerup
+- `output=min,avg,median,90%,max,sum,stdev` - which function(s) to output, defaults to stdev
+- `color=orange` - what color to make the text, defaults to white
+
+Example:
+![stdev](Assets/stdev.png)
