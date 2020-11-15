@@ -536,7 +536,7 @@ var DashboardPowerups = (function () {
                 let p = pub.PUUsqlColor(chart, title);
                 promises.push(p);
                 $.when(p).done(val => {
-                    if (chart.series[0].type == "pie") {
+                    if (chart.series[0] && chart.series[0].type == "pie") {
                         pieChartPU();
                     } else {
                         lineChartPU();
@@ -559,7 +559,7 @@ var DashboardPowerups = (function () {
                     if (val) pu = true;
                     powerupsFired['PU_GAUGE'] ? powerupsFired['PU_GAUGE']++ : powerupsFired['PU_GAUGE'] = 1;
                 })
-            } else if (chart.series[0].type == "pie") {
+            } else if (chart.series[0] && chart.series[0].type == "pie") {
                 pieChartPU();
             } else {
                 lineChartPU();
@@ -2829,6 +2829,7 @@ var DashboardPowerups = (function () {
                 let argstring = $title.text().split(PU_STDEV)[1].split(/[!\n]/)[0];
                 let args = argstring.split(";").map(x => x.split("="));
                 let color = (args.find(x => x[0] == "color") || ["white"])[1];
+                let output = (args.find(x => x[0] == "output") || ["stdev"])[1].split(',');
 
                 //find the table
                 let dataTable = readTableData($tile);
@@ -2845,18 +2846,61 @@ var DashboardPowerups = (function () {
                     })
                     .reduce((agg, x) => agg + x, 0);
                 let stdev = Math.sqrt(sumsqdeltas / dataTable.normalTable.length);
-                let stdevF = stdev.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                let max = dataTable.normalTable.reduce((agg, x) => Math.max(x[key]));
+                let min = dataTable.normalTable.reduce((agg, x) => Math.min(x[key]));
+                let sorted = dataTable.normalTable
+                    .sort((a, b) => a[key] - b[key]);
+                let len = sorted.length;
+                const quantile = (q) => {
+                    const pos = (len - 1) * q;
+                    const base = Math.floor(pos);
+                    const rest = pos - base;
+                    if (sorted[base + 1] !== undefined) {
+                        return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+                    } else {
+                        return sorted[base];
+                    }
+                };
 
                 //display val
                 let $table = $tile.find(TABLE_SELECTOR);
                 $table.hide();
-                $tile.find(".powerupVlookup").remove();
-                $("<h1>")
-                    .addClass("powerupVlookup")
-                    .css("color", color)
-                    .css("font-size", "36px")
-                    .text(stdevF)
-                    .insertAfter($table);
+                $tile.find(".powerupStdev").remove();
+                output.forEach(o => {
+                    let text;
+                    switch (o.toLowerCase()) {
+                        case 'stdev':
+                            text = stdev.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                            break;
+                        case 'avg':
+                            text = avg.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                            break;
+                        case 'sum':
+                            text = sum.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                            break;
+                        case 'max':
+                            text = max.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                            break;
+                        case 'min':
+                            text = min.toLocaleString(undefined, { maximumFractionDigits: 2 });
+                            break;
+                        case 'median':
+                            text = quantile(.5).toLocaleString(undefined, { maximumFractionDigits: 2 });
+                            break;
+                        default:
+                            if (o.includes('%')) {
+                                let q = Number(o.replace(/%/g, '')) / 100;
+                                text = quantile(.5).toLocaleString(undefined, { maximumFractionDigits: 2 });
+                                break;
+                            }
+                    }
+                    $("<div>")
+                        .addClass("powerupStdev")
+                        .css("color", color)
+                        .html(`${o}: <span>${text}</span>`)
+                        .insertBefore($table);
+                })
+
             }
         });
         powerupsFired['PU_STDEV'] ? powerupsFired['PU_STDEV']++ : powerupsFired['PU_STDEV'] = 1;
