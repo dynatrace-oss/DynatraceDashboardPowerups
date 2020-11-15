@@ -305,3 +305,6 @@ span.powerup-color-normal {
   align-items: center;
 }
 
+.powerupStdev span {
+  font-size: 32px;
+}
