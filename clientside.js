@@ -2891,7 +2891,7 @@ var DashboardPowerups = (function () {
                         default:
                             if (o.includes('%')) {
                                 let q = Number(o.replace(/%/g, '')) / 100;
-                                text = quantile(.5).toLocaleString(undefined, { maximumFractionDigits: 2 });
+                                text = quantile(q).toLocaleString(undefined, { maximumFractionDigits: 2 });
                                 break;
                             }
                     }
