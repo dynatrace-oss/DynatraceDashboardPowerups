@@ -62,6 +62,7 @@ To add Powerups to your existing dashboards, you may add markup text in your das
 - [Compare](#Compare)
 - [VLookup](#VLookup)
 - [Stdev](#Stdev)
+- [100stack](#100stack)
 
 ### Disclaimer
 If you manually add markup, it is best practice to add a Powerup disclaimer tile so that users who do not yet have the Extension, will be directed to install it. To add the disclaimer, add the following to your dashboard JSON:
@@ -352,3 +353,14 @@ Explanation:
 
 Example:
 ![stdev](Assets/stdev.png)
+
+### 100 Stack
+This powerup switches stacked column charts to 100% stacked charts.
+Syntax:
+`!PU(100stack):`
+
+Explanation
+- `!PU(100stack):` - denotes this powerup
+
+Example:
+![100stack](Assets/100stack.png)

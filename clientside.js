@@ -36,10 +36,11 @@ var DashboardPowerups = (function () {
     const PU_COMPARE = '!PU(compare):';
     const PU_VLOOKUP = '!PU(vlookup):';
     const PU_STDEV = '!PU(stdev):';
+    const PU_100STACK = '!PU(100stack):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
-        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV
+        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
@@ -506,6 +507,18 @@ var DashboardPowerups = (function () {
             restoreHandlers();
         }
 
+        var PU100stack = function(chart, title) {
+            chart.series.forEach((s, i) => {
+                if (s.options.type === "column") {
+                    let opts = {
+                        stacking: "percent",
+                    }
+                    s.update(opts);
+                    s.yAxis.setExtremes(0,100);
+                }
+            });
+        }
+
         if (pub.config.Powerups.tooltipPU &&
             typeof (chart) !== "undefined" &&
             //!chart.poweredup &&
@@ -560,6 +573,10 @@ var DashboardPowerups = (function () {
                     if (val) pu = true;
                     powerupsFired['PU_GAUGE'] ? powerupsFired['PU_GAUGE']++ : powerupsFired['PU_GAUGE'] = 1;
                 })
+            } else if (title.includes(PU_100STACK)) {
+                if (PU100stack(chart, title))
+                    pu = true;
+                powerupsFired['PU_100STACK'] ? powerupsFired['PU_100STACK']++ : powerupsFired['PU_100STACK'] = 1;
             } else if (chart.series[0] && chart.series[0].type == "pie") {
                 pieChartPU();
             } else {
