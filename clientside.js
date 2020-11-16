@@ -701,7 +701,7 @@ var DashboardPowerups = (function () {
                     name: chart.series[0].name + `(${split})`,
                     type: 'bar',
                     cursor: 'crosshair',
-                    stacking: 'normal',
+                    stacking: stacking,
                     data: [
                         {
                             name: newName,
