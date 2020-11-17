@@ -275,7 +275,7 @@ if (typeof (INJECTED) == "undefined") {
 
     function injectOtherModules(config) {
         if (!config.Powerups.BeaconOptOut) {
-            injectOtherModule('3rdParty/node_modules/@dynatrace/openkit-js/dist/browser/openkit.js');
+            injectOtherModule('3rdParty/node_modules/@dynatrace/openkit-js/dist/browser/openkit.js', "OpenKitBuilder");
         }
         if (config.Powerups.sankeyPU) {
             injectOtherModule('3rdParty/node_modules/@iconfu/svg-inject/dist/svg-inject.min.js', "SVGInject");
