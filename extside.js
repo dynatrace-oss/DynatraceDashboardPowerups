@@ -170,7 +170,7 @@ if (typeof (INJECTED) == "undefined") {
                 libLocation: "ext",
                 ackedVersion: "0.0",
                 BeaconOptOut: false,
-                uuid: uuidv4()
+                uuid: (typeof(uuidv4)==="function"?uuidv4():"")
             }
         }
 

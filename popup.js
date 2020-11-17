@@ -51,7 +51,7 @@ function loadConfig(alreadyWritten = false) {
             libLocation: "ext",
             ackedVersion: "0.0",
             BeaconOptOut: false,
-            uuid: uuidv4()
+            uuid: (typeof(uuidv4)==="function"?uuidv4():"")
         }
     };
 
@@ -109,7 +109,7 @@ function writeConfig() {
             libLocation: $('#libLocation').val(),
             ackedVersion: chrome.runtime.getManifest().version,
             BeaconOptOut: $('#BeaconOptOut').prop("checked"),
-            uuid: $('#uuid').val() || uuidv4()
+            uuid: $('#uuid').val() || (typeof(uuidv4)==="function"?uuidv4():"")
         }
     }
 

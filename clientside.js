@@ -134,6 +134,11 @@ var DashboardPowerups = (function () {
             width: '1px'
         }
     };
+    const CREDITS_OFF = {
+        credits: {
+            enabled: false
+        }
+    }
     const MO_CONFIG = { attributes: true, childList: true, subtree: true }; //MutexObserver
     var waits = 0;
     var observers = [];
@@ -243,7 +248,7 @@ var DashboardPowerups = (function () {
     }
 
     function startBeacon() {
-        if (typeof(OpenKitBuilder)==="undefined") return false;
+        if (typeof (OpenKitBuilder) === "undefined") return false;
         if (pub.config.Powerups.BeaconOptOut) return false;
 
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
@@ -274,7 +279,7 @@ var DashboardPowerups = (function () {
     }
 
     function endBeacon() {
-        if (typeof(OpenKitBuilder)==="undefined" || !pub.openKit) return false;
+        if (typeof (OpenKitBuilder) === "undefined" || !pub.openKit) return false;
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end beacon");
         if (pub.openKitAction) {
             Object.keys(powerupsFired).forEach(x => {
@@ -507,14 +512,14 @@ var DashboardPowerups = (function () {
             restoreHandlers();
         }
 
-        var PU100stack = function(chart, title) {
+        var PU100stack = function (chart, title) {
             chart.series.forEach((s, i) => {
                 if (s.options.type === "column") {
                     let opts = {
                         stacking: "percent",
                     }
-                    s.update(opts);
-                    s.yAxis.setExtremes(0,100);
+                    s.update(opts, false);
+                    s.yAxis.setExtremes(0, 100);
                 }
             });
         }
@@ -655,7 +660,7 @@ var DashboardPowerups = (function () {
         }
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
         if (colors) colors = colors.split(',');
-        let stacking = (title.includes(PU_100STACK)?"percent":"normal");
+        let stacking = (title.includes(PU_100STACK) ? "percent" : "normal");
 
         //get data
         if (chart.series.length > 1) { //magically the data is actually already split, just stack it
@@ -2848,11 +2853,11 @@ var DashboardPowerups = (function () {
                 let argstring = $title.text().split(PU_STDEV)[1].split(/[!\n]/)[0];
                 let args = argstring.split(";").map(x => x.split("="));
                 let color = (args.find(x => x[0] == "color") || ["white"])[1];
-                let output = (args.find(x => x[0] == "output") || ["output","stdev"])[1].split(',');
+                let output = (args.find(x => x[0] == "output") || ["output", "stdev"])[1].split(',');
 
                 //find the table
                 let dataTable = readTableData($tile);
-                if(!dataTable) return false;
+                if (!dataTable) return false;
 
                 //console.log("POWERUP: DEBUG - readTableData:");
                 //console.log(dataTable);
@@ -2868,9 +2873,9 @@ var DashboardPowerups = (function () {
                 let stdev = Math.sqrt(sumsqdeltas / dataTable.normalTable.length);
                 let sorted = dataTable.normalTable
                     .sort((a, b) => a[key] - b[key])
-                    .map(x=>x[key]);
+                    .map(x => x[key]);
                 let len = sorted.length;
-                let max = sorted[len-1];
+                let max = sorted[len - 1];
                 let min = sorted[0];
                 const quantile = (q) => {
                     const pos = (len - 1) * q;
