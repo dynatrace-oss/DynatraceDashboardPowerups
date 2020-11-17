@@ -1,5 +1,5 @@
 # Warning - Critical bug in version 1.27 / 1.28
-**Workaround:** Please change Library Location to "GitHub (newer)". Follow issue [here](https://github.com/LucasHocker/DynatraceDashboardPowerups/issues/6).
+~~**Workaround:** Please change Library Location to "GitHub (newer)".~~ Follow issue [here](https://github.com/LucasHocker/DynatraceDashboardPowerups/issues/6). Version 1.29 has been submitted to Google ChromeStore, just waiting for their approval of the fix. My apologies for the inconvenience.
 
 # Dynatrace Dashboard Powerups
 
