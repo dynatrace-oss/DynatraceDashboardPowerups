@@ -45,7 +45,7 @@
     "externally_connectable": {
         "matches": [
             "https://*.live.dynatrace.com/*",
-            "https://*/e/*",
+            //"https://*/e/*",
             "https://*.sprint.dynatracelabs.com/*",
             "https://*.dev.dynatracelabs.com/*"
         ]
