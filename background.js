@@ -17,6 +17,7 @@ function hashListener(details) {
                     else
                         chrome.pageAction.setIcon({ tabId: details.tabId, path: "Assets/powerup_purple.png" });
                 });
+                listenForBeaconMessages();
 
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/jquery-3.5.1.min.js', runAt: "document_end" });
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/node_modules/uuid/dist/umd/uuidv4.min.js', runAt: "document_end" });
@@ -130,7 +131,7 @@ function endBeacon(request) {
 chrome.webNavigation.onCommitted.addListener(hashListener, filter);
 chrome.webNavigation.onHistoryStateUpdated.addListener(hashListener, filter);
 chrome.webNavigation.onReferenceFragmentUpdated.addListener(hashListener, filter)
-listenForBeaconMessages();
+
 
 /*chrome.runtime.onMessageExternal.addListener(
     function(request, sender, sendResponse) {
