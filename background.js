@@ -132,7 +132,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(hashListener, filter);
 chrome.webNavigation.onReferenceFragmentUpdated.addListener(hashListener, filter)
 //listenForBeaconMessages();
 
-chrome.runtime.onMessage.addListener(
+chrome.runtime.onMessageExternal.addListener(
     function(request, sender, sendResponse) {
       console.log(sender.tab ?
                   "from a content script:" + sender.tab.url :
