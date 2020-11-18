@@ -61,7 +61,7 @@ var filter = {
     }]
 };
 
-const OPENKIT_URL = 'https://bf49960xxn.bf-sprint.dynatracelabs.com/mbeacon';
+/*const OPENKIT_URL = 'https://bf49960xxn.bf-sprint.dynatracelabs.com/mbeacon';
 const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
 var openKit, openKitSession, openKitAction;
 
@@ -124,11 +124,19 @@ function endBeacon(request) {
     }
     if (openKitSession) openKitSession.end();
     if (openKit) openKit.shutdown();
-}
+}*/
 
 // Main
 chrome.webNavigation.onCommitted.addListener(hashListener, filter);
 chrome.webNavigation.onHistoryStateUpdated.addListener(hashListener, filter);
 chrome.webNavigation.onReferenceFragmentUpdated.addListener(hashListener, filter)
-listenForBeaconMessages();
+//listenForBeaconMessages();
 
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+      console.log(sender.tab ?
+                  "from a content script:" + sender.tab.url :
+                  "from the extension");
+      if (request.greeting == "hello")
+        sendResponse({farewell: "goodbye"});
+    });
