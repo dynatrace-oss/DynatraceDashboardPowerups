@@ -20,6 +20,7 @@ if (typeof (BEACON_LOADED) == "undefined") {
                         break;
                 }
             });
+        console.log("POWERUP: message listener loaded.");
     }
 
     function startBeacon(request) {
