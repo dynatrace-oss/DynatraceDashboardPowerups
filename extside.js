@@ -11,6 +11,7 @@ if (typeof (INJECTED) == "undefined") {
 
     const ext_url = chrome.runtime.getURL("");
     const version = chrome.runtime.getManifest().version;
+    const ext_id = chrome.runtime.id;
     const GH_URL = 'https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/';
     var waits = 0;
     var timeout;
@@ -52,6 +53,7 @@ if (typeof (INJECTED) == "undefined") {
                     injectClientsideString(`
                     DashboardPowerups.POWERUP_EXT_URL='${ext_url}';
                     DashboardPowerups.VERSION='${version}';
+                    DashboardPowerups.EXT_ID='${ext_id}';
                     DashboardPowerups.config = ${JSON.stringify(config)};
                     DashboardPowerups.GridObserver.launchGridObserver();
                     `);

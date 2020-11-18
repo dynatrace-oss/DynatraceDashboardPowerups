@@ -252,7 +252,7 @@ var DashboardPowerups = (function () {
         if (pub.config.Powerups.BeaconOptOut) return false;
 
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
-        pub.openKit = new OpenKitBuilder(OPENKIT_URL, OPENKIT_APPID, pub.config.Powerups.uuid)
+        /*pub.openKit = new OpenKitBuilder(OPENKIT_URL, OPENKIT_APPID, pub.config.Powerups.uuid)
             .withApplicationVersion(pub.VERSION)
             .withOperatingSystem(navigator.userAgent.match(/\(([^)]+)\)/)[1])
             .withManufacturer('Chrome')
@@ -264,7 +264,10 @@ var DashboardPowerups = (function () {
             if (pub.openKitSession) {
                 let email = $(`[debugid="userEmail"]`).text();
                 let name = (email > "" ? email : $(`[debugid="userName"]`).text());
-                let internalUser = (name.includes('@dynatrace.com') ? "true" : "false");
+                let internalUser = (name.includes('@dynatrace.com') ||
+                    location.href.match(/managed[a-z-]*.internal.dynatrace/)
+                    ? "true" : "false");
+                let dtVersion = $(`[uitestid="gwt-debug-systemVerisionSection"]`).text().match(/[0-9.]+/)[0];
                 pub.openKitSession.identifyUser(name);
                 pub.openKitAction = pub.openKitSession.enterAction('PowerUp');
                 if (pub.openKitAction) {
@@ -273,15 +276,48 @@ var DashboardPowerups = (function () {
                     pub.openKitAction.reportValue('host', location.host);
                     pub.openKitAction.reportValue('dashboardID', location.hash.match(/id=([0-9a-f-]+)/)[1]);
                     pub.openKitAction.reportValue(`internalUser`, internalUser);
+                    pub.openKitAction.reportValue(`dtVersion`, dtVersion);
                 }
             }
-        }
+        }*/
+        //try sending message to background.js instead to avoid CSP issues
+        let email = $(`[debugid="userEmail"]`).text();
+        let name = (email > "" ? email : $(`[debugid="userName"]`).text());
+        let internalUser = (name.includes('@dynatrace.com') ||
+            location.href.match(/managed[a-z-]*.internal.dynatrace/)
+            ? "true" : "false");
+        let dtVersion = $(`[uitestid="gwt-debug-systemVerisionSection"]`).text().match(/[0-9.]+/)[0];
+        let vals = {
+            tenantId: tenantId,
+            host: location.host,
+            dashboardID: location.hash.match(/id=([0-9a-f-]+)/)[1],
+            internalUser: internalUser,
+            dtVersion: dtVersion
+        };
+        chrome.runtime.sendMessage(
+            pub.config.EXT_ID,
+            {
+                OpenKit: "start_beacon",
+                action: "PowerUp",
+                beaconOptOut: pub.config.Powerups.BeaconOptOut,
+                uuid: pub.config.Powerups.uuid,
+                applicationVersion: pub.VERSION,
+                operatingSystem: navigator.userAgent.match(/\(([^)]+)\)/)[1],
+                manufacturer: 'Chrome',
+                modelId: navigator.userAgent.match(/Chrome\/([^ ]+)/)[1],
+                screenResolution: [window.innerWidth, window.innerHeight],
+                name: name,
+                vals: vals
+            },
+            function (response) {
+                console.log(response.beacon_status);
+            });
     }
 
     function endBeacon() {
         if (typeof (OpenKitBuilder) === "undefined" || !pub.openKit) return false;
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end beacon");
-        if (pub.openKitAction) {
+        /*if (pub.openKitAction) {
             Object.keys(powerupsFired).forEach(x => {
                 pub.openKitAction.reportValue(x, powerupsFired[x]);
             });
@@ -289,7 +325,17 @@ var DashboardPowerups = (function () {
             pub.openKitAction.leaveAction();
         }
         if (pub.openKitSession) pub.openKitSession.end();
-        if (pub.openKit) pub.openKit.shutdown();
+        if (pub.openKit) pub.openKit.shutdown();*/
+        let vals = powerupsFired;
+        chrome.runtime.sendMessage(
+            pub.config.EXT_ID,
+            {
+                OpenKit: "end_beacon",
+                vals: vals
+            },
+            function (response) {
+                console.log(response.beacon_status);
+            });
     }
 
     //Public methods

@@ -5,10 +5,12 @@ $(document).ready(function () {
     updateDebugOutput(config_p);
 
     $.when(config_p).done(function (config) {
+        //startBeaconMessage();
         updateControls(config);
         $('#save').on('click', saveAndClose);
         $('#prefs').on('click', togglePrefs);
         togglePrefs();
+        //endBeaconMessage();
     });
 
 });
@@ -51,7 +53,7 @@ function loadConfig(alreadyWritten = false) {
             libLocation: "ext",
             ackedVersion: "0.0",
             BeaconOptOut: false,
-            uuid: (typeof(uuidv4)==="function"?uuidv4():"")
+            uuid: (typeof (uuidv4) === "function" ? uuidv4() : "")
         }
     };
 
@@ -62,7 +64,7 @@ function loadConfig(alreadyWritten = false) {
             && result.Powerups.ackedVersion === chrome.runtime.getManifest().version
         ) {
             p.resolve(result);
-        } else if(alreadyWritten){
+        } else if (alreadyWritten) {
             console.log("Powerup: (popup) FATAL - write/read did not match.");
             p.resolve(defaultConfig);
         } else {
@@ -109,7 +111,7 @@ function writeConfig() {
             libLocation: $('#libLocation').val(),
             ackedVersion: chrome.runtime.getManifest().version,
             BeaconOptOut: $('#BeaconOptOut').prop("checked"),
-            uuid: $('#uuid').val() || (typeof(uuidv4)==="function"?uuidv4():"")
+            uuid: $('#uuid').val() || (typeof (uuidv4) === "function" ? uuidv4() : "")
         }
     }
 
@@ -151,3 +153,37 @@ function togglePrefs() {
     $closer.parents("thead").siblings().toggle();
     $closer.toggleClass("open");
 }
+
+/*function startBeaconMessage() {
+    if (typeof (OpenKitBuilder) === "undefined") return false;
+    if (config.Powerups.BeaconOptOut) return false;
+    if (config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start popup beacon");
+
+    //try sending message to background.js
+    chrome.runtime.sendMessage(
+        pub.config.EXT_ID,
+        {
+            OpenKit: "start_beacon",
+            action: "Popup",
+            beaconOptOut: config.Powerups.BeaconOptOut,
+            uuid: config.Powerups.uuid
+        },
+        function (response) {
+            console.log(response.beacon_status);
+        });
+}
+
+function endBeaconMessage() {
+    if (typeof (OpenKitBuilder) === "undefined") return false;
+    if (config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end popup beacon");
+
+    let vals = powerupsFired;
+    chrome.runtime.sendMessage(
+        {
+            OpenKit: "end_beacon",
+            vals: vals
+        },
+        function (response) {
+            console.log(response.beacon_status);
+        });
+}*/
