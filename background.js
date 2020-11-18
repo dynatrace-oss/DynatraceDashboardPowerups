@@ -21,7 +21,7 @@ function hashListener(details) {
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/jquery-3.5.1.min.js', runAt: "document_end" });
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/node_modules/uuid/dist/umd/uuidv4.min.js', runAt: "document_end" });
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/node_modules/@dynatrace/openkit-js/dist/browser/openkit.js', runAt: "document_end" });
-                chrome.tabs.executeScript(details.tabId, { file: 'beacon.min.js', runAt: "document_end" });
+                //chrome.tabs.executeScript(details.tabId, { file: 'beacon.min.js', runAt: "document_end" });
                 chrome.tabs.executeScript(details.tabId, { file: 'extside.min.js', runAt: "document_end" });
             }
         });
@@ -63,3 +63,5 @@ var filter = {
 chrome.webNavigation.onCommitted.addListener(hashListener, filter);
 chrome.webNavigation.onHistoryStateUpdated.addListener(hashListener, filter);
 chrome.webNavigation.onReferenceFragmentUpdated.addListener(hashListener, filter)
+
+
