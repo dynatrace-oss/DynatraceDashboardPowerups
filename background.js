@@ -81,6 +81,7 @@ function listenForBeaconMessages() {
                     sendResponse({ beacon_status: "done" });
                     break;
             }
+            return true;
         });
     console.log("POWERUP: message listener loaded.");
 }
