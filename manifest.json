@@ -6,6 +6,7 @@
     "author": "Lucas Hocker",
     "background": {
         "scripts": [
+            "3rdParty/node_modules/@dynatrace/openkit-js/dist/browser/openkit.js",
             "background.js"
         ],
         "persistent": false
