@@ -252,9 +252,9 @@ var DashboardPowerups = (function () {
         if (pub.config.Powerups.BeaconOptOut) return false;
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
         
-        chrome.runtime.sendMessage(pub.EXT_ID, {greeting: "hello"}, function(response) {
+        /*chrome.runtime.sendMessage(pub.EXT_ID, {greeting: "hello"}, function(response) {
             console.log(response.farewell);
-          });
+          });*/
 
         //try sending message to background.js instead to avoid CSP issues
         let email = $(`[debugid="userEmail"]`).text();

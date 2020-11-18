@@ -61,12 +61,12 @@ var filter = {
     }]
 };
 
-/*const OPENKIT_URL = 'https://bf49960xxn.bf-sprint.dynatracelabs.com/mbeacon';
+const OPENKIT_URL = 'https://bf49960xxn.bf-sprint.dynatracelabs.com/mbeacon';
 const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
 var openKit, openKitSession, openKitAction;
 
 function listenForBeaconMessages() {
-    chrome.runtime.onMessage.addListener(
+    chrome.runtime.onMessageExternal.addListener(
         function (request, sender, sendResponse) {
             console.log(sender.tab ?
                 "from a content script:" + sender.tab.url :
@@ -124,15 +124,15 @@ function endBeacon(request) {
     }
     if (openKitSession) openKitSession.end();
     if (openKit) openKit.shutdown();
-}*/
+}
 
 // Main
 chrome.webNavigation.onCommitted.addListener(hashListener, filter);
 chrome.webNavigation.onHistoryStateUpdated.addListener(hashListener, filter);
 chrome.webNavigation.onReferenceFragmentUpdated.addListener(hashListener, filter)
-//listenForBeaconMessages();
+listenForBeaconMessages();
 
-chrome.runtime.onMessageExternal.addListener(
+/*chrome.runtime.onMessageExternal.addListener(
     function(request, sender, sendResponse) {
       console.log(sender.tab ?
                   "from a content script:" + sender.tab.url :
@@ -140,3 +140,4 @@ chrome.runtime.onMessageExternal.addListener(
       if (request.greeting == "hello")
         sendResponse({farewell: "goodbye"});
     });
+*/
