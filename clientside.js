@@ -283,7 +283,7 @@ var DashboardPowerups = (function () {
     }
 
     function endBeacon() {
-        if (typeof (OpenKitBuilder) === "undefined" || !pub.openKit) return false;
+        if (typeof (OpenKitBuilder) === "undefined") return false;
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end beacon");
 
         let vals = powerupsFired;

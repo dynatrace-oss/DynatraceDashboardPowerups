@@ -304,16 +304,19 @@ if (typeof (INJECTED) == "undefined") {
     }
 
     function startBeaconListener() {
-        window.addEventListener("message", function (event) {
-            // We only accept messages from ourselves
-            if (event.source != window)
-                return;
+        if (typeof (BEACON_LISTENING) == "undefined") {
+            window.addEventListener("message", function (event) {
+                // We only accept messages from ourselves
+                if (event.source != window)
+                    return;
 
-            if (event.data.OpenKit) {
-                console.log("Content script received: " + event.data.OpenKit);
-                chrome.runtime.sendMessage(event.data);
-            }
-        }, false);
+                if (event.data.OpenKit) {
+                    console.log("POWERUP: Content script received: " + event.data.OpenKit);
+                    chrome.runtime.sendMessage(event.data);
+                }
+            }, false);
+        }
+        BEACON_LISTENING = true;
     }
 
     INJECTED = true;
