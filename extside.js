@@ -47,6 +47,7 @@ if (typeof (INJECTED) == "undefined") {
                 if (POWERUPDEBUG) console.log("Powerup: clientside libs injected.");
 
                 $.when(clientside_p).then(() => {
+                    startBeaconListener();
                     injectOtherModules(config);
                     injectHighchartsModules(config);
                     injectD3Modules(config);
