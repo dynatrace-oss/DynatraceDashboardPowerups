@@ -172,7 +172,7 @@ if (typeof (INJECTED) == "undefined") {
                 libLocation: "ext",
                 ackedVersion: "0.0",
                 BeaconOptOut: false,
-                uuid: (typeof(uuidv4)==="function"?uuidv4():"")
+                uuid: (typeof (uuidv4) === "function" ? uuidv4() : "")
             }
         }
 
@@ -300,6 +300,19 @@ if (typeof (INJECTED) == "undefined") {
                 .attr("src", "${src}" )
                 .appendTo("body");
         }`);
+    }
+
+    function startBeaconListener() {
+        window.addEventListener("message", function (event) {
+            // We only accept messages from ourselves
+            if (event.source != window)
+                return;
+
+            if (event.data.OpenKit) {
+                console.log("Content script received: " + event.data.OpenKit);
+                chrome.runtime.sendMessage(event.data);
+            }
+        }, false);
     }
 
     INJECTED = true;

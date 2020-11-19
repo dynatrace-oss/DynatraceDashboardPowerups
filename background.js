@@ -67,7 +67,7 @@ const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
 var openKit, openKitSession, openKitAction;
 
 function listenForBeaconMessages() {
-    chrome.runtime.onMessageExternal.addListener(
+    chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
             console.log(sender.tab ?
                 "from a content script:" + sender.tab.url :

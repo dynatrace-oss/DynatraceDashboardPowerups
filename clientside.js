@@ -251,10 +251,6 @@ var DashboardPowerups = (function () {
         if (typeof (OpenKitBuilder) === "undefined") return false;
         if (pub.config.Powerups.BeaconOptOut) return false;
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
-        
-        /*chrome.runtime.sendMessage(pub.EXT_ID, {greeting: "hello"}, function(response) {
-            console.log(response.farewell);
-          });*/
 
         //try sending message to background.js instead to avoid CSP issues
         let email = $(`[debugid="userEmail"]`).text();
@@ -270,8 +266,7 @@ var DashboardPowerups = (function () {
             internalUser: internalUser,
             dtVersion: dtVersion
         };
-        chrome.runtime.sendMessage(
-            pub.EXT_ID,
+        window.postMessage(
             {
                 OpenKit: "start_beacon",
                 action: "PowerUp",
@@ -284,10 +279,7 @@ var DashboardPowerups = (function () {
                 screenResolution: [window.innerWidth, window.innerHeight],
                 name: name,
                 vals: vals
-            },
-            function (response) {
-                console.log(response.beacon_status);
-            });
+            }, "*");
     }
 
     function endBeacon() {
@@ -295,15 +287,11 @@ var DashboardPowerups = (function () {
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end beacon");
 
         let vals = powerupsFired;
-        chrome.runtime.sendMessage(
-            pub.EXT_ID,
+        window.postMessage(
             {
                 OpenKit: "end_beacon",
                 vals: vals
-            },
-            function (response) {
-                console.log(response.beacon_status);
-            });
+            }, "*");
     }
 
     //Public methods
