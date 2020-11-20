@@ -153,37 +153,3 @@ function togglePrefs() {
     $closer.parents("thead").siblings().toggle();
     $closer.toggleClass("open");
 }
-
-/*function startBeaconMessage() {
-    if (typeof (OpenKitBuilder) === "undefined") return false;
-    if (config.Powerups.BeaconOptOut) return false;
-    if (config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start popup beacon");
-
-    //try sending message to background.js
-    chrome.runtime.sendMessage(
-        pub.config.EXT_ID,
-        {
-            OpenKit: "start_beacon",
-            action: "Popup",
-            beaconOptOut: config.Powerups.BeaconOptOut,
-            uuid: config.Powerups.uuid
-        },
-        function (response) {
-            console.log(response.beacon_status);
-        });
-}
-
-function endBeaconMessage() {
-    if (typeof (OpenKitBuilder) === "undefined") return false;
-    if (config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end popup beacon");
-
-    let vals = powerupsFired;
-    chrome.runtime.sendMessage(
-        {
-            OpenKit: "end_beacon",
-            vals: vals
-        },
-        function (response) {
-            console.log(response.beacon_status);
-        });
-}*/

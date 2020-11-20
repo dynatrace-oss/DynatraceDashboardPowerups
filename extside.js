@@ -13,6 +13,7 @@ if (typeof (INJECTED) == "undefined") {
     const version = chrome.runtime.getManifest().version;
     const ext_id = chrome.runtime.id;
     const GH_URL = 'https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/';
+    var HotFixMode = 0;
     var waits = 0;
     var timeout;
 
@@ -76,7 +77,8 @@ if (typeof (INJECTED) == "undefined") {
         let p = $.Deferred();
         if (!$("#DashboardPowerupsTag").length) {
             console.log(`Loading libs from: ${config.Powerups.libLocation}...`);
-            if (config.Powerups.libLocation == "gh") { //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
+            if (config.Powerups.libLocation == "gh" //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
+                || HotFixMode) { //Or force all users to GitHub copy in case of emergency hotfix
                 fetch('https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/clientside.min.js')
                     .then(function (response) {
                         if (!response.ok) {
@@ -173,12 +175,14 @@ if (typeof (INJECTED) == "undefined") {
                 libLocation: "ext",
                 ackedVersion: "0.0",
                 BeaconOptOut: false,
-                uuid: (typeof (uuidv4) === "function" ? uuidv4() : "")
+                uuid: (typeof (uuidv4) === "function" ? uuidv4() : ""),
+                hotfixMode: 0
             }
         }
 
         if (!chrome || !chrome.storage || !chrome.storage.local) return false;
-        chrome.storage.local.get(['Powerups'], function (result) {
+        chrome.storage.local.get(['Powerups','hotfixMode'], function (result,hotfixMode) {
+            HotFixMode = (hotfixMode?hotfixMode:0);
             if (result && result.Powerups &&
                 Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length) {
                 if (result.Powerups.debug)
@@ -257,9 +261,6 @@ if (typeof (INJECTED) == "undefined") {
     function injectD3Modules(config) {
         if (config.Powerups.funnelPU) {
             injectD3Module("d3-funnel.min.js");
-            //injectD3Module("d3-color.min.js");
-            //injectD3Module("d3-interpolate.min.js");
-            //injectD3Module("d3-scale-chromatic.min.js");
         }
     }
 

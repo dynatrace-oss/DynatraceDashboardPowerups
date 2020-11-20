@@ -1,4 +1,7 @@
 var re = /dashboard(?:\/dashboard)?;/;
+var HotFixMode = (HotFixMode?HotFixMode:0);
+const GH_URL = 'https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/';
+
 function hashListener(details) {
     var refIndex = details.url.indexOf('#');
     var ref = refIndex >= 0 ? details.url.slice(refIndex + 1) : '';
@@ -21,7 +24,8 @@ function hashListener(details) {
 
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/jquery-3.5.1.min.js', runAt: "document_end" });
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/node_modules/uuid/dist/umd/uuidv4.min.js', runAt: "document_end" });
-                chrome.tabs.executeScript(details.tabId, { file: 'extside.min.js', runAt: "document_end" });
+                loadExtside();
+                //chrome.tabs.executeScript(details.tabId, { file: 'extside.min.js', runAt: "document_end" });
             }
         });
 
@@ -128,7 +132,41 @@ function endBeacon(request) {
     if (openKit) openKit.shutdown();
 }
 
+function checkSignals(alarm) {
+    const SIGNAL_URL = GH_URL + 'signals.json';
+
+    $.getJSON(SIGNAL_URL)
+        .done((signal)=>{
+            if(signal && typeof(signal.hotfixMode)!=="undefined"){
+                chrome.storage.local.set({'hotfixMode': signal.hotfixMode}, ()=>{});
+                HotFixMode = signal.hotfixMode;
+            }
+        })
+        .fail((jqxhr, textStatus, error)=>{
+            console.log(`POWERUP: failed to get signals.json. ${error}`);
+        });
+}
+
+function loadExtside() {
+    if(HotFixMode>1){ //in case of emergency hotfix, load from GH instead of ext. 
+        //strongly prefer loading from extension, use only in event of critical bug + slow Google ChromeStore review
+        const file = GH_URL + 'extside.min.js';
+        console.log("POWERUP: WARN - in HotFixMode, loading extside from GH.");
+        $.get(file)
+            .done((code)=>{
+                chrome.tabs.executeScript(details.tabId, { code: code, runAt: "document_end" });
+            })
+            .fail((jqxhr, textStatus, error)=>{
+                console.log(`POWERUP: FATAL - In HotFixMode but failed to load extside from GH. ${error}`);
+            });
+    } else {
+        chrome.tabs.executeScript(details.tabId, { file: 'extside.min.js', runAt: "document_end" });
+    }
+}
+
 // Main
 chrome.webNavigation.onCommitted.addListener(hashListener, filter);
 chrome.webNavigation.onHistoryStateUpdated.addListener(hashListener, filter);
 chrome.webNavigation.onReferenceFragmentUpdated.addListener(hashListener, filter)
+chrome.alarms.onAlarm.addListener(checkSignals);
+chrome.alarms.create("checkSignals", {delayInMinutes: 1, periodInMinutes: 60});
