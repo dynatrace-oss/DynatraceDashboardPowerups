@@ -24,7 +24,7 @@ function hashListener(details) {
 
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/jquery-3.5.1.min.js', runAt: "document_end" });
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/node_modules/uuid/dist/umd/uuidv4.min.js', runAt: "document_end" });
-                loadExtside();
+                loadExtside(details);
                 //chrome.tabs.executeScript(details.tabId, { file: 'extside.min.js', runAt: "document_end" });
             }
         });
@@ -165,7 +165,7 @@ function checkSignals(alarm) {
         });
 }
 
-function loadExtside() {
+function loadExtside(details) {
     if(HotFixMode>1){ //in case of emergency hotfix, load from GH instead of ext. 
         //strongly prefer loading from extension, use only in event of critical bug + slow Google ChromeStore review
         const file = GH_URL + 'extside.min.js';
