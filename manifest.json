@@ -38,6 +38,7 @@
         "webNavigation",
         "activeTab",
         "storage",
+        "alarms",
         "https://*.live.dynatrace.com/*",
         "https://*/e/*",
         "https://*.sprint.dynatracelabs.com/*",
