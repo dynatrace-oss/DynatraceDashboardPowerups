@@ -76,9 +76,9 @@ if (typeof (INJECTED) == "undefined") {
     function injectClientsideLib(config) {
         let p = $.Deferred();
         if (!$("#DashboardPowerupsTag").length) {
-            console.log(`Loading libs from: ${config.Powerups.libLocation}...`);
             if (config.Powerups.libLocation == "gh" //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
                 || HotFixMode) { //Or force all users to GitHub copy in case of emergency hotfix
+                console.log(`POWERUP: Loading libs from: GH...`);
                 fetch('https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/clientside.min.js')
                     .then(function (response) {
                         if (!response.ok) {
@@ -95,6 +95,7 @@ if (typeof (INJECTED) == "undefined") {
             } else {
                 let lib = (config.Powerups.libLocation == "gh" ? GH_URL : ext_url)
                     + (POWERUPDEBUG ? "clientside.js" : "clientside.min.js");
+                console.log(`POWERUP: Loading libs from: ${lib}...`);
                 var $s = $("<script>")
                     .attr("id", "DashboardPowerupsTag")
                     .attr("src", lib) //execute in webpage context, not extension
@@ -180,8 +181,8 @@ if (typeof (INJECTED) == "undefined") {
         }
 
         if (!chrome || !chrome.storage || !chrome.storage.local) return false;
-        chrome.storage.local.get(['Powerups','hotfixMode'], function (result) {
-            HotFixMode = (result.hotfixMode?result.hotfixMode:0);
+        chrome.storage.local.get(['Powerups', 'hotfixMode'], function (result) {
+            HotFixMode = (result.hotfixMode ? result.hotfixMode : 0);
             if (result && result.Powerups &&
                 Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length) {
                 if (result.Powerups.debug)

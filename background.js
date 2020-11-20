@@ -117,6 +117,7 @@ function startBeacon(request) {
                 Object.keys(request.vals).forEach(x => {
                     openKitAction.reportValue(x, request.vals[x]);
                 });
+                openKitAction.reportValue("hotfixMode", HotFixMode);
             }
         }
     }

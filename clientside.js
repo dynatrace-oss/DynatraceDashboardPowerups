@@ -258,12 +258,17 @@ var DashboardPowerups = (function () {
             location.href.match(/managed[a-z-]*.internal.dynatrace/)
             ? "true" : "false");
         let dtVersion = $(`[uitestid="gwt-debug-systemVerisionSection"]`).text().match(/[0-9.]+/)[0];
+        let dbName = $(`[uitestid="gwt-debug-inlineEditLabelViewText"]`).text();
+        let configuratorTag = ($(`[uitestid="gwt-debug-showMoreTags"]`).parent().find(`[title="Configurator"]`).length?"true":"false");
+
         let vals = {
             tenantId: tenantId,
             host: location.host,
             dashboardID: location.hash.match(/id=([0-9a-f-]+)/)[1],
             internalUser: internalUser,
-            dtVersion: dtVersion
+            dtVersion: dtVersion,
+            dbName: dbName,
+            configuratorTag: configuratorTag
         };
         window.postMessage(
             {
@@ -2970,8 +2975,6 @@ var DashboardPowerups = (function () {
             pub.loadChartSync();
             waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
         } catch (e) {
-            /*if (pub.openKitSession)
-                pub.openKitSession.reportCrash(e.name, e.message, e.stack);*/
             crashBeacon(e);
             console.warn("POWERUP: ERROR ", e);
         }
