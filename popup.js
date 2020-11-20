@@ -1,3 +1,4 @@
+var HotFixMode = 0;
 console.log("Powerup: popup.js loaded.");
 window.jQuery || console.log("Powerup: No jQuery for popup.js...");
 $(document).ready(function () {
@@ -57,7 +58,8 @@ function loadConfig(alreadyWritten = false) {
         }
     };
 
-    chrome.storage.local.get(['Powerups'], function (result) {
+    chrome.storage.local.get(['Powerups','hotfixMode'], function (result,hotfixMode) {
+        HotFixMode = (hotfixMode?hotfixMode:0);
         console.log('Powerup: (popup) config from storage is: ' + JSON.stringify(result));
         if (result && result.Powerups
             && Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length
