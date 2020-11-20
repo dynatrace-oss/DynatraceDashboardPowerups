@@ -248,7 +248,6 @@ var DashboardPowerups = (function () {
     }
 
     function startBeacon() {
-        if (typeof (OpenKitBuilder) === "undefined") return false;
         if (pub.config.Powerups.BeaconOptOut) return false;
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
 
@@ -282,8 +281,19 @@ var DashboardPowerups = (function () {
             }, "*");
     }
 
+    function crashBeacon(e) {
+        if (pub.config.Powerups.BeaconOptOut) return false;
+        if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit crash beacon");
+
+        window.postMessage(
+            {
+                OpenKit: "crash_beacon",
+                e: e
+            }, "*");
+    }
+
     function endBeacon() {
-        if (typeof (OpenKitBuilder) === "undefined") return false;
+        if (pub.config.Powerups.BeaconOptOut) return false;
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end beacon");
 
         let vals = powerupsFired;
@@ -2960,9 +2970,10 @@ var DashboardPowerups = (function () {
             pub.loadChartSync();
             waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
         } catch (e) {
-            if (pub.openKitSession)
-                pub.openKitSession.reportCrash(e.name, e.message, e.stack);
-            console.warn({ msg: "POWERUP: ERROR", e: e });
+            /*if (pub.openKitSession)
+                pub.openKitSession.reportCrash(e.name, e.message, e.stack);*/
+            crashBeacon(e);
+            console.warn("POWERUP: ERROR ", e);
         }
         $.when.apply($, promises).always(function () {
             let p = pub.cleanMarkup();

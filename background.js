@@ -84,6 +84,10 @@ function listenForBeaconMessages() {
                         endBeacon(request);
                         sendResponse({ beacon_status: "done" });
                         break;
+                    case "crash_beacon":
+                        crashBeacon(request);
+                        sendResponse({ beacon_status: "sent" });
+                        break;
                 }
                 return true;
             });
@@ -116,6 +120,20 @@ function startBeacon(request) {
             }
         }
     }
+}
+
+function crashBeacon(request) {
+    if (typeof (OpenKitBuilder) === "undefined") return false;
+    if (request.beaconOptOut) return false;
+
+    if(openKitSession){
+        let e = request.e || {name:"",message:"",stack:""};
+        openKitSession.reportCrash(e.name, e.message, e.stack);
+        openKitSession.end();
+        openKit.shutdown();
+    }
+
+    console.log("POWERUP: DEBUG - OpenKit crash beacon");
 }
 
 function endBeacon(request) {
