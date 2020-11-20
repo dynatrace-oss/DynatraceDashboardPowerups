@@ -260,7 +260,7 @@ var DashboardPowerups = (function () {
         let dtVersion = $(`[uitestid="gwt-debug-systemVerisionSection"]`).text().match(/[0-9.]+/)[0];
         let dbName = $(`[uitestid="gwt-debug-inlineEditLabelViewText"]`).text();
         let configuratorTag = ($(`[uitestid="gwt-debug-showMoreTags"]`).parent().find(`[title="Configurator"]`).length?"true":"false");
-        let envName = $(`[uitestid="gwt-debug-searchField"] div input`).attr("placeholder").match(/Search Dynatrace (.+).../)[1];
+        let envName = ($(`[uitestid="gwt-debug-searchField"] div input`).attr("placeholder").match(/Search Dynatrace (.+).../) || [])[1];
 
         let vals = {
             tenantId: tenantId,
