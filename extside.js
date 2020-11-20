@@ -181,8 +181,8 @@ if (typeof (INJECTED) == "undefined") {
         }
 
         if (!chrome || !chrome.storage || !chrome.storage.local) return false;
-        chrome.storage.local.get(['Powerups','hotfixMode'], function (result,hotfixMode) {
-            HotFixMode = (hotfixMode?hotfixMode:0);
+        chrome.storage.local.get(['Powerups','hotfixMode'], function (result) {
+            HotFixMode = (result.hotfixMode?result.hotfixMode:0);
             if (result && result.Powerups &&
                 Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length) {
                 if (result.Powerups.debug)
