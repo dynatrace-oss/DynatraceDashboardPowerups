@@ -175,8 +175,7 @@ if (typeof (INJECTED) == "undefined") {
                 libLocation: "ext",
                 ackedVersion: "0.0",
                 BeaconOptOut: false,
-                uuid: (typeof (uuidv4) === "function" ? uuidv4() : ""),
-                hotfixMode: 0
+                uuid: (typeof (uuidv4) === "function" ? uuidv4() : "")
             }
         }
 
