@@ -21,8 +21,6 @@ function hashListener(details) {
 
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/jquery-3.5.1.min.js', runAt: "document_end" });
                 chrome.tabs.executeScript(details.tabId, { file: '3rdParty/node_modules/uuid/dist/umd/uuidv4.min.js', runAt: "document_end" });
-                //chrome.tabs.executeScript(details.tabId, { file: '3rdParty/node_modules/@dynatrace/openkit-js/dist/browser/openkit.js', runAt: "document_end" });
-                //chrome.tabs.executeScript(details.tabId, { file: 'beacon.min.js', runAt: "document_end" });
                 chrome.tabs.executeScript(details.tabId, { file: 'extside.min.js', runAt: "document_end" });
             }
         });
@@ -67,24 +65,27 @@ const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
 var openKit, openKitSession, openKitAction;
 
 function listenForBeaconMessages() {
-    chrome.runtime.onMessage.addListener(
-        function (request, sender, sendResponse) {
-            console.log(sender.tab ?
-                "from a content script:" + sender.tab.url :
-                "from the extension");
-            switch (request.OpenKit) {
-                case "start_beacon":
-                    startBeacon(request);
-                    sendResponse({ beacon_status: "sent" });
-                    break;
-                case "end_beacon":
-                    endBeacon(request);
-                    sendResponse({ beacon_status: "done" });
-                    break;
-            }
-            return true;
-        });
-    console.log("POWERUP: message listener loaded.");
+    if (typeof (BEACON_LISTENING) == "undefined") {
+        chrome.runtime.onMessage.addListener(
+            function (request, sender, sendResponse) {
+                console.log(sender.tab ?
+                    "from a content script:" + sender.tab.url :
+                    "from the extension");
+                switch (request.OpenKit) {
+                    case "start_beacon":
+                        startBeacon(request);
+                        sendResponse({ beacon_status: "sent" });
+                        break;
+                    case "end_beacon":
+                        endBeacon(request);
+                        sendResponse({ beacon_status: "done" });
+                        break;
+                }
+                return true;
+            });
+        console.log("POWERUP: message listener loaded.");
+        BEACON_LISTENING = true;
+    }
 }
 
 function startBeacon(request) {
@@ -131,14 +132,3 @@ function endBeacon(request) {
 chrome.webNavigation.onCommitted.addListener(hashListener, filter);
 chrome.webNavigation.onHistoryStateUpdated.addListener(hashListener, filter);
 chrome.webNavigation.onReferenceFragmentUpdated.addListener(hashListener, filter)
-
-
-/*chrome.runtime.onMessageExternal.addListener(
-    function(request, sender, sendResponse) {
-      console.log(sender.tab ?
-                  "from a content script:" + sender.tab.url :
-                  "from the extension");
-      if (request.greeting == "hello")
-        sendResponse({farewell: "goodbye"});
-    });
-*/
