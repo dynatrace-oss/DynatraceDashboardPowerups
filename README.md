@@ -1,7 +1,3 @@
-# Warning - Critical bug in version 1.27 / 1.28
- Version 1.29 has been submitted to Google ChromeStore, just waiting for their approval of the fix. My apologies for the inconvenience.
- **[Manual Workaround](WORKAROUND.md)**
-
 # Dynatrace Dashboard Powerups
 
 This extension powers-up Dynatrace dashboards to enable cool new experimental features live, such as:
