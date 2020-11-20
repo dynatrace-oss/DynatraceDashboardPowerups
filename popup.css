@@ -73,3 +73,8 @@ input[type=button] {
 .open {
 	transform: rotate(90deg);
 }
+
+.hotfixMode {
+	color: #ef651f;
+	font-size: xx-small;
+}

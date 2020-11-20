@@ -127,6 +127,12 @@ function updateDebugOutput(config_p) {
     $.when(config_p).done(function (config) {
         $('#notice').val(JSON.stringify(config));
         $(`#version`).text(`version: ${config.Powerups.ackedVersion}`);
+        if (HotFixMode) {
+            $("<span>")
+            .addClass("hotfixMode")
+            .text(" (in HotFix Mode)")
+            .appendTo($(`#version`));
+        }
     })
 }
 
