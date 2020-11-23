@@ -254,8 +254,9 @@ var DashboardPowerups = (function () {
         //try sending message to background.js instead to avoid CSP issues
         let email = $(`[debugid="userEmail"]`).text();
         let name = (email > "" ? email : $(`[debugid="userName"]`).text());
-        let internalUser = (name.includes('@dynatrace.com') ||
-            location.href.match(/managed[a-z-]*.internal.dynatrace/)
+        let internalUser = (name.includes('@dynatrace.com')
+            || name.includes('@ruxitlabs.com')
+            || location.href.match(/managed[a-z-]*.internal.dynatrace/)
             ? "true" : "false");
         let dtVersion = $(`[uitestid="gwt-debug-systemVerisionSection"]`).text().match(/[0-9.]+/)[0];
         let dbName = $(`[uitestid="gwt-debug-inlineEditLabelViewText"]`).text();
