@@ -2945,10 +2945,9 @@ var DashboardPowerups = (function () {
                         .html(`${o}: <span>${text}</span>`)
                         .insertBefore($table);
                 })
-
+                powerupsFired['PU_STDEV'] ? powerupsFired['PU_STDEV']++ : powerupsFired['PU_STDEV'] = 1;
             }
         });
-        powerupsFired['PU_STDEV'] ? powerupsFired['PU_STDEV']++ : powerupsFired['PU_STDEV'] = 1;
         return true;
     }
 
