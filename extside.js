@@ -80,23 +80,22 @@ if (typeof (INJECTED) == "undefined") {
                 || HotFixMode) { //Or force all users to GitHub copy in case of emergency hotfix
                 console.log(`POWERUP: Loading libs from: GH...`);
                 fetch('https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/clientside.min.js')
-                    .then(function (response) {
-                        if (!response.ok) {
-                            console.log(`POWERUP: Loading libs from: GH failed...`);
-                            //default back to local copy
-                            let lib = ext_url + (POWERUPDEBUG ? "clientside.js" : "clientside.min.js");
-                            console.log(`POWERUP: Loading libs from: ${lib}...`);
-                            var $s = $("<script>")
-                                .attr("id", "DashboardPowerupsTag")
-                                .attr("src", lib) //execute in webpage context, not extension
-                                .appendTo("body");
-                            p.resolve(true);
-                        } else return response.text();
-                    })
-                    .then(function (text) { // read response body as text
+                    .then(response => response.text())
+                    .then(text => { // read response body as text
                         var $s = $("<script>")
                             .attr("id", "DashboardPowerupsTag")
                             .text(text) //execute in webpage context, not extension
+                            .appendTo("body");
+                        p.resolve(true);
+                    })
+                    .catch(err => {
+                        console.log(`POWERUP: Loading libs from: GH failed...`, err);
+                        //default back to local copy
+                        let lib = ext_url + (POWERUPDEBUG ? "clientside.js" : "clientside.min.js");
+                        console.log(`POWERUP: Loading libs from: ${lib}...`);
+                        var $s = $("<script>")
+                            .attr("id", "DashboardPowerupsTag")
+                            .attr("src", lib) //execute in webpage context, not extension
                             .appendTo("body");
                         p.resolve(true);
                     });
