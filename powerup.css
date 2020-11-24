@@ -210,7 +210,7 @@ span.powerup-color-normal {
   border-radius: 3px;
 }
 
-#powerupFunnelContainer {
+.powerupFunnelContainer {
   height: 100%;
   width: 100%;
   z-index: 999;

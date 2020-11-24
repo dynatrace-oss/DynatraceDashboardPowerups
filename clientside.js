@@ -2327,10 +2327,10 @@ var DashboardPowerups = (function () {
                 $funnelpanel.find(`div:nth-of-type(2)`).hide();
 
                 //new funnel
-                let $funnelContainer = $("#powerupFunnelContainer");
+                let $funnelContainer = $funnelpanel.find(".powerupFunnelContainer");
                 if (!$funnelContainer.length)
                     $funnelContainer = $("<div>")
-                        .attr("id", "powerupFunnelContainer")
+                        .addClass("powerupFunnelContainer")
                         .appendTo($funnelpanel);
 
                 let chart = new D3Funnel($funnelContainer[0]);
