@@ -82,7 +82,15 @@ if (typeof (INJECTED) == "undefined") {
                 fetch('https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/clientside.min.js')
                     .then(function (response) {
                         if (!response.ok) {
+                            console.log(`POWERUP: Loading libs from: GH failed...`);
                             //default back to local copy
+                            let lib = ext_url + (POWERUPDEBUG ? "clientside.js" : "clientside.min.js");
+                            console.log(`POWERUP: Loading libs from: ${lib}...`);
+                            var $s = $("<script>")
+                                .attr("id", "DashboardPowerupsTag")
+                                .attr("src", lib) //execute in webpage context, not extension
+                                .appendTo("body");
+                            p.resolve(true);
                         } else return response.text();
                     })
                     .then(function (text) { // read response body as text
