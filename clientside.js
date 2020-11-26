@@ -681,7 +681,7 @@ var DashboardPowerups = (function () {
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
         if (colors) colors = colors.split(',');
         let stacking = (title.includes(PU_100STACK) ? "percent" : "normal");
-        let dataLabels = (((args.find(x => x[0] == "dataLabels") || ["false"])[1])
+        let dataLabels = (((args.find(x => x[0] == "dataLabels") || ["dataLabels","false"])[1])
             .toLowerCase() === "true" ? true : false);
 
         //get data
