@@ -682,7 +682,8 @@ var DashboardPowerups = (function () {
         if (colors) colors = colors.split(',');
         let stacking = (title.includes(PU_100STACK) ? "percent" : "normal");
         let dataLabels = (((args.find(x => x[0] == "dataLabels") || ["dataLabels","false"])[1])
-            .toLowerCase() === "true" ? true : false);
+            .toLowerCase()
+            .trim() === "true" ? true : false);
 
         //get data
         if (chart.series.length > 1) { //magically the data is actually already split, just stack it
