@@ -163,6 +163,7 @@ This powerup switches to a stacked bar chart for a USQL result instead of stacke
 Explanation:
 - `!PU(usqlstack):` - indicates the powerup
 - `colors=green,blue,#aabbcc` - assigns colors to each series
+- `dataLabels=true` - (optional) display data label on each segment, defaults to no
 
 Example:
 ![USQL Stacked Bar Chart](Assets/usqlstack.png)
