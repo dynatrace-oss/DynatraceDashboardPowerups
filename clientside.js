@@ -732,6 +732,9 @@ var DashboardPowerups = (function () {
                     type: 'bar',
                     cursor: 'crosshair',
                     stacking: stacking,
+                    dataLabels: {
+                        enabled: dataLabels
+                    },
                     data: [
                         {
                             name: newName,
