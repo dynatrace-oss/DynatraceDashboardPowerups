@@ -2889,7 +2889,7 @@ var DashboardPowerups = (function () {
                 let args = argstring.split(";").map(x => x.split("="));
 
                 //find the table
-                let dataTable = readTableData($tabletile); //do I need this? maybe make it sortable etc later
+                //let dataTable = readTableData($tile); //do I need this? maybe make it sortable etc later
 
                 //build menu
                 let $menu = $("<div>")
