@@ -339,7 +339,6 @@ span.powerup-color-normal {
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-end;
-  display: none;
 }
 
 .powerupTableButton {
@@ -352,7 +351,7 @@ span.powerup-color-normal {
   height: 10px;
   display: table;
   z-index: 1001;
-  margin: 2px;
+  margin: 5px;
 }
 
 .powerupTableButton:hover {

@@ -2901,6 +2901,7 @@ var DashboardPowerups = (function () {
                     .text('...')
                     .appendTo($menu);
                 let $list = $("<div>")
+                    .css("display","none")
                     .appendTo($menu);
                 let $csv = $("<a>")
                     .addClass("powerupTableButton")
@@ -2910,7 +2911,7 @@ var DashboardPowerups = (function () {
                 let $xls = $("<a>")
                     .addClass("powerupTableButton")
                     .attr("href", "javascript:;")
-                    .text('XLSx')
+                    .text('XLS')
                     .appendTo($list);
 
                 //bind click handlers
