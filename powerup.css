@@ -348,4 +348,11 @@ span.powerup-color-normal {
   height: 10px;
   display: table;
   z-index: 1001;
+  margin: 2px;
+}
+
+.powerupTableButton:hover {
+  background-color: rgba(255,255,255,0.2);
+  color: white;
+  text-decoration: none;
 }
