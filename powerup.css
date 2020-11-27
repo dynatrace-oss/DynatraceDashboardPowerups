@@ -196,11 +196,25 @@ span.powerup-color-normal {
   background-color: #242424;
 }
 
-.powerup-icon-yellow {fill:#ffe11c;}
-.powerup-icon-red {fill:#dc172a;}
-.powerup-icon-green {fill:#2ab06f;}
-.powerup-icon-white {fill:white;}
-.powerup-icon-purple {fill:#7c38a1;}
+.powerup-icon-yellow {
+  fill: #ffe11c;
+}
+
+.powerup-icon-red {
+  fill: #dc172a;
+}
+
+.powerup-icon-green {
+  fill: #2ab06f;
+}
+
+.powerup-icon-white {
+  fill: white;
+}
+
+.powerup-icon-purple {
+  fill: #7c38a1;
+}
 
 .powerup-sankey-tooltip {
   z-index: 1100;
@@ -255,8 +269,7 @@ span.powerup-color-normal {
   cursor: default;
 }
 
-.powerupHighchartsContainer .highcharts-sankey-series .highcharts-node,
-.powerupHighchartsContainer .highcharts-sankey-series .highcharts-data-label * {
+.powerupHighchartsContainer .highcharts-sankey-series .highcharts-node, .powerupHighchartsContainer .highcharts-sankey-series .highcharts-data-label * {
   cursor: context-menu;
 }
 
@@ -271,11 +284,12 @@ span.powerup-color-normal {
   padding: 10px;
 }
 
-.powerupSankeyDetailPopup a{
+.powerupSankeyDetailPopup a {
   color: #00b9cc;
   text-decoration: none;
 }
-.powerupSankeyDetailPopup a:hover{
+
+.powerupSankeyDetailPopup a:hover {
   cursor: pointer;
   text-decoration: underline;
 }
@@ -307,4 +321,21 @@ span.powerup-color-normal {
 
 .powerupStdev span {
   font-size: 32px;
+}
+
+.powerupTableMenu {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+
+.powerupTableButton {
+  border-radius: 3px;
+  border: 1px #00b9cc solid;
+  padding: 3px;
+  width: 10px;
+  height: 10px;
+  display: table;
+  z-index: 1001;
 }

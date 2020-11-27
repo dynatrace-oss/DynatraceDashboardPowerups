@@ -37,10 +37,12 @@ var DashboardPowerups = (function () {
     const PU_VLOOKUP = '!PU(vlookup):';
     const PU_STDEV = '!PU(stdev):';
     const PU_100STACK = '!PU(100stack):';
+    const PU_TABLE = '!PU(table):'
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
-        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK
+        PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
+        PU_TABLE
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
@@ -681,7 +683,7 @@ var DashboardPowerups = (function () {
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
         if (colors) colors = colors.split(',');
         let stacking = (title.includes(PU_100STACK) ? "percent" : "normal");
-        let dataLabels = (((args.find(x => x[0] == "dataLabels") || ["dataLabels","false"])[1])
+        let dataLabels = (((args.find(x => x[0] == "dataLabels") || ["dataLabels", "false"])[1])
             .toLowerCase()
             .trim() === "true" ? true : false);
 
@@ -2877,6 +2879,54 @@ var DashboardPowerups = (function () {
         return true;
     }
 
+    pub.PUtable = function () {
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let $tile = $title.parents(TILE_SELECTOR);
+
+            if ($title.text().includes(PU_TABLE)) {
+                let argstring = $title.text().split(PU_TABLE)[1].split(/[!\n]/)[0];
+                let args = argstring.split(";").map(x => x.split("="));
+
+                //find the table
+                let dataTable = readTableData($tabletile); //do I need this? maybe make it sortable etc later
+
+                //build menu
+                let $menu = $("<div>")
+                    .addClass("powerupTableMenu")
+                    .text('...')
+                    .appendTo($tile);
+                let $ellipsis = $("<a>")
+                    .addClass("powerupTableButton")
+                    .attr("href", "javascript:;")
+                    .text('...')
+                    .appendTo($menu);
+                let $list = $("<div>")
+                    .appendTo($menu);
+                let $csv = $("<a>")
+                    .addClass("powerupTableButton")
+                    .attr("href", "javascript:;")
+                    .text('CSV')
+                    .appendTo($list);
+                let $xls = $("<a>")
+                    .addClass("powerupTableButton")
+                    .attr("href", "javascript:;")
+                    .text('XLSx')
+                    .appendTo($list);
+
+                //bind click handlers
+                $ellipsis.on('click',()=>{$list.toggle()});
+                //display a menu
+
+                //bind click handlers for menu items
+
+                //generate CVS/XLSX/etc on menu item click
+                powerupsFired['PU_TABLE'] ? powerupsFired['PU_TABLE']++ : powerupsFired['PU_TABLE'] = 1;
+            }
+        });
+        return true;
+    }
+
     pub.PUstdev = function () {
         $(TITLE_SELECTOR).each((i, el) => {
             let $title = $(el);
@@ -2985,6 +3035,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUCompare());
             promises.push(pub.PUvlookup());
             promises.push(pub.PUstdev());
+            promises.push(pub.PUtable());
             promises.push(pub.sunburnMode());
             promises.push(pub.fixPublicDashboards());
             pub.loadChartSync();
