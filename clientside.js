@@ -2894,7 +2894,6 @@ var DashboardPowerups = (function () {
                 //build menu
                 let $menu = $("<div>")
                     .addClass("powerupTableMenu")
-                    .text('...')
                     .appendTo($tile);
                 let $ellipsis = $("<a>")
                     .addClass("powerupTableButton")

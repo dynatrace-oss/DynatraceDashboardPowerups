@@ -331,6 +331,8 @@ span.powerup-color-normal {
 }
 
 .powerupTableButton {
+  color: white;
+  text-decoration: none;
   border-radius: 3px;
   border: 1px #00b9cc solid;
   padding: 3px;
