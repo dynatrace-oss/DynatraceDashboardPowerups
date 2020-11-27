@@ -314,6 +314,19 @@ var DashboardPowerups = (function () {
             }, "*");
     }
 
+    function download(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+      
+        element.style.display = 'none';
+        document.body.appendChild(element);
+      
+        element.click();
+      
+        document.body.removeChild(element);
+      }
+
     //Public methods
     var pub = {};
 
@@ -2883,13 +2896,15 @@ var DashboardPowerups = (function () {
         $(TITLE_SELECTOR).each((i, el) => {
             let $title = $(el);
             let $tile = $title.parents(TILE_SELECTOR);
+            let title = $title.text();
 
-            if ($title.text().includes(PU_TABLE)) {
-                let argstring = $title.text().split(PU_TABLE)[1].split(/[!\n]/)[0];
+            if (title.includes(PU_TABLE)) {
+                let argstring = title.split(PU_TABLE)[1].split(/[!\n]/)[0];
+                title = title.split(PU_TABLE)[0].trim();
                 let args = argstring.split(";").map(x => x.split("="));
 
                 //find the table
-                //let dataTable = readTableData($tile); //do I need this? maybe make it sortable etc later
+                let dataTable = readTableData($tile); // maybe make it sortable etc later
 
                 //build menu
                 let $menu = $("<div>")
@@ -2920,7 +2935,17 @@ var DashboardPowerups = (function () {
                     $menu.toggleClass("on");
                 });
                 $csv.on('click',()=>{
-                    alert(`Poof! a csv file`);
+                    //alert(`Poof! a csv file`);
+                    if (!dataTable) return false;
+                    let csvContent = dataTable.keys.join(',') + '\n';
+                    dataTable.normalTable.forEach(row=>{
+                        dataTables.keys.forEach(k=>{
+                            csvContent += row[k] + ',';
+                        });
+                        csvContent += '\n';
+                    });
+                    let filename = title +'.csv';
+                    download(filename, csvContent);
                 });
                 $xls.on('click',()=>{
                     alert(`Poof! a xls file`);
