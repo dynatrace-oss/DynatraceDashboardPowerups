@@ -2939,7 +2939,7 @@ var DashboardPowerups = (function () {
                     if (!dataTable) return false;
                     let csvContent = dataTable.keys.join(',') + '\n';
                     dataTable.normalTable.forEach(row=>{
-                        dataTables.keys.forEach(k=>{
+                        dataTable.keys.forEach(k=>{
                             csvContent += row[k] + ',';
                         });
                         csvContent += '\n';
