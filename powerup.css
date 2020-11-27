@@ -332,6 +332,11 @@ span.powerup-color-normal {
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-end;
+  border-radius: 3px;
+}
+
+.powerupTableMenu.on {
+  background-color: #454646;
 }
 
 .powerupTableMenu>div {

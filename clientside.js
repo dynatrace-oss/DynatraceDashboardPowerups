@@ -2915,10 +2915,16 @@ var DashboardPowerups = (function () {
                     .appendTo($list);
 
                 //bind click handlers
-                $ellipsis.on('click',()=>{$list.toggle()});
-                //display a menu
-
-                //bind click handlers for menu items
+                $ellipsis.on('click',()=>{
+                    $list.toggle();
+                    $menu.toggleClass("on");
+                });
+                $csv.on('click',()=>{
+                    alert(`Poof! a csv file`);
+                });
+                $xls.on('click',()=>{
+                    alert(`Poof! a xls file`);
+                });
 
                 //generate CVS/XLSX/etc on menu item click
                 powerupsFired['PU_TABLE'] ? powerupsFired['PU_TABLE']++ : powerupsFired['PU_TABLE'] = 1;
