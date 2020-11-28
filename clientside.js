@@ -2908,7 +2908,10 @@ var DashboardPowerups = (function () {
                 title = title.split(PU_TABLE)[0].trim();
                 let args = argstring.split(";").map(x => x.split("="));
 
-                //find the table
+                //decorate the table
+                $tile.find(TABLE_SELECTOR).addClass("powerupTable");
+                
+                //read the table
                 let dataTable = readTableData($tile); // maybe make it sortable etc later
 
                 //build menu
