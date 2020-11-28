@@ -323,9 +323,23 @@ span.powerup-color-normal {
   font-size: 32px;
 }
 
-.powerupTable > div > div > div:nth-of-type(1) > span {
+.powerupTable>div>div>div:nth-of-type(1)>span {
   color: #00b9cc !important;
-  font-size: .9em !important;
+  font-size: 1.1em !important;
+}
+
+.powerupTableColAsc::after {
+  content: "";
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 20px solid #00b9cc;
+}
+
+.powerupTableColDesc::after {
+  content: "";
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 20px solid #00b9cc;
 }
 
 .powerupTableMenu {
@@ -365,7 +379,7 @@ span.powerup-color-normal {
 }
 
 .powerupTableButton:hover {
-  background-color: rgba(255,255,255,0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   color: white;
   text-decoration: none;
 }

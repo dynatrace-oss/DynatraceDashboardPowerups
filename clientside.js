@@ -19,6 +19,7 @@ var DashboardPowerups = (function () {
     const SVT_PANEL_SELECTOR = '[uitestid="gwt-debug-chartPanel"]';
     const SVT_METRIC_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-title"]';
     const SVT_UNITS_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:nth-of-type(2), [uitestid="gwt-debug-kpiValue"] > span:nth-of-type(2)';
+    const COLUMN_SELECTOR = '.powerupTable > div > div > div:nth-of-type(1) > span';
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
     const PU_MAP = '!PU(map):';
@@ -2910,7 +2911,7 @@ var DashboardPowerups = (function () {
 
                 //decorate the table
                 $tile.find(TABLE_SELECTOR).addClass("powerupTable");
-                
+
                 //read the table
                 let dataTable = readTableData($tile); // maybe make it sortable etc later
 
@@ -2968,6 +2969,17 @@ var DashboardPowerups = (function () {
                         sheetaoa.push(rowA);
                     });
                     downloadExcel(filename, sheetname, sheetaoa);
+                });
+                $(COLUMN_SELECTOR).on('click', event=>{
+                    let $col = $(event.target);
+                    if($col.hasClass("powerupTableColAsc")){
+                        $col.removeClass("powerupTableColAsc");
+                        $col.addClass("powerupTableColDesc");
+                    } else {
+                        $col.removeClass("powerupTableColDesc");
+                        $col.addClass("powerupTableColAsc");
+                    }
+
                 });
 
                 //generate CVS/XLSX/etc on menu item click
