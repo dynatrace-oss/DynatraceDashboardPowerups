@@ -339,7 +339,7 @@ span.powerup-color-normal {
 }
 
 .powerupTable a:hover:not(.powerupTableColDesc) {
-  cursor: n-resize;
+  cursor: s-resize;
 }
 
 .powerupTableColAsc:hover {
