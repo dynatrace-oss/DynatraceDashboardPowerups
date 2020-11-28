@@ -2982,10 +2982,10 @@ var DashboardPowerups = (function () {
                             .insertAfter($span)
                             .on('click', event => {
                                 if ($a.hasClass("powerupTableColAsc")) {
-                                    $a.removeClass("powerupTableColAsc");
+                                    $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc","powerupTableColDesc"]);
                                     $a.addClass("powerupTableColDesc");
                                 } else {
-                                    $a.removeClass("powerupTableColDesc");
+                                    $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc","powerupTableColDesc"]);
                                     $a.addClass("powerupTableColAsc");
                                 }
                             });
