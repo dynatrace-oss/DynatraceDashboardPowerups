@@ -328,7 +328,7 @@ span.powerup-color-normal {
 }
 
 .powerupTable:hover {
-  cursor: auto;
+  cursor: default;
 }
 
 .powerupTable a, .powerupTable a:hover {
@@ -336,6 +336,14 @@ span.powerup-color-normal {
   font-size: 1.1em !important;
   text-decoration: none;
   z-index: 1001;
+}
+
+.powerupTableColAsc:hover {
+  cursor: n-resize;
+}
+
+.powerupTableColDesc:hover {
+  cursor: s-resize;
 }
 
 .powerupTableColAsc::after {

@@ -2905,12 +2905,13 @@ var DashboardPowerups = (function () {
             let title = $title.text();
 
             if (title.includes(PU_TABLE)) {
+                let $table = $tile.find(TABLE_SELECTOR);
                 let argstring = title.split(PU_TABLE)[1].split(/[!\n]/)[0];
                 title = title.split(PU_TABLE)[0].trim();
                 let args = argstring.split(";").map(x => x.split("="));
 
                 //decorate the table
-                $tile.find(TABLE_SELECTOR).addClass("powerupTable");
+                $table.addClass("powerupTable");
 
                 //read the table
                 let dataTable = readTableData($tile); // maybe make it sortable etc later
@@ -2939,6 +2940,10 @@ var DashboardPowerups = (function () {
                     .appendTo($list);
 
                 //bind click handlers
+                $table.off("click")
+                    .on("click",(e)=>{
+                        e.stopImmediatePropagation();
+                    })
                 $ellipsis.on('click', () => {
                     $list.toggle();
                     $menu.toggleClass("on");
