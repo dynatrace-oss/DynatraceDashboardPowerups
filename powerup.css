@@ -327,9 +327,10 @@ span.powerup-color-normal {
   z-index: 1000;
 }
 
-.powerupTable>div>div>div:nth-of-type(1)>span {
+.powerupTable a, .powerupTable a:hover {
   color: #00b9cc !important;
   font-size: 1.1em !important;
+  text-decoration: none;
 }
 
 .powerupTableColAsc::after {

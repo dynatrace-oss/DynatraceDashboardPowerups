@@ -2970,17 +2970,27 @@ var DashboardPowerups = (function () {
                     });
                     downloadExcel(filename, sheetname, sheetaoa);
                 });
-                $(COLUMN_SELECTOR).on('click', event=>{
-                    let $col = $(event.target);
-                    if($col.hasClass("powerupTableColAsc")){
-                        $col.removeClass("powerupTableColAsc");
-                        $col.addClass("powerupTableColDesc");
-                    } else {
-                        $col.removeClass("powerupTableColDesc");
-                        $col.addClass("powerupTableColAsc");
-                    }
 
-                });
+                //make column headers clickable
+                $(COLUMN_SELECTOR)
+                    .each((i, el) => {
+                        let $span = $(el);
+                        $span.hide();
+                        let $a = $("<a>")
+                            .attr("href", "javascript:;")
+                            .text($span.text())
+                            .insertAfter($span)
+                            .on('click', event => {
+                                if ($a.hasClass("powerupTableColAsc")) {
+                                    $a.removeClass("powerupTableColAsc");
+                                    $a.addClass("powerupTableColDesc");
+                                } else {
+                                    $a.removeClass("powerupTableColDesc");
+                                    $a.addClass("powerupTableColAsc");
+                                }
+                            });
+                    })
+
 
                 //generate CVS/XLSX/etc on menu item click
                 powerupsFired['PU_TABLE'] ? powerupsFired['PU_TABLE']++ : powerupsFired['PU_TABLE'] = 1;
