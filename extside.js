@@ -175,6 +175,7 @@ if (typeof (INJECTED) == "undefined") {
                 datePU: true,
                 gaugePU: true,
                 comparePU: true,
+                tablePU: true,
                 debug: false,
                 colorPUTarget: "Text",
                 animateCritical: "3 Pulses",
