@@ -338,6 +338,10 @@ span.powerup-color-normal {
   z-index: 1001;
 }
 
+.powerupTable a:hover:not(.powerupTableColDesc) {
+  cursor: n-resize;
+}
+
 .powerupTableColAsc:hover {
   cursor: n-resize;
 }
