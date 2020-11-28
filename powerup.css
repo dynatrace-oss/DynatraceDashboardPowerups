@@ -340,16 +340,20 @@ span.powerup-color-normal {
 
 .powerupTableColAsc::after {
   content: "";
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-top: 20px solid #00b9cc;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #00b9cc;
+  position: absolute;
+  margin-left: 5px;
 }
 
 .powerupTableColDesc::after {
   content: "";
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-bottom: 20px solid #00b9cc;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #00b9cc;
+  position: absolute;
+  margin-left: 5px;
 }
 
 .powerupTableMenu {
