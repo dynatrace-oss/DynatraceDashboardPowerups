@@ -318,14 +318,19 @@ var DashboardPowerups = (function () {
         var element = document.createElement('a');
         element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
         element.setAttribute('download', filename);
-      
         element.style.display = 'none';
         document.body.appendChild(element);
-      
         element.click();
-      
         document.body.removeChild(element);
-      }
+    }
+
+    function downloadExcel(filename, sheetname, sheetaoa) {
+        if (typeof (XLSX) == "undefined") return false;
+        let wb = XLSX.utils.book_new();
+        let ws = XLSX.utils.aoa_to_sheet(sheetaoa);
+        XLSX.utils.book_append_sheet(wb, ws, sheetname);
+        let wbout = XLSX.writeFile(wb, filename, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+    }
 
     //Public methods
     var pub = {};
@@ -2916,7 +2921,7 @@ var DashboardPowerups = (function () {
                     .text('...')
                     .appendTo($menu);
                 let $list = $("<div>")
-                    .css("display","none")
+                    .css("display", "none")
                     .appendTo($menu);
                 let $csv = $("<a>")
                     .addClass("powerupTableButton")
@@ -2930,25 +2935,36 @@ var DashboardPowerups = (function () {
                     .appendTo($list);
 
                 //bind click handlers
-                $ellipsis.on('click',()=>{
+                $ellipsis.on('click', () => {
                     $list.toggle();
                     $menu.toggleClass("on");
                 });
-                $csv.on('click',()=>{
+                $csv.on('click', () => {
                     //alert(`Poof! a csv file`);
                     if (!dataTable) return false;
                     let csvContent = dataTable.keys.join(',') + '\n';
-                    dataTable.normalTable.forEach(row=>{
-                        dataTable.keys.forEach(k=>{
+                    dataTable.normalTable.forEach(row => {
+                        dataTable.keys.forEach(k => {
                             csvContent += row[k] + ',';
                         });
                         csvContent += '\n';
                     });
-                    let filename = title +'.csv';
+                    let filename = title + '.csv';
                     download(filename, csvContent);
                 });
-                $xls.on('click',()=>{
-                    alert(`Poof! a xls file`);
+                $xls.on('click', () => {
+                    //alert(`Poof! a xls file`);
+                    let filename = title + '.xlsx';
+                    let sheetname = title;
+                    let sheetaoa = [dataTable.keys];
+                    dataTable.normalTable.forEach(row => {
+                        let rowA = [];
+                        dataTable.keys.forEach(k => {
+                            rowA.push(row[k]);
+                        });
+                        sheetaoa.push(rowA);
+                    });
+                    downloadExcel(filename, sheetname, sheetaoa);
                 });
 
                 //generate CVS/XLSX/etc on menu item click

@@ -297,6 +297,9 @@ if (typeof (INJECTED) == "undefined") {
         if (config.Powerups.datePU) {
             injectOtherModule("3rdParty/date_fns.min.js", "dateFns");
         }
+        if (config.Powerups.tablePU) {
+            injectOtherModule("3rdParty/xlsx.mini.min.js", "XLSX");
+        }
     }
 
     function injectOtherModule(mod, glob) {
