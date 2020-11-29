@@ -325,12 +325,15 @@ var DashboardPowerups = (function () {
         document.body.removeChild(element);
     }
 
-    function downloadExcel(filename, sheetname, sheetaoa) {
+    //function downloadExcel(filename, sheetname, sheetaoa) {
+    function downloadExcel(filename, sheetname, json) {
         if (typeof (XLSX) == "undefined") return false;
         let wb = XLSX.utils.book_new();
-        let ws = XLSX.utils.aoa_to_sheet(sheetaoa);
+        //let ws = XLSX.utils.aoa_to_sheet(sheetaoa);
+        let ws = XLSX.utils.json_to_sheet(json);
         XLSX.utils.book_append_sheet(wb, ws, sheetname);
-        let wbout = XLSX.writeFile(wb, filename, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+        //let wbout = XLSX.writeFile(wb, filename, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+        let wbout = XLSX.writeFile(wb, filename);
     }
 
     //Public methods
@@ -2968,15 +2971,16 @@ var DashboardPowerups = (function () {
                     //alert(`Poof! a xls file`);
                     let filename = title + '.xlsx';
                     let sheetname = title;
-                    let sheetaoa = [dataTable.keys];
+                    /*let sheetaoa = [dataTable.keys];
                     dataTable.normalTable.forEach(row => {
                         let rowA = [];
                         dataTable.keys.forEach(k => {
                             rowA.push(row[k]);
                         });
                         sheetaoa.push(rowA);
-                    });
-                    downloadExcel(filename, sheetname, sheetaoa);
+                    });*/
+                    //downloadExcel(filename, sheetname, sheetaoa);
+                    downloadExcel(filename, sheetname, dataTable.normalTable);
                 });
 
                 //make column headers clickable
