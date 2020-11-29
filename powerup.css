@@ -327,6 +327,10 @@ span.powerup-color-normal {
   z-index: 1000;
 }
 
+.powerupTable span {
+  user-select: text;
+}
+
 .powerupTable:hover {
   cursor: default;
 }
