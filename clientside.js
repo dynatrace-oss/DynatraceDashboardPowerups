@@ -2912,6 +2912,9 @@ var DashboardPowerups = (function () {
 
                 //decorate the table
                 $table.addClass("powerupTable");
+                //reorder link to make text selectable
+                $tile.find(`[uitestid="gwt-debug-DTAQL"] > a`)
+                    .prependTo($tile.find(`[uitestid="gwt-debug-DTAQL"]`));
 
                 //read the table
                 let dataTable = readTableData($tile); // maybe make it sortable etc later
@@ -2943,7 +2946,7 @@ var DashboardPowerups = (function () {
                 $table.off("click")
                     .on("click",(e)=>{
                         e.stopImmediatePropagation();
-                    })
+                    });
                 $ellipsis.on('click', () => {
                     $list.toggle();
                     $menu.toggleClass("on");
