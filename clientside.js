@@ -325,14 +325,11 @@ var DashboardPowerups = (function () {
         document.body.removeChild(element);
     }
 
-    //function downloadExcel(filename, sheetname, sheetaoa) {
     function downloadExcel(filename, sheetname, json) {
         if (typeof (XLSX) == "undefined") return false;
         let wb = XLSX.utils.book_new();
-        //let ws = XLSX.utils.aoa_to_sheet(sheetaoa);
         let ws = XLSX.utils.json_to_sheet(json);
         XLSX.utils.book_append_sheet(wb, ws, sheetname);
-        //let wbout = XLSX.writeFile(wb, filename, { bookType: 'xlsx', bookSST: true, type: 'binary' });
         let wbout = XLSX.writeFile(wb, filename);
     }
 
@@ -2955,7 +2952,6 @@ var DashboardPowerups = (function () {
                     $menu.toggleClass("on");
                 });
                 $csv.on('click', () => {
-                    //alert(`Poof! a csv file`);
                     if (!dataTable) return false;
                     let csvContent = dataTable.keys.join(',') + '\n';
                     dataTable.normalTable.forEach(row => {
@@ -2968,18 +2964,8 @@ var DashboardPowerups = (function () {
                     download(filename, csvContent);
                 });
                 $xls.on('click', () => {
-                    //alert(`Poof! a xls file`);
                     let filename = title + '.xlsx';
                     let sheetname = title;
-                    /*let sheetaoa = [dataTable.keys];
-                    dataTable.normalTable.forEach(row => {
-                        let rowA = [];
-                        dataTable.keys.forEach(k => {
-                            rowA.push(row[k]);
-                        });
-                        sheetaoa.push(rowA);
-                    });*/
-                    //downloadExcel(filename, sheetname, sheetaoa);
                     downloadExcel(filename, sheetname, dataTable.normalTable);
                 });
 
@@ -3015,7 +3001,8 @@ var DashboardPowerups = (function () {
                                 }
                                 sorted.forEach((row, i) => {
                                     dataTable.keys.forEach((col, j) => {
-                                        $table.find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 1}) > span`).text(row[col]);
+                                        $table.find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 1}) > span`)
+                                            .text(row[col] == "null" ? "" : row[col]);
                                     })
                                 })
                             });
