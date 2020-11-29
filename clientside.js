@@ -2995,11 +2995,11 @@ var DashboardPowerups = (function () {
                                 if ($a.hasClass("powerupTableColAsc")) {
                                     $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc","powerupTableColDesc"]);
                                     $a.addClass("powerupTableColDesc");
-                                    sorted = dataTable.normalTable.sort((a,b)=>a[key] < b[key] ? -1 : 1);
+                                    sorted = dataTable.normalTable.sort((a,b)=>a[key].toLowerCase() < b[key].toLowerCase() ? -1 : 1);
                                 } else {
                                     $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc","powerupTableColDesc"]);
                                     $a.addClass("powerupTableColAsc");
-                                    sorted = dataTable.normalTable.sort((a,b)=>a[key] > b[key] ? -1 : 1);
+                                    sorted = dataTable.normalTable.sort((a,b)=>a[key].toLowerCase() > b[key].toLowerCase() ? -1 : 1);
                                 }
                                 sorted.forEach((row,i)=>{
                                     dataTable.keys.forEach((col,j)=>{
