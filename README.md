@@ -364,7 +364,7 @@ Example:
 ![100stack](Assets/100stack.png)
 
 ### Table
-This powerup enables exporting USQL tables to CSV/XLS. TODO: sortable columns.
+This powerup enables exporting USQL tables to CSV/XLS and sortable columns.
 Syntax:
 `!PU(table):`
 
@@ -372,4 +372,4 @@ Explanation
 - `!PU(table):` - denotes this powerup
 
 Example: 
-![tablexls](Assets/tablexls.png)
+![tablexls](Assets/table.png)
