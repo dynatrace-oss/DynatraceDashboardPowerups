@@ -2944,7 +2944,7 @@ var DashboardPowerups = (function () {
 
                 //bind click handlers
                 $table.off("click")
-                    .on("click",(e)=>{
+                    .on("click", (e) => {
                         e.stopImmediatePropagation();
                     });
                 $ellipsis.on('click', () => {
@@ -2989,21 +2989,29 @@ var DashboardPowerups = (function () {
                             .text($span.text())
                             .insertAfter($span)
                             .on('click', event => {
-                                if(!dataTable) return false;
+                                if (!dataTable) return false;
                                 let key = dataTable.keys[i];
                                 let sorted;
                                 if ($a.hasClass("powerupTableColAsc")) {
-                                    $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc","powerupTableColDesc"]);
+                                    $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc", "powerupTableColDesc"]);
                                     $a.addClass("powerupTableColDesc");
-                                    sorted = dataTable.normalTable.sort((a,b)=>a[key].toLowerCase() < b[key].toLowerCase() ? -1 : 1);
+                                    sorted = dataTable.normalTable.sort((a, b) =>
+                                        (typeof (a[key]) == "string" ? a[key].toLowerCase() : a[key])
+                                            <
+                                            (typeof (b[key]) == "string" ? b[key].toLowerCase() : b[key])
+                                            ? -1 : 1);
                                 } else {
-                                    $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc","powerupTableColDesc"]);
+                                    $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc", "powerupTableColDesc"]);
                                     $a.addClass("powerupTableColAsc");
-                                    sorted = dataTable.normalTable.sort((a,b)=>a[key].toLowerCase() > b[key].toLowerCase() ? -1 : 1);
+                                    sorted = dataTable.normalTable.sort((a, b) =>
+                                        (typeof (a[key]) == "string" ? a[key].toLowerCase() : a[key])
+                                            >
+                                            (typeof (b[key]) == "string" ? b[key].toLowerCase() : b[key])
+                                            ? -1 : 1);
                                 }
-                                sorted.forEach((row,i)=>{
-                                    dataTable.keys.forEach((col,j)=>{
-                                        $table.find(`div > div:nth-of-type(${j+1}) > div:nth-of-type(${i+1}) > span`).text(row[col]);
+                                sorted.forEach((row, i) => {
+                                    dataTable.keys.forEach((col, j) => {
+                                        $table.find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 1}) > span`).text(row[col]);
                                     })
                                 })
                             });
