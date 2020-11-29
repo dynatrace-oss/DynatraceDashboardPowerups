@@ -3002,12 +3002,11 @@ var DashboardPowerups = (function () {
                                 sorted.forEach((row, i) => {
                                     dataTable.keys.forEach((col, j) => {
                                         $table.find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 1}) > span`)
-                                            .text(row[col] == "null" ? "" : row[col]);
+                                            .text(row[col]);
                                     })
                                 })
                             });
                     })
-
 
                 //generate CVS/XLSX/etc on menu item click
                 powerupsFired['PU_TABLE'] ? powerupsFired['PU_TABLE']++ : powerupsFired['PU_TABLE'] = 1;
