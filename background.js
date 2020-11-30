@@ -172,7 +172,8 @@ function sendMetricToDT(payload){
         url: BG_ENV.API_URL,
         data: payload,
         headers: {
-            Authorization: "Api-Token "+BG_ENV.DT_TOKEN
+            Authorization: "Api-Token "+BG_ENV.DT_TOKEN,
+            "Content-Type": "text/plain; charset=utf-8"
         }
     }
 
