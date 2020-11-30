@@ -98,24 +98,31 @@ function startBeacon(request) {
     if (request.beaconOptOut) return false;
 
     console.log("POWERUP: DEBUG - OpenKit start beacon");
-    openKit = new OpenKitBuilder(BG_ENV.OPENKIT_URL, BG_ENV.OPENKIT_APPID, request.uuid)
+    if(!openKit || !openKit.isInitialized()){
+        openKit = new OpenKitBuilder(BG_ENV.OPENKIT_URL, BG_ENV.OPENKIT_APPID, request.uuid)
         .withApplicationVersion(request.applicationVersion)
         .withOperatingSystem(request.operatingSystem)
         .withManufacturer(request.manufacturer)
         .withModelId(request.modelId)
         .withScreenResolution(request.screenResolution[0], request.screenResolution[1])
         .build();
+    }
+    
     if (openKit) {
-        openKitSession = openKit.createSession();
+        if(!openKitSession || openKitSession.isShutdown())
+            openKitSession = openKit.createSession();
         if (openKitSession) {
-            openKitSession.identifyUser(request.name);
+            if(!openKitSession.userId || openKitSession.userId !== request.name){
+                openKitSession.identifyUser(request.name);
+                openKitSession.userId = request.name; //safe store for later
+            }
             openKitAction = openKitSession.enterAction(request.action);
             if (openKitAction) {
                 Object.keys(request.vals).forEach(x => {
                     openKitAction.reportValue(x, request.vals[x]);
                 });
                 openKitAction.reportValue("hotfixMode", HotFixMode);
-                openKitAction.vals = request.vals;
+                openKitAction.vals = request.vals; //safe store for later
             }
         }
     }
@@ -142,14 +149,13 @@ function endBeacon(request) {
         Object.keys(request.vals).forEach(x => {
             openKitAction.reportValue(x, request.vals[x]);
         });
-        powerupsFired = {};
         openKitAction.leaveAction();
 
         let payload = createMetricPayload({...request.vals,...openKitAction.vals});
         if(payload && payload.length) sendMetricToDT(payload);
     }
-    if (openKitSession) openKitSession.end();
-    if (openKit) openKit.shutdown();
+    //if (openKitSession) openKitSession.end(); //now that we have MINT, no need to end the session on each DB powerup
+    //if (openKit) openKit.shutdown();
 }
 
 function createMetricPayload(vals) {
@@ -162,6 +168,7 @@ function createMetricPayload(vals) {
     if("tenantId" in vals) line += `tenantid=${vals['tenantId']},`;
     if(openKit && openKit.config && openKit.config.meta && openKit.config.meta.applicationVersion)
         line += `version=${openKit.config.meta.applicationVersion},`;
+    if(openKitSession && openKitSession.userId) line += `userid=${openKitSession.userId},`;
     if(typeof(HotFixMode)!="undefined") line += `hotfixmode=${HotFixMode},`;
 
     Object.keys(vals).filter(x=>x.startsWith('PU_'))
