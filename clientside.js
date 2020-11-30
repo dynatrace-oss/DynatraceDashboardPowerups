@@ -310,6 +310,7 @@ var DashboardPowerups = (function () {
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end beacon");
 
         let vals = powerupsFired;
+        powerupsFired = {};
         window.postMessage(
             {
                 OpenKit: "end_beacon",
