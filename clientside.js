@@ -3003,7 +3003,7 @@ var DashboardPowerups = (function () {
                                 }
                                 sorted.forEach((row, i) => {
                                     dataTable.keys.forEach((col, j) => {
-                                        $table.find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 1}) > span`)
+                                        $table.find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 2}) > span`)
                                             .text(row[col]);
                                     })
                                 })
