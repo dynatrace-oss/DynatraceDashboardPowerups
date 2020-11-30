@@ -2970,7 +2970,7 @@ var DashboardPowerups = (function () {
                 });
 
                 //make column headers clickable
-                $(COLUMN_SELECTOR)
+                $tile.find(COLUMN_SELECTOR)
                     .each((i, el) => {
                         let $span = $(el);
                         $span.hide();
