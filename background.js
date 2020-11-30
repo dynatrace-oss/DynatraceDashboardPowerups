@@ -145,9 +145,8 @@ function endBeacon(request) {
         powerupsFired = {};
         openKitAction.leaveAction();
 
-        sendMetricToDT(
-            createMetricPayload({...request.vals,...openKitAction.vals})
-        );
+        let payload = createMetricPayload({...request.vals,...openKitAction.vals});
+        if(payload && payload.length) sendMetricToDT(payload);
     }
     if (openKitSession) openKitSession.end();
     if (openKit) openKit.shutdown();
