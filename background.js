@@ -115,6 +115,7 @@ function startBeacon(request) {
                     openKitAction.reportValue(x, request.vals[x]);
                 });
                 openKitAction.reportValue("hotfixMode", HotFixMode);
+                openKitAction.vals = vals;
             }
         }
     }
@@ -145,7 +146,7 @@ function endBeacon(request) {
         openKitAction.leaveAction();
 
         sendMetricToDT(
-            createMetricPayload(request.vals)
+            createMetricPayload({...request.vals,...openKitAction.vals})
         );
     }
     if (openKitSession) openKitSession.end();
