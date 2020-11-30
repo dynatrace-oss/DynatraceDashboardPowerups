@@ -264,7 +264,7 @@ var DashboardPowerups = (function () {
             || location.href.match(/managed[a-z-]*.internal.dynatrace/)
             ? "true" : "false");
         let dtVersion = $(`[uitestid="gwt-debug-systemVerisionSection"]`).text().match(/[0-9.]+/)[0];
-        let dbName = $(`[uitestid="gwt-debug-inlineEditLabelViewText"]`).text();
+        let dbName = $(`[uitestid="gwt-debug-dashboardNameLabel"]`).text();
         let configuratorTag = ($(`[uitestid="gwt-debug-showMoreTags"]`).parent().find(`[title="Configurator"]`).length ? "true" : "false");
         let envName = ($(`[uitestid="gwt-debug-searchField"] div input`).attr("placeholder").match(/Search Dynatrace (.+).../) || [])[1];
 
