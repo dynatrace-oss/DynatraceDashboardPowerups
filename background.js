@@ -154,7 +154,7 @@ function endBeacon(request) {
 
 function createMetricPayload(vals) {
     let payload = "";
-    let line = `${BG_ENV.METRIC_KEY},`;
+    let line = `${BG_ENV.METRIC_KEY},dt.entity.custom_application=${BG_ENV.ENT_ID},`;
     
     if("internalUser" in vals) line += `internalUser=${vals[internalUser]},`;
     if("configuratorTag" in vals) line += `configuratorTag=${vals[configuratorTag]},`;
