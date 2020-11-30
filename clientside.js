@@ -2976,8 +2976,10 @@ var DashboardPowerups = (function () {
                     .each((i, el) => {
                         let $span = $(el);
                         $span.hide();
+                        $span.siblings(".powerTableCol").remove();
                         let $a = $("<a>")
                             .attr("href", "javascript:;")
+                            .addClass("powerTableCol")
                             .text($span.text())
                             .insertAfter($span)
                             .on('click', event => {
