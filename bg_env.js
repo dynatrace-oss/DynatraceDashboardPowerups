@@ -6,5 +6,5 @@ var BG_ENV = {
     ENT_ID: 'CUSTOM_APPLICATION-9A51173A189845EF',
     API_URL: 'https://tgm10765.sprint.dynatracelabs.com/api/v2/metrics/ingest',
     DT_TOKEN: "XXXXXXXXXXXXXXX",
-    METRIC_KEY: "powerups.usage.2020113001"
+    METRIC_KEY: "powerups.usage"
 }
