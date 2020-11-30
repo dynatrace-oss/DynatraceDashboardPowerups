@@ -281,7 +281,7 @@ var DashboardPowerups = (function () {
         window.postMessage(
             {
                 OpenKit: "start_beacon",
-                action: "PowerUp",
+                action: "PowerUp: "+location.href,
                 beaconOptOut: pub.config.Powerups.BeaconOptOut,
                 uuid: pub.config.Powerups.uuid,
                 applicationVersion: pub.VERSION,
