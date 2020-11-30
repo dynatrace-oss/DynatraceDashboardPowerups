@@ -1,6 +1,5 @@
 var re = /dashboard(?:\/dashboard)?;/;
 var HotFixMode = (HotFixMode?HotFixMode:0);
-const GH_URL = 'https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/';
 
 function hashListener(details) {
     var refIndex = details.url.indexOf('#');
@@ -64,8 +63,6 @@ var filter = {
     }]
 };
 
-const OPENKIT_URL = 'https://bf49960xxn.bf-sprint.dynatracelabs.com/mbeacon';
-const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
 var openKit, openKitSession, openKitAction;
 
 function listenForBeaconMessages() {
@@ -101,7 +98,7 @@ function startBeacon(request) {
     if (request.beaconOptOut) return false;
 
     console.log("POWERUP: DEBUG - OpenKit start beacon");
-    openKit = new OpenKitBuilder(OPENKIT_URL, OPENKIT_APPID, request.uuid)
+    openKit = new OpenKitBuilder(BG_ENV.OPENKIT_URL, BG_ENV.OPENKIT_APPID, request.uuid)
         .withApplicationVersion(request.applicationVersion)
         .withOperatingSystem(request.operatingSystem)
         .withManufacturer(request.manufacturer)
@@ -146,13 +143,46 @@ function endBeacon(request) {
         });
         powerupsFired = {};
         openKitAction.leaveAction();
+
+        sendMetricToDT(
+            createMetricPayload(request.vals)
+        );
     }
     if (openKitSession) openKitSession.end();
     if (openKit) openKit.shutdown();
 }
 
+function createMetricPayload(vals) {
+    let payload = "";
+    let line = `${BG_ENV.METRIC_KEY},`;
+    
+    if("internalUser" in val) line += `internalUser=${vals[internalUser]},`;
+    if("configuratorTag" in val) line += `configuratorTag=${vals[configuratorTag]},`;
+
+    Object.keys(vals).filter(x=>x.startsWith('PU_'))
+        .forEach(x=>{
+            payload += line + `powerup=${x} ${vals[x]}\n`;
+        });
+    
+    return payload;
+}
+
+function sendMetricToDT(payload){
+    let settings = {
+        url: BG_ENV.API_URL,
+        data: payload,
+        headers: {
+            Authorization: "Api-Token "+BG_ENV.DT_TOKEN
+        }
+    }
+
+    $.post(settings)
+        .done(()=>{console.log("POWERUP: sendMetricToDT success.")})
+        .fail(()=>{console.log("POWERUP: sendMetricToDT failed.")});
+}
+
 function checkSignals(alarm) {
-    const SIGNAL_URL = GH_URL + 'signals.json';
+    const SIGNAL_URL = BG_ENV.GH_URL + 'signals.json';
 
     $.getJSON(SIGNAL_URL)
         .done((signal)=>{
@@ -169,7 +199,7 @@ function checkSignals(alarm) {
 function loadExtside(details) {
     if(HotFixMode>1){ //in case of emergency hotfix, load from GH instead of ext. 
         //strongly prefer loading from extension, use only in event of critical bug + slow Google ChromeStore review
-        const file = GH_URL + 'extside.min.js';
+        const file = BG_ENV.GH_URL + 'extside.min.js';
         console.log("POWERUP: WARN - in HotFixMode, loading extside from GH.");
         $.get(file)
             .done((code)=>{

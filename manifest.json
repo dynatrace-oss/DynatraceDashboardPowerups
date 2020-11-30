@@ -8,6 +8,8 @@
         "scripts": [
             "3rdParty/jquery-3.5.1.min.js",
             "3rdParty/node_modules/@dynatrace/openkit-js/dist/browser/openkit.js",
+            "bg_env.js",
+            "bg_secure.js",
             "background.js"
         ],
         "persistent": false
