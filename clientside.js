@@ -212,7 +212,7 @@ var DashboardPowerups = (function () {
     }
 
     //Read data from USQL table
-    function readTableData(tabletile) {
+    function readTableData(tabletile, forceLastColumnNumber = true) {
         let $tabletile = $(tabletile);
         if (!$tabletile.length) return false;
         let dataTable = [];
@@ -239,7 +239,9 @@ var DashboardPowerups = (function () {
             let obj = {};
             for (let j = 0; j < numKeys; j++) {
                 let key = keys[j];
-                if (j == numKeys - 1 && dataTable[j][i] != null) {//Last column should be a number
+                if (forceLastColumnNumber //Last column should be a number
+                    && j == numKeys - 1
+                    && dataTable[j][i] != null) {
                     obj[key] = Number(dataTable[j][i].replace(/[,a-z ]/g, ''));
                 } else {
                     obj[key] = dataTable[j][i] || 0;
@@ -2917,7 +2919,7 @@ var DashboardPowerups = (function () {
                     .prependTo($tile.find(`[uitestid="gwt-debug-DTAQL"]`));
 
                 //read the table
-                let dataTable = readTableData($tile); // maybe make it sortable etc later
+                let dataTable = readTableData($tile, false); // maybe make it sortable etc later
 
                 //build menu
                 let $menu = $("<div>")
