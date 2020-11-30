@@ -158,6 +158,11 @@ function createMetricPayload(vals) {
     
     if("internalUser" in vals) line += `internaluser=${vals['internalUser']},`;
     if("configuratorTag" in vals) line += `configuratortag=${vals['configuratorTag']},`;
+    if("host" in vals) line += `host=${vals['host']},`;
+    if("tenantId" in vals) line += `tenantid=${vals['tenantId']},`;
+    if(openKit && openKit.config && openKit.config.meta && openKit.config.meta.applicationVersion)
+        line += `version=${openKit.config.meta.applicationVersion},`;
+    if(typeof(HotFixMode)!="undefined") line += `hotfixmode=${HotFixMode},`;
 
     Object.keys(vals).filter(x=>x.startsWith('PU_'))
         .forEach(x=>{
