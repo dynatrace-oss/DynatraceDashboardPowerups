@@ -156,8 +156,8 @@ function createMetricPayload(vals) {
     let payload = "";
     let line = `${BG_ENV.METRIC_KEY},`;
     
-    if("internalUser" in val) line += `internalUser=${vals[internalUser]},`;
-    if("configuratorTag" in val) line += `configuratorTag=${vals[configuratorTag]},`;
+    if("internalUser" in vals) line += `internalUser=${vals[internalUser]},`;
+    if("configuratorTag" in vals) line += `configuratorTag=${vals[configuratorTag]},`;
 
     Object.keys(vals).filter(x=>x.startsWith('PU_'))
         .forEach(x=>{
