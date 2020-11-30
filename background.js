@@ -115,7 +115,7 @@ function startBeacon(request) {
                     openKitAction.reportValue(x, request.vals[x]);
                 });
                 openKitAction.reportValue("hotfixMode", HotFixMode);
-                openKitAction.vals = vals;
+                openKitAction.vals = request.vals;
             }
         }
     }
