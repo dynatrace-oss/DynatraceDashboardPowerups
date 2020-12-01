@@ -281,7 +281,7 @@ var DashboardPowerups = (function () {
         window.postMessage(
             {
                 OpenKit: "start_beacon",
-                action: "PowerUp: "+location.href,
+                action: "PowerUp: " + location.href,
                 beaconOptOut: pub.config.Powerups.BeaconOptOut,
                 uuid: pub.config.Powerups.uuid,
                 applicationVersion: pub.VERSION,
@@ -3108,6 +3108,19 @@ var DashboardPowerups = (function () {
         return true;
     }
 
+    pub.hideEarlyAdopter = function () {
+        $(`[uitestid="gwt-debug-dashboard-tile-filter-indicator-icon"]`).siblings()
+            .each((i, el) => {
+                let $el = $(el);
+                if ($el.text() == "Early Adopter") {
+                    $el.hide();
+                    let $tile = $el.parents(TILE_SELECTOR);
+                    let $title = $tile.find(TITLE_SELECTOR);
+                    $title.css("width","100%");
+                }
+            });
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -3130,6 +3143,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUstdev());
             promises.push(pub.PUtable());
             promises.push(pub.sunburnMode());
+            promises.push(pub.hideEarlyAdopter());
             promises.push(pub.fixPublicDashboards());
             pub.loadChartSync();
             waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
