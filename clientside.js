@@ -2196,7 +2196,8 @@ var DashboardPowerups = (function () {
             data: newData,
             dataLabels: DATALABELS,
 
-        }
+        };
+        newSeries.dataLabels.format = '{point.value:.2f}';
         let newChartOpts = {
             type: 'heatmap',
             series: [newSeries],
