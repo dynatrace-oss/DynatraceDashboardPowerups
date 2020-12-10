@@ -266,6 +266,42 @@ var DashboardPowerups = (function () {
         return ({ keys: keys, normalTable: normalTable })
     }
 
+    function columnSorterAsc(a, b, key) {
+        switch(typeof(a[key])){
+            case "number":
+                return a - b;
+            case "string":
+                if(a[key].match(/^[0-9]/)
+                    && b[key].match(/^[0-9]/)){ //likely number as a string
+                        let a0 = a[key].replace(/[^0-9]*/,'');
+                        let b0 = b[key].replace(/[^0-9]*/,'');
+                        return a - b;
+                } else { //should be a string
+                    a[key].toLowerCase() > b[key].toLowerCase() ? -1 : 1;
+                }
+            default:
+                return false;
+        }
+    }
+
+    function columnSorterDesc(a, b) {
+        switch(typeof(a[key])){
+            case "number":
+                return b - a;
+            case "string":
+                if(a[key].match(/^[0-9]/)
+                    && b[key].match(/^[0-9]/)){ //likely number as a string
+                        let a0 = a[key].replace(/[^0-9]*/,'');
+                        let b0 = b[key].replace(/[^0-9]*/,'');
+                        return a - b;
+                } else { //should be a string
+                    a[key].toLowerCase() < b[key].toLowerCase() ? -1 : 1;
+                }
+            default:
+                return false;
+        }
+    }
+
     function startBeacon() {
         if (pub.config.Powerups.BeaconOptOut) return false;
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
@@ -840,7 +876,7 @@ var DashboardPowerups = (function () {
                 if (idx > -1) {
                     pt.update({ color: colors[idx] }, false);
                 }
-            });  
+            });
         } else { //assign colors in series order
             let opts = {
                 //stacking: "normal",
@@ -853,11 +889,11 @@ var DashboardPowerups = (function () {
                     s.update({ color: colors[i] });
             });
         }
-        if(dataLabels){
+        if (dataLabels) {
             let opts = {
-                dataLabels: {...DATALABELS}
+                dataLabels: { ...DATALABELS }
             }
-            chart.series.forEach(s=>{s.update(opts, false);});
+            chart.series.forEach(s => { s.update(opts, false); });
         }
         chart.redraw(false);
         return true;
@@ -2194,7 +2230,7 @@ var DashboardPowerups = (function () {
         let newSeries = {
             type: 'heatmap',
             data: newData,
-            dataLabels: {...DATALABELS},
+            dataLabels: { ...DATALABELS },
 
         };
         newSeries.dataLabels.format = '{point.value:.2f}';
@@ -3008,19 +3044,11 @@ var DashboardPowerups = (function () {
                                 if ($a.hasClass("powerupTableColAsc")) {
                                     $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc", "powerupTableColDesc"]);
                                     $a.addClass("powerupTableColDesc");
-                                    sorted = dataTable.normalTable.sort((a, b) =>
-                                        (typeof (a[key]) == "string" ? a[key].toLowerCase() : a[key])
-                                            <
-                                            (typeof (b[key]) == "string" ? b[key].toLowerCase() : b[key])
-                                            ? -1 : 1);
+                                    sorted = dataTable.normalTable.sort((a, b) => {columnSorterDesc(a,b,key)});
                                 } else {
                                     $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc", "powerupTableColDesc"]);
                                     $a.addClass("powerupTableColAsc");
-                                    sorted = dataTable.normalTable.sort((a, b) =>
-                                        (typeof (a[key]) == "string" ? a[key].toLowerCase() : a[key])
-                                            >
-                                            (typeof (b[key]) == "string" ? b[key].toLowerCase() : b[key])
-                                            ? -1 : 1);
+                                    sorted = dataTable.normalTable.sort((a, b) => {columnSorterAsc(a,b,key)});
                                 }
                                 sorted.forEach((row, i) => {
                                     dataTable.keys.forEach((col, j) => {
@@ -3134,7 +3162,7 @@ var DashboardPowerups = (function () {
                     $el.hide();
                     let $tile = $el.parents(TILE_SELECTOR);
                     let $title = $tile.find(TITLE_SELECTOR);
-                    $title.css("width","100%");
+                    $title.css("width", "100%");
                 }
             });
     }
