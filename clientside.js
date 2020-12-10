@@ -141,7 +141,14 @@ var DashboardPowerups = (function () {
         credits: {
             enabled: false
         }
-    }
+    };
+    const DATALABELS = {
+        enabled: true,
+        color: '#000000',
+        format: '{point.value:.2f}',
+        crop: true,
+        overflow: "justify"
+    };
     const MO_CONFIG = { attributes: true, childList: true, subtree: true }; //MutexObserver
     var waits = 0;
     var observers = [];
@@ -841,9 +848,7 @@ var DashboardPowerups = (function () {
         }
         if(dataLabels){
             let opts = {
-                dataLabels: {
-                    enabled: dataLabels
-                }
+                dataLabels: DATALABELS
             }
             chart.series.forEach(s=>{s.update(opts, false);});
         }
@@ -2182,13 +2187,7 @@ var DashboardPowerups = (function () {
         let newSeries = {
             type: 'heatmap',
             data: newData,
-            dataLabels: {
-                enabled: true,
-                color: '#000000',
-                format: '{point.value:.2f}',
-                crop: true,
-                overflow: "justify"
-            },
+            dataLabels: DATALABELS,
 
         }
         let newChartOpts = {
