@@ -3044,11 +3044,11 @@ var DashboardPowerups = (function () {
                                 if ($a.hasClass("powerupTableColAsc")) {
                                     $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc", "powerupTableColDesc"]);
                                     $a.addClass("powerupTableColDesc");
-                                    sorted = dataTable.normalTable.sort((a, b) => {columnSorterDesc(a,b,key)});
+                                    sorted = dataTable.normalTable.sort((a, b) => columnSorterDesc(a,b,key));
                                 } else {
                                     $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc", "powerupTableColDesc"]);
                                     $a.addClass("powerupTableColAsc");
-                                    sorted = dataTable.normalTable.sort((a, b) => {columnSorterAsc(a,b,key)});
+                                    sorted = dataTable.normalTable.sort((a, b) => columnSorterAsc(a,b,key));
                                 }
                                 sorted.forEach((row, i) => {
                                     dataTable.keys.forEach((col, j) => {
