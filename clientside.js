@@ -144,8 +144,8 @@ var DashboardPowerups = (function () {
     };
     const DATALABELS = {
         enabled: true,
-        color: '#000000',
-        format: '{point.value:.2f}',
+        color: '#ffffff',
+        //format: '{point.value:.2f}',
         crop: true,
         overflow: "justify",
         style: {
