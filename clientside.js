@@ -845,7 +845,7 @@ var DashboardPowerups = (function () {
                     enabled: dataLabels
                 }
             }
-            chart.update(opts, false);
+            chart.series.forEach(s=>{s.update(opts, false);});
         }
         chart.redraw(false);
         return true;
