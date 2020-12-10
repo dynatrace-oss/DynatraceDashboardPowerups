@@ -284,7 +284,7 @@ var DashboardPowerups = (function () {
         }
     }
 
-    function columnSorterDesc(a, b) {
+    function columnSorterDesc(a, b, key) {
         switch(typeof(a[key])){
             case "number":
                 return b - a;
