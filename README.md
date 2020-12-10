@@ -175,12 +175,11 @@ This powerup switches the color palette for a USQL chart . Change the title like
 Explanation:
 - `!PU(usqlcolor):` - indicates the powerup
 - `colors=green,blue,#aabbcc` - assigns colors to each series
+- `dataLabels=true` - (optional) display data label on each segment, defaults to no
 
 Example:
 ![USQL Color](Assets/usqlcolor.png)
 
-Note:
-- You may need to use `order by` to get consistent coloring, e.g. `order by apdexCategory` to ensure you always get "**F**rustrated, **S**atisfied, **T**olerated"
 
 ### Heatmap
 Currently this powerup can display a heatmap based on a **bar chart**. Eventually, it will be more generic.

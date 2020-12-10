@@ -811,9 +811,13 @@ var DashboardPowerups = (function () {
             return false;
         }
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
+        let dataLabels = (((args.find(x => x[0] == "dataLabels") || ["dataLabels", "false"])[1])
+            .toLowerCase()
+            .trim() === "true" ? true : false);
+        let vals = ((args.find(x => x[0] == "vals") || [])[1]);
+
         if (colors) colors = colors.split(',');
         else return false;
-        let vals = ((args.find(x => x[0] == "vals") || [])[1]);
         if (vals) {
             vals = vals.split(',');
             let data = chart.series[0].data;
@@ -822,8 +826,7 @@ var DashboardPowerups = (function () {
                 if (idx > -1) {
                     pt.update({ color: colors[idx] }, false);
                 }
-            });
-            chart.redraw;
+            });  
         } else { //assign colors in series order
             let opts = {
                 //stacking: "normal",
@@ -835,8 +838,16 @@ var DashboardPowerups = (function () {
                 if (s.color)
                     s.update({ color: colors[i] });
             });
-            chart.redraw(false);
         }
+        if(dataLabels){
+            let opts = {
+                dataLabels: {
+                    enabled: dataLabels
+                }
+            }
+            chart.update(opts, false);
+        }
+        chart.redraw(false);
         return true;
     }
 
