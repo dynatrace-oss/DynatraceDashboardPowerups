@@ -147,7 +147,13 @@ var DashboardPowerups = (function () {
         color: '#000000',
         format: '{point.value:.2f}',
         crop: true,
-        overflow: "justify"
+        overflow: "justify",
+        style: {
+            color: "#ffffff",
+            fontSize: "10px",
+            fontWeight: "",
+            textOutline: ""
+        }
     };
     const MO_CONFIG = { attributes: true, childList: true, subtree: true }; //MutexObserver
     var waits = 0;
