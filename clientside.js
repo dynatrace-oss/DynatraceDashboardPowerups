@@ -293,7 +293,7 @@ var DashboardPowerups = (function () {
                     && b[key].match(/^[0-9]/)){ //likely number as a string
                         let a0 = a[key].replace(/[^0-9]*/g,'');
                         let b0 = b[key].replace(/[^0-9]*/g,'');
-                        return a0 - b0;
+                        return b0 - a0;
                 } else { //should be a string
                     return (a[key].toLowerCase() < b[key].toLowerCase() ? -1 : 1);
                 }
