@@ -171,10 +171,15 @@ function createMetricPayload(vals) {
     if(openKitSession && openKitSession.userId) line += `userid=${openKitSession.userId},`;
     if(typeof(HotFixMode)!="undefined") line += `hotfixmode=${HotFixMode},`;
 
-    Object.keys(vals).filter(x=>x.startsWith('PU_'))
+    if(vals && vals.length){
+        Object.keys(vals).filter(x=>x.startsWith('PU_'))
         .forEach(x=>{
             payload += line + `powerup=${x} ${vals[x]}\n`;
         });
+    } else {
+        payload = line + `powerup=none 1\n`;
+    }
+    
     
     return payload;
 }
