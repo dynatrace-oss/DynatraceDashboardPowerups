@@ -146,6 +146,7 @@ var DashboardPowerups = (function () {
         enabled: true,
         color: '#ffffff',
         //format: '{point.value:.2f}',
+        format: '{y:.2f}',
         crop: true,
         overflow: "justify",
         style: {
