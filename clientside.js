@@ -855,7 +855,7 @@ var DashboardPowerups = (function () {
         }
         if(dataLabels){
             let opts = {
-                dataLabels: DATALABELS
+                dataLabels: {...DATALABELS}
             }
             chart.series.forEach(s=>{s.update(opts, false);});
         }
@@ -2194,7 +2194,7 @@ var DashboardPowerups = (function () {
         let newSeries = {
             type: 'heatmap',
             data: newData,
-            dataLabels: DATALABELS,
+            dataLabels: {...DATALABELS},
 
         };
         newSeries.dataLabels.format = '{point.value:.2f}';
