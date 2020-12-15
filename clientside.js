@@ -2927,7 +2927,7 @@ var DashboardPowerups = (function () {
                         console.log("POWERUP: WARN - vlookup compareVal not found in table.");
                     } else {
                         let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
-                        let compareVlookupVal = dataTable.normalTable[compareRowIdx][compareColName];
+                        let compareVlookupVal = compareTable.normalTable[compareRowIdx][compareColName];
                         let a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
                         let b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
                         if (Number.isNaN(a) || Number.isNaN(b)) {
