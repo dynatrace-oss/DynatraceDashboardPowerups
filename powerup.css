@@ -6,7 +6,7 @@ div.powerup-color-critical {
   background-color: red;
 }
 
-span.powerup-color-critical {
+span.powerup-color-critical, h1.powerup-color-critical {
   color: red;
 }
 
@@ -52,7 +52,7 @@ div.powerup-color-warning {
   background-color: yellow;
 }
 
-span.powerup-color-warning {
+span.powerup-color-warning, h1.powerup-color-warning {
   color: yellow;
 }
 
@@ -98,7 +98,7 @@ div.powerup-color-normal {
   background-color: green;
 }
 
-span.powerup-color-normal {
+span.powerup-color-normal, h1.powerup-color-normal {
   color: green;
 }
 

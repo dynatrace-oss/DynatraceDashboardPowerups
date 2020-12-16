@@ -267,17 +267,17 @@ var DashboardPowerups = (function () {
     }
 
     function columnSorterAsc(a, b, key) {
-        switch(typeof(a[key])){
+        switch (typeof (a[key])) {
             case "number":
                 return a - b;
             case "string":
-                if(a[key].match(/^[0-9]/)
-                    && b[key].match(/^[0-9]/)){ //likely number as a string
-                        let a0 = a[key].replace(/[^0-9]*/g,'');
-                        let b0 = b[key].replace(/[^0-9]*/g,'');
-                        return a0 - b0;
+                if (a[key].match(/^[0-9]/)
+                    && b[key].match(/^[0-9]/)) { //likely number as a string
+                    let a0 = a[key].replace(/[^0-9]*/g, '');
+                    let b0 = b[key].replace(/[^0-9]*/g, '');
+                    return a0 - b0;
                 } else { //should be a string
-                    return(a[key].toLowerCase() > b[key].toLowerCase() ? -1 : 1);
+                    return (a[key].toLowerCase() > b[key].toLowerCase() ? -1 : 1);
                 }
             default:
                 return false;
@@ -285,15 +285,15 @@ var DashboardPowerups = (function () {
     }
 
     function columnSorterDesc(a, b, key) {
-        switch(typeof(a[key])){
+        switch (typeof (a[key])) {
             case "number":
                 return b - a;
             case "string":
-                if(a[key].match(/^[0-9]/)
-                    && b[key].match(/^[0-9]/)){ //likely number as a string
-                        let a0 = a[key].replace(/[^0-9]*/g,'');
-                        let b0 = b[key].replace(/[^0-9]*/g,'');
-                        return b0 - a0;
+                if (a[key].match(/^[0-9]/)
+                    && b[key].match(/^[0-9]/)) { //likely number as a string
+                    let a0 = a[key].replace(/[^0-9]*/g, '');
+                    let b0 = b[key].replace(/[^0-9]*/g, '');
+                    return b0 - a0;
                 } else { //should be a string
                     return (a[key].toLowerCase() < b[key].toLowerCase() ? -1 : 1);
                 }
@@ -2211,8 +2211,8 @@ var DashboardPowerups = (function () {
                     .reduce((total, d, idx, arr) => {
                         total += d.y;
                         if (idx === arr.length - 1) { //final step, calc the avg
-                            let len = arr.filter(x=>x.y !== null).length;
-                            if(!len) return NaN;
+                            let len = arr.filter(x => x.y !== null).length;
+                            if (!len) return NaN;
                             else return total / len;
                         } else { //not final step, keep summing everything up
                             return total;
@@ -2551,6 +2551,9 @@ var DashboardPowerups = (function () {
             let scopeStr = args.find(x => x[0] == "scope")[1];
             let color = (args.find(x => x[0] == "color") || [])[1] || "white";
             let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
+            let base = (args.find(x => x[0] == "base") || [])[1] || "";
+            let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
+            let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
 
             let scope = scopeStr.trim().split(',')
                 .map(x => (x.includes(':')
@@ -2584,18 +2587,40 @@ var DashboardPowerups = (function () {
 
             //calculate
             let fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format;
-            let calcVal = fmt(mexp.eval(exp, tokens, pairs));
+            let val = mexp.eval(exp, tokens, pairs);
+            let sVal = fmt(val);
 
             //swap markdown content
             $container.hide();
             let $newContainer = $("<div>")
                 .addClass("powerupMath")
                 .insertAfter($container);
-            let h1 = $("<h1>")
-                .text(calcVal)
-                .css("color", color)
+            let $h1 = $("<h1>")
+                .text(sVal)
                 .css("font-size", size)
                 .appendTo($newContainer);
+            
+            //thresholds
+            if(base && !isNaN(warn) && !isNaN(crit)){
+                switch(base){
+                    case "low":
+                        if (val < warn) $target.addClass(`powerup-color-normal`);
+                        else if (val < crit) $target.addClass(`powerup-color-warning`);
+                        else $target.addClass(`powerup-color-critical`);
+                        break;
+                    case "high":
+                        if (val > warn) $target.addClass(`powerup-color-normal`);
+                        else if (val > crit) $target.addClass(`powerup-color-warning`);
+                        else $target.addClass(`powerup-color-critical`);
+                        break;
+                    default:
+                        $h1.css("color", color);
+                        break;
+                }
+            } else {
+                $h1.css("color", color);
+            }
+            
             powerupsFired['PU_MATH'] ? powerupsFired['PU_MATH']++ : powerupsFired['PU_MATH'] = 1;
         });
     }
@@ -3046,11 +3071,11 @@ var DashboardPowerups = (function () {
                                 if ($a.hasClass("powerupTableColAsc")) {
                                     $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc", "powerupTableColDesc"]);
                                     $a.addClass("powerupTableColDesc");
-                                    sorted = dataTable.normalTable.sort((a, b) => columnSorterDesc(a,b,key));
+                                    sorted = dataTable.normalTable.sort((a, b) => columnSorterDesc(a, b, key));
                                 } else {
                                     $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc", "powerupTableColDesc"]);
                                     $a.addClass("powerupTableColAsc");
-                                    sorted = dataTable.normalTable.sort((a, b) => columnSorterAsc(a,b,key));
+                                    sorted = dataTable.normalTable.sort((a, b) => columnSorterAsc(a, b, key));
                                 }
                                 sorted.forEach((row, i) => {
                                     dataTable.keys.forEach((col, j) => {
