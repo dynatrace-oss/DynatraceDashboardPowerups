@@ -263,6 +263,9 @@ Explanation:
 - `scope=` - list of any variables used in your expression. Optionally, you may have seperate variable names from link name, e.g. `x4:link4`, otherwise assume var and link are the same string e.g. `x1`
 - `color=` - (optional) a valid CSS color, defaults to white
 - `size=` - (optional) a valid CSS font-size, defaults to 36px
+- `base=` - (optional) if using thresholds, define whether the base (normal) is `low` or `high`
+- `warn=` - (optional) if using thresholds, warning threshold, once breached color coding will be yellow
+- `crit=` - (optional) if using thresholds, critical threshold, once breached color coding will be red
 
 Example:
 ![Math](Assets/mathPU.png)
