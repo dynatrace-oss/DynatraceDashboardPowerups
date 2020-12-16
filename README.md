@@ -114,6 +114,7 @@ Explanation:
 - `link=` this is used to link to a Single Value Tile to get the comparison value
 - `warn=` this is the warning threshold, once breached color coding will be yellow
 - `crit=` this is the critical threshold, once breached color coding will be red
+- `url=` (optional) if you want the icon to be clickable, give it a url. Recommend using this as last argument.
 Just be sure to include the `!PU(link):` with a matching string in the desired Single Value Tile
 
 Example:
