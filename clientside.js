@@ -2213,7 +2213,7 @@ var DashboardPowerups = (function () {
                         if (idx === arr.length - 1) { //final step, calc the avg
                             let len = arr.filter(x=>x.y !== null).length;
                             if(!len) return NaN;
-                            else return total / arr.length;
+                            else return total / len;
                         } else { //not final step, keep summing everything up
                             return total;
                         }
