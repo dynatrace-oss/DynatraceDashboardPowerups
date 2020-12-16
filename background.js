@@ -171,13 +171,16 @@ function createMetricPayload(vals) {
     if(openKitSession && openKitSession.userId) line += `userid=${openKitSession.userId},`;
     if(typeof(HotFixMode)!="undefined") line += `hotfixmode=${HotFixMode},`;
 
+    let re = new RegExp(`^${BG_ENV.METRIC_KEY},`);
+    let summaryLine = line.replace(re,`${BG_ENV.METRIC_SUMMARY_KEY},`);
     if(vals && vals.length){
         Object.keys(vals).filter(x=>x.startsWith('PU_'))
         .forEach(x=>{
             payload += line + `powerup=${x} ${vals[x]}\n`;
         });
+        payload += summaryLine + `poweredup=true 1\n`;
     } else {
-        payload = line + `powerup=none 1\n`;
+        payload = summaryLine + `poweredup=false 1\n`;
     }
     
     
