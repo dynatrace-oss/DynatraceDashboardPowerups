@@ -1151,7 +1151,7 @@ var DashboardPowerups = (function () {
             let base = args.find(x => x[0] == "base")[1];
             let warn = Number(args.find(x => x[0] == "warn")[1]);
             let crit = Number(args.find(x => x[0] == "crit")[1]);
-            let url = (args.find(x => x[0] == "url") || [])[1];
+            let url = (argstring.match(/url=([^ ]+)/) || [])[1];
             if(url) url = url.trim();
             let argObj = {
                 icon: icon,
