@@ -2926,7 +2926,7 @@ var DashboardPowerups = (function () {
                 let link = (args.find(x => x[0] == "link") || [])[1];
                 let val = (args.find(x => x[0] == "val") || [""])[1];
                 let col = (args.find(x => x[0] == "col") || [1])[1];
-                let row = (args.find(x => x[0] == "row") || [])[1];
+                let row = Number((args.find(x => x[0] == "row") || [])[1]);
 
                 //find the table
                 let $tabletile = $(pub.findLinkedTile(link));
