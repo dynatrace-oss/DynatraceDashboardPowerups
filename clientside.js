@@ -2604,14 +2604,14 @@ var DashboardPowerups = (function () {
             if(base && !isNaN(warn) && !isNaN(crit)){
                 switch(base){
                     case "low":
-                        if (val < warn) $target.addClass(`powerup-color-normal`);
-                        else if (val < crit) $target.addClass(`powerup-color-warning`);
-                        else $target.addClass(`powerup-color-critical`);
+                        if (val < warn) $h1.addClass(`powerup-color-normal`);
+                        else if (val < crit) $h1.addClass(`powerup-color-warning`);
+                        else $h1.addClass(`powerup-color-critical`);
                         break;
                     case "high":
-                        if (val > warn) $target.addClass(`powerup-color-normal`);
-                        else if (val > crit) $target.addClass(`powerup-color-warning`);
-                        else $target.addClass(`powerup-color-critical`);
+                        if (val > warn) $h1.addClass(`powerup-color-normal`);
+                        else if (val > crit) $h1.addClass(`powerup-color-warning`);
+                        else $h1.addClass(`powerup-color-critical`);
                         break;
                     default:
                         $h1.css("color", color);
