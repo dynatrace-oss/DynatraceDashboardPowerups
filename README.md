@@ -327,6 +327,7 @@ Explanation:
 - `link=table` - reference the table tile, ie put `!PU(link):table` in the title of the USQL tile
 - `val=...` - value to look for in the first column of the table
 - `col=1` - column number (or name) of where to look up the value, ie 1 is 2nd column of the table
+- `row=1` - (optional) ignore val and instead lookup value by row number. Starting at 1 from top or -1 from bottom.
 
 Options:
 - `color=blue` - what color to make the text

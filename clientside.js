@@ -2926,6 +2926,7 @@ var DashboardPowerups = (function () {
                 let link = (args.find(x => x[0] == "link") || [])[1];
                 let val = (args.find(x => x[0] == "val") || [""])[1];
                 let col = (args.find(x => x[0] == "col") || [1])[1];
+                let row = (args.find(x => x[0] == "row") || [])[1];
 
                 //find the table
                 let $tabletile = $(pub.findLinkedTile(link));
@@ -2936,7 +2937,15 @@ var DashboardPowerups = (function () {
 
                 //lookup val in table
                 let firstColName = dataTable.keys[0];
-                let rowIdx = dataTable.normalTable.findIndex(x => x[firstColName] === val);
+                let rowIdx;
+                if(row>0){
+                    rowIdx = row - 1;
+                } else if(row<0){
+                    rowIdx = dataTable.normalTable.length -1 + row;
+                } else {
+                    rowIdx = dataTable.normalTable.findIndex(x => x[firstColName] === val);
+                }
+                
                 if (rowIdx < 0) {
                     console.log("POWERUP: WARN - vlookup val not found in table.");
                     return false;
