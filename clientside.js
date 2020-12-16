@@ -1151,12 +1151,14 @@ var DashboardPowerups = (function () {
             let base = args.find(x => x[0] == "base")[1];
             let warn = Number(args.find(x => x[0] == "warn")[1]);
             let crit = Number(args.find(x => x[0] == "crit")[1]);
+            let url = (args.find(x => x[0] == "url") || [])[1];
             let argObj = {
                 icon: icon,
                 link: link,
                 base: base,
                 warn: warn,
-                crit: crit
+                crit: crit,
+                url: url
             }
             let val = pub.findLinkedVal(link);
 
@@ -1180,6 +1182,14 @@ var DashboardPowerups = (function () {
                         if (val > warn) $svg.addClass(class_norm);
                         else if (val > crit) $svg.addClass(class_warn);
                         else $svg.addClass(class_crit);
+                    }
+                    if(url){
+                        let $a = $(`<a>`)
+                            .attr('href',url)
+                            .insertBefore($svg);
+                        if(url.startsWith('http'))
+                            $a.attr('target','_blank');
+                        $svg.appendTo($a);
                     }
                 });
             powerupsFired['PU_SVG'] ? powerupsFired['PU_SVG']++ : powerupsFired['PU_SVG'] = 1;
