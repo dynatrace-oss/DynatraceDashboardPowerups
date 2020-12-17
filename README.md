@@ -327,10 +327,10 @@ Explanation:
 - `link=table` - reference the table tile, ie put `!PU(link):table` in the title of the USQL tile
 - `val=...` - value to look for in the first column of the table
 - `col=1` - column number (or name) of where to look up the value, ie 1 is 2nd column of the table
-- `row=1` - (optional) ignore val and instead lookup value by row number. Starting at 1 from top or -1 from bottom.
 
 Options:
 - `color=blue` - what color to make the text
+- `row=1` - (optional) ignore val and instead lookup value by row number. Starting at 1 from top or -1 from bottom.
 
 Optional comparison:
 - `compareTable=table` - reference the table tile, ie put `!PU(link):table` in the title of the USQL tile
@@ -339,6 +339,11 @@ Optional comparison:
 - `lt=green` - color to make the text, if the value is lower than the comparison value
 - `eq=yellow` - color to make the text, if the value is equal than the comparison value
 - `gt=red` - color to make the text, if the value is greater than the comparison value
+
+Optional thresholds, mutually exclusive of comparison:
+- `base=high` this is the base case for your metric, ie is it good to be low or high?
+- `warn=90` this is the warning threshold, once breached color coding will be yellow
+- `crit=80` this is the critical threshold, once breached color coding will be red
 
 Example:
 ![vlookup](Assets/vlookup.png)
