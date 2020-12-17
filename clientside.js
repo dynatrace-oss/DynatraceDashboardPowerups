@@ -2989,15 +2989,16 @@ var DashboardPowerups = (function () {
                         }
                     }
                 } else if(base && !isNaN(warn) && !isNaN(crit)){
+                    let a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
                     switch(base){
                         case "low":
-                            if (val < warn) color="green";
-                            else if (val < crit) color="yellow";
+                            if (a < warn) color="green";
+                            else if (a < crit) color="yellow";
                             else color="red";
                             break;
                         case "high":
-                            if (val > warn) color="green";
-                            else if (val > crit) color="yellow";
+                            if (a > warn) color="green";
+                            else if (a > crit) color="yellow";
                             else color="red";
                             break;
                     }
