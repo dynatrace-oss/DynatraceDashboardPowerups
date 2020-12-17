@@ -3030,6 +3030,7 @@ var DashboardPowerups = (function () {
                 let argstring = title.split(PU_TABLE)[1].split(/[!\n]/)[0];
                 title = title.split(PU_TABLE)[0].trim();
                 let args = argstring.split(";").map(x => x.split("="));
+                let col = Number((args.find(x => x[0] == "col") || [])[1]);
 
                 //decorate the table
                 $table.addClass("powerupTable");
@@ -3121,7 +3122,14 @@ var DashboardPowerups = (function () {
                                     })
                                 })
                             });
-                    })
+                        if(col === i + 1){
+                            $a.addClass("powerupTableColDesc");
+                        } else if(col === -1 *(i+1)){
+                            $a.addClass("powerupTableColAsc");
+                        }
+                    });
+                $tile.find(`a.powerupTableColDesc, a.powerupTableColAsc`)
+                    .eq(0).trigger("click");
 
                 //generate CVS/XLSX/etc on menu item click
                 powerupsFired['PU_TABLE'] ? powerupsFired['PU_TABLE']++ : powerupsFired['PU_TABLE'] = 1;
