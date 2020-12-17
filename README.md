@@ -379,6 +379,7 @@ Syntax:
 
 Explanation
 - `!PU(table):` - denotes this powerup
+- `col=` - (optional) default sort order, e.g. 1 sort by first column ascending, -5 sort by fifth column descending
 
 Example: 
 ![tablexls](Assets/table.png)
