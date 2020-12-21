@@ -833,13 +833,10 @@ var DashboardPowerups = (function () {
                 if (colors && Array.isArray(colors) && colors[seriesNum])
                     newSerie.color = colors[seriesNum];
                 if (vals) {
-                    let data = newSerie.data;
-                    data.forEach(pt => {
-                        let idx = vals.findIndex(x => x.toLowerCase() === pt.name.toLowerCase());
-                        if (idx > -1) {
-                            pt.update({ color: colors[idx] }, false);
-                        }
-                    });
+                    let idx = vals.findIndex(x => x.toLowerCase() === split.toLowerCase());
+                    if (idx > -1) {
+                        newSerie.color = colors[idx];
+                    }
                 }
                 newSeries.push(newSerie);
             } else {
