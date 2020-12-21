@@ -1146,8 +1146,8 @@ var DashboardPowerups = (function () {
             let argstring = $svgcontainer.text().split(PU_SVG)[1].split('!')[0];
 
             let args = argstring.split(";").map(x => x.split("="));
-            let icon = args.find(x => x[0] == "icon")[1];
-            let link = args.find(x => x[0] == "link")[1];
+            let icon = (args.find(x => x[0] == "icon") || ["icon","abort"])[1];
+            let link = (args.find(x => x[0] == "link") || [])[1];
             let color = (args.find(x => x[0] == "color") || [])[1];
             let base = (args.find(x => x[0] == "base") || [])[1];
             let warn = Number( (args.find(x => x[0] == "warn") || [])[1]);
