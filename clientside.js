@@ -772,7 +772,8 @@ var DashboardPowerups = (function () {
                     groupPadding: 0
                 }
                 if (vals) {
-                    let idx = vals.findIndex(x => x.toLowerCase() === s.name.toLowerCase());
+                    let name = (s.name.match(/\(([^)]+)/) || [])[1] || "";
+                    let idx = vals.findIndex(x => x.toLowerCase() === name.toLowerCase());
                     if (idx > -1) {
                         opts.color = colors[idx];
                     } else {
