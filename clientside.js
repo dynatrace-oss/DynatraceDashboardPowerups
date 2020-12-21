@@ -755,6 +755,7 @@ var DashboardPowerups = (function () {
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
         if (colors) colors = colors.split(',');
         let vals = ((args.find(x => x[0] == "vals") || [])[1]);
+        if (vals) vals = vals.split(',');
         let stacking = (title.includes(PU_100STACK) ? "percent" : "normal");
         let dataLabels = (((args.find(x => x[0] == "dataLabels") || ["dataLabels", "false"])[1])
             .toLowerCase()
@@ -774,7 +775,6 @@ var DashboardPowerups = (function () {
                     opts.color = colors[i];
                 s.update(opts, false);
                 if (vals) {
-                    vals = vals.split(',');
                     let data = chart.series[i].data;
                     data.forEach(pt => {
                         let idx = vals.findIndex(x => x.toLowerCase() === pt.name.toLowerCase());
@@ -833,7 +833,6 @@ var DashboardPowerups = (function () {
                 if (colors && Array.isArray(colors) && colors[seriesNum])
                     newSerie.color = colors[seriesNum];
                 if (vals) {
-                    vals = vals.split(',');
                     let data = newSerie.data;
                     data.forEach(pt => {
                         let idx = vals.findIndex(x => x.toLowerCase() === pt.name.toLowerCase());
