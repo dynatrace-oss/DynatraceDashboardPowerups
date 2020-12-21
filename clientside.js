@@ -7,7 +7,7 @@ var DashboardPowerups = (function () {
     const TILE_SELECTOR = '.grid-tile';
     const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"]';
     const MARKDOWN_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
-    const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, [uitestid="gwt-debug-kpiValue"] span';
+    const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, [uitestid="gwt-debug-kpiValue"] span, [uitestid="gwt-debug-dexp-visualization-single-value"] span';
     const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
     const MAPTITLE_SELECTOR = 'span[uitestid="gwt-debug-WorldMapTile"]';
@@ -2121,6 +2121,7 @@ var DashboardPowerups = (function () {
         let argstring = title.split(PU_HEATMAP)[1].split('!')[0];
         let args = argstring.split(";").map(x => x.split("="));
         let txtColor = (args.find(x => x[0] == "txtColor") || [])[1] || "#ffffff";
+        let interval = (args.find(x => x[0] == "int") || [])[1] || "1d";
         let colorAxis = {};
 
         if (argstring.includes("vals")) {
