@@ -3,7 +3,7 @@ var DashboardPowerups = (function () {
     const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
     const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
-    const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type';
+    const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type, [uitestid="gwt-debug-dexp-visualization-single-value"] span:first-of-type';
     const TILE_SELECTOR = '.grid-tile';
     const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"]';
     const MARKDOWN_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
