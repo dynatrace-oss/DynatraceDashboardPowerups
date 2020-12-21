@@ -754,6 +754,7 @@ var DashboardPowerups = (function () {
         }
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
         if (colors) colors = colors.split(',');
+        let vals = ((args.find(x => x[0] == "vals") || [])[1]);
         let stacking = (title.includes(PU_100STACK) ? "percent" : "normal");
         let dataLabels = (((args.find(x => x[0] == "dataLabels") || ["dataLabels", "false"])[1])
             .toLowerCase()
@@ -772,6 +773,16 @@ var DashboardPowerups = (function () {
                 if (colors && Array.isArray(colors) && colors[i])
                     opts.color = colors[i];
                 s.update(opts, false);
+                if (vals) {
+                    vals = vals.split(',');
+                    let data = chart.series[i].data;
+                    data.forEach(pt => {
+                        let idx = vals.findIndex(x => x.toLowerCase() === pt.name.toLowerCase());
+                        if (idx > -1) {
+                            pt.update({ color: colors[idx] }, false);
+                        }
+                    });
+                }
             });
             chart.redraw(false);
             return true;
@@ -821,6 +832,16 @@ var DashboardPowerups = (function () {
                 let seriesNum = newSeries.length;
                 if (colors && Array.isArray(colors) && colors[seriesNum])
                     newSerie.color = colors[seriesNum];
+                if (vals) {
+                    vals = vals.split(',');
+                    let data = newSerie.data;
+                    data.forEach(pt => {
+                        let idx = vals.findIndex(x => x.toLowerCase() === pt.name.toLowerCase());
+                        if (idx > -1) {
+                            pt.update({ color: colors[idx] }, false);
+                        }
+                    });
+                }
                 newSeries.push(newSerie);
             } else {
                 newSeries[i].data.push({
@@ -1146,14 +1167,14 @@ var DashboardPowerups = (function () {
             let argstring = $svgcontainer.text().split(PU_SVG)[1].split('!')[0];
 
             let args = argstring.split(";").map(x => x.split("="));
-            let icon = (args.find(x => x[0] == "icon") || ["icon","abort"])[1];
+            let icon = (args.find(x => x[0] == "icon") || ["icon", "abort"])[1];
             let link = (args.find(x => x[0] == "link") || [])[1];
             let color = (args.find(x => x[0] == "color") || [])[1];
             let base = (args.find(x => x[0] == "base") || [])[1];
-            let warn = Number( (args.find(x => x[0] == "warn") || [])[1]);
-            let crit = Number( (args.find(x => x[0] == "crit") || [])[1]);
+            let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
+            let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
             let url = (argstring.match(/url=([^ ]+)/) || [])[1];
-            if(url) url = url.trim();
+            if (url) url = url.trim();
             let argObj = {
                 icon: icon,
                 link: link,
@@ -1184,15 +1205,15 @@ var DashboardPowerups = (function () {
                         if (val > warn) $svg.addClass(class_norm);
                         else if (val > crit) $svg.addClass(class_warn);
                         else $svg.addClass(class_crit);
-                    } else if(color){
-                        $svg.css("fill",color);
+                    } else if (color) {
+                        $svg.css("fill", color);
                     }
-                    if(url){
+                    if (url) {
                         let $a = $(`<a>`)
-                            .attr('href',url)
+                            .attr('href', url)
                             .insertBefore($svg);
-                        if(url.startsWith('http'))
-                            $a.attr('target','_blank');
+                        if (url.startsWith('http'))
+                            $a.attr('target', '_blank');
                         $svg.appendTo($a);
                     }
                 });
@@ -2614,10 +2635,10 @@ var DashboardPowerups = (function () {
                 .text(sVal)
                 .css("font-size", size)
                 .appendTo($newContainer);
-            
+
             //thresholds
-            if(base && !isNaN(warn) && !isNaN(crit)){
-                switch(base){
+            if (base && !isNaN(warn) && !isNaN(crit)) {
+                switch (base) {
                     case "low":
                         if (val < warn) $h1.addClass(`powerup-color-normal`);
                         else if (val < crit) $h1.addClass(`powerup-color-warning`);
@@ -2635,7 +2656,7 @@ var DashboardPowerups = (function () {
             } else {
                 $h1.css("color", color);
             }
-            
+
             powerupsFired['PU_MATH'] ? powerupsFired['PU_MATH']++ : powerupsFired['PU_MATH'] = 1;
         });
     }
@@ -2945,14 +2966,14 @@ var DashboardPowerups = (function () {
                 //lookup val in table
                 let firstColName = dataTable.keys[0];
                 let rowIdx;
-                if(row>0){
+                if (row > 0) {
                     rowIdx = row - 1;
-                } else if(row<0){
-                    rowIdx = dataTable.normalTable.length -1 + row;
+                } else if (row < 0) {
+                    rowIdx = dataTable.normalTable.length - 1 + row;
                 } else {
                     rowIdx = dataTable.normalTable.findIndex(x => x[firstColName] === val);
                 }
-                
+
                 if (rowIdx < 0) {
                     console.log("POWERUP: WARN - vlookup val not found in table.");
                     return false;
@@ -2992,18 +3013,18 @@ var DashboardPowerups = (function () {
                             else if (a > b) color = gt;
                         }
                     }
-                } else if(base && !isNaN(warn) && !isNaN(crit)){
+                } else if (base && !isNaN(warn) && !isNaN(crit)) {
                     let a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
-                    switch(base){
+                    switch (base) {
                         case "low":
-                            if (a < warn) color="green";
-                            else if (a < crit) color="yellow";
-                            else color="red";
+                            if (a < warn) color = "green";
+                            else if (a < crit) color = "yellow";
+                            else color = "red";
                             break;
                         case "high":
-                            if (a > warn) color="green";
-                            else if (a > crit) color="yellow";
-                            else color="red";
+                            if (a > warn) color = "green";
+                            else if (a > crit) color = "yellow";
+                            else color = "red";
                             break;
                     }
                 }
@@ -3126,9 +3147,9 @@ var DashboardPowerups = (function () {
                                     })
                                 })
                             });
-                        if(col === i + 1){
+                        if (col === i + 1) {
                             $a.addClass("powerupTableColDesc");
-                        } else if(col === -1 *(i+1)){
+                        } else if (col === -1 * (i + 1)) {
                             $a.addClass("powerupTableColAsc");
                         }
                     });
