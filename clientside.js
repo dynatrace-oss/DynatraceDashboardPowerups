@@ -771,18 +771,21 @@ var DashboardPowerups = (function () {
                     },
                     groupPadding: 0
                 }
-                if (colors && Array.isArray(colors) && colors[i])
-                    opts.color = colors[i];
-                s.update(opts, false);
                 if (vals) {
-                    let data = chart.series[i].data;
-                    data.forEach(pt => {
-                        let idx = vals.findIndex(x => x.toLowerCase() === pt.name.toLowerCase());
-                        if (idx > -1) {
-                            pt.update({ color: colors[idx] }, false);
-                        }
-                    });
+                    let idx = vals.findIndex(x => x.toLowerCase() === s.name.toLowerCase());
+                    if (idx > -1) {
+                        opts.color = colors[idx];
+                    } else {
+                        if (colors && Array.isArray(colors) && colors[i])
+                            opts.color = colors[i];
+                    }
+
+                } else {
+                    if (colors && Array.isArray(colors) && colors[i])
+                        opts.color = colors[i];
                 }
+                s.update(opts, false);
+
             });
             chart.redraw(false);
             return true;
@@ -830,13 +833,17 @@ var DashboardPowerups = (function () {
                     ]
                 }
                 let seriesNum = newSeries.length;
-                if (colors && Array.isArray(colors) && colors[seriesNum])
-                    newSerie.color = colors[seriesNum];
                 if (vals) {
                     let idx = vals.findIndex(x => x.toLowerCase() === split.toLowerCase());
                     if (idx > -1) {
                         newSerie.color = colors[idx];
+                    } else {
+                        if (colors && Array.isArray(colors) && colors[seriesNum])
+                            newSerie.color = colors[seriesNum];
                     }
+                } else {
+                    if (colors && Array.isArray(colors) && colors[seriesNum])
+                        newSerie.color = colors[seriesNum];
                 }
                 newSeries.push(newSerie);
             } else {
