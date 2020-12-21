@@ -1148,9 +1148,10 @@ var DashboardPowerups = (function () {
             let args = argstring.split(";").map(x => x.split("="));
             let icon = args.find(x => x[0] == "icon")[1];
             let link = args.find(x => x[0] == "link")[1];
-            let base = args.find(x => x[0] == "base")[1];
-            let warn = Number(args.find(x => x[0] == "warn")[1]);
-            let crit = Number(args.find(x => x[0] == "crit")[1]);
+            let color = (args.find(x => x[0] == "color") || [])[1];
+            let base = (args.find(x => x[0] == "base") || [])[1];
+            let warn = Number( (args.find(x => x[0] == "warn") || [])[1]);
+            let crit = Number( (args.find(x => x[0] == "crit") || [])[1]);
             let url = (argstring.match(/url=([^ ]+)/) || [])[1];
             if(url) url = url.trim();
             let argObj = {
@@ -1183,6 +1184,8 @@ var DashboardPowerups = (function () {
                         if (val > warn) $svg.addClass(class_norm);
                         else if (val > crit) $svg.addClass(class_warn);
                         else $svg.addClass(class_crit);
+                    } else if(color){
+                        $svg.css("fill",color);
                     }
                     if(url){
                         let $a = $(`<a>`)
