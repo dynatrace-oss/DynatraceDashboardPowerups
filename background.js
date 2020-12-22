@@ -272,7 +272,7 @@ function backgroundPowerup(request, sender) {
             fetch(url).then(response => {
                 response.blob().then(blobResponse => {
                     let type = blobResponse.type;
-                    if (allowedFileTypes.indexOf(files[i].type) < 0) {
+                    if (allowedFileTypes.indexOf(type) < 0) {
                         let err = `POWERUP: PU_BACKGROUND - not an allowed filetype: '${type}' for '${url}'`
                         console.warn(err);
                         errorBeacon(err);
