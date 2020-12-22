@@ -281,7 +281,7 @@ function backgroundPowerup(request, sender) {
                         let obj = {};
                         obj[url] = blobResponse;
                         chrome.storage.local.set({ obj }, () => {
-                            chrome.tabs.sendMessage(sender.tab,
+                            chrome.tabs.sendMessage(sender.tab.id,
                                 {
                                     PowerUpResult: "PU_BACKGROUND",
                                     url: url,
