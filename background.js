@@ -280,8 +280,8 @@ function backgroundPowerup(request, sender) {
                     } else {
                         let obj = {};
                         obj[url] = blobResponse;
-                        chrome.storage.local.set({ obj }, () => {
-                            if(typeof(chrome.runtime.lastError)!="undefined"){
+                        chrome.storage.local.set(obj, () => {
+                            if (typeof (chrome.runtime.lastError) != "undefined") {
                                 let err = chrome.runtime.lastError;
                                 console.error(err);
                             }
@@ -291,7 +291,7 @@ function backgroundPowerup(request, sender) {
                                     url: url,
                                     targetSelector: request.targetSelector
                                 },
-                                (response)=>{
+                                (response) => {
                                     console.log(response);
                                 })
                         });
