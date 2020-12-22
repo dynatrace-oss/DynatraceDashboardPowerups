@@ -286,6 +286,9 @@ function backgroundPowerup(request, sender) {
                                     PowerUpResult: "PU_BACKGROUND",
                                     url: url,
                                     targetSelector: request.targetSelector
+                                },
+                                (response)=>{
+                                    console.log(response);
                                 })
                         });
                     }
