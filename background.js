@@ -279,22 +279,27 @@ function backgroundPowerup(request, sender) {
                         return false;
                     } else {
                         let obj = {};
-                        obj[url] = blobResponse;
-                        chrome.storage.local.set(obj, () => {
-                            if (typeof (chrome.runtime.lastError) != "undefined") {
-                                let err = chrome.runtime.lastError;
-                                console.error(err);
-                            }
-                            chrome.tabs.sendMessage(sender.tab.id,
-                                {
-                                    PowerUpResult: "PU_BACKGROUND",
-                                    url: url,
-                                    targetSelector: request.targetSelector
-                                },
-                                (response) => {
-                                    console.log(response);
-                                })
-                        });
+                        let reader = new FileReader();
+                        reader.onload = (e) => {
+                            obj[url] = e.target.result;
+
+                            chrome.storage.local.set(obj, () => {
+                                if (typeof (chrome.runtime.lastError) != "undefined") {
+                                    let err = chrome.runtime.lastError;
+                                    console.error(err);
+                                }
+                                chrome.tabs.sendMessage(sender.tab.id,
+                                    {
+                                        PowerUpResult: "PU_BACKGROUND",
+                                        url: url,
+                                        targetSelector: request.targetSelector
+                                    },
+                                    (response) => {
+                                        console.log(response);
+                                    })
+                            });
+                        }
+                        reader.readAsDataURL(blobResponse);
                     }
                 })
             });
