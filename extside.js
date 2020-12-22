@@ -393,7 +393,9 @@ if (typeof (INJECTED) == "undefined") {
                 e.target.result);
         }
         reader.readAsDataURL(file);*/
-        $target.css('background-image',file);
+        $target
+            .css('background-image',file)
+            .addClass('powerupBackground');
     }
 
     function errorBeacon(err) {
