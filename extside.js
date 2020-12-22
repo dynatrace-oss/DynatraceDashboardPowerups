@@ -387,12 +387,13 @@ if (typeof (INJECTED) == "undefined") {
 
     function insertImg(target,file){
         let $target = $(target);
-        let reader = new FileReader();
+        /*let reader = new FileReader();
         reader.onload = (e)=>{
             $target.attr('src',
                 e.target.result);
         }
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file);*/
+        $target.attr('src',file);
     }
 
     function errorBeacon(err) {
