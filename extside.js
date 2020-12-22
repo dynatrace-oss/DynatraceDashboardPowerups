@@ -394,7 +394,7 @@ if (typeof (INJECTED) == "undefined") {
         }
         reader.readAsDataURL(file);*/
         $target
-            .css('background-image',file)
+            .css('background-image',`url(${file})`)
             .addClass('powerupBackground');
     }
 
