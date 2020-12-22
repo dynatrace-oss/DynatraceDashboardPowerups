@@ -3281,10 +3281,12 @@ var DashboardPowerups = (function () {
                 let url = (argstring.match(/url=([^ ]+)/) || [])[1];
                 if (url) url = url.trim();
                 
-                $(GRID_SELECTOR)
+                /*$(GRID_SELECTOR)
                     .css("background-image",
                         `url("${url}")`)
-                    .addClass("powerupBackground");
+                    .addClass("powerupBackground");*/
+                
+                //pass message back to extside to get the image
 
                 $markdown.hide();
             }
