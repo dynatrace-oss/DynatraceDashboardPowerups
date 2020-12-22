@@ -356,6 +356,18 @@ var DashboardPowerups = (function () {
             }, "*");
     }
 
+    function errorBeacon(err) {
+        if (pub.config.Powerups.BeaconOptOut) return false;
+        if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit crash beacon");
+
+        window.postMessage(
+            {
+                OpenKit: "error_beacon",
+                context: "clientside",
+                err: err
+            }, "*");
+    }
+
     function endBeacon() {
         if (pub.config.Powerups.BeaconOptOut) return false;
         if (pub.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end beacon");
@@ -3286,7 +3298,13 @@ var DashboardPowerups = (function () {
                         `url("${url}")`)
                     .addClass("powerupBackground");*/
                 
-                //pass message back to extside to get the image
+                //pass message back to extside to get the image, avoid block by CSP
+                window.postMessage(
+                    {
+                        PowerUp: "PU_BACKGROUND",
+                        url: url,
+                        targetSelector: GRID_SELECTOR
+                    }, "*");
 
                 $markdown.hide();
             }

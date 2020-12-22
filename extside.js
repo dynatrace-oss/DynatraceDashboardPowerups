@@ -212,13 +212,32 @@ if (typeof (INJECTED) == "undefined") {
 
         chrome.runtime.onMessage.addListener(
             function (request, sender, sendResponse) {
-                if (request.Powerup == "UpdateConfig") {
-                    chrome.storage.local.get(['Powerups'], function (result) {
-                        let s = `DashboardPowerups.config = ${JSON.stringify(result)};`
-                        injectClientsideString(s);
-                        sendResponse({ Powerup: "InjectedUpdatedConfig" });
-                    });
+                switch (request.Powerup) {
+                    case "UpdateConfig": {
+                        chrome.storage.local.get(['Powerups'], function (result) {
+                            let s = `DashboardPowerups.config = ${JSON.stringify(result)};`
+                            injectClientsideString(s);
+                            sendResponse({ Powerup: "InjectedUpdatedConfig" });
+                        });
+                        break;
+                    }
                 }
+                switch (request.PowerUpResult){
+                    case "PU_BACKGROUND": //we asked background for an img, now we have it
+                    let p = loadImgFromStorage(request);
+                    $.when(p)
+                        .done((file)=>{ //found locally, insert it
+                            let target = request.targetSelector;
+                            insertImg(target,file);
+                        })
+                        .fail(()=>{ //hmm that didn't work, fail
+                            let err = `POWERUP: unable to load image: ${request.url}`;
+                            errorBeacon(err);
+                            console.warn(err);
+                        });
+                    break;
+                }
+                return true;
             });
 
         return p;
@@ -326,9 +345,57 @@ if (typeof (INJECTED) == "undefined") {
                     console.log("POWERUP: Content script received: " + event.data.OpenKit);
                     chrome.runtime.sendMessage(event.data);
                 }
+
+                if (event.data.PowerUp) {
+                    extsidePowerup(event);
+                }
             }, false);
         }
         BEACON_LISTENING = true;
+    }
+
+    function extsidePowerup(event) { //run powerup extside instead of clientside
+        switch (event.data.PowerUp) {
+            case "PU_BACKGROUND":
+                let p = loadImgFromStorage(event.data);
+                $.when(p)
+                    .done((file)=>{ //found locally, insert it
+                        let target = event.data.targetSelector;
+                        insertImg(target,file);
+                    })
+                    .fail(()=>{ //not stored locally, ask background for it
+                        chrome.runtime.sendMessage(event.data);
+                    });
+                break;
+        }
+    }
+
+    function loadImgFromStorage(request){
+        let p = $.Deferred();
+        chrome.storage.local.get([request.url], (result)=>{
+            let file = result[request.url];
+            p.resolve(file);
+        })
+        return p;
+    }
+
+    function insertImg(target,file){
+        let $target = $(request.targetSelector);
+        let reader = new FileReader();
+        reader.onload = (e)=>{
+            $target.attr('src',
+                e.target.result);
+        }
+        reader.readAsDataURL(file);
+    }
+
+    function errorBeacon(err) {
+        chrome.runtime.sendMessage(
+            {
+                OpenKit: "error_beacon",
+                context: "extside",
+                err: err
+            });
     }
 
     INJECTED = true;
