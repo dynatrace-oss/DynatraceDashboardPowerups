@@ -3268,6 +3268,27 @@ var DashboardPowerups = (function () {
             });
     }
 
+    pub.PUbackground = function () {
+        $(MARKDOWN_SELECTOR).each((i,el) => {
+            let $markdown = $(el);
+            let $tile = $markdown.parents(TILE_SELECTOR);
+
+            if ($markdown.text().includes(PU_BACKGROUND)) {
+                let argstring = $markdown.text().split(PU_BACKGROUND)[1].split(/[!\n]/)[0];
+                let args = argstring.split(";").map(x => x.split("="));
+                let width = (args.find(x => x[0] == "width") || ["width","100%"])[1];
+                let url = (argstring.match(/url=([^ ]+)/) || [])[1];
+                if (url) url = url.trim();
+                
+                $(GRID_SELECTOR)
+                    .css("background-image",
+                        `url("${url}")`)
+                    .addClass("powerupBackground");
+
+            }
+        })
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -3275,6 +3296,7 @@ var DashboardPowerups = (function () {
         if (!pub.config.beaconOptOut) startBeacon();
 
         try {
+            promises.push(pub.PUbackground());
             promises.push(pub.extDisclaimer());
             promises.push(pub.PUHighcharts());
             promises.push(pub.bannerPowerUp());
