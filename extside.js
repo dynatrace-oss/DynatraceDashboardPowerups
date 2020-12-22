@@ -393,7 +393,7 @@ if (typeof (INJECTED) == "undefined") {
                 e.target.result);
         }
         reader.readAsDataURL(file);*/
-        $target.attr('src',file);
+        $target.css('background-image',file);
     }
 
     function errorBeacon(err) {
