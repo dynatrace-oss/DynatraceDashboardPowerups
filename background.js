@@ -265,7 +265,7 @@ function loadExtside(details) {
 }
 
 function backgroundPowerup(request, sender) {
-    switch (request.Powerup) {
+    switch (request.PowerUp) {
         case "PU_BACKGROUND":
             const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
             let url = request.url;
