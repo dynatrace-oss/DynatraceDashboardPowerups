@@ -380,7 +380,7 @@ if (typeof (INJECTED) == "undefined") {
     }
 
     function insertImg(target,file){
-        let $target = $(request.targetSelector);
+        let $target = $(target);
         let reader = new FileReader();
         reader.onload = (e)=>{
             $target.attr('src',
