@@ -38,12 +38,13 @@ var DashboardPowerups = (function () {
     const PU_VLOOKUP = '!PU(vlookup):';
     const PU_STDEV = '!PU(stdev):';
     const PU_100STACK = '!PU(100stack):';
-    const PU_TABLE = '!PU(table):'
+    const PU_TABLE = '!PU(table):';
+    const PU_BACKGROUND = '!PU(background):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
-        PU_TABLE
+        PU_TABLE, PU_BACKGROUND
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
@@ -3285,6 +3286,7 @@ var DashboardPowerups = (function () {
                         `url("${url}")`)
                     .addClass("powerupBackground");
 
+                $markdown.hide();
             }
         })
     }
