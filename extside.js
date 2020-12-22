@@ -374,6 +374,9 @@ if (typeof (INJECTED) == "undefined") {
         let p = $.Deferred();
         chrome.storage.local.get([request.url], (result)=>{
             let file = result[request.url];
+            if(chrome.runtime.lastError){
+                console.warn("POWERUP: loadImgFromStorage lastError: ",chrome.runtime.lastError);
+            }
             if(file)
                 p.resolve(file);
             else
