@@ -3330,7 +3330,7 @@ var DashboardPowerups = (function () {
                 //pass message back to extside to get the image, avoid block by CSP
                 $markdown.hide();
                 $markdown.siblings('.powerupImage').remove();
-                let id = uniqId();
+                let id = `PUimage-` + uniqId();
                 let $target = $('<div>')
                     .attr('id',id)
                     .addClass('powerupImage')
