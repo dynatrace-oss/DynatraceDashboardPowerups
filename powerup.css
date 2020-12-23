@@ -420,3 +420,8 @@ span.powerup-color-normal, h1.powerup-color-normal {
   /*background-attachment: fixed; */ 
   background-size: cover;
 }
+
+.powerupImage {
+  width: 100%;
+  height: 100%;
+}
