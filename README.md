@@ -92,10 +92,16 @@ For Single Value Tiles, either custom chart or USQL, you can add color coding by
 
 Explanation:
 - `!PU(color):` this starts the markup
-- `base=high` this is the base case for your metric, ie is it good to be low or high?
+- `base=high` this is the base case for your metric, ie is it good to be `low` or `high`?
 - `warn=90` this is the warning threshold, once breached color coding will be yellow
 - `crit=80` this is the critical threshold, once breached color coding will be red
 So in the example of availability, high is better. Greater than 90 would be green, 90 to 80 yellow, and 80 or less red.
+
+Alternative: Absolute value comparison
+- `base=abs,1`
+- `warn=0.05`
+- `crit=0.1`
+This example would result in red: <= .9 or >= 1.1, yellow: <=.95 or >= 1.05, green otherwise.
 
 Example:
 ![Colors](Assets/colors.png)
@@ -112,6 +118,7 @@ Explanation:
 - `!PU(svg):` this starts the markup
 - `icon=` this refers to an SVG file in the 3rdParty/node_modules/@dynatrace/barista-icons folder
 - `link=` this is used to link to a Single Value Tile to get the comparison value
+- `base=` this is the base case for your metric, ie is it good to be low or high?
 - `warn=` this is the warning threshold, once breached color coding will be yellow
 - `crit=` this is the critical threshold, once breached color coding will be red
 - `url=` (optional) if you want the icon to be clickable, give it a url. Recommend using this as last argument.
@@ -385,3 +392,26 @@ Explanation
 
 Example: 
 ![tablexls](Assets/table.png)
+
+### Background
+This powerup changes the background of the dashdoard to an external image. This should be placed in an offscreen markdown tile. The tile will auto-hide when the extension runs.
+Syntax:
+`!PU(background):url=https://myurl.com/myimage.png`
+
+Explanation
+- `!PU(background):` - denotes this powerup
+- `url=` - url of the image to load
+
+Note: you should limit usage to only trusted image sources and keep file size reasonable
+
+### Image
+This powerup adds an external image. This swaps a markdown tile with the image.
+Syntax:
+`!PU(background):url=https://myurl.com/myimage.png out=https://www.dynatrace.com`
+
+Explanation
+- `!PU(background):` - denotes this powerup
+- `url=` - url of the image to load
+- `out=` - (optional) makes image a clickable link. Where should the link go. Also note the space delimiter.
+
+Note: you should limit usage to only trusted image sources and keep file size reasonable

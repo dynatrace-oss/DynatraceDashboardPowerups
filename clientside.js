@@ -1136,6 +1136,11 @@ var DashboardPowerups = (function () {
                         if (val > warn) $target.addClass(class_norm);
                         else if (val > crit) $target.addClass(class_warn);
                         else $target.addClass(class_crit);
+                    } else if (base.startsWith("abs")) {
+                        let abs = Number( (base.split(',') || ["abs","0"])[1]);
+                        if (val >= abs + crit || val <= abs - crit) $target.addClass(class_crit);
+                        else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
+                        else $target.addClass(class_norm);
                     }
 
                     let $trend = $tile.find(TREND_SELECTOR);
@@ -1231,6 +1236,11 @@ var DashboardPowerups = (function () {
                         if (val > warn) $svg.addClass(class_norm);
                         else if (val > crit) $svg.addClass(class_warn);
                         else $svg.addClass(class_crit);
+                    } else if (base.startsWith("abs")) {
+                        let abs = Number( (base.split(',') || ["abs","0"])[1]);
+                        if (val >= abs + crit || val <= abs - crit) $target.addClass(class_crit);
+                        else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
+                        else $target.addClass(class_norm);
                     } else if (color) {
                         $svg.css("fill", color);
                     }
@@ -1295,6 +1305,11 @@ var DashboardPowerups = (function () {
                     if (val > args.warn) $svg.addClass(class_norm);
                     else if (val > args.crit) $svg.addClass(class_warn);
                     else $svg.addClass(class_crit);
+                } else if (base.startsWith("abs")) {
+                    let abs = Number( (base.split(',') || ["abs","0"])[1]);
+                    if (val >= abs + crit || val <= abs - crit) $target.addClass(class_crit);
+                    else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
+                    else $target.addClass(class_norm);
                 }
             }
         });
