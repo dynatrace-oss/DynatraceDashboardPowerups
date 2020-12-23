@@ -3340,6 +3340,7 @@ var DashboardPowerups = (function () {
                 if (out) {
                     let $a = $(`<a>`)
                         .attr('href', out)
+                        .addClass('powerupImage')
                         .insertBefore($target);
                     if (out.startsWith('http'))
                         $a.attr('target', '_blank');
