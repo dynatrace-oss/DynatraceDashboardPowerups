@@ -204,7 +204,7 @@ function createMetricPayload(vals) {
 
     let re = new RegExp(`^${BG_ENV.METRIC_KEY},`);
     let summaryLine = line.replace(re, `${BG_ENV.METRIC_SUMMARY_KEY},`);
-    if (vals && vals.length) {
+    if (vals && Object.keys(vals).length) {
         Object.keys(vals).filter(x => x.startsWith('PU_'))
             .forEach(x => {
                 payload += line + `powerup=${x} ${vals[x]}\n`;
