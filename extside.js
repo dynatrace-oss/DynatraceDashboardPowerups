@@ -222,20 +222,21 @@ if (typeof (INJECTED) == "undefined") {
                         break;
                     }
                 }
-                switch (request.PowerUpResult){
+                switch (request.PowerUpResult) {
                     case "PU_BACKGROUND": //we asked background for an img, now we have it
-                    let p = loadImgFromStorage(request);
-                    $.when(p)
-                        .done((file)=>{ //found locally, insert it
-                            let target = request.targetSelector;
-                            insertImg(target,file);
-                        })
-                        .fail(()=>{ //hmm that didn't work, fail
-                            let err = `POWERUP: unable to load image: ${request.url}`;
-                            errorBeacon(err);
-                            console.warn(err);
-                        });
-                    break;
+                    case "PU_IMAGE":
+                        let p = loadImgFromStorage(request);
+                        $.when(p)
+                            .done((file) => { //found locally, insert it
+                                let target = request.targetSelector;
+                                insertImg(target, file);
+                            })
+                            .fail(() => { //hmm that didn't work, fail
+                                let err = `POWERUP: unable to load image: ${request.url}`;
+                                errorBeacon(err);
+                                console.warn(err);
+                            });
+                        break;
                 }
                 return true;
             });
@@ -357,27 +358,28 @@ if (typeof (INJECTED) == "undefined") {
     function extsidePowerup(event) { //run powerup extside instead of clientside
         switch (event.data.PowerUp) {
             case "PU_BACKGROUND":
+            case "PU_IMAGE":
                 let p = loadImgFromStorage(event.data);
                 $.when(p)
-                    .done((file)=>{ //found locally, insert it
+                    .done((file) => { //found locally, insert it
                         let target = event.data.targetSelector;
-                        insertImg(target,file);
+                        insertImg(target, file);
                     })
-                    .fail(()=>{ //not stored locally, ask background for it
+                    .fail(() => { //not stored locally, ask background for it
                         chrome.runtime.sendMessage(event.data);
                     });
                 break;
         }
     }
 
-    function loadImgFromStorage(request){
+    function loadImgFromStorage(request) {
         let p = $.Deferred();
-        chrome.storage.local.get([request.url], (result)=>{
+        chrome.storage.local.get([request.url], (result) => {
             let file = result[request.url];
-            if(chrome.runtime.lastError){
-                console.warn("POWERUP: loadImgFromStorage lastError: ",chrome.runtime.lastError);
+            if (chrome.runtime.lastError) {
+                console.warn("POWERUP: loadImgFromStorage lastError: ", chrome.runtime.lastError);
             }
-            if(file)
+            if (file)
                 p.resolve(file);
             else
                 p.reject();
@@ -385,16 +387,10 @@ if (typeof (INJECTED) == "undefined") {
         return p;
     }
 
-    function insertImg(target,file){
+    function insertImg(target, file) {
         let $target = $(target);
-        /*let reader = new FileReader();
-        reader.onload = (e)=>{
-            $target.attr('src',
-                e.target.result);
-        }
-        reader.readAsDataURL(file);*/
         $target
-            .css('background-image',`url(${file})`)
+            .css('background-image', `url(${file})`)
             .addClass('powerupBackground');
     }
 

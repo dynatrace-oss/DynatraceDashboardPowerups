@@ -267,13 +267,14 @@ function loadExtside(details) {
 function backgroundPowerup(request, sender) {
     switch (request.PowerUp) {
         case "PU_BACKGROUND":
+        case "PU_IMAGE":
             const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
             let url = request.url;
             fetch(url).then(response => {
                 response.blob().then(blobResponse => {
                     let type = blobResponse.type;
                     if (allowedFileTypes.indexOf(type) < 0) {
-                        let err = `POWERUP: PU_BACKGROUND - not an allowed filetype: '${type}' for '${url}'`
+                        let err = `POWERUP: ${request.PowerUp} - not an allowed filetype: '${type}' for '${url}'`
                         console.warn(err);
                         errorBeacon(err);
                         return false;
@@ -290,7 +291,7 @@ function backgroundPowerup(request, sender) {
                                 }
                                 chrome.tabs.sendMessage(sender.tab.id,
                                     {
-                                        PowerUpResult: "PU_BACKGROUND",
+                                        PowerUpResult: request.PowerUp,
                                         url: url,
                                         targetSelector: request.targetSelector
                                     },

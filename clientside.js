@@ -40,6 +40,7 @@ var DashboardPowerups = (function () {
     const PU_100STACK = '!PU(100stack):';
     const PU_TABLE = '!PU(table):';
     const PU_BACKGROUND = '!PU(background):';
+    const PU_IMAGE = '!PU(image):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
@@ -168,6 +169,14 @@ var DashboardPowerups = (function () {
 
 
     //Private methods
+    var uniqId = (function () {
+        //usage: let myId = uniqId();
+        var i = 0;
+        return function () {
+            return i++;
+        }
+    })();
+
     const debounce = (func, wait) => {
         let timeout;
 
@@ -3292,12 +3301,7 @@ var DashboardPowerups = (function () {
                 let width = (args.find(x => x[0] == "width") || ["width","100%"])[1];
                 let url = (argstring.match(/url=([^ ]+)/) || [])[1];
                 if (url) url = url.trim();
-                
-                /*$(GRID_SELECTOR)
-                    .css("background-image",
-                        `url("${url}")`)
-                    .addClass("powerupBackground");*/
-                
+
                 //pass message back to extside to get the image, avoid block by CSP
                 window.postMessage(
                     {
@@ -3305,8 +3309,38 @@ var DashboardPowerups = (function () {
                         url: url,
                         targetSelector: GRID_SELECTOR
                     }, "*");
-
                 $markdown.hide();
+            }
+        })
+    }
+
+    pub.PUimage = function () {
+        $(MARKDOWN_SELECTOR).each((i,el) => {
+            let $markdown = $(el);
+            let $tile = $markdown.parents(TILE_SELECTOR);
+
+            if ($markdown.text().includes(PU_IMAGE)) {
+                let argstring = $markdown.text().split(PU_IMAGE)[1].split(/[!\n]/)[0];
+                let args = argstring.split(";").map(x => x.split("="));
+                let width = (args.find(x => x[0] == "width") || ["width","100%"])[1];
+                let url = (argstring.match(/url=([^ ]+)/) || [])[1];
+                if (url) url = url.trim();
+
+                //pass message back to extside to get the image, avoid block by CSP
+                $markdown.hide();
+                $markdown.siblings('.powerupImage').remove();
+                let id = uniqId();
+                let $target = $('<div>')
+                    .attr('id',id)
+                    .addClass('powerupImage')
+                    .insertAfter($markdown);
+                window.postMessage(
+                    {
+                        PowerUp: "PU_IMAGE",
+                        url: url,
+                        targetSelector: `#${id}`
+                    }, "*");
+                
             }
         })
     }
