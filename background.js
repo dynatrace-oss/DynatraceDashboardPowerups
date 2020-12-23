@@ -92,6 +92,7 @@ function listenForBeaconMessages() {
                 }
                 switch (request.PowerUp) {
                     case "PU_BACKGROUND":
+                    case "PU_IMAGE":
                         backgroundPowerup(request, sender);
                         break;
                 }
