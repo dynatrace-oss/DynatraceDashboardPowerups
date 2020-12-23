@@ -3310,6 +3310,7 @@ var DashboardPowerups = (function () {
                         targetSelector: GRID_SELECTOR
                     }, "*");
                 $markdown.hide();
+                powerupsFired['PU_BACKGROUND'] ? powerupsFired['PU_BACKGROUND']++ : powerupsFired['PU_BACKGROUND'] = 1;
             }
         })
     }
@@ -3340,7 +3341,7 @@ var DashboardPowerups = (function () {
                         url: url,
                         targetSelector: `#${id}`
                     }, "*");
-                
+                    powerupsFired['PU_IMAGE'] ? powerupsFired['PU_IMAGE']++ : powerupsFired['PU_IMAGE'] = 1;
             }
         })
     }
@@ -3367,6 +3368,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUvlookup());
             promises.push(pub.PUstdev());
             promises.push(pub.PUtable());
+            promises.push(pub.PUimage());
             promises.push(pub.sunburnMode());
             promises.push(pub.hideEarlyAdopter());
             promises.push(pub.fixPublicDashboards());
