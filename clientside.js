@@ -3291,14 +3291,14 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUbackground = function () {
-        $(MARKDOWN_SELECTOR).each((i,el) => {
+        $(MARKDOWN_SELECTOR).each((i, el) => {
             let $markdown = $(el);
             let $tile = $markdown.parents(TILE_SELECTOR);
 
             if ($markdown.text().includes(PU_BACKGROUND)) {
                 let argstring = $markdown.text().split(PU_BACKGROUND)[1].split(/[!\n]/)[0];
                 let args = argstring.split(";").map(x => x.split("="));
-                let width = (args.find(x => x[0] == "width") || ["width","100%"])[1];
+                let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
                 let url = (argstring.match(/url=([^ ]+)/) || [])[1];
                 if (url) url = url.trim();
 
@@ -3316,32 +3316,42 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUimage = function () {
-        $(MARKDOWN_SELECTOR).each((i,el) => {
+        $(MARKDOWN_SELECTOR).each((i, el) => {
             let $markdown = $(el);
             let $tile = $markdown.parents(TILE_SELECTOR);
 
             if ($markdown.text().includes(PU_IMAGE)) {
                 let argstring = $markdown.text().split(PU_IMAGE)[1].split(/[!\n]/)[0];
                 let args = argstring.split(";").map(x => x.split("="));
-                let width = (args.find(x => x[0] == "width") || ["width","100%"])[1];
+                let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
                 let url = (argstring.match(/url=([^ ]+)/) || [])[1];
                 if (url) url = url.trim();
+                let out = (argstring.match(/out=([^ ]+)/) || [])[1];
+                if (out) out = out.trim();
 
                 //pass message back to extside to get the image, avoid block by CSP
                 $markdown.hide();
                 $markdown.siblings('.powerupImage').remove();
                 let id = `PUimage-` + uniqId();
                 let $target = $('<div>')
-                    .attr('id',id)
+                    .attr('id', id)
                     .addClass('powerupImage')
                     .insertAfter($markdown);
+                if (out) {
+                    let $a = $(`<a>`)
+                        .attr('href', out)
+                        .insertBefore($target);
+                    if (out.startsWith('http'))
+                        $a.attr('target', '_blank');
+                    $target.appendTo($a);
+                }
                 window.postMessage(
                     {
                         PowerUp: "PU_IMAGE",
                         url: url,
                         targetSelector: `#${id}`
                     }, "*");
-                    powerupsFired['PU_IMAGE'] ? powerupsFired['PU_IMAGE']++ : powerupsFired['PU_IMAGE'] = 1;
+                powerupsFired['PU_IMAGE'] ? powerupsFired['PU_IMAGE']++ : powerupsFired['PU_IMAGE'] = 1;
             }
         })
     }
