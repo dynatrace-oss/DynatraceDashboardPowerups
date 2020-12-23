@@ -417,6 +417,6 @@ span.powerup-color-normal, h1.powerup-color-normal {
 
 .powerupBackground {
   background-repeat: no-repeat;
-  background-attachment: fixed;  
+  /*background-attachment: fixed; */ 
   background-size: cover;
 }
