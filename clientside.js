@@ -2,6 +2,7 @@ var DashboardPowerups = (function () {
     const OPENKIT_URL = 'https://bf49960xxn.bf-sprint.dynatracelabs.com/mbeacon';
     const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
     const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard';
+    const VIEWPORT_SELECTOR = '.grid-viewport';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
     const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type, [uitestid="gwt-debug-dexp-visualization-single-value"] span:first-of-type';
     const TILE_SELECTOR = '.grid-tile';
@@ -3322,7 +3323,7 @@ var DashboardPowerups = (function () {
                     {
                         PowerUp: "PU_BACKGROUND",
                         url: url,
-                        targetSelector: GRID_SELECTOR
+                        targetSelector: VIEWPORT_SELECTOR
                     }, "*");
                 $markdown.hide();
                 powerupsFired['PU_BACKGROUND'] ? powerupsFired['PU_BACKGROUND']++ : powerupsFired['PU_BACKGROUND'] = 1;
