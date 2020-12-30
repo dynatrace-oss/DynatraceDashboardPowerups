@@ -379,7 +379,7 @@ if (typeof (INJECTED) == "undefined") {
                         // caches.match() always resolves
                         // but in case of success response will have value
                         if (response !== undefined) {
-                            insertImgResponse(target, response);
+                            insertImgResponse(target, event, response);
                             return response;
                         } else {
                             return fetch(url, {
@@ -394,7 +394,7 @@ if (typeof (INJECTED) == "undefined") {
                                 caches.open('PowerUps').then(function (cache) {
                                     cache.put(url, responseClone);
                                 });
-                                insertImgResponse(target, response);
+                                insertImgResponse(target, event, response);
                                 return response;
                             }).catch(function () {
                                 return undefined;
@@ -430,11 +430,11 @@ if (typeof (INJECTED) == "undefined") {
             .addClass('powerupBackground');
     }
 
-    function insertImgResponse(target, response) {
+    function insertImgResponse(target, event, response) {
         const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
         response.blob().then(blobResponse => {
             let type = blobResponse.type;
-            let url = response.url;
+            let url = response.url || event.data.url;
             if (allowedFileTypes.indexOf(type) < 0) {
                 let err = `POWERUP: insertImgResponse - not an allowed filetype: '${type}' for '${url}'`
                 console.warn(err);
