@@ -288,7 +288,7 @@ function backgroundPowerup(request, sender) {
                             chrome.storage.local.set(obj, () => {
                                 if (typeof (chrome.runtime.lastError) != "undefined") {
                                     let err = chrome.runtime.lastError;
-                                    console.error(err);
+                                    if(err) console.error(err);
                                 }
                                 chrome.tabs.sendMessage(sender.tab.id,
                                     {
