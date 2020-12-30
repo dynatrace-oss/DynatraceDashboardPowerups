@@ -371,6 +371,10 @@ if (typeof (INJECTED) == "undefined") {
                 if (caches) {
                     const url = event.data.url;
                     const target = event.data.targetSelector;
+                    if(!url.length){
+                        console.warn(`POWERUP: blank URL in extsidePowerup`);
+                        return false;
+                    }
                     caches.match(url).then(function (response) {
                         // caches.match() always resolves
                         // but in case of success response will have value
