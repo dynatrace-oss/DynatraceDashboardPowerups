@@ -378,14 +378,14 @@ if (typeof (INJECTED) == "undefined") {
                             insertImgResponse(target, response);
                             return response;
                         } else {
-                            return fetch(event.request).then(function (response) {
+                            return fetch(url).then(function (response) {
                                 // response may be used only once
                                 // we need to save clone to put one copy in cache
                                 // and serve second one
                                 let responseClone = response.clone();
 
                                 caches.open('PowerUps').then(function (cache) {
-                                    cache.put(event.request, responseClone);
+                                    cache.put(url, responseClone);
                                 });
                                 insertImgResponse(target, response);
                                 return response;
