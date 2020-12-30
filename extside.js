@@ -430,8 +430,9 @@ if (typeof (INJECTED) == "undefined") {
         const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
         response.blob().then(blobResponse => {
             let type = blobResponse.type;
+            let url = response.url;
             if (allowedFileTypes.indexOf(type) < 0) {
-                let err = `POWERUP: ${request.PowerUp} - not an allowed filetype: '${type}' for '${url}'`
+                let err = `POWERUP: insertImgResponse - not an allowed filetype: '${type}' for '${url}'`
                 console.warn(err);
                 errorBeacon(err);
                 return false;
@@ -447,7 +448,6 @@ if (typeof (INJECTED) == "undefined") {
                 reader.readAsDataURL(blobResponse);
             }
         })
-
     }
 
     function errorBeacon(err) {
