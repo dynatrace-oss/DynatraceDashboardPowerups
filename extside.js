@@ -359,7 +359,7 @@ if (typeof (INJECTED) == "undefined") {
         switch (event.data.PowerUp) {
             case "PU_BACKGROUND":
             case "PU_IMAGE":
-                let p = loadImgFromStorage(event.data);
+                /*let p = loadImgFromStorage(event.data);
                 $.when(p)
                     .done((file) => { //found locally, insert it
                         let target = event.data.targetSelector;
@@ -367,7 +367,35 @@ if (typeof (INJECTED) == "undefined") {
                     })
                     .fail(() => { //not stored locally, ask background for it
                         chrome.runtime.sendMessage(event.data);
+                    });*/
+                if (caches) {
+                    let url = event.data.url;
+                    caches.match(url).then(function (response) {
+                        // caches.match() always resolves
+                        // but in case of success response will have value
+                        if (response !== undefined) {
+                            insertImgResponse(target, response);
+                            return response;
+                        } else {
+                            return fetch(event.request).then(function (response) {
+                                // response may be used only once
+                                // we need to save clone to put one copy in cache
+                                // and serve second one
+                                let responseClone = response.clone();
+
+                                caches.open('PowerUps').then(function (cache) {
+                                    cache.put(event.request, responseClone);
+                                });
+                                insertImgResponse(target, response);
+                                return response;
+                            }).catch(function () {
+                                return undefined;
+                            });
+                        }
                     });
+                } else {
+                    console.warn("POWERUP: caches API not available.");
+                }
                 break;
         }
     }
@@ -392,6 +420,30 @@ if (typeof (INJECTED) == "undefined") {
         $target
             .css('background-image', `url(${file})`)
             .addClass('powerupBackground');
+    }
+
+    function insertImgResponse(target, response) {
+        const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
+        response.blob().then(blobResponse => {
+            let type = blobResponse.type;
+            if (allowedFileTypes.indexOf(type) < 0) {
+                let err = `POWERUP: ${request.PowerUp} - not an allowed filetype: '${type}' for '${url}'`
+                console.warn(err);
+                errorBeacon(err);
+                return false;
+            } else {
+                let reader = new FileReader();
+                reader.onload = (e) => {
+                    let file = e.target.result;
+                    let $target = $(target);
+                    $target
+                        .css('background-image', `url(${file})`)
+                        .addClass('powerupBackground');
+                }
+                reader.readAsDataURL(blobResponse);
+            }
+        })
+
     }
 
     function errorBeacon(err) {
