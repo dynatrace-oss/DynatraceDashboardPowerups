@@ -378,7 +378,10 @@ if (typeof (INJECTED) == "undefined") {
                             insertImgResponse(target, response);
                             return response;
                         } else {
-                            return fetch(url).then(function (response) {
+                            return fetch(url, {
+                                mode: 'no-cors',
+                                credentials: 'omit'
+                            }).then(function (response) {
                                 // response may be used only once
                                 // we need to save clone to put one copy in cache
                                 // and serve second one
