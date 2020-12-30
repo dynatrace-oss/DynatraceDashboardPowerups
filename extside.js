@@ -369,7 +369,8 @@ if (typeof (INJECTED) == "undefined") {
                         chrome.runtime.sendMessage(event.data);
                     });*/
                 if (caches) {
-                    let url = event.data.url;
+                    const url = event.data.url;
+                    const target = event.data.targetSelector;
                     caches.match(url).then(function (response) {
                         // caches.match() always resolves
                         // but in case of success response will have value
