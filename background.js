@@ -269,8 +269,6 @@ function backgroundPowerup(request, sender) {
     switch (request.PowerUp) {
         case "PU_BACKGROUND":
         case "PU_IMAGE":
-            const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
-            let url = request.url;
             /*fetch(url).then(response => {
                 response.blob().then(blobResponse => {
                     let type = blobResponse.type;
@@ -323,7 +321,6 @@ function backgroundPowerup(request, sender) {
             // 5. message data url back to ext side
             if (caches) {
                 const url = request.url;
-                const target = request.targetSelector;
                 if (!url.length) {
                     console.warn(`POWERUP: blank URL in backgroundPowerup`);
                     return false;
@@ -353,6 +350,7 @@ function backgroundPowerup(request, sender) {
 }
 
 function messageBackDataURLFromResponse(response, request, sender) {
+    const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
     response.blob().then((blobResponse) => { //convert response -> blob -> dataUrl
         let type = blobResponse.type;
         let url = request.url;
