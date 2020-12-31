@@ -407,7 +407,7 @@ if (typeof (INJECTED) == "undefined") {
                 }*/
                 let p = loadImgFromCache(event.data);
                 $.when(p)
-                    .done((file) => { //found locally, insert it
+                    .done((response) => { //found locally, insert it
                         let target = event.data.targetSelector;
                         insertImgResponse(target, event.data, response);
                     })
