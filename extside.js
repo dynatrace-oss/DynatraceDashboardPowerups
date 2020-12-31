@@ -450,10 +450,12 @@ if (typeof (INJECTED) == "undefined") {
                 caches.match(url).then(function (response) {
                     if (response !== undefined) { //found in cache
                         p.resolve(response);
+                    } else {
+                        p.reject();
                     }
                 });
         } else {
-            p.reject;
+            p.reject();
         }
         return p;
     }
