@@ -269,51 +269,6 @@ function backgroundPowerup(request, sender) {
     switch (request.PowerUp) {
         case "PU_BACKGROUND":
         case "PU_IMAGE":
-            /*fetch(url).then(response => {
-                response.blob().then(blobResponse => {
-                    let type = blobResponse.type;
-                    if (allowedFileTypes.indexOf(type) < 0) {
-                        let err = `POWERUP: ${request.PowerUp} - not an allowed filetype: '${type}' for '${url}'`
-                        console.warn(err);
-                        errorBeacon(err);
-                        return false;
-                    } else {
-                        let obj = {};
-                        let reader = new FileReader();
-                        reader.onload = (e) => {
-                            obj[url] = e.target.result;
-
-                            chrome.storage.local.set(obj, () => {
-                                if (typeof (chrome.runtime.lastError) != "undefined") {
-                                    let err = chrome.runtime.lastError;
-                                    if(err) console.error(err);
-                                }
-                                chrome.tabs.sendMessage(sender.tab.id,
-                                    {
-                                        PowerUpResult: request.PowerUp,
-                                        url: url,
-                                        targetSelector: request.targetSelector
-                                    },
-                                    (response) => {
-                                        console.log(response);
-                                    })
-                            });
-                        }
-                        reader.readAsDataURL(blobResponse);
-                    }
-                })*/
-            /*chrome.tabs.sendMessage(sender.tab.id,
-                {
-                    PowerUpResult: request.PowerUp,
-                    url: url,
-                    targetSelector: request.targetSelector,
-                    response: response
-                },
-                (response) => {
-                    console.log(response);
-                })
-        });*/
-
             // 1. check cache, if found return
             // 2. if not, fetch and cache
             // 3. if fetch fails, send error beacon
@@ -371,8 +326,10 @@ function messageBackDataURLFromResponse(response, request, sender) {
                         targetSelector: request.targetSelector,
                         dataURL: dataURL
                     },
-                    (response) => {
-                        console.log(response);
+                    (responseFromExtside) => {
+                        //console.log(response);
+                        if (chrome.runtime.lastError) //Check for stupid errors
+                            console.log(chrome.runtime.lastError.message);
                     })
             }
             reader.readAsDataURL(blobResponse);

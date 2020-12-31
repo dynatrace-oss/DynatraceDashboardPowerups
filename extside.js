@@ -367,55 +367,7 @@ if (typeof (INJECTED) == "undefined") {
     function extsidePowerup(event) { //run powerup extside instead of clientside
         switch (event.data.PowerUp) {
             case "PU_BACKGROUND":
-            case "PU_IMAGE":
-                /*let p = loadImgFromStorage(event.data);
-                $.when(p)
-                    .done((file) => { //found locally, insert it
-                        let target = event.data.targetSelector;
-                        insertImg(target, file);
-                    })
-                    .fail(() => { //not stored locally, ask background for it
-                        chrome.runtime.sendMessage(event.data);
-                    });*/
-                /*if (caches) {
-                    const url = event.data.url;
-                    const target = event.data.targetSelector;
-                    if(!url.length){
-                        console.warn(`POWERUP: blank URL in extsidePowerup`);
-                        return false;
-                    }
-                    caches.match(url).then(function (response) {
-                        if (response !== undefined) { //found in cache
-                            insertImgResponse(target, event, response);
-                            return response;
-                        } else {
-                            return fetch(url, {
-                                mode: 'no-cors',
-                                credentials: 'omit'
-                            }).then(function (response) {
-                                caches.open('PowerUps').then(function (cache) {
-                                    cache.put(url, responseClone);
-                                });
-                                insertImgResponse(target, event, response);
-                                return response;
-                            }).catch(function () {
-                                return undefined;
-                            });
-                        }
-                    });
-                } else {
-                    console.warn("POWERUP: caches API not available.");
-                }*/
-                /*let p = loadImgFromCache(event.data);
-                $.when(p)
-                    .done((response) => { //found locally, insert it
-                        let target = event.data.targetSelector;
-                        insertImgResponse(target, event.data, response);
-                    })
-                    .fail(() => { //not stored locally, ask background for it
-                        chrome.runtime.sendMessage(event.data);
-                    });*/
-                
+            case "PU_IMAGE":                
                 // 1. send message from client side to background
                 // 2. background does the work
                 // 3. receive message back from background
@@ -423,48 +375,6 @@ if (typeof (INJECTED) == "undefined") {
                 chrome.runtime.sendMessage(event.data);
                 break;
         }
-    }
-
-    /*function loadImgFromStorage(request) {
-        let p = $.Deferred();
-        chrome.storage.local.get([request.url], (result) => {
-            let file = result[request.url];
-            if (chrome.runtime.lastError) {
-                console.warn("POWERUP: loadImgFromStorage lastError: ", chrome.runtime.lastError);
-            }
-            if (file)
-                p.resolve(file);
-            else
-                p.reject();
-        })
-        return p;
-    }*/
-
-    function loadImgFromCache(request) {
-        let p = $.Deferred();
-        /*chrome.storage.local.get([request.url], (result) => {
-            let file = result[request.url];
-            if (chrome.runtime.lastError) {
-                console.warn("POWERUP: loadImgFromStorage lastError: ", chrome.runtime.lastError);
-            }
-            if (file)
-                p.resolve(file);
-            else
-                p.reject();
-        })*/
-        const url = request.url;
-        if (caches && url.length) {
-            caches.match(url).then(function (response) {
-                if (response !== undefined) { //found in cache
-                    p.resolve(response);
-                } else {
-                    p.reject();
-                }
-            });
-        } else {
-            p.reject();
-        }
-        return p;
     }
 
     function insertImg(target, file) {
