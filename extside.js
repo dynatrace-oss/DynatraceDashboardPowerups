@@ -236,14 +236,15 @@ if (typeof (INJECTED) == "undefined") {
                                 errorBeacon(err);
                                 console.warn(err);
                             });*/
-                        let response = request.response;
-                        if(response.ok){
+                        /*let response = request.response;
+                        if (response.ok) {
                             let clone = response.clone();
                             caches.open('PowerUps').then(function (cache) {
                                 cache.put(url, clone);
                             });
                             insertImgResponse(target, request, response);
-                        }
+                        }*/
+                        insertImg(request.targetSelector, request.dataURL);
                         break;
                 }
                 return true;
@@ -405,7 +406,7 @@ if (typeof (INJECTED) == "undefined") {
                 } else {
                     console.warn("POWERUP: caches API not available.");
                 }*/
-                let p = loadImgFromCache(event.data);
+                /*let p = loadImgFromCache(event.data);
                 $.when(p)
                     .done((response) => { //found locally, insert it
                         let target = event.data.targetSelector;
@@ -413,12 +414,18 @@ if (typeof (INJECTED) == "undefined") {
                     })
                     .fail(() => { //not stored locally, ask background for it
                         chrome.runtime.sendMessage(event.data);
-                    });
+                    });*/
+                
+                // 1. send message from client side to background
+                // 2. background does the work
+                // 3. receive message back from background
+                // 4. insert dataUrl
+                chrome.runtime.sendMessage(event.data);
                 break;
         }
     }
 
-    function loadImgFromStorage(request) {
+    /*function loadImgFromStorage(request) {
         let p = $.Deferred();
         chrome.storage.local.get([request.url], (result) => {
             let file = result[request.url];
@@ -431,7 +438,7 @@ if (typeof (INJECTED) == "undefined") {
                 p.reject();
         })
         return p;
-    }
+    }*/
 
     function loadImgFromCache(request) {
         let p = $.Deferred();
@@ -447,13 +454,13 @@ if (typeof (INJECTED) == "undefined") {
         })*/
         const url = request.url;
         if (caches && url.length) {
-                caches.match(url).then(function (response) {
-                    if (response !== undefined) { //found in cache
-                        p.resolve(response);
-                    } else {
-                        p.reject();
-                    }
-                });
+            caches.match(url).then(function (response) {
+                if (response !== undefined) { //found in cache
+                    p.resolve(response);
+                } else {
+                    p.reject();
+                }
+            });
         } else {
             p.reject();
         }

@@ -271,8 +271,8 @@ function backgroundPowerup(request, sender) {
         case "PU_IMAGE":
             const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
             let url = request.url;
-            fetch(url).then(response => {
-                /*response.blob().then(blobResponse => {
+            /*fetch(url).then(response => {
+                response.blob().then(blobResponse => {
                     let type = blobResponse.type;
                     if (allowedFileTypes.indexOf(type) < 0) {
                         let err = `POWERUP: ${request.PowerUp} - not an allowed filetype: '${type}' for '${url}'`
@@ -304,19 +304,82 @@ function backgroundPowerup(request, sender) {
                         reader.readAsDataURL(blobResponse);
                     }
                 })*/
-                chrome.tabs.sendMessage(sender.tab.id,
+            /*chrome.tabs.sendMessage(sender.tab.id,
+                {
+                    PowerUpResult: request.PowerUp,
+                    url: url,
+                    targetSelector: request.targetSelector,
+                    response: response
+                },
+                (response) => {
+                    console.log(response);
+                })
+        });*/
+
+            // 1. check cache, if found return
+            // 2. if not, fetch and cache
+            // 3. if fetch fails, send error beacon
+            // 4. retrieve as blob, convert to data url
+            // 5. message data url back to ext side
+            if (caches) {
+                const url = request.url;
+                const target = request.targetSelector;
+                if (!url.length) {
+                    console.warn(`POWERUP: blank URL in backgroundPowerup`);
+                    return false;
+                }
+                caches.match(url).then(function (response) {
+                    if (response !== undefined) { //found in cache
+                        messageBackDataURLFromResponse(response, request, sender)
+                        return true;
+                    } else {  //not in cache, go get it
+                        return fetch(url).then(response => {
+                            let responseClone = response.clone(); //cache it for later
+                            caches.open('PowerUps').then(function (cache) {
+                                cache.put(url, responseClone);
+                            });
+                            messageBackDataURLFromResponse(response, request, sender)
+                            return true;
+                        }).catch(function () {
+                            return false;
+                        });
+                    }
+                });
+            } else {
+                console.warn("POWERUP: caches API not available.");
+            }
+            break;
+    }
+}
+
+function messageBackDataURLFromResponse(response, request, sender) {
+    response.blob().then((blobResponse) => { //convert response -> blob -> dataUrl
+        let type = blobResponse.type;
+        let url = request.url;
+        if (allowedFileTypes.indexOf(type) < 0) {
+            let err = `POWERUP: ${request.PowerUp} - not an allowed filetype: '${type}' for '${url}'`
+            console.warn(err);
+            errorBeacon(err);
+            return false;
+        } else {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                let dataURL = e.target.result;
+
+                chrome.tabs.sendMessage(sender.tab.id, //send back to ext side
                     {
                         PowerUpResult: request.PowerUp,
                         url: url,
                         targetSelector: request.targetSelector,
-                        response: response
+                        dataURL: dataURL
                     },
                     (response) => {
                         console.log(response);
                     })
-            });
-            break;
-    }
+            }
+            reader.readAsDataURL(blobResponse);
+        }
+    });
 }
 
 // Main
