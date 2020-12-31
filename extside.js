@@ -225,7 +225,7 @@ if (typeof (INJECTED) == "undefined") {
                 switch (request.PowerUpResult) {
                     case "PU_BACKGROUND": //we asked background for an img, now we have it
                     case "PU_IMAGE":
-                        let p = loadImgFromStorage(request);
+                        /*let p = loadImgFromStorage(request);
                         $.when(p)
                             .done((file) => { //found locally, insert it
                                 let target = request.targetSelector;
@@ -235,7 +235,15 @@ if (typeof (INJECTED) == "undefined") {
                                 let err = `POWERUP: unable to load image: ${request.url}`;
                                 errorBeacon(err);
                                 console.warn(err);
+                            });*/
+                        let response = request.response;
+                        if(response.ok){
+                            let clone = response.clone();
+                            caches.open('PowerUps').then(function (cache) {
+                                cache.put(url, clone);
                             });
+                            insertImgResponse(target, request, response);
+                        }
                         break;
                 }
                 return true;
@@ -368,7 +376,7 @@ if (typeof (INJECTED) == "undefined") {
                     .fail(() => { //not stored locally, ask background for it
                         chrome.runtime.sendMessage(event.data);
                     });*/
-                if (caches) {
+                /*if (caches) {
                     const url = event.data.url;
                     const target = event.data.targetSelector;
                     if(!url.length){
@@ -376,9 +384,7 @@ if (typeof (INJECTED) == "undefined") {
                         return false;
                     }
                     caches.match(url).then(function (response) {
-                        // caches.match() always resolves
-                        // but in case of success response will have value
-                        if (response !== undefined) {
+                        if (response !== undefined) { //found in cache
                             insertImgResponse(target, event, response);
                             return response;
                         } else {
@@ -386,11 +392,6 @@ if (typeof (INJECTED) == "undefined") {
                                 mode: 'no-cors',
                                 credentials: 'omit'
                             }).then(function (response) {
-                                // response may be used only once
-                                // we need to save clone to put one copy in cache
-                                // and serve second one
-                                let responseClone = response.clone();
-
                                 caches.open('PowerUps').then(function (cache) {
                                     cache.put(url, responseClone);
                                 });
@@ -403,7 +404,16 @@ if (typeof (INJECTED) == "undefined") {
                     });
                 } else {
                     console.warn("POWERUP: caches API not available.");
-                }
+                }*/
+                let p = loadImgFromCache(event.data);
+                $.when(p)
+                    .done((file) => { //found locally, insert it
+                        let target = event.data.targetSelector;
+                        insertImgResponse(target, event.data, response);
+                    })
+                    .fail(() => { //not stored locally, ask background for it
+                        chrome.runtime.sendMessage(event.data);
+                    });
                 break;
         }
     }
@@ -423,6 +433,31 @@ if (typeof (INJECTED) == "undefined") {
         return p;
     }
 
+    function loadImgFromCache(request) {
+        let p = $.Deferred();
+        /*chrome.storage.local.get([request.url], (result) => {
+            let file = result[request.url];
+            if (chrome.runtime.lastError) {
+                console.warn("POWERUP: loadImgFromStorage lastError: ", chrome.runtime.lastError);
+            }
+            if (file)
+                p.resolve(file);
+            else
+                p.reject();
+        })*/
+        const url = request.url;
+        if (caches && url.length) {
+                caches.match(url).then(function (response) {
+                    if (response !== undefined) { //found in cache
+                        p.resolve(response);
+                    }
+                });
+        } else {
+            p.reject;
+        }
+        return p;
+    }
+
     function insertImg(target, file) {
         let $target = $(target);
         $target
@@ -430,11 +465,11 @@ if (typeof (INJECTED) == "undefined") {
             .addClass('powerupBackground');
     }
 
-    function insertImgResponse(target, event, response) {
+    function insertImgResponse(target, request, response) {
         const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
         response.blob().then(blobResponse => {
             let type = blobResponse.type;
-            let url = response.url || event.data.url;
+            let url = response.url || request.url;
             if (allowedFileTypes.indexOf(type) < 0) {
                 let err = `POWERUP: insertImgResponse - not an allowed filetype: '${type}' for '${url}'`
                 console.warn(err);

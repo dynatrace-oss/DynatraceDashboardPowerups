@@ -272,7 +272,7 @@ function backgroundPowerup(request, sender) {
             const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
             let url = request.url;
             fetch(url).then(response => {
-                response.blob().then(blobResponse => {
+                /*response.blob().then(blobResponse => {
                     let type = blobResponse.type;
                     if (allowedFileTypes.indexOf(type) < 0) {
                         let err = `POWERUP: ${request.PowerUp} - not an allowed filetype: '${type}' for '${url}'`
@@ -303,7 +303,17 @@ function backgroundPowerup(request, sender) {
                         }
                         reader.readAsDataURL(blobResponse);
                     }
-                })
+                })*/
+                chrome.tabs.sendMessage(sender.tab.id,
+                    {
+                        PowerUpResult: request.PowerUp,
+                        url: url,
+                        targetSelector: request.targetSelector,
+                        response: response
+                    },
+                    (response) => {
+                        console.log(response);
+                    })
             });
             break;
     }
