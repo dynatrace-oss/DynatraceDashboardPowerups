@@ -36,6 +36,7 @@ var DashboardPowerups = (function () {
     const PU_DATE = '!PU(date):';
     const PU_GAUGE = '!PU(gauge):';
     const PU_COMPARE = '!PU(compare):';
+    const PU_MCOMPARE = '!PU(mcompare):';
     const PU_VLOOKUP = '!PU(vlookup):';
     const PU_STDEV = '!PU(stdev):';
     const PU_100STACK = '!PU(100stack):';
@@ -46,7 +47,7 @@ var DashboardPowerups = (function () {
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
-        PU_TABLE, PU_BACKGROUND
+        PU_TABLE, PU_BACKGROUND, PU_MCOMPARE
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
@@ -2730,6 +2731,50 @@ var DashboardPowerups = (function () {
         return count;
     }
 
+    pub.PUmCompare = function () {  //example: !PU(mcompare):links=link1,link2,link3;mode=outlier;low=green;high=red;other=gray
+        if (!pub.config.Powerups.comparePU) return;
+        let count = 0;
+
+        //find compare PUs
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let $tile = $title.parents(".grid-tile");
+            let text = $title.text();
+            let $bignum = $tile.find(BIGNUM_SELECTOR);
+
+            if (!text.includes(PU_MCOMPARE)) return;
+            if (pub.config.Powerups.debug) console.log("Powerup: mcompare power-up found");
+            let argstring = text.split(PU_COMPARE)[1].split('!')[0];
+
+            let args = argstring.split(";").map(x => x.split("="));
+            let links = args.find(x => x[0] == "links")[1];
+            if(typeof(links)=="string" && links.length)
+                links = links.split(',');
+            let low = (args.find(x => x[0] == "lt") || [])[1] || "green";
+            let high = (args.find(x => x[0] == "gt") || [])[1] || "red";
+            let other = (args.find(x => x[0] == "eq") || [])[1] || "gray";
+
+            let linkvals = [];
+            links.forEach(link=>{
+                let num = pub.findLinkedVal(link);
+                if(!isNaN(num)) linkvals.push(num);
+            });
+            let min = Math.min.apply(Math, linkvals);
+            let max = Math.max.apply(Math, linkvals);
+            
+            let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g, ''));
+
+            //let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
+
+            if (val === min) $bignum.css("color", low);
+            else if (val === max) $bignum.css("color", high);
+            else $bignum.css("color", other);
+            count++;
+            powerupsFired['PU_MCOMPARE'] ? powerupsFired['PU_MCOMPARE']++ : powerupsFired['PU_MCOMPARE'] = 1;
+        });
+        return count;
+    }
+
     pub.puDate = function () { //example: !PU(date):res=now-7d/d;fmt=yyyy-mm-dd;color=blue
         if (!pub.config.Powerups.datePU) return;
 
@@ -3383,6 +3428,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUMath());
             promises.push(pub.puDate());
             promises.push(pub.PUCompare());
+            promises.push(pub.PUmCompare());
             promises.push(pub.PUvlookup());
             promises.push(pub.PUstdev());
             promises.push(pub.PUtable());
