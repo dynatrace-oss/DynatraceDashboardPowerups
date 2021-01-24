@@ -633,6 +633,7 @@ var DashboardPowerups = (function () {
             chart.series.forEach((s, i) => {
                 if (s.options.type === "column") {
                     let opts = {
+                        stack: 'stack0',
                         stacking: "percent",
                     }
                     s.update(opts, false);
@@ -788,6 +789,7 @@ var DashboardPowerups = (function () {
         if (chart.series.length > 1) { //magically the data is actually already split, just stack it
             chart.series.forEach((s, i) => {
                 let opts = {
+                    stack: 'stack0',
                     stacking: stacking,
                     dataLabels: {
                         enabled: dataLabels
