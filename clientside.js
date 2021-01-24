@@ -123,7 +123,7 @@ var DashboardPowerups = (function () {
         cursor: 'crosshair',
         "enableMouseTracking": true,
         stickyTracking: true,
-        tooltip: PIE_TOOLTIP_OPTS,
+        //tooltip: PIE_TOOLTIP_OPTS,
         "states": {
             "hover": {
                 "enabled": true,
@@ -588,7 +588,8 @@ var DashboardPowerups = (function () {
                 chart.update({ chart: CHART_OPTS }, false);
                 pu = true;
             }
-            if (!compare(TOOLTIP_OPTS, chart.tooltip.options)) {
+            //if (!compare(TOOLTIP_OPTS, chart.tooltip.options)) {
+            if (typeof(chart.tooltip.options.userOptions)=="undefined") {  //do not override built-in tooltips
                 chart.update({ tooltip: TOOLTIP_OPTS }, false);
                 pu = true;
             }
@@ -609,23 +610,11 @@ var DashboardPowerups = (function () {
                     series.update(PIE_SERIES_OPTS, false);
                     pu = true;
                 }
+                if(typeof(chart.tooltip.options.userOptions)=="undefined"){ //do not override built-in tooltips
+                    chart.update({ tooltip: PIE_TOOLTIP_OPTS }, false);
+                pu = true;
+                }
             });
-            /*if (!compare(CHART_OPTS, chart.options.chart)) {
-                chart.update({ chart: CHART_OPTS }, false);
-                pu = true;
-            }*/
-            /*if (!compare(PIE_TOOLTIP_OPTS, chart.series[0].tooltipOptions)) {
-                chart.series[0].update({ tooltipOptions: PIE_TOOLTIP_OPTS }, true);
-                pu = true;
-            }*/
-            /*if (!compare(AXIS_OPTS, chart.xAxis[0].options)) {
-                chart.update({ xAxis: AXIS_OPTS }, false);
-                pu = true;
-            }
-            if (!compare(AXIS_OPTS, chart.yAxis[0].options)) {
-                chart.update({ yAxis: AXIS_OPTS }, false);
-                pu = true;
-            }*/
             restoreHandlers();
         }
 
