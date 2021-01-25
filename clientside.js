@@ -2775,7 +2775,7 @@ var DashboardPowerups = (function () {
                 case "scale":
                     let percent = (val - min) / (max - min); 
                     let color = d3.interpolateHsl(low,high)(percent);
-                    $bignum.css("color", other);
+                    $bignum.css("color", color);
                     break;
                 case "outlier":
                 default:
