@@ -630,8 +630,8 @@ var DashboardPowerups = (function () {
                         stacking: "percent"
                     }
                     if(!isNaN(pad)){
-                        opts.pointPadding = pad;
-                        opts.groupPadding = 0;
+                        opts.pointPadding = 0;
+                        opts.groupPadding = pad;
                         opts.borderWidth = 0;
                         opts.shadow = false;
                     }
