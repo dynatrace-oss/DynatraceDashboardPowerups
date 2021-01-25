@@ -415,3 +415,20 @@ Explanation
 - `out=` - (optional) makes image a clickable link. Where should the link go. Also note the space delimiter.
 
 Note: you should limit usage to only trusted image sources and keep file size reasonable
+
+### mCompare
+This powerup compares multiple SVTs. It has two modes: `outlier` and `scale`. Outlier mode highlights the low and high; whereas, scale uses color to show distance from extremes.
+Syntax:
+`!PU(mcompare):links=link1,link2,link3,link4,link5;low=green;high=red;other=gray !PU(link):link1`
+`!PU(mcompare):mode=scale;links=linkA,linkB,linkC,linkD,linkE;low=blue;high=green !PU(link):linkA`
+
+Explanation
+- `!PU(mcompare):` - denotes this powerup
+- `mode=scale` - which mode, defaults to `outlier`
+- `links=` - list of links to SVTs
+- `low=` - CSS color for lowest value
+- `high=` - CSS color for highest value
+- `other=` - CSS color for middle values in outlier mode
+
+Example: 
+![mcompare](Assets/mcompare.png)
