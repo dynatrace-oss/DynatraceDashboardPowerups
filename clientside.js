@@ -620,7 +620,7 @@ var DashboardPowerups = (function () {
         }
 
         var PU100stack = function (chart, title) {
-            let argstring = title.split(PU_LINE)[1].split('!')[0];
+            let argstring = title.split(PU_100STACK)[1].split('!')[0];
             let args = argstring.split(";").map(x => x.split("="));
             let pad = Number(args.find(x => x[0] == "pad")[1]);
             chart.series.forEach((s, i) => {
