@@ -376,10 +376,11 @@ Example:
 ### 100 Stack
 This powerup switches stacked column charts to 100% stacked charts.
 Syntax:
-`!PU(100stack):`
+`!PU(100stack):pad=0.1`
 
 Explanation
 - `!PU(100stack):` - denotes this powerup
+- `pad=0.1` - (optional) override standard padding between points. Note: small padding can lead to uneven looking spacing due to pixel rounding from antialiasing -- use a larger graph to avoid.
 
 Example:
 ![100stack](Assets/100stack.png)
