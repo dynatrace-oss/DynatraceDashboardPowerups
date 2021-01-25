@@ -2750,10 +2750,14 @@ var DashboardPowerups = (function () {
             let links = args.find(x => x[0] == "links")[1].trim();
             if (typeof (links) == "string" && links.length)
                 links = links.split(',');
-            let low = (args.find(x => x[0] == "low") || [])[1].trim() || "green";
-            let high = (args.find(x => x[0] == "high") || [])[1].trim() || "red";
-            let other = (args.find(x => x[0] == "other") || [])[1].trim() || "gray";
-            let mode = (args.find(x => x[0] == "mode") || [])[1].trim() || "outlier";
+            let low = (args.find(x => x[0] == "low") || [])[1] || "green";
+            low = low.trim();
+            let high = (args.find(x => x[0] == "high") || [])[1] || "red";
+            high = high.trim();
+            let other = (args.find(x => x[0] == "other") || [])[1] || "gray";
+            other = other.trim();
+            let mode = (args.find(x => x[0] == "mode") || [])[1] || "outlier";
+            mode = mode.trim();
 
             let linkvals = [];
             links.forEach(link => {
