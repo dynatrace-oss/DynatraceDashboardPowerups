@@ -2747,13 +2747,13 @@ var DashboardPowerups = (function () {
             let argstring = text.split(PU_MCOMPARE)[1].split('!')[0];
 
             let args = argstring.split(";").map(x => x.split("="));
-            let links = args.find(x => x[0] == "links")[1];
+            let links = args.find(x => x[0] == "links")[1].trim();
             if (typeof (links) == "string" && links.length)
                 links = links.split(',');
-            let low = (args.find(x => x[0] == "low") || [])[1] || "green";
-            let high = (args.find(x => x[0] == "high") || [])[1] || "red";
-            let other = (args.find(x => x[0] == "other") || [])[1] || "gray";
-            let mode = (args.find(x => x[0] == "mode") || [])[1] || "outlier";
+            let low = (args.find(x => x[0] == "low") || [])[1].trim() || "green";
+            let high = (args.find(x => x[0] == "high") || [])[1].trim() || "red";
+            let other = (args.find(x => x[0] == "other") || [])[1].trim() || "gray";
+            let mode = (args.find(x => x[0] == "mode") || [])[1].trim() || "outlier";
 
             let linkvals = [];
             links.forEach(link => {
