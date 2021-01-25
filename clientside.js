@@ -625,6 +625,8 @@ var DashboardPowerups = (function () {
                     let opts = {
                         stack: 'stack0',
                         stacking: "percent",
+                        pointPadding: 0,
+                        groupPadding: 0,
                     }
                     s.update(opts, false);
                     s.yAxis.setExtremes(0, 100);
@@ -2773,8 +2775,8 @@ var DashboardPowerups = (function () {
 
             switch (mode) {
                 case "scale":
-                    let percent = (val - min) / (max - min); 
-                    let color = d3.interpolateHsl(low,high)(percent);
+                    let percent = (val - min) / (max - min);
+                    let color = d3.interpolateHsl(low, high)(percent);
                     $bignum.css("color", color);
                     break;
                 case "outlier":
