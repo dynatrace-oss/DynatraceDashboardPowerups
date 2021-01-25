@@ -60,6 +60,9 @@ To add Powerups to your existing dashboards, you may add markup text in your das
 - [VLookup](#VLookup)
 - [Stdev](#Stdev)
 - [100stack](#100stack)
+- [mCompare](#mCompare)
+- [Image](#Image)
+- [Background](#Background)
 
 ### Disclaimer
 If you manually add markup, it is best practice to add a Powerup disclaimer tile so that users who do not yet have the Extension, will be directed to install it. To add the disclaimer, add the following to your dashboard JSON:
