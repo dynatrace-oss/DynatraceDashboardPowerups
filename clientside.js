@@ -632,6 +632,7 @@ var DashboardPowerups = (function () {
                     if(!isNaN(pad)){
                         opts.pointPadding = pad;
                         opts.groupPadding = 0;
+                        opts.borderWidth = 0;
                     }
                     s.update(opts, false);
                     s.yAxis.setExtremes(0, 100);
