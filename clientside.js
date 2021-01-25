@@ -590,7 +590,7 @@ var DashboardPowerups = (function () {
                 pu = true;
             }
             //if (!compare(TOOLTIP_OPTS, chart.tooltip.options)) {
-            if (typeof(chart.tooltip.options.userOptions)=="undefined") {  //do not override built-in tooltips
+            if (typeof (chart.tooltip.options.userOptions) == "undefined") {  //do not override built-in tooltips
                 chart.update({ tooltip: TOOLTIP_OPTS }, false);
                 pu = true;
             }
@@ -611,9 +611,9 @@ var DashboardPowerups = (function () {
                     series.update(PIE_SERIES_OPTS, false);
                     pu = true;
                 }
-                if(typeof(chart.tooltip.options.userOptions)=="undefined"){ //do not override built-in tooltips
+                if (typeof (chart.tooltip.options.userOptions) == "undefined") { //do not override built-in tooltips
                     chart.update({ tooltip: PIE_TOOLTIP_OPTS }, false);
-                pu = true;
+                    pu = true;
                 }
             });
             restoreHandlers();
@@ -1011,9 +1011,9 @@ var DashboardPowerups = (function () {
             let idx = title.length;
 
             idx = MARKERS.reduce((acc, marker) =>
-                (title.includes(marker) ?
-                    Math.min(title.indexOf(marker), acc) :
-                    Math.min(acc, idx))
+            (title.includes(marker) ?
+                Math.min(title.indexOf(marker), acc) :
+                Math.min(acc, idx))
                 , idx);
 
             let newTitle = title.substring(0, idx) +
@@ -1129,8 +1129,8 @@ var DashboardPowerups = (function () {
                         if (val > warn) $target.addClass(class_norm);
                         else if (val > crit) $target.addClass(class_warn);
                         else $target.addClass(class_crit);
-                    } else if (typeof(base)=="string" && base.startsWith("abs")) {
-                        let abs = Number( (base.split(',') || ["abs","0"])[1]);
+                    } else if (typeof (base) == "string" && base.startsWith("abs")) {
+                        let abs = Number((base.split(',') || ["abs", "0"])[1]);
                         if (val >= abs + crit || val <= abs - crit) $target.addClass(class_crit);
                         else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
                         else $target.addClass(class_norm);
@@ -1229,8 +1229,8 @@ var DashboardPowerups = (function () {
                         if (val > warn) $svg.addClass(class_norm);
                         else if (val > crit) $svg.addClass(class_warn);
                         else $svg.addClass(class_crit);
-                    } else if (typeof(base)=="string" && base.startsWith("abs")) {
-                        let abs = Number( (base.split(',') || ["abs","0"])[1]);
+                    } else if (typeof (base) == "string" && base.startsWith("abs")) {
+                        let abs = Number((base.split(',') || ["abs", "0"])[1]);
                         if (val >= abs + crit || val <= abs - crit) $target.addClass(class_crit);
                         else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
                         else $target.addClass(class_norm);
@@ -1298,8 +1298,8 @@ var DashboardPowerups = (function () {
                     if (val > args.warn) $svg.addClass(class_norm);
                     else if (val > args.crit) $svg.addClass(class_warn);
                     else $svg.addClass(class_crit);
-                } else if (typeof(base)=="string" && base.startsWith("abs")) {
-                    let abs = Number( (base.split(',') || ["abs","0"])[1]);
+                } else if (typeof (base) == "string" && base.startsWith("abs")) {
+                    let abs = Number((base.split(',') || ["abs", "0"])[1]);
                     if (val >= abs + crit || val <= abs - crit) $target.addClass(class_crit);
                     else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
                     else $target.addClass(class_norm);
@@ -2748,27 +2748,38 @@ var DashboardPowerups = (function () {
 
             let args = argstring.split(";").map(x => x.split("="));
             let links = args.find(x => x[0] == "links")[1];
-            if(typeof(links)=="string" && links.length)
+            if (typeof (links) == "string" && links.length)
                 links = links.split(',');
-            let low = (args.find(x => x[0] == "lt") || [])[1] || "green";
-            let high = (args.find(x => x[0] == "gt") || [])[1] || "red";
-            let other = (args.find(x => x[0] == "eq") || [])[1] || "gray";
+            let low = (args.find(x => x[0] == "low") || [])[1] || "green";
+            let high = (args.find(x => x[0] == "high") || [])[1] || "red";
+            let other = (args.find(x => x[0] == "other") || [])[1] || "gray";
+            let mode = (args.find(x => x[0] == "mode") || [])[1] || "outlier";
 
             let linkvals = [];
-            links.forEach(link=>{
+            links.forEach(link => {
                 let num = pub.findLinkedVal(link);
-                if(!isNaN(num)) linkvals.push(num);
+                if (!isNaN(num)) linkvals.push(num);
             });
             let min = Math.min.apply(Math, linkvals);
             let max = Math.max.apply(Math, linkvals);
-            
+
             let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g, ''));
 
             //let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
 
-            if (val === min) $bignum.css("color", low);
-            else if (val === max) $bignum.css("color", high);
-            else $bignum.css("color", other);
+            switch (mode) {
+                case "scale":
+                    let percent = (val - min) / (max - min); 
+                    let color = d3.interpolateHsl(low,high)(percent);
+                    $bignum.css("color", other);
+                    break;
+                case "outlier":
+                default:
+                    if (val === min) $bignum.css("color", low);
+                    else if (val === max) $bignum.css("color", high);
+                    else $bignum.css("color", other);
+            }
+
             count++;
             powerupsFired['PU_MCOMPARE'] ? powerupsFired['PU_MCOMPARE']++ : powerupsFired['PU_MCOMPARE'] = 1;
         });
