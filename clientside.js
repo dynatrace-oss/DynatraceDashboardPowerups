@@ -2744,7 +2744,7 @@ var DashboardPowerups = (function () {
 
             if (!text.includes(PU_MCOMPARE)) return;
             if (pub.config.Powerups.debug) console.log("Powerup: mcompare power-up found");
-            let argstring = text.split(PU_COMPARE)[1].split('!')[0];
+            let argstring = text.split(PU_MCOMPARE)[1].split('!')[0];
 
             let args = argstring.split(";").map(x => x.split("="));
             let links = args.find(x => x[0] == "links")[1];
