@@ -620,13 +620,18 @@ var DashboardPowerups = (function () {
         }
 
         var PU100stack = function (chart, title) {
+            let argstring = title.split(PU_LINE)[1].split('!')[0];
+            let args = argstring.split(";").map(x => x.split("="));
+            let pad = Number(args.find(x => x[0] == "pad")[1]);
             chart.series.forEach((s, i) => {
                 if (s.options.type === "column") {
                     let opts = {
                         stack: 'stack0',
-                        stacking: "percent",
-                        pointPadding: 0,
-                        groupPadding: 0,
+                        stacking: "percent"
+                    }
+                    if(!isNaN(pad)){
+                        opts.pointPadding = pad;
+                        opts.groupPadding = 0;
                     }
                     s.update(opts, false);
                     s.yAxis.setExtremes(0, 100);
