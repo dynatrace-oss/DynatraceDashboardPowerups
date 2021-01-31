@@ -3447,12 +3447,12 @@ var DashboardPowerups = (function () {
                 if(colors) colors = colors.split(',');
                 if(scale) scale = scale.split(',');
 
-                if (colors.length) {
+                if (colors && colors.length) {
                     $tile.find(FUNNEL_SELECTOR).find(`path`).each((idx,path) => {
                         $(path).css('fill', colors[idx]);
                     });
                     powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
-                } else if (scale.length == 2) {
+                } else if (scale && scale.length == 2) {
                     let $paths = $tile.find(FUNNEL_SELECTOR).find(`path`);
                     $paths.each((idx, path) => {
                         let percent = idx / $paths.length;
