@@ -43,6 +43,7 @@ var DashboardPowerups = (function () {
     const PU_TABLE = '!PU(table):';
     const PU_BACKGROUND = '!PU(background):';
     const PU_IMAGE = '!PU(image):';
+    const PU_FUNNELCOLORS = '!PU(funncolors):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
@@ -622,14 +623,14 @@ var DashboardPowerups = (function () {
         var PU100stack = function (chart, title) {
             let argstring = title.split(PU_100STACK)[1].split('!')[0];
             let args = argstring.split(";").map(x => x.split("="));
-            let pad = Number((args.find(x => x[0] == "pad") ||[])[1]);
+            let pad = Number((args.find(x => x[0] == "pad") || [])[1]);
             chart.series.forEach((s, i) => {
                 if (s.options.type === "column") {
                     let opts = {
                         stack: 'stack0',
                         stacking: "percent"
                     }
-                    if(!isNaN(pad)){
+                    if (!isNaN(pad)) {
                         opts.pointPadding = pad;
                         opts.groupPadding = pad;
                         opts.borderWidth = 0;
@@ -3433,6 +3434,36 @@ var DashboardPowerups = (function () {
         })
     }
 
+    pub.PUfunnelColors = function () {
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let $tile = $title.parents(TILE_SELECTOR);
+
+            if ($title.text().includes(PU_FUNNELCOLORS)) {
+                let argstring = $title.text().split(PU_FUNNELCOLORS)[1].split(/[!\n]/)[0];
+                let args = argstring.split(";").map(x => x.split("="));
+                let colors = (args.find(x => x[0] == "colors") || [])[1].split(',');
+                let scale = (args.find(x => x[0] == "scale") || [])[1].split(',');
+
+                if (colors.length) {
+                    $tile.find(FUNNEL_SELECTOR).find(`path`).each((el, i) => {
+                        $(el).css('fill', colors[i]);
+                    });
+                    powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
+                } else if (scale.length == 2) {
+                    let $paths = $tile.find(FUNNEL_SELECTOR).find(`path`);
+                    $paths.each((el, i) => {
+                        let percent = i / $paths.length;
+                        let color = d3.interpolateHsl(scale[0], scale[1])(percent);
+                        $(el).css('fill', color);
+                    });
+                    powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
+                }
+            }
+
+        });
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -3457,6 +3488,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUstdev());
             promises.push(pub.PUtable());
             promises.push(pub.PUimage());
+            promises.push(pub.PUfunnelColors());
             promises.push(pub.sunburnMode());
             promises.push(pub.hideEarlyAdopter());
             promises.push(pub.fixPublicDashboards());
