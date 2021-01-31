@@ -3442,8 +3442,10 @@ var DashboardPowerups = (function () {
             if ($title.text().includes(PU_FUNNELCOLORS)) {
                 let argstring = $title.text().split(PU_FUNNELCOLORS)[1].split(/[!\n]/)[0];
                 let args = argstring.split(";").map(x => x.split("="));
-                let colors = (args.find(x => x[0] == "colors") || [])[1].split(',');
-                let scale = (args.find(x => x[0] == "scale") || [])[1].split(',');
+                let colors = (args.find(x => x[0] == "colors") || [])[1];
+                let scale = (args.find(x => x[0] == "scale") || [])[1];
+                if(colors) colors = colors.split(',');
+                if(scale) scale = scale.split(',');
 
                 if (colors.length) {
                     $tile.find(FUNNEL_SELECTOR).find(`path`).each((idx,path) => {
