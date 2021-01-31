@@ -267,7 +267,9 @@ Example:
 ![Funnel](Assets/colorFunnel.png) ![FunnelLinks](Assets/funnelLinks.png)
 
 ### Math
-This powerup allows you to do complex math based on other values on the dashboard. See [math-expression-evaluator](http://bugwheels94.github.io/math-expression-evaluator/#supported-maths-symbols) for help with math expressions. Syntax:
+This powerup allows you to do complex math based on other values on the dashboard. See [math-expression-evaluator](http://bugwheels94.github.io/math-expression-evaluator/#supported-maths-symbols) for help with math expressions. 
+
+Syntax:
 `!PU(math):exp=(x1+x2+x3+x4)/4;scope=x1,x2,x3,x4:link4;color=blue`
 
 Explanation:
@@ -288,7 +290,9 @@ Note:
 ![Units](Assets/units.png)
 
 ### Date
-This powerup allows you to use Dynatrace date format strings and format in Markdown tiles. Syntax:
+This powerup allows you to use Dynatrace date format strings and format in Markdown tiles. 
+
+Syntax:
 `!PU(date):res=now-7d/d;fmt=YYYY-MM-DD;color=green`
 
 Explanation:
@@ -301,7 +305,9 @@ Example:
 ![Date](Assets/datePU.png)
 
 ### Gauge
-This powerup converts a Single Value Tile into a solid gauge. Syntax:
+This powerup converts a Single Value Tile into a solid gauge. 
+
+Syntax:
 `Memory !PU(gauge):stops=.5,.75,.9;colors=green,yellow,red;min=0;max=100`
 
 Explanation:
@@ -315,7 +321,9 @@ Example:
 ![Gauge](Assets/gauge.png)
 
 ### Compare
-This powerup compares a Single Value Tile (SVT) to another SVT and applies coloring based on the comparison. Syntax:
+This powerup compares a Single Value Tile (SVT) to another SVT and applies coloring based on the comparison. 
+
+Syntax:
 `Active users !PU(compare):link=link2;lt=red;gt=green;eq=yellow !PU(link):link1`
 
 Explanation:
@@ -331,6 +339,7 @@ Example:
 
 ### VLookup
 This powerup extracts a value from a USQL table, and optionally compares it to another table value.
+
 Syntax:
 `!PU(vlookup):link=table;val=/easytravel/rest/journeys/;col=1;compareTable=table;compareVal=/easytravel/rest/locations;compareCol=1;lt=green;gt=red;eq=yellow`
 
@@ -362,6 +371,7 @@ Example:
 
 ### Stdev
 This powerup computes standard deviation (or other value) over a series. Apply to a USQL table.
+
 Syntax:
 `!PU(stdev):color=orange;output=min,avg,median,90%,max,sum,stdev`
 
@@ -375,6 +385,7 @@ Example:
 
 ### 100 Stack
 This powerup switches stacked column charts to 100% stacked charts.
+
 Syntax:
 `!PU(100stack):pad=0.1`
 
@@ -387,10 +398,11 @@ Example:
 
 ### Table
 This powerup enables exporting USQL tables to CSV/XLS and sortable columns.
+
 Syntax:
 `!PU(table):`
 
-Explanation
+Explanation:
 - `!PU(table):` - denotes this powerup
 - `col=` - (optional) default sort order, e.g. 1 sort by first column ascending, -5 sort by fifth column descending
 
@@ -399,10 +411,11 @@ Example:
 
 ### Background
 This powerup changes the background of the dashdoard to an external image. This should be placed in an offscreen markdown tile. The tile will auto-hide when the extension runs.
+
 Syntax:
 `!PU(background):url=https://myurl.com/myimage.png`
 
-Explanation
+Explanation:
 - `!PU(background):` - denotes this powerup
 - `url=` - url of the image to load
 
@@ -410,6 +423,7 @@ Note: you should limit usage to only trusted image sources and keep file size re
 
 ### Image
 This powerup adds an external image. This swaps a markdown tile with the image.
+
 Syntax:
 `!PU(background):url=https://myurl.com/myimage.png out=https://www.dynatrace.com`
 
@@ -422,11 +436,12 @@ Note: you should limit usage to only trusted image sources and keep file size re
 
 ### mCompare
 This powerup compares multiple SVTs. It has two modes: `outlier` and `scale`. Outlier mode highlights the low and high; whereas, scale uses color to show distance from extremes.
-Syntax:
-`!PU(mcompare):links=link1,link2,link3,link4,link5;low=green;high=red;other=gray !PU(link):link1`
-`!PU(mcompare):mode=scale;links=linkA,linkB,linkC,linkD,linkE;low=blue;high=green !PU(link):linkA`
 
-Explanation
+Syntax:
+- `!PU(mcompare):links=link1,link2,link3,link4,link5;low=green;high=red;other=gray !PU(link):link1`
+- `!PU(mcompare):mode=scale;links=linkA,linkB,linkC,linkD,linkE;low=blue;high=green !PU(link):linkA`
+
+Explanation:
 - `!PU(mcompare):` - denotes this powerup
 - `mode=scale` - which mode, defaults to `outlier`
 - `links=` - list of links to SVTs
@@ -436,3 +451,18 @@ Explanation
 
 Example: 
 ![mcompare](Assets/mcompare.png)
+
+### FunneColors
+This powerup retains the existing funnel design but allows changing the colors. You can either specify `colors` directly or specify a `scale` between two colors.
+
+Syntax:
+- `!PU(funnelcolors):colors=#9cd575,#4fd5e0,#2ab6f4,#a972cc`
+- `!PU(funnelcolors):scale=#14a8f5,#6bcb8b`
+
+Explanation:
+- `!PU(funnelcolors):` - denotes this powerup
+- `colors=` - specify colors for each funnel step from left to right
+- `scale=` - specify a color scale starting with the first color and ending with the last
+
+Example:
+![funnelcolors](Assets/funnelcolors.png)

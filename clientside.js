@@ -48,7 +48,7 @@ var DashboardPowerups = (function () {
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
-        PU_TABLE, PU_BACKGROUND, PU_MCOMPARE
+        PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
