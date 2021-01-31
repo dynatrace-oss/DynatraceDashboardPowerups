@@ -43,7 +43,7 @@ var DashboardPowerups = (function () {
     const PU_TABLE = '!PU(table):';
     const PU_BACKGROUND = '!PU(background):';
     const PU_IMAGE = '!PU(image):';
-    const PU_FUNNELCOLORS = '!PU(funncolors):';
+    const PU_FUNNELCOLORS = '!PU(funnelcolors):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
@@ -3446,16 +3446,16 @@ var DashboardPowerups = (function () {
                 let scale = (args.find(x => x[0] == "scale") || [])[1].split(',');
 
                 if (colors.length) {
-                    $tile.find(FUNNEL_SELECTOR).find(`path`).each((el, i) => {
-                        $(el).css('fill', colors[i]);
+                    $tile.find(FUNNEL_SELECTOR).find(`path`).each((idx,path) => {
+                        $(path).css('fill', colors[idx]);
                     });
                     powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
                 } else if (scale.length == 2) {
                     let $paths = $tile.find(FUNNEL_SELECTOR).find(`path`);
-                    $paths.each((el, i) => {
-                        let percent = i / $paths.length;
+                    $paths.each((idx, path) => {
+                        let percent = idx / $paths.length;
                         let color = d3.interpolateHsl(scale[0], scale[1])(percent);
-                        $(el).css('fill', color);
+                        $(path).css('fill', color);
                     });
                     powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
                 }
