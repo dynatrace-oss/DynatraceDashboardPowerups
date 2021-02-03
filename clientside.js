@@ -2185,13 +2185,16 @@ var DashboardPowerups = (function () {
     pub.PUHeatmap = function (chart, title, newContainer) { //example: !PU(heatmap):vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f
         if (!pub.config.Powerups.heatmapPU) return;
         if (chart.series.length < 1 || chart.series[0].data.length < 1) return;
-        //let titletokens = title.split(PU_HEATMAP);
         let argstring = title.split(PU_HEATMAP)[1].split('!')[0];
         let args = argstring.split(";").map(x => x.split("="));
         let txtColor = (args.find(x => x[0] == "txtColor") || [])[1] || "#ffffff";
-        let interval = (args.find(x => x[0] == "int") || [])[1] || "1d";
+        //let interval = (args.find(x => x[0] == "int") || [])[1] || "1d";
         let colorAxis = {};
+        let ms = Number((args.find(x => x[0] == "ms") || [])[1] || "86400000");
+        let fmt = (args.find(x => x[0] == "fmt") || [])[1] || "MM/DD";
+        let scale = Number((args.find(x => x[0] == "scale") || [])[1] || "1");
 
+        //determine fixed color or colorAxis
         if (argstring.includes("vals")) {
             let dataClasses = colorAxis.dataClasses = [];
             let vals = ((args.find(x => x[0] == "vals") || [])[1] || ".5,.7,.85,.94").split(',').map(x => Number(x));
@@ -2233,6 +2236,7 @@ var DashboardPowerups = (function () {
             if (typeof (maxColor) !== "undefined") colorAxis.maxColor = d3.rgb(maxColor).toString();
         }
 
+        //handle containers
         let oldContainer = chart.container;
         let $tile = $(oldContainer).parents(TILE_SELECTOR);
         let $newContainer;
@@ -2251,9 +2255,24 @@ var DashboardPowerups = (function () {
         }
         let $legend = $tile.find(LEGEND_SELECTOR);
 
+        //data manipulation
         let newData = [];
         let yNames = [];
         let categories = [];
+        let oldCategories = [... new Set(chart.series.map(x => x.data)
+            .flat().map(x => x.category))];
+        let categoryMap = new Map();
+        if(ms && fmt){
+            oldCategories.forEach(x => {
+                if (!categoryMap.has(x)) {
+                    let newCategory = dateFns.format(
+                        parseInt(x / ms) * ms,
+                        fmt);
+                    categoryMap.set(x,newCategory);    
+                }
+            });
+            categories = categoryMap.values();
+        }
         function getPointCategoryName(point, dimension) {
             var series = point.series,
                 isY = dimension === 'y',
@@ -2276,12 +2295,17 @@ var DashboardPowerups = (function () {
 
             //map new X values
             s.data.forEach((d) => {
-                const date = new Date(d.category);
-                d.newCat = date.toLocaleDateString();
-                d.newCatIdx = categories.findIndex(x => x === d.newCat);
-                if (d.newCatIdx < 0) {
-                    d.newCatIdx = categories.length;
-                    categories.push(d.newCat);
+                if(ms && fmt){
+                    d.newCat = categoryMap.get(d.category);
+                    d.newCatIdx = categories.findIndex(x => x === d.newCat);
+                } else {
+                    const date = new Date(d.category);
+                    d.newCat = date.toLocaleDateString();
+                    d.newCatIdx = categories.findIndex(x => x === d.newCat);
+                    if (d.newCatIdx < 0) {
+                        d.newCatIdx = categories.length;
+                        categories.push(d.newCat);
+                    }
                 }
             });
 
@@ -2298,6 +2322,7 @@ var DashboardPowerups = (function () {
                             return total;
                         }
                     }, 0);
+                    avg = avg * scale;
                 newData.push([cIdx, sIdx, avg]);
             });
         });
@@ -2371,6 +2396,29 @@ var DashboardPowerups = (function () {
         $(".highcharts-exporting-group").addClass("powerupVisible");
         return true;
     }
+
+    /*pub.PUheatmap2 = function (chart, title, newContainer) { //example: !PU(heatmap):ms=300000vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f
+        if (chart.series.length < 1 || chart.series[0].data.length < 1) return;
+        let argstring = title.split(PU_HEATMAP)[1].split('!')[0];
+        let args = argstring.split(";").map(x => x.split("="));
+        let txtColor = (args.find(x => x[0] == "txtColor") || [])[1] || "#ffffff";
+        let colorAxis = {};
+        let ms = Number((args.find(x => x[0] == "ms") || [])[1] || "3600000");
+        let fmt = (args.find(x => x[0] == "fmt") || [])[1] || "HH:mm";
+
+        let oldCategories = [... new Set(chart.series.map(x => x.data)
+            .flat().map(x => x.category))];
+        let categoryMap = new Map();
+        oldCategories.forEach(x => {
+            if (!categoryMap.has(x)) {
+                let newCategory = dateFns.format(
+                    parseInt(x / ms) * ms,
+                    fmt);
+                categoryMap.set(x,newCategory);    
+            }
+        });
+
+    }*/
 
     pub.PUfunnel = function () {
         if (!pub.config.Powerups.funnelPU) return;
@@ -3444,11 +3492,11 @@ var DashboardPowerups = (function () {
                 let args = argstring.split(";").map(x => x.split("="));
                 let colors = (args.find(x => x[0] == "colors") || [])[1];
                 let scale = (args.find(x => x[0] == "scale") || [])[1];
-                if(colors) colors = colors.split(',');
-                if(scale) scale = scale.split(',');
+                if (colors) colors = colors.split(',');
+                if (scale) scale = scale.split(',');
 
                 if (colors && colors.length) {
-                    $tile.find(FUNNEL_SELECTOR).find(`path`).each((idx,path) => {
+                    $tile.find(FUNNEL_SELECTOR).find(`path`).each((idx, path) => {
                         $(path).css('fill', colors[idx]);
                     });
                     powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
