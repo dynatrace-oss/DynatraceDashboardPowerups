@@ -197,15 +197,21 @@ Example:
 ### Heatmap
 Currently this powerup can display a heatmap based on a **bar chart**. Eventually, it will be more generic.
 ```
-Apdex (by app) !PU(heatmap):vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f
+Apdex !PU(heatmap):vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f
 ```
 ```
-Apdex (by app) !PU(heatmap):min=1;max=1000;minColor=#ffffff;maxColor=red
+Request Count !PU(heatmap):minColor=yellow;maxColor=green;txtColor=black;ms=3600000;fmt=HH:mm
 ```
 
 Explanation:
 - `!PU(heatmap):` - denotes the heatmap powerup, anything prior to this is treated as the title
 - `txtColor=` - (optional) what color text to use for data labels, defaults to white
+- `ms=` - (optional) number of milliseconds to bucket time by on x-axis, e.g.:
+- - `86400000` - 1 day (default)
+- - `3600000` - 1 hour
+- `fmt=` - (optional) date format for x-axis, see [date-fns](https://date-fns.org/v1.9.0/docs/format)
+- `scale=` - (optional) multiply values by this number, defaults to 1. Affects display and `vals`. e.g.:
+- - `.000001` -  bytes into gb
 
 &nbsp;&nbsp; Option 1 - Color classes:
 - `vals=` - thresholds, should be N-1 of them
