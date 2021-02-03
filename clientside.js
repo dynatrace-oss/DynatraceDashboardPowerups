@@ -2262,13 +2262,13 @@ var DashboardPowerups = (function () {
         let oldCategories = [... new Set(chart.series.map(x => x.data)
             .flat().map(x => x.category))];
         let categoryMap = new Map();
-        if(ms && fmt){
+        if (ms && fmt) {
             oldCategories.forEach(x => {
                 if (!categoryMap.has(x)) {
                     let newCategory = dateFns.format(
                         parseInt(x / ms) * ms,
                         fmt);
-                    categoryMap.set(x,newCategory);    
+                    categoryMap.set(x, newCategory);
                 }
             });
             categories = [... new Set(categoryMap.values())];
@@ -2295,7 +2295,7 @@ var DashboardPowerups = (function () {
 
             //map new X values
             s.data.forEach((d) => {
-                if(ms && fmt){
+                if (ms && fmt) {
                     d.newCat = categoryMap.get(d.category);
                     d.newCatIdx = categories.findIndex(x => x === d.newCat);
                 } else {
@@ -2322,26 +2322,17 @@ var DashboardPowerups = (function () {
                             return total;
                         }
                     }, 0);
-                    avg = avg * scale;
+                avg = avg * scale;
                 newData.push([cIdx, sIdx, avg]);
             });
         });
         //Highcharts expects data to be sorted
         newData = newData.sort((a, b) => {
-            if(ms && fmt){ //unflip order
-                if (a[0] === b[0]) {
-                    return b[1] - a[1];
-                } else {
-                    return b[0] - a[0];
-                }
+            if (a[0] === b[0]) {
+                return a[1] - b[1];
             } else {
-                if (a[0] === b[0]) {
-                    return a[1] - b[1];
-                } else {
-                    return a[0] - b[0];
-                }
+                return a[0] - b[0];
             }
-            
         });
         let newSeries = {
             type: 'heatmap',
@@ -2361,7 +2352,7 @@ var DashboardPowerups = (function () {
             },
             xAxis: {
                 categories: categories,
-                reversed: true
+                reversed: (ms && fmt?false:true)
             },
             yAxis: {
                 categories: yNames,
