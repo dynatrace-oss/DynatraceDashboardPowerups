@@ -2397,29 +2397,6 @@ var DashboardPowerups = (function () {
         return true;
     }
 
-    /*pub.PUheatmap2 = function (chart, title, newContainer) { //example: !PU(heatmap):ms=300000vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f
-        if (chart.series.length < 1 || chart.series[0].data.length < 1) return;
-        let argstring = title.split(PU_HEATMAP)[1].split('!')[0];
-        let args = argstring.split(";").map(x => x.split("="));
-        let txtColor = (args.find(x => x[0] == "txtColor") || [])[1] || "#ffffff";
-        let colorAxis = {};
-        let ms = Number((args.find(x => x[0] == "ms") || [])[1] || "3600000");
-        let fmt = (args.find(x => x[0] == "fmt") || [])[1] || "HH:mm";
-
-        let oldCategories = [... new Set(chart.series.map(x => x.data)
-            .flat().map(x => x.category))];
-        let categoryMap = new Map();
-        oldCategories.forEach(x => {
-            if (!categoryMap.has(x)) {
-                let newCategory = dateFns.format(
-                    parseInt(x / ms) * ms,
-                    fmt);
-                categoryMap.set(x,newCategory);    
-            }
-        });
-
-    }*/
-
     pub.PUfunnel = function () {
         if (!pub.config.Powerups.funnelPU) return;
         let mainPromise = new $.Deferred();
