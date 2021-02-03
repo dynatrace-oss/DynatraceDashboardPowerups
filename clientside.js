@@ -2271,7 +2271,7 @@ var DashboardPowerups = (function () {
                     categoryMap.set(x,newCategory);    
                 }
             });
-            categories = categoryMap.values();
+            categories = [... new Set(categoryMap.values())];
         }
         function getPointCategoryName(point, dimension) {
             var series = point.series,
