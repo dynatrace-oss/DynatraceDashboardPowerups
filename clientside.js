@@ -643,33 +643,6 @@ var DashboardPowerups = (function () {
             });
         }
 
-        var PUforecast = function (chart, title) { //!PU(forecast):alg=sma;n=5;color=lightblue
-            let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0];
-            let args = argstring.split(";").map(x => x.split("="));
-            let alg = (args.find(x => x[0] == "alg") || [])[1] || "sma";
-            let color = (args.find(x => x[0] == "color") || [])[1] || "lightblue";
-            let n = Number((args.find(x => x[0] == "scale") || [])[1] || 5);
-
-            let data = chart.series[0].data;
-            let sma = [];
-            for (let i = n; i < data.length; i++) {
-                let smaPoint = [];
-                let sum = 0;
-                for (let j = i; j >= i - n; j--) {
-                    sum += data[j].y;
-                }
-                let avg = sum / n;
-                smaPoint = [data[i].x, avg];
-                sma.push(smaPoint);
-            }
-
-            chart.addSeries({
-                name: "sma",
-                data: sma,
-                color: color
-            }, false);
-        }
-
         if (pub.config.Powerups.tooltipPU &&
             typeof (chart) !== "undefined" &&
             //!chart.poweredup &&
@@ -731,14 +704,12 @@ var DashboardPowerups = (function () {
             } else if (chart.series[0] && chart.series[0].type == "pie") {
                 pieChartPU();
             } else if (title.includes(PU_FORECAST)) {
-                let p = PUforecast(chart, title);
+                let p = pub.PUforecast(chart, title);
                 promises.push(p);
                 $.when(p).done(val => {
                     if (val) pu = true;
                     powerupsFired['PU_FORECAST'] ? powerupsFired['PU_FORECAST']++ : powerupsFired['PU_FORECAST'] = 1;
                 });
-
-
             } else {
                 lineChartPU();
                 enableExporting();
@@ -769,6 +740,43 @@ var DashboardPowerups = (function () {
         } else {
             return false;
         }
+    }
+
+    pub.PUforecast = function (chart, title) { //!PU(forecast):alg=sma;n=5;color=lightblue
+        let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0];
+        let args = argstring.split(";").map(x => x.split("="));
+        let alg = (args.find(x => x[0] == "alg") || [])[1] || "sma";
+        let color = (args.find(x => x[0] == "color") || [])[1] || "lightblue";
+        let n = Number((args.find(x => x[0] == "scale") || [])[1] || 5);
+
+        let data = chart.series[0].data;
+        let sma = [];
+        for (let i = n; i < data.length; i++) {
+            let smaPoint = [];
+            let sum = 0;
+            let count = 0;
+            for (let j = i; j >= i - n; j--) {
+                sum += data[j].y;
+                count++;
+            }
+            let avg = sum / n;
+            console.log({
+                n:n, 
+                count: count,
+                sum: sum,
+                avg: avg
+            });
+            smaPoint = [data[i].x, avg];
+            sma.push(smaPoint);
+        }
+
+        chart.addSeries({
+            name: "sma",
+            data: sma,
+            color: color
+        }, false);
+
+        return true;
     }
 
     pub.PULine = function (chart, title) { //example: !PU(line):thld=4000;hcol=green;lcol=red
