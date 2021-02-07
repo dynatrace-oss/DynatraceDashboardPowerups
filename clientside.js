@@ -653,13 +653,13 @@ var DashboardPowerups = (function () {
                     let data = chart.series[0].data;
                     let sma = [];
                     for(let i=n; i<data.length; i++){
-                        let smaPoint = {};//Object.assign({},data);
+                        let smaPoint = [];
                         let sum = 0;
                         for(let j=i; j>=i-n; j--){
                             sum += data[j].y;
                         }
-                        let avg = smaPoint.y = sum/n;
-                        smaPoint.x = data[i].x;
+                        let avg = sum/n;
+                        smaPoint = [data[i].x,avg];
                         sma.push(smaPoint);
                     }
 
