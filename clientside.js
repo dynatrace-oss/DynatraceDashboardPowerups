@@ -755,7 +755,7 @@ var DashboardPowerups = (function () {
             let smaPoint = [];
             let sum = 0;
             let count = 0;
-            for (let j = i; j >= i - n; j--) {
+            for (let j = i-1; j >= i - n; j--) {
                 sum += data[j].y;
                 count++;
             }
