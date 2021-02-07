@@ -687,12 +687,6 @@ var DashboardPowerups = (function () {
                     lineChartPU();
                     enableExporting();
                     powerupsFired['PU_LINE'] ? powerupsFired['PU_LINE']++ : powerupsFired['PU_LINE'] = 1;
-
-                    if (title.includes(PU_FORECAST)){
-                        if(PUforecast(chart, title)){
-                            powerupsFired['PU_FORECAST'] ? powerupsFired['PU_FORECAST']++ : powerupsFired['PU_FORECAST'] = 1;
-                        }
-                    }
                 }
             } else if (title.includes(PU_USQLSTACK)) {
                 let p = pub.PUUsqlStack(chart, title);
@@ -736,6 +730,10 @@ var DashboardPowerups = (function () {
                 powerupsFired['PU_100STACK'] ? powerupsFired['PU_100STACK']++ : powerupsFired['PU_100STACK'] = 1;
             } else if (chart.series[0] && chart.series[0].type == "pie") {
                 pieChartPU();
+            } else if (title.includes(PU_FORECAST)){
+                if(PUforecast(chart, title)){
+                    powerupsFired['PU_FORECAST'] ? powerupsFired['PU_FORECAST']++ : powerupsFired['PU_FORECAST'] = 1;
+                }
             } else {
                 lineChartPU();
                 enableExporting();
