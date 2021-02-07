@@ -644,30 +644,30 @@ var DashboardPowerups = (function () {
         }
 
         var PUforecast = function (chart, title) { //!PU(forecast):alg=sma;n=5;color=lightblue
-                    let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0];
-                    let args = argstring.split(";").map(x => x.split("="));
-                    let alg = (args.find(x => x[0] == "alg") || [])[1] || "sma";
-                    let color = (args.find(x => x[0] == "color") || [])[1] || "lightblue";
-                    let n = Number((args.find(x => x[0] == "scale") || [])[1] || 5);
-                    
-                    let data = chart.series[0].data;
-                    let sma = [];
-                    for(let i=n; i<data.length; i++){
-                        let smaPoint = [];
-                        let sum = 0;
-                        for(let j=i; j>=i-n; j--){
-                            sum += data[j].y;
-                        }
-                        let avg = sum/n;
-                        smaPoint = [data[i].x,avg];
-                        sma.push(smaPoint);
-                    }
+            let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0];
+            let args = argstring.split(";").map(x => x.split("="));
+            let alg = (args.find(x => x[0] == "alg") || [])[1] || "sma";
+            let color = (args.find(x => x[0] == "color") || [])[1] || "lightblue";
+            let n = Number((args.find(x => x[0] == "scale") || [])[1] || 5);
 
-                    chart.addSeries({
-                        name: "sma",
-                        data: sma,
-                        color: color
-                    },false);
+            let data = chart.series[0].data;
+            let sma = [];
+            for (let i = n; i < data.length; i++) {
+                let smaPoint = [];
+                let sum = 0;
+                for (let j = i; j >= i - n; j--) {
+                    sum += data[j].y;
+                }
+                let avg = sum / n;
+                smaPoint = [data[i].x, avg];
+                sma.push(smaPoint);
+            }
+
+            chart.addSeries({
+                name: "sma",
+                data: sma,
+                color: color
+            }, false);
         }
 
         if (pub.config.Powerups.tooltipPU &&
@@ -730,10 +730,15 @@ var DashboardPowerups = (function () {
                 powerupsFired['PU_100STACK'] ? powerupsFired['PU_100STACK']++ : powerupsFired['PU_100STACK'] = 1;
             } else if (chart.series[0] && chart.series[0].type == "pie") {
                 pieChartPU();
-            } else if (title.includes(PU_FORECAST)){
-                if(PUforecast(chart, title)){
+            } else if (title.includes(PU_FORECAST)) {
+                let p = PUforecast(chart, title);
+                promises.push(p);
+                $.when(p).done(val => {
+                    if (val) pu = true;
                     powerupsFired['PU_FORECAST'] ? powerupsFired['PU_FORECAST']++ : powerupsFired['PU_FORECAST'] = 1;
-                }
+                });
+
+
             } else {
                 lineChartPU();
                 enableExporting();
@@ -2384,7 +2389,7 @@ var DashboardPowerups = (function () {
             },
             xAxis: {
                 categories: categories,
-                reversed: (ms && fmt?false:true)
+                reversed: (ms && fmt ? false : true)
             },
             yAxis: {
                 categories: yNames,
