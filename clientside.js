@@ -754,21 +754,14 @@ var DashboardPowerups = (function () {
         chart.series.filter(x=>x.name=="sma").forEach(x=>{
             x.remove();
         });
-        for (let i = n; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
             let smaPoint = [];
             let sum = 0;
-            let count = 0;
-            for (let j = i-1; j >= i - n; j--) {
+            let c = Math.min(i,n);
+            for (let j = i-1; j >= i - c; j--) {
                 sum += data[j].y;
-                count++;
             }
-            let avg = sum / n;
-            console.log({
-                n:n, 
-                count: count,
-                sum: sum,
-                avg: avg
-            });
+            let avg = sum / c;
             smaPoint = [data[i].x, avg];
             sma.push(smaPoint);
         }
