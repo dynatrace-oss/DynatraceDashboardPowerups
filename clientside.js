@@ -751,7 +751,9 @@ var DashboardPowerups = (function () {
 
         let data = chart.series[0].data;
         let sma = [];
-        chart.series.filter(x=>x.name=="sma").remove();
+        chart.series.filter(x=>x.name=="sma").forEach(x=>{
+            x.remove();
+        });
         for (let i = n; i < data.length; i++) {
             let smaPoint = [];
             let sum = 0;
