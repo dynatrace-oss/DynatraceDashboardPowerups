@@ -747,13 +747,18 @@ var DashboardPowerups = (function () {
         let args = argstring.split(";").map(x => x.split("="));
         let alg = (args.find(x => x[0] == "alg") || [])[1] || "sma";
         let color = (args.find(x => x[0] == "color") || [])[1] || "lightblue";
-        let n = Number((args.find(x => x[0] == "n") || [])[1] || 5);
-
+        let n = (args.find(x => x[0] == "n") || [])[1] || 5;
         let data = chart.series[0].data;
+        if(n.includes("%")){
+            n = Number(n.split('%')[0]) * 0.01;
+            n = n * data.length;
+        }else {
+            n = Number(n);
+        }
+
+        
         let sma = [];
-        chart.series.filter(x=>x.name=="sma").forEach(x=>{
-            x.remove();
-        });
+        chart.series.filter(x=>x.name=="sma").forEach(x=>{x.remove();});
         for (let i = 0; i < data.length; i++) {
             let smaPoint = [];
             let sum = 0;
