@@ -44,11 +44,12 @@ var DashboardPowerups = (function () {
     const PU_BACKGROUND = '!PU(background):';
     const PU_IMAGE = '!PU(image):';
     const PU_FUNNELCOLORS = '!PU(funnelcolors):';
+    const PU_FORECAST = '!PU(forecast):'
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
-        PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS
+        PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST
     ];
     const CHART_OPTS = {
         plotBackgroundColor: '#454646',
@@ -642,6 +643,33 @@ var DashboardPowerups = (function () {
             });
         }
 
+        var PUforecast = function (chart, title) { //!PU(forecast):alg=sma;n=5;color=lightblue
+                    let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0];
+                    let args = argstring.split(";").map(x => x.split("="));
+                    let alg = (args.find(x => x[0] == "alg") || [])[1] || "sma";
+                    let color = (args.find(x => x[0] == "color") || [])[1] || "lightblue";
+                    let n = Number((args.find(x => x[0] == "scale") || [])[1] || 5);
+                    
+                    let data = chart.series[0].data;
+                    let sma = [];
+                    for(let i=n; i<data.length; i++){
+                        let smaPoint = {};//Object.assign({},data);
+                        let sum = 0;
+                        for(let j=i; j>=i-n; j--){
+                            sum += data[j].y;
+                        }
+                        let avg = smaPoint.y = sum/n;
+                        smaPoint.x = data[i].x;
+                        sma.push(smaPoint);
+                    }
+
+                    chart.addSeries({
+                        name: "sma",
+                        data: sma,
+                        color: color
+                    },false);
+        }
+
         if (pub.config.Powerups.tooltipPU &&
             typeof (chart) !== "undefined" &&
             //!chart.poweredup &&
@@ -659,6 +687,12 @@ var DashboardPowerups = (function () {
                     lineChartPU();
                     enableExporting();
                     powerupsFired['PU_LINE'] ? powerupsFired['PU_LINE']++ : powerupsFired['PU_LINE'] = 1;
+
+                    if (title.includes(PU_FORECAST)){
+                        if(PUforecast(chart, title)){
+                            powerupsFired['PU_FORECAST'] ? powerupsFired['PU_FORECAST']++ : powerupsFired['PU_FORECAST'] = 1;
+                        }
+                    }
                 }
             } else if (title.includes(PU_USQLSTACK)) {
                 let p = pub.PUUsqlStack(chart, title);
@@ -3487,7 +3521,6 @@ var DashboardPowerups = (function () {
                     powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
                 }
             }
-
         });
     }
 
