@@ -763,9 +763,9 @@ var DashboardPowerups = (function () {
             x.remove(true);
         });
         let $container = $(chart.container);
-        let graphs = chart.series.map(x=>x.graph);
+        let groups = chart.series.map(x=>x.group);
         $container.find(`.highcharts-series`).each((i,el)=>{
-            if(!graphs.includes(el)){
+            if(!groups.includes(el)){
                 $(el).remove();
             }
         });
