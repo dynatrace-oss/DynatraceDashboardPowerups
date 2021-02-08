@@ -757,12 +757,20 @@ var DashboardPowerups = (function () {
         }
 
         
-        let sma = [];
-        let smaSeries;
+        
+        //cleanup old added series, for some reason Product kills them in memory but not in SVG
         chart.series.filter(x=>x.name=="sma").forEach(x=>{
-            //x.remove(true);
-            smaSeries = x;
+            x.remove(true);
         });
+        let $container = $(chart.container);
+        let graphs = chart.series.map(x=>x.graph);
+        $container.find(`.highcharts-series`).each((i,el)=>{
+            if(!graphs.includes(el)){
+                $(el).remove();
+            }
+        });
+
+        let sma = [];
         for (let i = 0; i < data.length; i++) {
             let smaPoint = [];
             let sum = 0;
@@ -775,21 +783,11 @@ var DashboardPowerups = (function () {
             sma.push(smaPoint);
         }
 
-        if(typeof(smaSeries)=="undefined"){
             chart.addSeries({
                 name: "sma",
                 data: sma,
                 color: color
             }, false);
-        } else {
-            smaSeries.update({
-                name: "sma",
-                data: sma,
-                color: color
-            }, false);
-        }
-        
-
         return true;
     }
 
