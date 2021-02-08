@@ -747,7 +747,7 @@ var DashboardPowerups = (function () {
         let args = argstring.split(";").map(x => x.split("="));
         let alg = (args.find(x => x[0] == "alg") || [])[1] || "sma";
         let color = (args.find(x => x[0] == "color") || [])[1] || "lightblue";
-        let n = (args.find(x => x[0] == "n") || [])[1] || 5;
+        let n = (args.find(x => x[0] == "n") || [])[1] || "20%";
         let data = chart.series[0].data;
         if(n.includes("%")){
             n = Number(n.split('%')[0]) * 0.01;
@@ -758,7 +758,11 @@ var DashboardPowerups = (function () {
 
         
         let sma = [];
-        chart.series.filter(x=>x.name=="sma").forEach(x=>{x.remove(true);});
+        let smaSeries;
+        chart.series.filter(x=>x.name=="sma").forEach(x=>{
+            //x.remove(true);
+            smaSeries = x;
+        });
         for (let i = 0; i < data.length; i++) {
             let smaPoint = [];
             let sum = 0;
@@ -771,11 +775,20 @@ var DashboardPowerups = (function () {
             sma.push(smaPoint);
         }
 
-        chart.addSeries({
-            name: "sma",
-            data: sma,
-            color: color
-        }, false);
+        if(typeof(smaSeries)=="undefined"){
+            chart.addSeries({
+                name: "sma",
+                data: sma,
+                color: color
+            }, false);
+        } else {
+            smaSeries.update({
+                name: "sma",
+                data: sma,
+                color: color
+            }, false);
+        }
+        
 
         return true;
     }
