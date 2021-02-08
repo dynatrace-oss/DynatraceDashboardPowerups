@@ -798,7 +798,11 @@ var DashboardPowerups = (function () {
                 sum += data[j].y;
             }
             let avg = sum / len;
-            smaPoint = [data[i].x, avg];
+            if(data[i].y!=null){
+                smaPoint = [data[i].x, avg];
+            } else {
+                smaPoint = [data[i].x, null];
+            }
             sma.push(smaPoint);
         }
 
