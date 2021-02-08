@@ -842,10 +842,10 @@ var DashboardPowerups = (function () {
                     count++;
                 }
             });
-            let m = sum/count;
+            let m = sum / count;
             data.forEach(x => {
                 if (x.y != null) {
-                    mean.push([x.x,m]);
+                    mean.push([x.x, m]);
                 }
             });
             chart.addSeries({
@@ -859,15 +859,15 @@ var DashboardPowerups = (function () {
         function standardDeviation(m) {
             let deltas = [];
             let stdevs = [];
-            data.forEach(x=>{
-                if(x.y != null){
+            data.forEach(x => {
+                if (x.y != null) {
                     deltas.push(x.y - m);
                 }
             });
-            let sum = deltas.reduce((acc,curr)=>acc+curr);
+            let sum = deltas.reduce((acc, curr) => acc + curr * curr, 0);
             let stdev = Math.sqrt(sum);
-            data.forEach(x=>{
-                if(x.y != null){
+            data.forEach(x => {
+                if (x.y != null) {
                     stdevs.push([
                         x.x,
                         m - stdev,
