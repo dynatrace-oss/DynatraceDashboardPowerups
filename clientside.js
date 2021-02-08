@@ -759,7 +759,7 @@ var DashboardPowerups = (function () {
         
         
         //cleanup old added series, for some reason Product kills them in memory but not in SVG
-        chart.series.filter(x=>x.name=="sma").forEach(x=>{
+        chart.series.filter(x=>x.name=="SMA").forEach(x=>{
             x.remove(true);
         });
         let $container = $(chart.container);
@@ -778,7 +778,9 @@ var DashboardPowerups = (function () {
         chart.legend.update({
             enabled: true,
             itemStyle: {
-                color: "#B7B7B8"
+                color: "#B7B7B8",
+                fontSize: "10px",
+                fontWeight: "normal"
             },
             itemHoverStyle: {
                 color: "white"
@@ -799,7 +801,7 @@ var DashboardPowerups = (function () {
         }
 
             chart.addSeries({
-                name: "sma",
+                name: "SMA",
                 data: sma,
                 color: color
             }, false);
