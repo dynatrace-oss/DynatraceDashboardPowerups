@@ -793,7 +793,7 @@ var DashboardPowerups = (function () {
             let sum = 0;
             let start = Math.max(0,i-n+1);
             let end = i;
-            let len = end - start;
+            let len = end - start +1;
             for (let j = start; j <= end; j++) {
                 sum += data[j].y;
             }
