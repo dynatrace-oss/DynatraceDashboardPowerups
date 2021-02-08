@@ -776,7 +776,13 @@ var DashboardPowerups = (function () {
         let seriesName = $legend.find(`[title]`).eq(0).attr('title');
         chart.series[0].name = seriesName;
         chart.legend.update({
-            enabled: true
+            enabled: true,
+            itemStyle: {
+                color: "#B7B7B8"
+            },
+            itemHoverStyle: {
+                color: white
+            }
         },false);
 
         let sma = [];
