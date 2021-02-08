@@ -781,7 +781,7 @@ var DashboardPowerups = (function () {
                 color: "#B7B7B8"
             },
             itemHoverStyle: {
-                color: white
+                color: "white"
             }
         },false);
 
