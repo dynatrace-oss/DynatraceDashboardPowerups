@@ -792,7 +792,7 @@ var DashboardPowerups = (function () {
             let smaPoint = [];
             let sum = 0;
             let c = Math.min(i,n);
-            for (let j = i; j >= Math.min(i - c,0); j--) {
+            for (let j = i; j >= Math.max(i - c,0); j--) {
                 sum += data[j].y;
             }
             let avg = sum / c;
