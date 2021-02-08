@@ -859,13 +859,15 @@ var DashboardPowerups = (function () {
         function standardDeviation(m) {
             let deltas = [];
             let stdevs = [];
+            let count = 0;
             data.forEach(x => {
                 if (x.y != null) {
                     deltas.push(x.y - m);
+                    count++;
                 }
             });
             let sum = deltas.reduce((acc, curr) => acc + curr * curr, 0);
-            let stdev = Math.sqrt(sum);
+            let stdev = Math.sqrt(sum/count);
             data.forEach(x => {
                 if (x.y != null) {
                     stdevs.push([
