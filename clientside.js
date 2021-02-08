@@ -832,8 +832,32 @@ var DashboardPowerups = (function () {
             }, false);
         }
 
+        function mean() {
+            let mean = [];
+            let sum = 0;
+            let count = 0;
+            data.forEach(x => {
+                if (x.x != null) {
+                    sum += x.y;
+                    count++;
+                }
+            });
+            let m = sum/count;
+            data.forEach(x => {
+                if (x.x != null) {
+                    mean.push([x.x,m]);
+                }
+            });
+            chart.addSeries({
+                name: "Mean",
+                data: mean,
+                color: "#748cff"
+            }, false);
+        }
+
         simpleMovingAverage();
         expontialMovingAverage();
+        mean();
 
         return true;
     }
