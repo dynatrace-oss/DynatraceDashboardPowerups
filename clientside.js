@@ -810,30 +810,31 @@ var DashboardPowerups = (function () {
             chart.addSeries({
                 name: "SMA",
                 data: sma,
-                color: color
+                color: "#2ab6f4"
             }, false);
         }
 
         function expontialMovingAverage() {
             let ema = [];
-            ema[0] = [data[0].x,data[0].y];
+            ema[0] = [data[0].x, data[0].y];
             for (let i = 1; i < data.length; i++) {
-                let h = Math.max(i - 1,0);
+                if (data[i].y == null) break;
+                let h = Math.max(i - 1, 0);
                 let k = 2 / (n + 1)
 
                 let EMA = data[i].y * k + ema[h][1] * (1 - k);
-                ema.push([data[i].x,EMA]);
+                ema.push([data[i].x, EMA]);
             }
             chart.addSeries({
                 name: "EMA",
                 data: ema,
-                color: color
+                color: "#4fd5e0"
             }, false);
         }
 
         simpleMovingAverage();
         expontialMovingAverage();
-        
+
         return true;
     }
 
