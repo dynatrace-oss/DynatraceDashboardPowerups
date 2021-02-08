@@ -888,7 +888,7 @@ var DashboardPowerups = (function () {
         simpleMovingAverage();
         expontialMovingAverage();
         let m = mean();
-        let stdev = standardDeviation();
+        let stdev = standardDeviation(m);
 
         return true;
     }
