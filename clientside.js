@@ -763,7 +763,7 @@ var DashboardPowerups = (function () {
             x.remove(true);
         });
         let $container = $(chart.container);
-        let groups = chart.series.map(x=>x.group);
+        let groups = chart.series.map(x=>x.group.element);
         $container.find(`.highcharts-series`).each((i,el)=>{
             if(!groups.includes(el)){
                 $(el).remove();
