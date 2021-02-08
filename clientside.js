@@ -749,23 +749,23 @@ var DashboardPowerups = (function () {
         let color = (args.find(x => x[0] == "color") || [])[1] || "lightblue";
         let n = (args.find(x => x[0] == "n") || [])[1] || "20%";
         let data = chart.series[0].data;
-        if(n.includes("%")){
+        if (n.includes("%")) {
             n = Number(n.split('%')[0]) * 0.01;
             n = Math.round(n * data.length);
-        }else {
+        } else {
             n = Number(n);
         }
 
-        
-        
+
+
         //cleanup old added series, for some reason Product kills them in memory but not in SVG
-        chart.series.filter(x=>x.name=="SMA").forEach(x=>{
+        chart.series.filter(x => x.name == "SMA").forEach(x => {
             x.remove(true);
         });
         let $container = $(chart.container);
-        let groups = chart.series.map(x=>x.group.element);
-        $container.find(`.highcharts-series`).each((i,el)=>{
-            if(!groups.includes(el)){
+        let groups = chart.series.map(x => x.group.element);
+        $container.find(`.highcharts-series`).each((i, el) => {
+            if (!groups.includes(el)) {
                 $(el).remove();
             }
         });
@@ -785,32 +785,55 @@ var DashboardPowerups = (function () {
             itemHoverStyle: {
                 color: "white"
             }
-        },false);
+        }, false);
 
-        let sma = [];
-        for (let i = 0; i < data.length; i++) {
-            let smaPoint = [];
-            let sum = 0;
-            let start = Math.max(0,i-n+1);
-            let end = i;
-            let len = end - start +1;
-            for (let j = start; j <= end; j++) {
-                sum += data[j].y;
+        function simpleMovingAverage() {
+            let sma = [];
+            for (let i = 0; i < data.length; i++) {
+                let smaPoint = [];
+                let sum = 0;
+                let start = Math.max(0, i - n + 1);
+                let end = i;
+                let len = end - start + 1;
+                for (let j = start; j <= end; j++) {
+                    sum += data[j].y;
+                }
+                let avg = sum / len;
+                if (data[i].y != null) {
+                    smaPoint = [data[i].x, avg];
+                } else {
+                    smaPoint = [data[i].x, null];
+                }
+                sma.push(smaPoint);
             }
-            let avg = sum / len;
-            if(data[i].y!=null){
-                smaPoint = [data[i].x, avg];
-            } else {
-                smaPoint = [data[i].x, null];
-            }
-            sma.push(smaPoint);
-        }
 
             chart.addSeries({
                 name: "SMA",
                 data: sma,
                 color: color
             }, false);
+        }
+
+        function expontialMovingAverage() {
+            let ema = [];
+            ema[0] = [data[0].x,data[0].y];
+            for (let i = 1; i < data.length; i++) {
+                let h = Math.max(i - 1,0);
+                let k = 2 / (n + 1)
+
+                let EMA = data[i].y * k + ema[h][1] * (1 - k);
+                ema.push([data[i].x,EMA]);
+            }
+            chart.addSeries({
+                name: "EMA",
+                data: ema,
+                color: color
+            }, false);
+        }
+
+        simpleMovingAverage();
+        expontialMovingAverage();
+        
         return true;
     }
 
