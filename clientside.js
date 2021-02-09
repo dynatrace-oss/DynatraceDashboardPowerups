@@ -819,7 +819,7 @@ var DashboardPowerups = (function () {
             let ema = [];
             ema[0] = [data[0].x, data[0].y];
             for (let i = 1; i < data.length; i++) {
-                if (data[i].y == null) break;
+                if (data[i].y == null) continue;
                 let h = Math.max(i - 1, 0);
                 let k = 2 / (n + 1)
 
@@ -872,7 +872,7 @@ var DashboardPowerups = (function () {
                 }
             });
             let sum = deltas.reduce((acc, curr) => acc + curr * curr, 0);
-            let stdev = Math.sqrt(sum/count);
+            let stdev = Math.sqrt(sum / count);
             data.forEach(x => {
                 if (x.y != null) {
                     stdevs.push([
@@ -898,7 +898,7 @@ var DashboardPowerups = (function () {
             let deltas = [];
             let stdevs = [];
             let count = 0;
-            data.forEach((x,i) => {
+            data.forEach((x, i) => {
                 if (x.y != null) {
                     deltas.push(x.y - ema[i][1]);
                     count++;
@@ -914,7 +914,7 @@ var DashboardPowerups = (function () {
                 for (let j = start; j <= end; j++) {  //walk inside the window
                     sum += deltas[j] * deltas[j];
                 }
-                let stdev = Math.sqrt(sum/len);
+                let stdev = Math.sqrt(sum / len);
                 if (data[i].y != null) {
                     stdPoint = [
                         ema[i][0],
@@ -922,16 +922,56 @@ var DashboardPowerups = (function () {
                         ema[i][1] + stdev
                     ];
                     stdevs.push(stdPoint);
-                } 
+                }
             }
             chart.addSeries({
                 name: "Bands",
                 id: "Bands",
                 type: 'arearange',
                 data: stdevs,
-                color: "#748cff",
+                color: "#4fd5e0",
                 opacity: 0.7,
                 linkedTo: "EMA"
+            }, false);
+        }
+
+        function linearRegression() {
+            let x_sum = 0;
+            let y_sum = 0;
+            let xy_sum = 0;
+            let xx_sum = 0;
+            let count = 0;
+
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].y == null) continue;
+                let x = data[i].x;
+                let y = data[i].y;
+                x_sum += x;
+                y_sum += y;
+                xx_sum += x * x;
+                xy_sum += x * y;
+                count++;
+            }
+
+            // Calculate m and b for the line equation: y = m * x + b
+            let m = (count * xy_sum - x_sum * y_sum) / (count * xx_sum - x_sum * x_sum);
+            let b = (y_sum / count) - (m * x_sum) / count;
+            let line = [];
+
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].y == null) continue;
+                let point = [
+                    data[i].x,
+                    data[i].x * m + b
+                ];
+                line.push(point);
+            }
+
+            chart.addSeries({
+                name: "Linear",
+                id: "Linear",
+                data: line,
+                color: "#fd8232"
             }, false);
         }
 
