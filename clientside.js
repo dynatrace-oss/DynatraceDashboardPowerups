@@ -809,6 +809,7 @@ var DashboardPowerups = (function () {
 
             chart.addSeries({
                 name: "SMA",
+                id: "SMA",
                 data: sma,
                 color: "#2ab6f4"
             }, false);
@@ -827,9 +828,12 @@ var DashboardPowerups = (function () {
             }
             chart.addSeries({
                 name: "EMA",
+                id: "EMA",
                 data: ema,
                 color: "#4fd5e0"
             }, false);
+
+            return ema;
         }
 
         function mean() {
@@ -850,6 +854,7 @@ var DashboardPowerups = (function () {
             });
             chart.addSeries({
                 name: "Mean",
+                id: "Mean",
                 data: mean,
                 color: "#748cff"
             }, false);
@@ -880,17 +885,61 @@ var DashboardPowerups = (function () {
 
             chart.addSeries({
                 name: "Stdev",
+                id: "Stdev",
                 type: 'arearange',
                 data: stdevs,
                 color: "#748cff",
-                opacity: 0.7
+                opacity: 0.7,
+                linkedTo: "Mean"
+            }, false);
+        }
+
+        function bands(ema) {
+            let deltas = [];
+            let stdevs = [];
+            let count = 0;
+            ema.forEach((x,i) => {
+                if (x.y != null) {
+                    deltas.push(x.y - ema[i][1]);
+                    count++;
+                }
+            });
+
+            for (let i = 0; i < deltas.length; i++) { //walk the window
+                let stdPoint = [];
+                let sum = 0;
+                let start = Math.max(0, i - n + 1);
+                let end = i;
+                let len = end - start + 1;
+                for (let j = start; j <= end; j++) {  //walk inside the window
+                    sum += deltas[j] * deltas[j];
+                }
+                let stdev = Math.sqrt(sum/len);
+                if (data[i].y != null) {
+                    stdPoint = [
+                        ema[i][0],
+                        ema[i][1] - stdev,
+                        ema[i][1] + stdev
+                    ];
+                    stdevs.push(stdPoint);
+                } 
+            }
+            chart.addSeries({
+                name: "Bands",
+                id: "Bands",
+                type: 'arearange',
+                data: stdevs,
+                color: "#748cff",
+                opacity: 0.7,
+                linkedTo: "EMA"
             }, false);
         }
 
         simpleMovingAverage();
-        expontialMovingAverage();
+        let ema = expontialMovingAverage();
         let m = mean();
         let stdev = standardDeviation(m);
+        bands(ema);
 
         return true;
     }
