@@ -980,6 +980,7 @@ var DashboardPowerups = (function () {
         let m = mean();
         let stdev = standardDeviation(m);
         bands(ema);
+        linearRegression();
 
         return true;
     }
