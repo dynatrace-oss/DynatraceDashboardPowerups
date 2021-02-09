@@ -747,7 +747,7 @@ var DashboardPowerups = (function () {
         let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0];
         let args = argstring.split(";").map(x => x.split("="));
         let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
-        let colors = (args.find(x => x[0] == "colors") || [])[1] || "#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232";
+        let colors = ((args.find(x => x[0] == "colors") || [])[1] || "#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232").split(',');
         let n = (args.find(x => x[0] == "n") || [])[1] || "20%";
         let data = chart.series[0].data;
         if (n.includes("%")) {
