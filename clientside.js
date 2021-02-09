@@ -746,8 +746,8 @@ var DashboardPowerups = (function () {
         const IDs = ["SMA", "EMA", "Mean", "Stdev", "Bands", "Linear"];
         let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0];
         let args = argstring.split(";").map(x => x.split("="));
-        let alg = (args.find(x => x[0] == "alg") || [])[1] || "sma";
-        let color = (args.find(x => x[0] == "color") || [])[1] || "lightblue";
+        let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
+        let colors = (args.find(x => x[0] == "colors") || [])[1] || "#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232";
         let n = (args.find(x => x[0] == "n") || [])[1] || "20%";
         let data = chart.series[0].data;
         if (n.includes("%")) {
@@ -756,7 +756,6 @@ var DashboardPowerups = (function () {
         } else {
             n = Number(n);
         }
-
 
 
         //cleanup old added series, for some reason Product kills them in memory but not in SVG
@@ -790,6 +789,17 @@ var DashboardPowerups = (function () {
             }
         }, false);
 
+        function nextColor(){
+            let i = chart.series.length; //ie next element
+            i = i % colors.length; //radix
+            return colors[i];
+        }
+
+        function lastColor(){
+            let i = chart.series.length -1;
+            return chart.series[i].color; 
+        }
+
         function simpleMovingAverage() {
             let sma = [];
             for (let i = 0; i < data.length; i++) {
@@ -814,7 +824,8 @@ var DashboardPowerups = (function () {
                 name: "SMA",
                 id: "SMA",
                 data: sma,
-                color: "#2ab6f4"
+                color: nextColor(),
+                visible: analysis.includes("SMA")
             }, false);
         }
 
@@ -833,7 +844,8 @@ var DashboardPowerups = (function () {
                 name: "EMA",
                 id: "EMA",
                 data: ema,
-                color: "#4fd5e0"
+                color: nextColor(),
+                visible: analysis.includes("EMA")
             }, false);
 
             return ema;
@@ -859,7 +871,8 @@ var DashboardPowerups = (function () {
                 name: "Mean",
                 id: "Mean",
                 data: mean,
-                color: "#748cff"
+                color: nextColor(),
+                visible: analysis.includes("Mean")
             }, false);
             return m;
         }
@@ -891,9 +904,10 @@ var DashboardPowerups = (function () {
                 id: "Stdev",
                 type: 'arearange',
                 data: stdevs,
-                color: "#748cff",
-                opacity: 0.7,
-                linkedTo: "Mean"
+                color: nextColor(),
+                opacity: 0.5,
+                linkedTo: "Mean",
+                visible: analysis.includes("Mean")
             }, false);
         }
 
@@ -932,9 +946,10 @@ var DashboardPowerups = (function () {
                 id: "Bands",
                 type: 'arearange',
                 data: stdevs,
-                color: "#4fd5e0",
-                opacity: 0.7,
-                linkedTo: "EMA"
+                color: nextColor(),
+                opacity: 0.5,
+                linkedTo: "EMA",
+                visible: analysis.includes("EMA")
             }, false);
         }
 
@@ -974,7 +989,8 @@ var DashboardPowerups = (function () {
                 name: "Linear",
                 id: "Linear",
                 data: line,
-                color: "#fd8232"
+                color: nextColor(),
+                visible: analysis.includes("Linear")
             }, false);
         }
 
