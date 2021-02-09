@@ -898,7 +898,7 @@ var DashboardPowerups = (function () {
             let deltas = [];
             let stdevs = [];
             let count = 0;
-            ema.forEach((x,i) => {
+            data.forEach((x,i) => {
                 if (x.y != null) {
                     deltas.push(x.y - ema[i][1]);
                     count++;
