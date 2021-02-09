@@ -743,6 +743,7 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUforecast = function (chart, title) { //!PU(forecast):alg=sma;n=5;color=lightblue
+        const IDs = ["SMA", "EMA", "Mean", "Stdev", "Bands", "Linear"];
         let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0];
         let args = argstring.split(";").map(x => x.split("="));
         let alg = (args.find(x => x[0] == "alg") || [])[1] || "sma";
@@ -759,9 +760,11 @@ var DashboardPowerups = (function () {
 
 
         //cleanup old added series, for some reason Product kills them in memory but not in SVG
-        chart.series.filter(x => x.name == "SMA").forEach(x => {
-            x.remove(true);
-        });
+        chart.series
+            .filter(x => IDs.includes(x.id))
+            .forEach(x => {
+                x.remove(true);
+            });
         let $container = $(chart.container);
         let groups = chart.series.map(x => x.group.element);
         $container.find(`.highcharts-series`).each((i, el) => {
