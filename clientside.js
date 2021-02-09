@@ -904,7 +904,7 @@ var DashboardPowerups = (function () {
                 id: "Stdev",
                 type: 'arearange',
                 data: stdevs,
-                color: nextColor(),
+                color: chart.get('Mean').color,
                 opacity: 0.5,
                 linkedTo: "Mean",
                 visible: analysis.includes("Mean")
@@ -946,7 +946,7 @@ var DashboardPowerups = (function () {
                 id: "Bands",
                 type: 'arearange',
                 data: stdevs,
-                color: nextColor(),
+                color: chart.get("EMA").color,
                 opacity: 0.5,
                 linkedTo: "EMA",
                 visible: analysis.includes("EMA")
