@@ -1023,6 +1023,7 @@ var DashboardPowerups = (function () {
         }
 
         function linearProjection(linear) {
+            if (!p) return;
             let newLine = projection(linear);
             chart.addSeries({
                 name: "Projection",
@@ -1040,6 +1041,7 @@ var DashboardPowerups = (function () {
         }
 
         function rangeProjection(stdevs) {
+            if (!p) return;
             let highs = stdevs.map(x => [x[0], x[2]]);
             let lows = stdevs.map(x => [x[0], x[1]]);
             let highLR = linearRegression(highs);
