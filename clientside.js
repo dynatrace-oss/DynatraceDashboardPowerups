@@ -1043,7 +1043,7 @@ var DashboardPowerups = (function () {
             }, false);
 
             chart.axes.filter(x => x.isXAxis)[0].setExtremes(
-                null,
+                data[0].x,
                 newLine[newLine.length - 1][0],
                 false
             );
@@ -1077,7 +1077,7 @@ var DashboardPowerups = (function () {
             }, false);
 
             chart.axes.filter(x => x.isXAxis)[0].setExtremes(
-                null,
+                data[0].x,
                 range[range.length - 1][0],
                 false
             );
