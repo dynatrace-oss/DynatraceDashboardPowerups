@@ -63,6 +63,8 @@ To add Powerups to your existing dashboards, you may add markup text in your das
 - [mCompare](#mCompare)
 - [Image](#Image)
 - [Background](#Background)
+- [Funnelcolors](#FunnelColors)
+- [Forecast](#Forecast)
 
 ### Disclaimer
 If you manually add markup, it is best practice to add a Powerup disclaimer tile so that users who do not yet have the Extension, will be directed to install it. To add the disclaimer, add the following to your dashboard JSON:
@@ -458,7 +460,7 @@ Explanation:
 Example: 
 ![mcompare](Assets/mcompare.png)
 
-### FunneColors
+### FunnelColors
 This powerup retains the existing funnel design but allows changing the colors. You can either specify `colors` directly or specify a `scale` between two colors.
 
 Syntax:
@@ -472,3 +474,21 @@ Explanation:
 
 Example:
 ![funnelcolors](Assets/funnelcolors.png)
+
+### Forecast
+**(Preview)** This powerup provides basic statistical tools to analyze **one line chart**. Additionally, you can also forecast future values based on these tools.
+
+Syntax:
+- `!PU(forecast):` - denotes this powerup
+- `n=20%` - how many data points to use for sliding windows. Can either be integer values for specific number of data point or percentage for a portion of the current data points. Defaults to 20%.
+- `p=20%` - how many data point to project into the future. Integer values for specific number of points or percentage to base on chart size. Defaults to 0.
+- `analysis=Linear` - Analyses to default to on:
+    - `SMA` - Simple Moving Average based on an `n` sized moving window
+    - `EMA` - Exponential Moving Average based on an `n` sized moving window, includes 1 standard deviation range also based on `n`
+    - `Mean` - Determines the average or mean across the timeseries also showing 1 standard devation for the timeseries
+    - `Linear` - Linear regression of the timeseries
+    - `Projection` - (on by default if `p` > 0) Projects the Linear Regression `p` points into the future. Additionally, linear regressions are performed on +/- 1 standard deviation.
+- `colors=#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232` - colors to use for analysis series.
+
+Example:
+![forecast](Assets/forecast.png)
