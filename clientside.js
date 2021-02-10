@@ -1002,7 +1002,7 @@ var DashboardPowerups = (function () {
             chart.addSeries({
                 name: "Linear",
                 id: "Linear",
-                data: line,
+                data: line.line,
                 color: nextColor(),
                 visible: analysis.includes("Linear")
             }, false);
