@@ -1022,9 +1022,11 @@ var DashboardPowerups = (function () {
                 dashStyle: "Dash"
             }, false);
 
-            chart.axes.filter(x=>x.isXAxis)[0].update({
-                max: line[line.length-1][0]
-            });
+            chart.axes.filter(x=>x.isXAxis)[0].setExtremes(
+                null,
+                line[line.length-1][0],
+                false
+            );
         }
 
         simpleMovingAverage();
