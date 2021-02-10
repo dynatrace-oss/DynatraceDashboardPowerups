@@ -912,7 +912,7 @@ var DashboardPowerups = (function () {
                 type: 'arearange',
                 data: stdevs,
                 color: chart.get('Mean').color,
-                opacity: 0.5,
+                opacity: 0.3,
                 linkedTo: "Mean",
                 visible: analysis.includes("Mean")
             }, false);
@@ -954,7 +954,7 @@ var DashboardPowerups = (function () {
                 type: 'arearange',
                 data: stdevs,
                 color: chart.get("EMA").color,
-                opacity: 0.5,
+                opacity: 0.3,
                 linkedTo: "EMA",
                 visible: analysis.includes("EMA")
             }, false);
@@ -1062,7 +1062,7 @@ var DashboardPowerups = (function () {
                 color: nextColor(),
                 type: 'arearange',
                 linkedTo: "Projection",
-                opacity: 0.5
+                opacity: 0.3
             }, false);
 
             chart.axes.filter(x => x.isXAxis)[0].setExtremes(
