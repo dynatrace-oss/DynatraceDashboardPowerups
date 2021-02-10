@@ -971,8 +971,8 @@ var DashboardPowerups = (function () {
 
             for (let i = 0; i < dataSet.length; i++) {
                 if (dataSet[i].y == null) continue;
-                let x = dataSet[i].x;
-                let y = dataSet[i].y;
+                let x = dataSet[i][0];
+                let y = dataSet[i][1];
                 x_sum += x;
                 y_sum += y;
                 xx_sum += x * x;
@@ -986,10 +986,10 @@ var DashboardPowerups = (function () {
             let line = [];
 
             for (let i = 0; i < dataSet.length; i++) {
-                if (dataSet[i].y == null) continue;
+                if (dataSet[i][1] == null) continue;
                 let point = [
-                    dataSet[i].x,
-                    dataSet[i].x * m + b
+                    dataSet[i][0],
+                    dataSet[i][0] * m + b
                 ];
                 line.push(point);
             }
@@ -997,7 +997,8 @@ var DashboardPowerups = (function () {
         }
 
         function linearTrendLine() {
-            let line = linearRegression(data);
+            let dataSet = data.filter(i=>i.y!=null).map(i=>[i.x,i.y]);
+            let line = linearRegression(dataSet);
             chart.addSeries({
                 name: "Linear",
                 id: "Linear",
