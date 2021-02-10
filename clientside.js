@@ -708,6 +708,8 @@ var DashboardPowerups = (function () {
                 promises.push(p);
                 $.when(p).done(val => {
                     if (val) pu = true;
+                    lineChartPU();
+                    enableExporting();
                     powerupsFired['PU_FORECAST'] ? powerupsFired['PU_FORECAST']++ : powerupsFired['PU_FORECAST'] = 1;
                 });
             } else {
@@ -1049,14 +1051,14 @@ var DashboardPowerups = (function () {
             let highLine = projection(highLR);
             let lowLine = projection(lowLR);
             let range = [];
-            lowLine.forEach((x,i) => {
+            lowLine.forEach((x, i) => {
                 range.push([
                     x[0],
                     x[1],
                     highLine[i][1]
                 ]);
             });
-            
+
             chart.addSeries({
                 name: "RangeProjection",
                 id: "RangeProjection",
