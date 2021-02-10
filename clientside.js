@@ -1329,17 +1329,18 @@ var DashboardPowerups = (function () {
                     if (i != chartIndex) {
                         for (let s = 0; s < charts[i].series.length; s++) {
                             const points = charts[i].series[s].points;
-                            for (let p = 0; p < points.length; p++) {
-                                if (points[p].x === x
-                                    && points[p].series.xAxis
-                                    && points[p].series.yAxis
-                                ) {
-                                    //points[p].onMouseOver();
-                                    points[p].series.xAxis.drawCrosshair(undefined, points[p]);
-                                    points[p].series.yAxis.drawCrosshair(undefined, points[p]);
-                                    break;
+                            if (points && points.length)
+                                for (let p = 0; p < points.length; p++) {
+                                    if (points[p].x === x
+                                        && points[p].series.xAxis
+                                        && points[p].series.yAxis
+                                    ) {
+                                        //points[p].onMouseOver();
+                                        points[p].series.xAxis.drawCrosshair(undefined, points[p]);
+                                        points[p].series.yAxis.drawCrosshair(undefined, points[p]);
+                                        break;
+                                    }
                                 }
-                            }
                         }
 
                     } else { //no need to anything on current chart
