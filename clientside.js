@@ -747,6 +747,7 @@ var DashboardPowerups = (function () {
     pub.PUforecast = function (chart, title) { //!PU(forecast):alg=sma;n=5;color=lightblue
         const IDs = ["SMA", "EMA", "Mean", "Stdev", "Bands", "Linear"];
         let data = chart.series[0].data;
+        let dataSet = data.filter(i => i.y != null).map(i => [i.x, i.y]);
         let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0];
         let args = argstring.split(";").map(x => x.split("="));
         let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
@@ -1006,7 +1007,6 @@ var DashboardPowerups = (function () {
         }
 
         function linearTrendLine() {
-            let dataSet = data.filter(i => i.y != null).map(i => [i.x, i.y]);
             let line = linearRegression(dataSet);
             chart.addSeries({
                 name: "Linear",
@@ -1089,9 +1089,9 @@ var DashboardPowerups = (function () {
                     && x.series.length)
                 .forEach(x => {
                     let tick = x.tickInterval;
-                    let min = Math.min.apply(Math, data.map(x => x.y));
+                    let min = Math.min.apply(Math, dataSet.map(x => x[1]));
                     min = Math.round((min * .9) / tick) * tick;
-                    let max = Math.max.apply(Math, data.map(x => x.y));
+                    let max = Math.max.apply(Math, dataSet.map(x => x[1]));
                     max = Math.round((max * 1.1) / tick) * tick;
                     x.setExtremes(min, max, false);
                 })
