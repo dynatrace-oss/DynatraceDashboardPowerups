@@ -1060,7 +1060,7 @@ var DashboardPowerups = (function () {
                 id: "RangeProjection",
                 data: range,
                 color: nextColor(),
-                dashStyle: "shortDash",
+                type: 'arearange',
                 linkedTo: "Projection",
                 opacity: 0.5
             }, false);
