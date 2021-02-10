@@ -1088,8 +1088,9 @@ var DashboardPowerups = (function () {
                 .filter(x => typeof (x.isXAxis) == "undefined"
                     && x.series.length)
                 .forEach(x => {
-                    let min = x.dataMin * .9;
-                    let max = x.dataMax * 1.1;
+                    let tick = x.tickInterval;
+                    let min = Math.ceil( (x.dataMin * .9)/tick) * tick;
+                    let max = Math.floor( (x.dataMax * 1.1)/tick) * tick;
                     x.setExtremes(min,max,false);
                 })
         }
@@ -1103,7 +1104,7 @@ var DashboardPowerups = (function () {
         linearProjection(linear);
         rangeProjection(stdevs);
         updateYAxis();
-        
+
         return true;
     }
 
