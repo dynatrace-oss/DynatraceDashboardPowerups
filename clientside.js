@@ -744,17 +744,24 @@ var DashboardPowerups = (function () {
 
     pub.PUforecast = function (chart, title) { //!PU(forecast):alg=sma;n=5;color=lightblue
         const IDs = ["SMA", "EMA", "Mean", "Stdev", "Bands", "Linear"];
+        let data = chart.series[0].data;
         let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0];
         let args = argstring.split(";").map(x => x.split("="));
         let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
         let colors = ((args.find(x => x[0] == "colors") || [])[1] || "#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232").split(',');
         let n = (args.find(x => x[0] == "n") || [])[1] || "20%";
-        let data = chart.series[0].data;
         if (n.includes("%")) {
             n = Number(n.split('%')[0]) * 0.01;
             n = Math.round(n * data.length);
         } else {
             n = Number(n);
+        }
+        let p = (args.find(x => x[0] == "p") || [])[1] || "0";
+        if (n.includes("%")) {
+            p = Number(p.split('%')[0]) * 0.01;
+            p = Math.round(p * data.length);
+        } else {
+            p = Number(p);
         }
 
 
@@ -992,6 +999,28 @@ var DashboardPowerups = (function () {
                 color: nextColor(),
                 visible: analysis.includes("Linear")
             }, false);
+
+            return {m:m,b:b,line:line};
+        }
+
+        function projection(linear){
+            if(!p)return;
+            let l = linear.line.length;
+            let d = linear.line[l-1] - linear.line[l-2];
+            let line = [];
+            for(let i =1; i<=p; i++){
+                let x = linear.line[l-1] + i * d;
+                let y = linear.m * x + linear.b;
+                line.push([x,y]);
+            }
+
+            chart.addSeries({
+                name: "Projection",
+                id: "Projection",
+                data: line,
+                color: nextColor(),
+                dashStyle: "Dash"
+            }, false);
         }
 
         simpleMovingAverage();
@@ -999,7 +1028,8 @@ var DashboardPowerups = (function () {
         let m = mean();
         let stdev = standardDeviation(m);
         bands(ema);
-        linearRegression();
+        let linear = linearRegression();
+        projection(linear);
 
         return true;
     }
