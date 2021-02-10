@@ -774,7 +774,7 @@ var DashboardPowerups = (function () {
                 x.remove(true);
             });
         chart.series
-            .filter(x => typeof(x.id)=="undefined" && x.index) //remove any other series except for the 1st source series
+            .filter(x => typeof (x.id) == "undefined" && x.index) //remove any other series except for the 1st source series
             .forEach(x => {
                 x.remove(true);
             });
@@ -1083,6 +1083,17 @@ var DashboardPowerups = (function () {
             );
         }
 
+        function updateYAxis() {
+            chart.axes
+                .filter(x => typeof (x.isXAxis) == "undefined"
+                    && x.series.length)
+                .forEach(x => {
+                    let min = x.dataMin * .9;
+                    let max = x.dataMax * 1.1;
+                    x.setExtremes(min,max,false);
+                })
+        }
+
         simpleMovingAverage();
         let ema = expontialMovingAverage();
         let m = mean();
@@ -1091,7 +1102,8 @@ var DashboardPowerups = (function () {
         let linear = linearTrendLine();
         linearProjection(linear);
         rangeProjection(stdevs);
-
+        updateYAxis();
+        
         return true;
     }
 
