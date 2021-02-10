@@ -1047,12 +1047,14 @@ var DashboardPowerups = (function () {
             let highLine = projection(highLR);
             let lowLine = projection(lowLR);
             let range = [];
-            lowLine.forEach(i => {
-                range[i[0]] = i[1];
+            lowLine.forEach((x,i) => {
+                range.push([
+                    x[0],
+                    x[1],
+                    highLine[i][1]
+                ]);
             });
-            highLine.forEach(i => {
-                range[i[0]] = i[1];
-            });
+            
             chart.addSeries({
                 name: "RangeProjection",
                 id: "RangeProjection",
