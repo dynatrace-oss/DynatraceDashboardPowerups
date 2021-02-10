@@ -796,15 +796,15 @@ var DashboardPowerups = (function () {
             }
         }, false);
 
-        function nextColor(){
+        function nextColor() {
             let i = chart.series.length; //ie next element
             i = i % colors.length; //radix
             return colors[i];
         }
 
-        function lastColor(){
-            let i = chart.series.length -1;
-            return chart.series[i].color; 
+        function lastColor() {
+            let i = chart.series.length - 1;
+            return chart.series[i].color;
         }
 
         function simpleMovingAverage() {
@@ -993,11 +993,11 @@ var DashboardPowerups = (function () {
                 ];
                 line.push(point);
             }
-            return {m:m,b:b,line:line};
+            return { m: m, b: b, line: line };
         }
 
         function linearTrendLine() {
-            let dataSet = data.filter(i=>i.y!=null).map(i=>[i.x,i.y]);
+            let dataSet = data.filter(i => i.y != null).map(i => [i.x, i.y]);
             let line = linearRegression(dataSet);
             chart.addSeries({
                 name: "Linear",
@@ -1009,20 +1009,20 @@ var DashboardPowerups = (function () {
             return line;
         }
 
-        function projection(linear){
-            if(!p)return;
+        function projection(linear) {
+            if (!p) return;
             let l = linear.line.length;
-            let d = linear.line[l-1][0] - linear.line[l-2][0];
+            let d = linear.line[l - 1][0] - linear.line[l - 2][0];
             let newLine = [];
-            for(let i =1; i<=p; i++){
-                let x = linear.line[l-1][0] + i * d;
+            for (let i = 1; i <= p; i++) {
+                let x = linear.line[l - 1][0] + i * d;
                 let y = linear.m * x + linear.b;
-                newLine.push([x,y]);
+                newLine.push([x, y]);
             }
             return newLine;
         }
 
-        function linearProjection(linear){
+        function linearProjection(linear) {
             let newLine = projection(linear);
             chart.addSeries({
                 name: "Projection",
@@ -1032,36 +1032,40 @@ var DashboardPowerups = (function () {
                 dashStyle: "shortDash"
             }, false);
 
-            chart.axes.filter(x=>x.isXAxis)[0].setExtremes(
+            chart.axes.filter(x => x.isXAxis)[0].setExtremes(
                 null,
-                newLine[newLine.length-1][0],
+                newLine[newLine.length - 1][0],
                 false
             );
         }
 
-        function rangeProjection(stdevs){
-            let highs = stdevs.map(x=>[x[0],x[2]]);
-            let lows = stdevs.map(x=>[x[0],x[1]]);
+        function rangeProjection(stdevs) {
+            let highs = stdevs.map(x => [x[0], x[2]]);
+            let lows = stdevs.map(x => [x[0], x[1]]);
             let highLR = linearRegression(highs);
             let lowLR = linearRegression(lows);
             let highLine = projection(highLR);
             let lowLine = projection(lowLR);
             let range = [];
-            lowLine.forEach(i=>{range[i[0]]=range[i[1]]});
-            highLine.forEach(i=>{range[i[0]]=range[i[1]]});
+            lowLine.forEach(i => {
+                range[i[0]] = i[1];
+            });
+            highLine.forEach(i => {
+                range[i[0]] = i[1];
+            });
             chart.addSeries({
                 name: "RangeProjection",
                 id: "RangeProjection",
                 data: range,
                 color: nextColor(),
                 dashStyle: "shortDash",
-                linkedTo:"Projection",
+                linkedTo: "Projection",
                 opacity: 0.5
             }, false);
 
-            chart.axes.filter(x=>x.isXAxis)[0].setExtremes(
+            chart.axes.filter(x => x.isXAxis)[0].setExtremes(
                 null,
-                range[range.length-1][0],
+                range[range.length - 1][0],
                 false
             );
         }
