@@ -958,19 +958,21 @@ var DashboardPowerups = (function () {
                 linkedTo: "EMA",
                 visible: analysis.includes("EMA")
             }, false);
+
+            return stdevs;
         }
 
-        function linearRegression() {
+        function linearRegression(dataSet) {
             let x_sum = 0;
             let y_sum = 0;
             let xy_sum = 0;
             let xx_sum = 0;
             let count = 0;
 
-            for (let i = 0; i < data.length; i++) {
-                if (data[i].y == null) continue;
-                let x = data[i].x;
-                let y = data[i].y;
+            for (let i = 0; i < dataSet.length; i++) {
+                if (dataSet[i].y == null) continue;
+                let x = dataSet[i].x;
+                let y = dataSet[i].y;
                 x_sum += x;
                 y_sum += y;
                 xx_sum += x * x;
@@ -983,15 +985,19 @@ var DashboardPowerups = (function () {
             let b = (y_sum / count) - (m * x_sum) / count;
             let line = [];
 
-            for (let i = 0; i < data.length; i++) {
-                if (data[i].y == null) continue;
+            for (let i = 0; i < dataSet.length; i++) {
+                if (dataSet[i].y == null) continue;
                 let point = [
-                    data[i].x,
-                    data[i].x * m + b
+                    dataSet[i].x,
+                    dataSet[i].x * m + b
                 ];
                 line.push(point);
             }
+            return {m:m,b:b,line:line};
+        }
 
+        function linearTrendLine() {
+            let line = linearRegression(data);
             chart.addSeries({
                 name: "Linear",
                 id: "Linear",
@@ -999,32 +1005,62 @@ var DashboardPowerups = (function () {
                 color: nextColor(),
                 visible: analysis.includes("Linear")
             }, false);
-
-            return {m:m,b:b,line:line};
+            return line;
         }
 
         function projection(linear){
             if(!p)return;
             let l = linear.line.length;
             let d = linear.line[l-1][0] - linear.line[l-2][0];
-            let line = [];
+            let newLine = [];
             for(let i =1; i<=p; i++){
                 let x = linear.line[l-1][0] + i * d;
                 let y = linear.m * x + linear.b;
-                line.push([x,y]);
+                newLine.push([x,y]);
             }
+            return newLine;
+        }
 
+        function linearProjection(linear){
+            let newLine = projection(linear);
             chart.addSeries({
                 name: "Projection",
                 id: "Projection",
-                data: line,
+                data: newLine,
                 color: nextColor(),
-                dashStyle: "Dash"
+                dashStyle: "shortDash"
             }, false);
 
             chart.axes.filter(x=>x.isXAxis)[0].setExtremes(
                 null,
-                line[line.length-1][0],
+                newLine[newLine.length-1][0],
+                false
+            );
+        }
+
+        function rangeProjection(stdevs){
+            let highs = stdevs.map(x=>[x[0],x[2]]);
+            let lows = stdevs.map(x=>[x[0],x[1]]);
+            let highLR = linearRegression(highs);
+            let lowLR = linearRegression(lows);
+            let highLine = projection(highLR);
+            let lowLine = projection(lowLR);
+            let range = [];
+            lowLine.forEach(i=>{range[i[0]]=range[i[1]]});
+            highLine.forEach(i=>{range[i[0]]=range[i[1]]});
+            chart.addSeries({
+                name: "RangeProjection",
+                id: "RangeProjection",
+                data: range,
+                color: nextColor(),
+                dashStyle: "shortDash",
+                linkedTo:"Projection",
+                opacity: 0.5
+            }, false);
+
+            chart.axes.filter(x=>x.isXAxis)[0].setExtremes(
+                null,
+                range[range.length-1][0],
                 false
             );
         }
@@ -1033,9 +1069,10 @@ var DashboardPowerups = (function () {
         let ema = expontialMovingAverage();
         let m = mean();
         let stdev = standardDeviation(m);
-        bands(ema);
-        let linear = linearRegression();
-        projection(linear);
+        let stdevs = bands(ema);
+        let linear = linearTrendLine();
+        linearProjection(linear);
+        rangeProjection(stdevs);
 
         return true;
     }
