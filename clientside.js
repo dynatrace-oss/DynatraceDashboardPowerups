@@ -970,7 +970,7 @@ var DashboardPowerups = (function () {
             let count = 0;
 
             for (let i = 0; i < dataSet.length; i++) {
-                if (dataSet[i].y == null) continue;
+                if (dataSet[i][1] == null) continue;
                 let x = dataSet[i][0];
                 let y = dataSet[i][1];
                 x_sum += x;
