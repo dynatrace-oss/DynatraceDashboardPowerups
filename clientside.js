@@ -1021,6 +1021,10 @@ var DashboardPowerups = (function () {
                 color: nextColor(),
                 dashStyle: "Dash"
             }, false);
+
+            chart.axes.filter(x=>x.isXAxis)[0].update({
+                max: line[line.length-1][1]
+            });
         }
 
         simpleMovingAverage();
