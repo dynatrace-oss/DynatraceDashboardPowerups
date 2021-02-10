@@ -1089,8 +1089,8 @@ var DashboardPowerups = (function () {
                     && x.series.length)
                 .forEach(x => {
                     let tick = x.tickInterval;
-                    let min = Math.ceil( (x.dataMin * .9)/tick) * tick;
-                    let max = Math.floor( (x.dataMax * 1.1)/tick) * tick;
+                    let min = Math.round( (x.dataMin * .9)/tick) * tick;
+                    let max = Math.round( (x.dataMax * 1.1)/tick) * tick;
                     x.setExtremes(min,max,false);
                 })
         }
