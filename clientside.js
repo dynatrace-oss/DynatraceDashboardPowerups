@@ -773,9 +773,14 @@ var DashboardPowerups = (function () {
             .forEach(x => {
                 x.remove(true);
             });
+        chart.series
+            .filter(x => typeof(x.id)=="undefined" && x.index) //remove any other series except for the 1st source series
+            .forEach(x => {
+                x.remove(true);
+            });
         let $container = $(chart.container);
         let groups = chart.series
-            .filter(x => typeof(x.group) != "undefined")
+            .filter(x => typeof (x.group) != "undefined")
             .map(x => x.group.element);
         $container.find(`.highcharts-series`).each((i, el) => {
             if (!groups.includes(el)) {
