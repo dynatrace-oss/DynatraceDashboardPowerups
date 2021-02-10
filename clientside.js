@@ -757,7 +757,7 @@ var DashboardPowerups = (function () {
             n = Number(n);
         }
         let p = (args.find(x => x[0] == "p") || [])[1] || "0";
-        if (n.includes("%")) {
+        if (p.includes("%")) {
             p = Number(p.split('%')[0]) * 0.01;
             p = Math.round(p * data.length);
         } else {
