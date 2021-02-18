@@ -1024,7 +1024,7 @@ var DashboardPowerups = (function () {
         }
 
         function projection(linear) {
-            if (!p) return;
+            if (!p || typeof(linear)=="undefined") return;
             let l = linear.line.length;
             if (!l) return;
             let d = linear.line[l - 1][0] - linear.line[l - 2][0];
