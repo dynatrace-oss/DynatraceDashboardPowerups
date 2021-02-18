@@ -3883,29 +3883,39 @@ var DashboardPowerups = (function () {
         if (!pub.config.beaconOptOut) startBeacon();
 
         try {
-            promises.push(pub.PUbackground());
-            promises.push(pub.extDisclaimer());
+            //data gathering operations
+            promises.push(pub.PUvlookup());
+            promises.push(pub.PUstdev());
+
+            //data processing operations
+            promises.push(pub.PUMath());
+            promises.push(pub.puDate());
+            
+            //visualize data
             promises.push(pub.PUHighcharts());
-            promises.push(pub.bannerPowerUp());
             promises.push(pub.colorPowerUp());
             promises.push(pub.updateSVGPowerUp());
             promises.push(pub.svgPowerUp());
             promises.push(pub.mapPowerUp());
             promises.push(pub.PUfunnel());
-            promises.push(pub.PUMath());
-            promises.push(pub.puDate());
             promises.push(pub.PUCompare());
             promises.push(pub.PUmCompare());
-            promises.push(pub.PUvlookup());
-            promises.push(pub.PUstdev());
             promises.push(pub.PUtable());
-            promises.push(pub.PUimage());
             promises.push(pub.PUfunnelColors());
+            waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
+
+            //misc visualizations
+            promises.push(pub.PUbackground());
+            promises.push(pub.extDisclaimer());
+            promises.push(pub.bannerPowerUp());
+            promises.push(pub.PUimage());
             promises.push(pub.sunburnMode());
             promises.push(pub.hideEarlyAdopter());
             promises.push(pub.fixPublicDashboards());
+
+            //cleanup activities
             pub.loadChartSync();
-            waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
+
         } catch (e) {
             crashBeacon(e);
             console.warn("POWERUP: ERROR ", e);
