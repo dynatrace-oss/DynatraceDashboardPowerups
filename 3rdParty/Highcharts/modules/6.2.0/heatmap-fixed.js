@@ -994,6 +994,7 @@
 		     * them from showing up individually.
 		     */
 		    addEvent(Legend, 'afterGetAllItems', function (e) {
+				if(typeof(this.chart.colorAxis)=="undefined")return; //LHocker avoid crashes in dereference nonexistant colorAxis
 		        var colorAxisItems = [],
 		            colorAxis = this.chart.colorAxis[0],
 		            i;

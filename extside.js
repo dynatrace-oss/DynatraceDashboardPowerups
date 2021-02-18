@@ -276,7 +276,8 @@ if (typeof (INJECTED) == "undefined") {
 
     function injectHighchartsModules(config) {
         if (config.Powerups.heatmapPU) {
-            injectHighchartsModule("heatmap");
+            //injectHighchartsModule("heatmap");
+            injectHighchartsModule("heatmap-fixed");
             injectClientsideString(`
             //Highcharts Heatmap bug workaround
             if(Highcharts && Highcharts.charts)
