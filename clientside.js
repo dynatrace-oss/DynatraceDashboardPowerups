@@ -796,7 +796,7 @@ var DashboardPowerups = (function () {
         let $tile = $container.parents(TILE_SELECTOR);
         let $legend = $tile.find(LEGEND_SELECTOR).hide();
         let seriesName = $legend.find(`[title]`).eq(0).attr('title');
-        chart.series[0].name = seriesName;
+        if(seriesName != null) chart.series[0].name = seriesName;
         chart.legend.update({
             enabled: true,
             itemStyle: {
