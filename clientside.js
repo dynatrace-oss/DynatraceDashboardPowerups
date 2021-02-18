@@ -1061,8 +1061,8 @@ var DashboardPowerups = (function () {
             let lows = stdevs.map(x => [x[0], x[1]]);
             let highLR = linearRegression(highs);
             let lowLR = linearRegression(lows);
-            let highLine = projection(highLR);
-            let lowLine = projection(lowLR);
+            let highLine = projection(highLR) || [];
+            let lowLine = projection(lowLR) || [];
             let range = [];
             lowLine.forEach((x, i) => {
                 range.push([
