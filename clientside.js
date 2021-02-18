@@ -592,7 +592,8 @@ var DashboardPowerups = (function () {
                 pu = true;
             }
             //if (!compare(TOOLTIP_OPTS, chart.tooltip.options)) {
-            if (typeof (chart.tooltip.options.userOptions) == "undefined") {  //do not override built-in tooltips
+            if (typeof (chart.tooltip.options.userOptions) == "undefined"
+                || !chart.tooltip.options.userOptions.enabled) {  //do not override built-in tooltips
                 chart.update({ tooltip: TOOLTIP_OPTS }, false);
                 pu = true;
             }
@@ -613,7 +614,8 @@ var DashboardPowerups = (function () {
                     series.update(PIE_SERIES_OPTS, false);
                     pu = true;
                 }
-                if (typeof (chart.tooltip.options.userOptions) == "undefined") { //do not override built-in tooltips
+                if (typeof (chart.tooltip.options.userOptions) == "undefined"
+                    || !chart.tooltip.options.userOptions.enabled) { //do not override built-in tooltips
                     chart.update({ tooltip: PIE_TOOLTIP_OPTS }, false);
                     pu = true;
                 }
