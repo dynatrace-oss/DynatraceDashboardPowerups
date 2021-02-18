@@ -1026,7 +1026,7 @@ var DashboardPowerups = (function () {
         function projection(linear) {
             if (!p || typeof(linear)=="undefined") return;
             let l = linear.line.length;
-            if (!l) return;
+            if (l<2) return;
             let d = linear.line[l - 1][0] - linear.line[l - 2][0];
             let newLine = [];
             for (let i = 1; i <= p; i++) {
