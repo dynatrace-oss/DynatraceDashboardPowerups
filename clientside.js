@@ -857,6 +857,7 @@ var DashboardPowerups = (function () {
                 let h = Math.max(i - 1, 0);
                 let k = 2 / (n + 1)
 
+                if (typeof (ema[h]) == "undefined") continue;
                 let EMA = data[i].y * k + ema[h][1] * (1 - k);
                 ema.push([data[i].x, EMA]);
             }
