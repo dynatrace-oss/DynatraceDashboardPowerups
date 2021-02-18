@@ -82,7 +82,8 @@ var DashboardPowerups = (function () {
             return this.points.reduce(function (s, point) {
                 let n = point.series.name;
                 let i = n.indexOf('¦') || "APPLICATION-0000000000000000".length;
-                let sn = (n.substring(0, i) || n); //worst case use the existing series name
+                let sn = n.substring(0, i);
+                if (!sn) sn = n; //worst case use the existing series name
 
                 let $container = $(point.series.chart.container);
                 let color = point.series.color;
