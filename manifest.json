@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Dynatrace Dashboard Powerups",
     "description": "Power-up existing dashboards with cool experimental features",
-    "version": "1.38",
+    "version": "1.39",
     "author": "Lucas Hocker",
     "background": {
         "scripts": [
