@@ -796,8 +796,8 @@ var DashboardPowerups = (function () {
         let $tile = $container.parents(TILE_SELECTOR);
         let $legend = $tile.find(LEGEND_SELECTOR).hide();
         let seriesName = $legend.find(`[title]`).eq(0).attr('title');
-        if(seriesName != null) {
-            chart.series[0].update({name: seriesName},false);
+        if (seriesName != null) {
+            chart.series[0].update({ name: seriesName }, false);
         }
         chart.legend.update({
             enabled: true,
@@ -1026,9 +1026,9 @@ var DashboardPowerups = (function () {
         }
 
         function projection(linear) {
-            if (!p || typeof(linear)=="undefined") return;
+            if (!p || typeof (linear) == "undefined") return;
             let l = linear.line.length;
-            if (l<2) return;
+            if (l < 2) return;
             let d = linear.line[l - 1][0] - linear.line[l - 2][0];
             let newLine = [];
             for (let i = 1; i <= p; i++) {
@@ -1706,7 +1706,6 @@ var DashboardPowerups = (function () {
 
     pub.findLinkedVal = function (link) {
         //find val
-        //TODO: refactor to call findLinkedTile
         let link_text = `!PU\\(link\\):` + link;
         let re = new RegExp(link_text + '(?!\\w)');
         let val;
@@ -1716,8 +1715,20 @@ var DashboardPowerups = (function () {
             if (re.test($linktitle.text())) {
                 let $linktile = $linktitle.parents(".grid-tile");
                 val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g, ''));
+                return true;
             }
         });
+
+        if (typeof val == "undefined")
+            $(MARKDOWN_SELECTOR).each((i_link, el_link) => {
+                let $linkmd = $(el_link);
+
+                if (re.test($linkmd.text())) {
+                    let $linktile = $linkmd.parents(".grid-tile");
+                    val = Number($linktile.find(`h1`).text().replace(/\D+/g, ''));
+                    return true;
+                }
+            });
         if (typeof val == "undefined") {
             console.log("Powerup: ERROR - unable to match link: " + link_text);
             return undefined;
@@ -3893,7 +3904,7 @@ var DashboardPowerups = (function () {
             //data processing operations
             promises.push(pub.PUMath());
             promises.push(pub.puDate());
-            
+
             //visualize data
             promises.push(pub.PUHighcharts());
             promises.push(pub.colorPowerUp());
