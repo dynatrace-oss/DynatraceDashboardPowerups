@@ -1715,7 +1715,7 @@ var DashboardPowerups = (function () {
             if (re.test($linktitle.text())) {
                 let $linktile = $linktitle.parents(".grid-tile");
                 val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g, ''));
-                return true;
+                //return true;
             }
         });
 
@@ -1726,7 +1726,7 @@ var DashboardPowerups = (function () {
                 if (re.test($linkmd.text())) {
                     let $linktile = $linkmd.parents(".grid-tile");
                     val = Number($linktile.find(`h1`).text().replace(/\D+/g, ''));
-                    return true;
+                    //return true;
                 }
             });
         if (typeof val == "undefined") {
