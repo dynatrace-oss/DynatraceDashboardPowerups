@@ -3795,6 +3795,7 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUbackground = function () {
+        let backgrounded = false;
         $(MARKDOWN_SELECTOR).each((i, el) => {
             let $markdown = $(el);
             let $tile = $markdown.parents(TILE_SELECTOR);
@@ -3815,8 +3816,15 @@ var DashboardPowerups = (function () {
                     }, "*");
                 $markdown.hide();
                 powerupsFired['PU_BACKGROUND'] ? powerupsFired['PU_BACKGROUND']++ : powerupsFired['PU_BACKGROUND'] = 1;
+                backgrounded = true;
+                return true;
             }
-        })
+        });
+        if(!backgrounded){  //if dashboard changed and new dashboard doesn't have background remove old one
+            $(`.powerupBackground`)
+                .css(`background-image`,"")
+                .removeClass('powerupBackground');
+        }
     }
 
     pub.PUimage = function () {
