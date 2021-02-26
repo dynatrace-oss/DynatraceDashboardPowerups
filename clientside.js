@@ -3339,8 +3339,9 @@ var DashboardPowerups = (function () {
                 lineWidth: 0,
                 tickWidth: 0,
                 minorTickInterval: null,
-                tickAmount: 2,
-                //tickInterval: 1,
+                //tickAmount: 2,
+                tickPositioner: ()=>{return [min,max]},
+                tickInterval: (max-min)/10,
                 labels: {
                     y: 16,
                     style: {
