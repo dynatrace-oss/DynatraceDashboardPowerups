@@ -3290,9 +3290,10 @@ var DashboardPowerups = (function () {
 
         //cleanup any old gauges
         $tile.find(`.powerupGauge`).each((el, i) => {
+            let oldcontainer = $(el).find(`.highcharts-container`).eq(0);
             let oldcharts = Highcharts.charts
                 .filter(x => typeof (x) != "undefined")
-                .filter(x => x.container === el);
+                .filter(x => x.container === oldcontainer);
             if (oldcharts.length)
                 oldcharts.forEach(oc => oc.destroy());
             $(el).remove();
@@ -3341,7 +3342,7 @@ var DashboardPowerups = (function () {
                 tickWidth: 0,
                 minorTickInterval: null,
                 //tickAmount: 2,
-                tickPositioner: () => { return positions },
+                tickPositioner: () => { return [min,max] },
                 //tickInterval: (max-min)/100,
                 labels: {
                     y: 16,
