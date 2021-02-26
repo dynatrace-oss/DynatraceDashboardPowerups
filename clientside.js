@@ -3294,7 +3294,7 @@ var DashboardPowerups = (function () {
             if(oldcontainer){
                 let oldcharts = Highcharts.charts
                 .filter(x => typeof (x) != "undefined")
-                .filter(x => x.container === el);
+                .filter(x => x.container === oldcontainer);
             if (oldcharts.length)
                 oldcharts.forEach(oc => oc.destroy());
             }
