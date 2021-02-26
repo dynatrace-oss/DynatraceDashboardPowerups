@@ -3290,7 +3290,7 @@ var DashboardPowerups = (function () {
 
         //cleanup any old gauges
         $tile.find(`.powerupGauge`).each((el,i)=>{
-            let oldcharts = Highcharts
+            let oldcharts = Highcharts.charts
                 .filter(x=>typeof(x)!="undefined")
                 .filter(x=>x.container===el);
             if(oldcharts.length)
@@ -3339,7 +3339,7 @@ var DashboardPowerups = (function () {
                 lineWidth: 0,
                 tickWidth: 0,
                 minorTickInterval: null,
-                tickAmount: 10,
+                tickAmount: 2,
                 //tickInterval: 1,
                 labels: {
                     y: 16,
