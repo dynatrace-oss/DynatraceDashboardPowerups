@@ -3288,7 +3288,15 @@ var DashboardPowerups = (function () {
             stops.push(stop);
         });
 
-
+        //cleanup any old gauges
+        $(`.powerupGauge`).each((el,i)=>{
+            let oldcharts = Highcharts
+                .filter(x=>typeof(x)!="undefined")
+                .filter(x=>x.container===el);
+            if(oldcharts.length)
+                oldcharts.forEach(oc=>oc.destroy());
+            $(el).remove();
+        });
 
         //swap
         $panel.hide();
