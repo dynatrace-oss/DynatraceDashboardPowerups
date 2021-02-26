@@ -3309,7 +3309,11 @@ var DashboardPowerups = (function () {
         let $newContainer = $("<div>")
             .addClass("powerupGauge")
             .insertAfter($panel);
-        let positions = [min, val, max].sort((a, b) => a - b);
+        let positions = [min, val, max];
+        stops.forEach(s=>{
+            positions.push(s[0]*max);
+        });
+        positions = positions.sort((a, b) => a - b);
 
         //new chart
         //default options
@@ -3341,10 +3345,11 @@ var DashboardPowerups = (function () {
             yAxis: {
                 stops: stops,
                 lineWidth: 0,
-                tickWidth: 0,
+                tickWidth: 1,
                 minorTickInterval: null,
                 //tickAmount: 2,
-                tickPositioner: () => { return [min,max] },
+                //tickPositioner: () => { return [min,max] },
+                tickPositioner: () => { return positions },
                 //tickInterval: (max-min)/100,
                 labels: {
                     y: 16,
