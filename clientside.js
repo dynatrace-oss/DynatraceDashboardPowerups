@@ -3290,12 +3290,14 @@ var DashboardPowerups = (function () {
 
         //cleanup any old gauges
         $tile.find(`.powerupGauge`).each((el, i) => {
-            let oldcontainer = $(el).find(`.highcharts-container`).eq(0);
-            let oldcharts = Highcharts.charts
+            let oldcontainer = $(el).find(`.highcharts-container`)[0];
+            if(oldcontainer){
+                let oldcharts = Highcharts.charts
                 .filter(x => typeof (x) != "undefined")
                 .filter(x => x.container === oldcontainer);
             if (oldcharts.length)
                 oldcharts.forEach(oc => oc.destroy());
+            }
             $(el).remove();
         });
 
