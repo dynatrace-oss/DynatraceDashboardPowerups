@@ -3350,6 +3350,7 @@ var DashboardPowerups = (function () {
                 //tickAmount: 2,
                 //tickPositioner: () => { return [min,max] },
                 tickPositioner: () => { return positions },
+                tickPosition: "outside",
                 //tickInterval: (max-min)/100,
                 labels: {
                     y: 16,
