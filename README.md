@@ -316,14 +316,15 @@ Example:
 This powerup converts a Single Value Tile into a solid gauge. 
 
 Syntax:
-`Memory !PU(gauge):stops=.5,.75,.9;colors=green,yellow,red;min=0;max=100`
+`Memory !PU(gauge):stops=.5,.75,.9;colors=green,yellow,orange,red;min=0;max=100`
 
 Explanation:
 - `!PU(gauge):` - denotes the gauge powerup
 - `stops=` - color stops as a percentage of the max, valid values rante 0 through 1
-- `colors=` - colors for color stops
+- `colors=` - colors for color stops. You should have 1 more color than you have stops.
 - `min=` - left end of the gauge, defaults to 0
 - `max=` - right end of the gauage, defaults to 100
+- `digits=2` - digits after the decimal, defaults to 1
 
 Example:
 ![Gauge](Assets/gauge.png)
