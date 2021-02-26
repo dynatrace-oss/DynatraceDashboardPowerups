@@ -3287,6 +3287,7 @@ var DashboardPowerups = (function () {
             let stop = [v, colors[i]];
             stops.push(stop);
         });
+        let digits = Number(((args.find(x => x[0] == "digits") || [])[1]) || 1);
 
         //cleanup any old gauges
         $tile.find(`.powerupGauge`).each((i, el) => {
@@ -3381,7 +3382,7 @@ var DashboardPowerups = (function () {
                 dataLabels: {
                     format:
                         '<div style="text-align:center">' +
-                        '<span style="font-size:25px">{y:.2f}</span>' +
+                        `<span style="font-size:25px">{y:.${digits}f}</span>` +
                         `<span style="font-size:12px;opacity:0.4">${units}</span>` +
                         '</div>',
                     color: '#ffffff',
