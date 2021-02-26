@@ -3289,14 +3289,14 @@ var DashboardPowerups = (function () {
         });
 
         //cleanup any old gauges
-        $(`.powerupGauge`).each((el,i)=>{
+        /*$(`.powerupGauge`).each((el,i)=>{
             let oldcharts = Highcharts
                 .filter(x=>typeof(x)!="undefined")
                 .filter(x=>x.container===el);
             if(oldcharts.length)
                 oldcharts.forEach(oc=>oc.destroy());
             $(el).remove();
-        });
+        });*/
 
         //swap
         $panel.hide();
