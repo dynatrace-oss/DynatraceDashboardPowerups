@@ -3309,7 +3309,7 @@ var DashboardPowerups = (function () {
         let $newContainer = $("<div>")
             .addClass("powerupGauge")
             .insertAfter($panel);
-        let positions = [min, val, max];
+        let positions = [min, max];
         stops.forEach(s=>{
             positions.push(s[0]*max);
         });
