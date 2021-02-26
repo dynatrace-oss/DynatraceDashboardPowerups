@@ -3289,7 +3289,7 @@ var DashboardPowerups = (function () {
         });
 
         //cleanup any old gauges
-        $tile.find(`.powerupGauge`).each((el, i) => {
+        $tile.find(`.powerupGauge`).each((i, el) => {
             let oldcontainer = $(el).find(`.highcharts-container`)[0];
             if(oldcontainer){
                 let oldcharts = Highcharts.charts
