@@ -3355,7 +3355,8 @@ var DashboardPowerups = (function () {
                     }
                 },
                 min: min,
-                max: max
+                max: max,
+                endOnTick:false
             },
             series: [{
                 name: metric,
