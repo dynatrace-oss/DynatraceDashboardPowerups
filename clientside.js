@@ -3339,7 +3339,7 @@ var DashboardPowerups = (function () {
                 lineWidth: 0,
                 tickWidth: 0,
                 minorTickInterval: null,
-                tickAmount: 2,
+                tickAmount: 10,
                 //tickInterval: 1,
                 labels: {
                     y: 16,
