@@ -3366,7 +3366,7 @@ var DashboardPowerups = (function () {
                 dataLabels: {
                     format:
                         '<div style="text-align:center">' +
-                        '<span style="font-size:25px">{y:.1f}</span>' +
+                        '<span style="font-size:25px">{y:.01f}</span>' +
                         `<span style="font-size:12px;opacity:0.4">${units}</span>` +
                         '</div>',
                     color: '#ffffff',
