@@ -3356,6 +3356,12 @@ var DashboardPowerups = (function () {
                     y: 16,
                     style: {
                         color: '#ffffff'
+                    },
+                    formatter: function (){
+                        if(this.value === min || this.value === max)
+                            return this.value;
+                        else
+                            return "";
                     }
                 },
                 title: {
