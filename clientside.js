@@ -3289,12 +3289,12 @@ var DashboardPowerups = (function () {
         });
 
         //cleanup any old gauges
-        $tile.find(`.powerupGauge`).each((el,i)=>{
+        $tile.find(`.powerupGauge`).each((el, i) => {
             let oldcharts = Highcharts.charts
-                .filter(x=>typeof(x)!="undefined")
-                .filter(x=>x.container===el);
-            if(oldcharts.length)
-                oldcharts.forEach(oc=>oc.destroy());
+                .filter(x => typeof (x) != "undefined")
+                .filter(x => x.container === el);
+            if (oldcharts.length)
+                oldcharts.forEach(oc => oc.destroy());
             $(el).remove();
         });
 
@@ -3306,6 +3306,7 @@ var DashboardPowerups = (function () {
         let $newContainer = $("<div>")
             .addClass("powerupGauge")
             .insertAfter($panel);
+        let positions = [min, val, max].sort((a, b) => a - b);
 
         //new chart
         //default options
@@ -3340,8 +3341,8 @@ var DashboardPowerups = (function () {
                 tickWidth: 0,
                 minorTickInterval: null,
                 //tickAmount: 2,
-                tickPositioner: ()=>{return [min,max]},
-                tickInterval: (max-min)/100,
+                tickPositioner: () => { return positions },
+                //tickInterval: (max-min)/100,
                 labels: {
                     y: 16,
                     style: {
@@ -3357,7 +3358,7 @@ var DashboardPowerups = (function () {
                 },
                 min: min,
                 max: max,
-                endOnTick:false
+                endOnTick: false
             },
             series: [{
                 name: metric,
@@ -3830,9 +3831,9 @@ var DashboardPowerups = (function () {
                 return true;
             }
         });
-        if(!backgrounded){  //if dashboard changed and new dashboard doesn't have background remove old one
+        if (!backgrounded) {  //if dashboard changed and new dashboard doesn't have background remove old one
             $(`.powerupBackground`)
-                .css(`background-image`,"")
+                .css(`background-image`, "")
                 .removeClass('powerupBackground');
         }
     }
