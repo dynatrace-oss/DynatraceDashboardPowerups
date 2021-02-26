@@ -3481,6 +3481,7 @@ var DashboardPowerups = (function () {
                 let base = (args.find(x => x[0] == "base") || [])[1] || "";
                 let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
                 let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
+                let notfound = (args.find(x => x[0] == "notfound") || [])[1] || null;
 
                 //find the table
                 let $tabletile = $(pub.findLinkedTile(link));
@@ -3500,58 +3501,61 @@ var DashboardPowerups = (function () {
                     rowIdx = dataTable.normalTable.findIndex(x => x[firstColName] === val);
                 }
 
+                let vlookupVal;
+                let colName = (Number.isNaN(col) ? col : dataTable.keys[col]);
                 if (rowIdx < 0) {
                     console.log("POWERUP: WARN - vlookup val not found in table.");
-                    return false;
-                }
-                let colName = (Number.isNaN(col) ? col : dataTable.keys[col]);
-                let vlookupVal = dataTable.normalTable[rowIdx][colName];
+                    //return false;
+                    vlookupVal = notfound;
+                } else {
+                    vlookupVal = dataTable.normalTable[rowIdx][colName];
 
-                //optionally compare to another table value
-                //compareTable=table;compareVal=/easytravel/rest/journeys/;compareCol=2;lt=red;gt=green;eq=yellow
-                let compareLink = (args.find(x => x[0] == "compareTable") || [])[1];
-                let compareVal = (args.find(x => x[0] == "compareVal") || [])[1];
-                if (compareLink && compareVal) {
-                    let compareCol = (args.find(x => x[0] == "compareCol") || [1])[1];
-                    let lt = (args.find(x => x[0] == "lt") || ['red'])[1];
-                    let eq = (args.find(x => x[0] == "eq") || ['yellow'])[1];
-                    let gt = (args.find(x => x[0] == "gt") || ['green'])[1];
-                    let compareTable;
-                    if (link === compareLink) compareTable = dataTable;
-                    else {
-                        let $comparetabletile = $(pub.findLinkedTile(compareLink));
-                        compareTable = readTableData($comparetabletile);
-                    }
-                    let compareFirstColName = compareTable.keys[0];
-                    let compareRowIdx = compareTable.normalTable.findIndex(x => x[compareFirstColName] === compareVal);
-                    if (compareRowIdx < 0) {
-                        console.log("POWERUP: WARN - vlookup compareVal not found in table.");
-                    } else {
-                        let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
-                        let compareVlookupVal = compareTable.normalTable[compareRowIdx][compareColName];
-                        let a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
-                        let b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
-                        if (Number.isNaN(a) || Number.isNaN(b)) {
-                            console.log("POWERUP: WARN - vlookup could not compare vals.");
-                        } else {
-                            if (a < b) color = lt;
-                            else if (a === b) color = eq;
-                            else if (a > b) color = gt;
+                    //optionally compare to another table value
+                    //compareTable=table;compareVal=/easytravel/rest/journeys/;compareCol=2;lt=red;gt=green;eq=yellow
+                    let compareLink = (args.find(x => x[0] == "compareTable") || [])[1];
+                    let compareVal = (args.find(x => x[0] == "compareVal") || [])[1];
+                    if (compareLink && compareVal) {
+                        let compareCol = (args.find(x => x[0] == "compareCol") || [1])[1];
+                        let lt = (args.find(x => x[0] == "lt") || ['red'])[1];
+                        let eq = (args.find(x => x[0] == "eq") || ['yellow'])[1];
+                        let gt = (args.find(x => x[0] == "gt") || ['green'])[1];
+                        let compareTable;
+                        if (link === compareLink) compareTable = dataTable;
+                        else {
+                            let $comparetabletile = $(pub.findLinkedTile(compareLink));
+                            compareTable = readTableData($comparetabletile);
                         }
-                    }
-                } else if (base && !isNaN(warn) && !isNaN(crit)) {
-                    let a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
-                    switch (base) {
-                        case "low":
-                            if (a < warn) color = "green";
-                            else if (a < crit) color = "yellow";
-                            else color = "red";
-                            break;
-                        case "high":
-                            if (a > warn) color = "green";
-                            else if (a > crit) color = "yellow";
-                            else color = "red";
-                            break;
+                        let compareFirstColName = compareTable.keys[0];
+                        let compareRowIdx = compareTable.normalTable.findIndex(x => x[compareFirstColName] === compareVal);
+                        if (compareRowIdx < 0) {
+                            console.log("POWERUP: WARN - vlookup compareVal not found in table.");
+                        } else {
+                            let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
+                            let compareVlookupVal = compareTable.normalTable[compareRowIdx][compareColName];
+                            let a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
+                            let b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
+                            if (Number.isNaN(a) || Number.isNaN(b)) {
+                                console.log("POWERUP: WARN - vlookup could not compare vals.");
+                            } else {
+                                if (a < b) color = lt;
+                                else if (a === b) color = eq;
+                                else if (a > b) color = gt;
+                            }
+                        }
+                    } else if (base && !isNaN(warn) && !isNaN(crit)) {
+                        let a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
+                        switch (base) {
+                            case "low":
+                                if (a < warn) color = "green";
+                                else if (a < crit) color = "yellow";
+                                else color = "red";
+                                break;
+                            case "high":
+                                if (a > warn) color = "green";
+                                else if (a > crit) color = "yellow";
+                                else color = "red";
+                                break;
+                        }
                     }
                 }
 
