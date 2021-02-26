@@ -359,7 +359,8 @@ Explanation:
 
 Options:
 - `color=blue` - what color to make the text
-- `row=1` - (optional) ignore val and instead lookup value by row number. Starting at 1 from top or -1 from bottom.
+- `row=1` - ignore val and instead lookup value by row number. Starting at 1 from top or -1 from bottom.
+- `notfound=0` - if value isn't found, instead use this value. Defaults to blank. Consider setting to zero if math tiles depend on this tile.
 
 Optional comparison:
 - `compareTable=table` - reference the table tile, ie put `!PU(link):table` in the title of the USQL tile
