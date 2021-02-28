@@ -321,7 +321,7 @@ Syntax:
 Explanation:
 - `!PU(gauge):` - denotes the gauge powerup
 - `stops=` - color stops as a percentage of the max, valid values rante 0 through 1
-- `colors=` - colors for color stops. You should have 1 more color than you have stops.
+- `colors=` - colors for color stops. You should have an equal number of colors and stops.
 - `min=` - left end of the gauge, defaults to 0
 - `max=` - right end of the gauage, defaults to 100
 - `digits=2` - digits after the decimal, defaults to 1
