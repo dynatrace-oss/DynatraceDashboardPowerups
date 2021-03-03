@@ -1,7 +1,7 @@
 var DashboardPowerups = (function () {
     const OPENKIT_URL = 'https://bf49960xxn.bf-sprint.dynatracelabs.com/mbeacon';
     const OPENKIT_APPID = '9a51173a-1898-45ef-94dd-4fea40538ef4';
-    const GRID_SELECTOR = '[uitestid="gwt-debug-dashboardGrid"], .grid-dashboard';
+    const GRID_SELECTOR = '.grid-dashboard';
     const VIEWPORT_SELECTOR = '.grid-viewport';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
     const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type, [uitestid="gwt-debug-dexp-visualization-single-value"] span:first-of-type';
@@ -44,7 +44,9 @@ var DashboardPowerups = (function () {
     const PU_BACKGROUND = '!PU(background):';
     const PU_IMAGE = '!PU(image):';
     const PU_FUNNELCOLORS = '!PU(funnelcolors):';
-    const PU_FORECAST = '!PU(forecast):'
+    const PU_FORECAST = '!PU(forecast):';
+    const PU_TILECSS = '!PU(tilecss):';
+    const PU_GRID = '!PU(grid):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
@@ -3292,12 +3294,12 @@ var DashboardPowerups = (function () {
         //cleanup any old gauges
         $tile.find(`.powerupGauge`).each((i, el) => {
             let oldcontainer = $(el).find(`.highcharts-container`)[0];
-            if(oldcontainer){
+            if (oldcontainer) {
                 let oldcharts = Highcharts.charts
-                .filter(x => typeof (x) != "undefined")
-                .filter(x => x.container === oldcontainer);
-            if (oldcharts.length)
-                oldcharts.forEach(oc => oc.destroy());
+                    .filter(x => typeof (x) != "undefined")
+                    .filter(x => x.container === oldcontainer);
+                if (oldcharts.length)
+                    oldcharts.forEach(oc => oc.destroy());
             }
             $(el).remove();
         });
@@ -3311,8 +3313,8 @@ var DashboardPowerups = (function () {
             .addClass("powerupGauge")
             .insertAfter($panel);
         let positions = [min, max];
-        stops.forEach(s=>{
-            positions.push(s[0]*max);
+        stops.forEach(s => {
+            positions.push(s[0] * max);
         });
         positions = positions.sort((a, b) => a - b);
 
@@ -3358,8 +3360,8 @@ var DashboardPowerups = (function () {
                     style: {
                         color: '#ffffff'
                     },
-                    formatter: function (){
-                        if(this.value === min || this.value === max)
+                    formatter: function () {
+                        if (this.value === min || this.value === max)
                             return this.value;
                         else
                             return "";
@@ -3927,6 +3929,87 @@ var DashboardPowerups = (function () {
         });
     }
 
+    pub.PUtilecss = function () {
+        let reTitle = new RegExp(PU_TILECSS + '`[^`]+`');
+        let reCSS = /[ ]*(\w+):[ ]*([^;]+);/g;
+        $([TITLE_SELECTOR, MARKDOWN_SELECTOR].join(', '))
+            .each((i, el) => {
+                let $text = $(el);
+                let $tile = $text.parents(TILE_SELECTOR);
+
+                if ($text.text().includes(PU_TILECSS)) {
+                    let match = $text.text().match(reTitle);
+                    if (match && match.length) {
+                        let cssText = match[0];
+                        let oldstyle = $tile.attr('style');
+                        let cssItems = [...cssText.matchAll(reCSS)];
+
+                        cssItems.forEach(x => $tile.css(x[1], x[2]));
+
+                        powerupsFired['PU_TILECSS'] ? powerupsFired['PU_TILECSS']++ : powerupsFired['PU_TILECSS'] = 1;
+                    }
+                }
+            })
+    }
+
+    pub.PUgrid = function() {
+        $(MARKDOWN_SELECTOR).each((i, el) => {
+            let $md = $(el);
+            let $tile = $md.parents(TILE_SELECTOR);
+
+            if($md.text().includes(PU_GRID)){
+                let argstring = $md.text().split(PU_GRID)[1].split(/[!\n]/)[0];
+                let args = argstring.split(";").map(x => x.split("="));
+                let color = (args.find(x => x[0] == "color") || [])[1] || "white";
+                let hor = (args.find(x => x[0] == "hor") || [])[1];
+                if(hor) hor = [... hor.matchAll(/[0-9]+/g)].map(x=>Number(x));
+                let ver = (args.find(x => x[0] == "ver") || [])[1];
+                if(ver) ver = [... ver.matchAll(/[0-9]+/g)].map(x=>Number(x));
+                let wid = (args.find(x => x[0] == "wid") || [])[1] || "32px";
+
+                //dashboard stuff
+                let $grid = $(GRID_SELECTOR).eq(0);
+                const left = $grid.style("left");
+                const top = $grid.style("top");
+                const width = $grid.style("width");
+                const height = $grid.style("height");
+                const block = 32; 
+
+                //horizontal lines
+                hor.forEach(x=>{
+                    let lineLeft = left;
+                    let lineTop = top + x * block;
+                    let $line = $("<div>")
+                        .addClass('powerupGrid')
+                        .css('left',`${lineLeft}px`)
+                        .css('top',`${lineTop}px`)
+                        .css('height',wid)
+                        .css('width',width)
+                        .css('background',color)
+                        .css('z-index',0) //need to test this, should go under tiles
+                        .appendTo($grid);
+                });
+
+                //vertical lines
+                ver.forEach(x=>{
+                    let lineLeft = left + x * block;
+                    let lineTop = top;
+                    let $line = $("<div>")
+                        .addClass('powerupGrid')
+                        .css('left',`${lineLeft}px`)
+                        .css('top',`${lineTop}px`)
+                        .css('height',wid)
+                        .css('width',width)
+                        .css('background',color)
+                        .css('z-index',0) //need to test this, should go under tiles
+                        .appendTo($grid);
+                });
+
+                powerupsFired['PU_GRID'] ? powerupsFired['PU_GRID']++ : powerupsFired['PU_GRID'] = 1;
+            }
+        })
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -3960,6 +4043,8 @@ var DashboardPowerups = (function () {
             promises.push(pub.extDisclaimer());
             promises.push(pub.bannerPowerUp());
             promises.push(pub.PUimage());
+            promises.push(pub.PUtilecss());
+            promises.push(pub.PUgrid());
             promises.push(pub.sunburnMode());
             promises.push(pub.hideEarlyAdopter());
             promises.push(pub.fixPublicDashboards());
