@@ -3969,7 +3969,7 @@ var DashboardPowerups = (function () {
                 const top = Number($grid.css("top").replace('px',''));
                 const width = $grid.css("width");
                 const height = $grid.css("height");
-                const block = 32; 
+                const block = 38; 
 
                 //horizontal lines
                 hor.forEach(x=>{
