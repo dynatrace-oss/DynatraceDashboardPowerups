@@ -3948,6 +3948,7 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUgrid = function() {
+        $('.powerupGrid').remove();
         $(MARKDOWN_SELECTOR).each((i, el) => {
             let $md = $(el);
             let $tile = $md.parents(TILE_SELECTOR);
@@ -3976,6 +3977,7 @@ var DashboardPowerups = (function () {
                     let lineTop = top + x * block;
                     let $line = $("<div>")
                         .addClass('powerupGrid')
+                        .css('position','absolute')
                         .css('left',`${lineLeft}px`)
                         .css('top',`${lineTop}px`)
                         .css('height',wid)
@@ -3991,6 +3993,7 @@ var DashboardPowerups = (function () {
                     let lineTop = top;
                     let $line = $("<div>")
                         .addClass('powerupGrid')
+                        .css('position','absolute')
                         .css('left',`${lineLeft}px`)
                         .css('top',`${lineTop}px`)
                         .css('height',height)
