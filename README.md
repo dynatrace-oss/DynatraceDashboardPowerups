@@ -8,6 +8,36 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
    
 *Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum or create an [issue](https://github.com/LucasHocker/DynatraceDashboardPowerups/issues) on Github*
 
+## Table of contents
+- [Install](#Installation)
+- [Configure](#Configure-extension)
+- Powerup List:
+    - [Disclaimer](#Disclaimer)
+    - [Tooltips](#Tooltips)
+    - [Colorize](#Colorize)
+    - [Icons](#Icons)
+    - [Worldmaps](#Worldmaps)
+    - [Banner](#Banner)
+    - [Line chart threshold](#Line-chart-threshold)
+    - [USQL stacked bar chart](#USQL-Stacked-Bar-chart)
+    - [USQL colors](#USQL-colors)
+    - [Heatmap](#heatmap)
+    - [Sankey](#UserAction-Sankey-chart)
+    - [Vertical funnel](#Vertical-Funnel)
+    - [Math](#Math)
+    - [Date](#Date)
+    - [Gauge](#Gauge)
+    - [Compare](#Compare)
+    - [VLookup](#VLookup)
+    - [Stdev](#Stdev)
+    - [100stack](#100stack)
+    - [mCompare](#mCompare)
+    - [Image](#Image)
+    - [Background](#Background)
+    - [Funnelcolors](#FunnelColors)
+    - [Forecast](#Forecast)
+    - [Grid](#Grid)
+
 ## Installation
 1. Install the extension from the
 [Chrome Store](https://chrome.google.com/webstore/detail/dynatrace-dashboard-power/dmpgdhbpdodhddciokonbahhbpaalmco)
@@ -40,31 +70,8 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 ## Powerup Howto
 To add Powerups to your existing dashboards, you may add markup text in your dashboard tile titles. Alternatively, you may deploy dashboard packs with Powerups already included via the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a>.
 
-### Powerup List
-- [Disclaimer](#Disclaimer)
-- [Tooltips](#Tooltips)
-- [Colorize](#Colorize)
-- [Icons](#Icons)
-- [Worldmaps](#Worldmaps)
-- [Banner](#Banner)
-- [Line chart threshold](#Line-chart-threshold)
-- [USQL stacked bar chart](#USQL-Stacked-Bar-chart)
-- [USQL colors](#USQL-colors)
-- [Heatmap](#heatmap)
-- [Sankey](#UserAction-Sankey-chart)
-- [Vertical funnel](#Vertical-Funnel)
-- [Math](#Math)
-- [Date](#Date)
-- [Gauge](#Gauge)
-- [Compare](#Compare)
-- [VLookup](#VLookup)
-- [Stdev](#Stdev)
-- [100stack](#100stack)
-- [mCompare](#mCompare)
-- [Image](#Image)
-- [Background](#Background)
-- [Funnelcolors](#FunnelColors)
-- [Forecast](#Forecast)
+## Powerup List
+
 
 ### Disclaimer
 If you manually add markup, it is best practice to add a Powerup disclaimer tile so that users who do not yet have the Extension, will be directed to install it. To add the disclaimer, add the following to your dashboard JSON:
@@ -478,9 +485,13 @@ Example:
 ![funnelcolors](Assets/funnelcolors.png)
 
 ### Forecast
-**(Preview)** This powerup provides basic statistical tools to analyze **one line chart**. Additionally, you can also forecast future values based on these tools.
+This powerup provides basic statistical tools to analyze **one line chart**. Additionally, you can also forecast future values based on these tools.
 
 Syntax:
+- `Revenue !PU(forecast):n=20%;p=30%` - project revenue forward 30% of the graph, using a 20% sliding window
+- `VisuallyComplete !PU(forecast):analysis=EMA,Linear` - apply EMA and Linear regression to Visually complete
+
+Explanation:
 - `!PU(forecast):` - denotes this powerup
 - `n=20%` - how many data points to use for sliding windows. Can either be integer values for specific number of data point or percentage for a portion of the current data points. Defaults to 20%.
 - `p=20%` - how many data point to project into the future. Integer values for specific number of points or percentage to base on chart size. Defaults to 0.
@@ -494,3 +505,21 @@ Syntax:
 
 Example:
 ![forecast](Assets/forecast.png)
+
+### Grid
+Add grid lines to your dashboards.
+
+Syntax:
+- `!PU(grid):hor=0,9,18;ver=0,9,18,27,35;color=#454646`
+
+Explanation:
+- `!PU(grid):` - denotes the powerup
+- `hor=0,9,18` - draw horizontal lines at the 0th, 9th, and 18th blocks on the dashboard. Blocks are 38px apart.
+- `ver=0,9,18,27,35` - draw vertical lines at various blocks
+- `color=` - (optional) css color to use for the grid, defaults to `#454646`
+- `wid=38` - (optional) width of the lines in px, defaults to 38
+- `margin=4` - (optional) margin in px to swallow up by the lines, defaults to 4. Ie default lines will be 46px wide (4 + 38 + 4)
+
+Example:
+![grid](Assets/grid.png)
+

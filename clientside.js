@@ -3958,7 +3958,7 @@ var DashboardPowerups = (function () {
             if($md.text().includes(PU_GRID)){
                 let argstring = $md.text().split(PU_GRID)[1].split(/[!\n]/)[0];
                 let args = argstring.split(";").map(x => x.split("="));
-                let color = (args.find(x => x[0] == "color") || [])[1] || "white";
+                let color = (args.find(x => x[0] == "color") || [])[1] || "#454646";
                 let hor = (args.find(x => x[0] == "hor") || [])[1];
                 if(hor) hor = [... hor.matchAll(/[0-9]+/g)].map(x=>Number(x));
                 let ver = (args.find(x => x[0] == "ver") || [])[1];
