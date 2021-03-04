@@ -37,7 +37,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [Funnelcolors](#FunnelColors)
     - [Forecast](#Forecast)
     - [Grid](#Grid)
-    - [Tilecss](#Tilecss)
+    - [TileCSS](#Tilecss)
 
 ## Installation
 1. Install the extension from the
@@ -524,3 +524,12 @@ Explanation:
 Example:
 ![grid](Assets/grid.png)
 
+### TileCSS
+Use CSS directives to further style a tile.
+
+Syntax:
+- ``Revenue !PU(tilecss):`border:3px green solid;border-radius: 15px;transform: rotateZ(45deg);` ``
+
+Explanation:
+- `!PU(tilecss):` - denotes the powerup
+- `` `...` `` - css directives wrapped in backticks. `url()` is disallowed.
