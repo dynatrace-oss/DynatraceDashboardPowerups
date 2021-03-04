@@ -3964,8 +3964,8 @@ var DashboardPowerups = (function () {
 
                 //dashboard stuff
                 let $grid = $(GRID_SELECTOR).eq(0);
-                const left = $grid.css("left");
-                const top = $grid.css("top");
+                const left = Number($grid.css("left").replace('px',''));
+                const top = Number($grid.css("top").replace('px',''));
                 const width = $grid.css("width");
                 const height = $grid.css("height");
                 const block = 32; 
@@ -3993,8 +3993,8 @@ var DashboardPowerups = (function () {
                         .addClass('powerupGrid')
                         .css('left',`${lineLeft}px`)
                         .css('top',`${lineTop}px`)
-                        .css('height',wid)
-                        .css('width',width)
+                        .css('height',height)
+                        .css('width',wid)
                         .css('background',color)
                         .css('z-index',0) //need to test this, should go under tiles
                         .appendTo($grid);
