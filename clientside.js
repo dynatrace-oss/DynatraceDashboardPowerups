@@ -3927,6 +3927,7 @@ var DashboardPowerups = (function () {
     pub.PUtilecss = function () {
         let reTitle = new RegExp('!PU\\(tilecss\\):`[^`]+`');
         let reCSS = /[ ]*([\w-]+):[ ]*([^;]+);/g;
+        let reURL = /[uU][rR][lL]\([^)]*\)/;
         $([TITLE_SELECTOR, MARKDOWN_SELECTOR].join(', '))
             .each((i, el) => {
                 let $text = $(el);
@@ -3939,7 +3940,10 @@ var DashboardPowerups = (function () {
                         let oldstyle = $tile.attr('style');
                         let cssItems = [...cssText.matchAll(reCSS)];
 
-                        cssItems.forEach(x => $tile.css(x[1], x[2]));
+                        cssItems.forEach(x => {
+                            if (!reURL.test(x[2].m))
+                                $tile.css(x[1], x[2]);
+                        });
 
                         powerupsFired['PU_TILECSS'] ? powerupsFired['PU_TILECSS']++ : powerupsFired['PU_TILECSS'] = 1;
                     }
@@ -3947,79 +3951,79 @@ var DashboardPowerups = (function () {
             })
     }
 
-    pub.PUgrid = function() {
-        const block = 38; 
+    pub.PUgrid = function () {
+        const block = 38;
         $('.powerupGrid').remove();
 
         $(MARKDOWN_SELECTOR).each((i, el) => {
             let $md = $(el);
             let $tile = $md.parents(TILE_SELECTOR);
 
-            if($md.text().includes(PU_GRID)){
+            if ($md.text().includes(PU_GRID)) {
                 let argstring = $md.text().split(PU_GRID)[1].split(/[!\n]/)[0];
                 let args = argstring.split(";").map(x => x.split("="));
                 let color = (args.find(x => x[0] == "color") || [])[1] || "#454646";
                 let hor = (args.find(x => x[0] == "hor") || [])[1];
-                if(hor) hor = [... hor.matchAll(/[0-9]+/g)].map(x=>Number(x));
+                if (hor) hor = [...hor.matchAll(/[0-9]+/g)].map(x => Number(x));
                 let ver = (args.find(x => x[0] == "ver") || [])[1];
-                if(ver) ver = [... ver.matchAll(/[0-9]+/g)].map(x=>Number(x));
-                let wid = (args.find(x => x[0] == "wid") || [])[1] || block; 
-                let margin = (args.find(x => x[0] == "margin") || [])[1] || 4; 
+                if (ver) ver = [...ver.matchAll(/[0-9]+/g)].map(x => Number(x));
+                let wid = (args.find(x => x[0] == "wid") || [])[1] || block;
+                let margin = (args.find(x => x[0] == "margin") || [])[1] || 4;
 
                 //dashboard stuff
                 let $grid = $(GRID_SELECTOR).eq(0);
-                const left = Number($grid.css("left").replace('px',''));
-                const top = Number($grid.css("top").replace('px',''));
+                const left = Number($grid.css("left").replace('px', ''));
+                const top = Number($grid.css("top").replace('px', ''));
                 const width = $grid.css("width");
                 const height = $grid.css("height");
-                
+
 
                 //horizontal lines
-                hor.forEach(x=>{
+                hor.forEach(x => {
                     let lineLeft = left;
                     let lineTop = top + x * block;
                     let lineWidth = wid;
-                    if(lineTop){
+                    if (lineTop) {
                         lineTop -= margin;
                         lineWidth += 2 * margin;
-                    } 
+                    }
                     else {
                         lineWidth += 1 * margin;
                     }
                     let $line = $("<div>")
                         .addClass('powerupGrid')
-                        .css('position','absolute')
-                        .css('left',`${lineLeft}px`)
-                        .css('top',`${lineTop}px`)
-                        .css('height',`${lineWidth}px`)
-                        .css('width','100%')
-                        .css('background',color)
-                        .css('z-index',0) //need to test this, should go under tiles
+                        .css('position', 'absolute')
+                        .css('left', `${lineLeft}px`)
+                        .css('top', `${lineTop}px`)
+                        .css('height', `${lineWidth}px`)
+                        .css('width', '100%')
+                        .css('background', color)
+                        .css('z-index', 0) //need to test this, should go under tiles
                         .appendTo($grid);
                 });
 
                 //vertical lines
-                ver.forEach(x=>{
+                ver.forEach(x => {
                     let lineLeft = left + x * block;
                     let lineTop = top;
                     let lineWidth = wid;
-                    if(lineLeft){
+                    if (lineLeft) {
                         lineLeft -= margin;
                         lineWidth += 2 * margin;
-                    } 
+                    }
                     else {
                         lineWidth += 1 * margin;
                     }
-                    
+
                     let $line = $("<div>")
                         .addClass('powerupGrid')
-                        .css('position','absolute')
-                        .css('left',`${lineLeft}px`)
-                        .css('top',`${lineTop}px`)
-                        .css('height','100%')
-                        .css('width',`${lineWidth}px`)
-                        .css('background',color)
-                        .css('z-index',0) //need to test this, should go under tiles
+                        .css('position', 'absolute')
+                        .css('left', `${lineLeft}px`)
+                        .css('top', `${lineTop}px`)
+                        .css('height', '100%')
+                        .css('width', `${lineWidth}px`)
+                        .css('background', color)
+                        .css('z-index', 0) //need to test this, should go under tiles
                         .appendTo($grid);
                 });
 
