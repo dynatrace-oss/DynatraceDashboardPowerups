@@ -2339,11 +2339,6 @@ var DashboardPowerups = (function () {
         //$(TABLE_SELECTOR)
         $(TITLE_SELECTOR)
             .each(function (i, el) {
-                /*let $el = $(el);
-                let $tile = $el.parents(TILE_SELECTOR);
-                let $title = $tile.find(TITLE_SELECTOR);
-                let title = $title.text();
-                if (!title.includes(PU_SANKEY)) return;*/
                 let $title = $(el);
                 let title = $title.text();
                 if (!title.includes(PU_SANKEY)) return;
@@ -3969,10 +3964,10 @@ var DashboardPowerups = (function () {
 
                 //dashboard stuff
                 let $grid = $(GRID_SELECTOR).eq(0);
-                const left = $grid.style("left");
-                const top = $grid.style("top");
-                const width = $grid.style("width");
-                const height = $grid.style("height");
+                const left = $grid.css("left");
+                const top = $grid.css("top");
+                const width = $grid.css("width");
+                const height = $grid.css("height");
                 const block = 32; 
 
                 //horizontal lines
