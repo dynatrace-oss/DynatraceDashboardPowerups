@@ -3949,7 +3949,6 @@ var DashboardPowerups = (function () {
 
     pub.PUgrid = function() {
         const block = 38; 
-        const margin = 4;
         $('.powerupGrid').remove();
 
         $(MARKDOWN_SELECTOR).each((i, el) => {
@@ -3964,7 +3963,8 @@ var DashboardPowerups = (function () {
                 if(hor) hor = [... hor.matchAll(/[0-9]+/g)].map(x=>Number(x));
                 let ver = (args.find(x => x[0] == "ver") || [])[1];
                 if(ver) ver = [... ver.matchAll(/[0-9]+/g)].map(x=>Number(x));
-                let wid = (args.find(x => x[0] == "wid") || [])[1] || `${block}px`; 
+                let wid = (args.find(x => x[0] == "wid") || [])[1] || block; 
+                let margin = (args.find(x => x[0] == "margin") || [])[1] || 4; 
 
                 //dashboard stuff
                 let $grid = $(GRID_SELECTOR).eq(0);
@@ -3991,7 +3991,7 @@ var DashboardPowerups = (function () {
                         .css('position','absolute')
                         .css('left',`${lineLeft}px`)
                         .css('top',`${lineTop}px`)
-                        .css('height',lineWidth)
+                        .css('height',`${lineWidth}px`)
                         .css('width','100%')
                         .css('background',color)
                         .css('z-index',0) //need to test this, should go under tiles
@@ -4017,7 +4017,7 @@ var DashboardPowerups = (function () {
                         .css('left',`${lineLeft}px`)
                         .css('top',`${lineTop}px`)
                         .css('height','100%')
-                        .css('width',lineWidth)
+                        .css('width',`${lineWidth}px`)
                         .css('background',color)
                         .css('z-index',0) //need to test this, should go under tiles
                         .appendTo($grid);
