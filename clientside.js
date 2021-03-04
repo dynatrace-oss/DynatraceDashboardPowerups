@@ -3949,7 +3949,7 @@ var DashboardPowerups = (function () {
 
     pub.PUgrid = function() {
         const block = 38; 
-        const margin = 3;
+        const margin = 4;
         $('.powerupGrid').remove();
 
         $(MARKDOWN_SELECTOR).each((i, el) => {
@@ -3964,7 +3964,7 @@ var DashboardPowerups = (function () {
                 if(hor) hor = [... hor.matchAll(/[0-9]+/g)].map(x=>Number(x));
                 let ver = (args.find(x => x[0] == "ver") || [])[1];
                 if(ver) ver = [... ver.matchAll(/[0-9]+/g)].map(x=>Number(x));
-                let wid = (args.find(x => x[0] == "wid") || [])[1] || `${block+6}px`; //6 to fill for margins
+                let wid = (args.find(x => x[0] == "wid") || [])[1] || `${block}px`; 
 
                 //dashboard stuff
                 let $grid = $(GRID_SELECTOR).eq(0);
@@ -3978,13 +3978,20 @@ var DashboardPowerups = (function () {
                 hor.forEach(x=>{
                     let lineLeft = left;
                     let lineTop = top + x * block;
-                    if(lineTop) lineTop -= 3; //margin
+                    let lineWidth = wid;
+                    if(lineTop){
+                        lineTop -= margin;
+                        lineWidth += 2 * margin;
+                    } 
+                    else {
+                        lineWidth += 1 * margin;
+                    }
                     let $line = $("<div>")
                         .addClass('powerupGrid')
                         .css('position','absolute')
                         .css('left',`${lineLeft}px`)
                         .css('top',`${lineTop}px`)
-                        .css('height',wid)
+                        .css('height',lineWidth)
                         .css('width','100%')
                         .css('background',color)
                         .css('z-index',0) //need to test this, should go under tiles
@@ -3994,15 +4001,23 @@ var DashboardPowerups = (function () {
                 //vertical lines
                 ver.forEach(x=>{
                     let lineLeft = left + x * block;
-                    if(lineLeft) lineLeft -= 3; //margin
                     let lineTop = top;
+                    let lineWidth = wid;
+                    if(lineLeft){
+                        lineLeft -= margin;
+                        lineWidth += 2 * margin;
+                    } 
+                    else {
+                        lineWidth += 1 * margin;
+                    }
+                    
                     let $line = $("<div>")
                         .addClass('powerupGrid')
                         .css('position','absolute')
                         .css('left',`${lineLeft}px`)
                         .css('top',`${lineTop}px`)
                         .css('height','100%')
-                        .css('width',wid)
+                        .css('width',lineWidth)
                         .css('background',color)
                         .css('z-index',0) //need to test this, should go under tiles
                         .appendTo($grid);
