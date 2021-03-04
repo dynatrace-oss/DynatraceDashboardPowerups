@@ -3963,7 +3963,7 @@ var DashboardPowerups = (function () {
                 if(hor) hor = [... hor.matchAll(/[0-9]+/g)].map(x=>Number(x));
                 let ver = (args.find(x => x[0] == "ver") || [])[1];
                 if(ver) ver = [... ver.matchAll(/[0-9]+/g)].map(x=>Number(x));
-                let wid = (args.find(x => x[0] == "wid") || [])[1] || `${block}px`;
+                let wid = (args.find(x => x[0] == "wid") || [])[1] || `${block+6}px`; //6 to fill for margins
 
                 //dashboard stuff
                 let $grid = $(GRID_SELECTOR).eq(0);
@@ -3977,6 +3977,7 @@ var DashboardPowerups = (function () {
                 hor.forEach(x=>{
                     let lineLeft = left;
                     let lineTop = top + x * block;
+                    if(lineTop) lineTop - 3; //margin
                     let $line = $("<div>")
                         .addClass('powerupGrid')
                         .css('position','absolute')
@@ -3992,6 +3993,7 @@ var DashboardPowerups = (function () {
                 //vertical lines
                 ver.forEach(x=>{
                     let lineLeft = left + x * block;
+                    if(lineLeft) lineLeft - 3; //margin
                     let lineTop = top;
                     let $line = $("<div>")
                         .addClass('powerupGrid')
