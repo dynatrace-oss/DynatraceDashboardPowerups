@@ -3925,7 +3925,7 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUtilecss = function () {
-        let reTitle = new RegExp('!PU\(tilecss\)`[^`]+`');
+        let reTitle = new RegExp('!PU\\(tilecss\\)`[^`]+`');
         let reCSS = /[ ]*(\w+):[ ]*([^;]+);/g;
         $([TITLE_SELECTOR, MARKDOWN_SELECTOR].join(', '))
             .each((i, el) => {
