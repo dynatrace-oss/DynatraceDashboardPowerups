@@ -37,6 +37,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [Funnelcolors](#FunnelColors)
     - [Forecast](#Forecast)
     - [Grid](#Grid)
+    - [Tilecss](#Tilecss)
 
 ## Installation
 1. Install the extension from the
