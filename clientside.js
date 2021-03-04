@@ -4005,6 +4005,7 @@ var DashboardPowerups = (function () {
                         .appendTo($grid);
                 });
 
+                $tile.hide();
                 powerupsFired['PU_GRID'] ? powerupsFired['PU_GRID']++ : powerupsFired['PU_GRID'] = 1;
             }
         })
