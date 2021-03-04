@@ -3948,7 +3948,9 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUgrid = function() {
+        const block = 38; 
         $('.powerupGrid').remove();
+
         $(MARKDOWN_SELECTOR).each((i, el) => {
             let $md = $(el);
             let $tile = $md.parents(TILE_SELECTOR);
@@ -3961,7 +3963,7 @@ var DashboardPowerups = (function () {
                 if(hor) hor = [... hor.matchAll(/[0-9]+/g)].map(x=>Number(x));
                 let ver = (args.find(x => x[0] == "ver") || [])[1];
                 if(ver) ver = [... ver.matchAll(/[0-9]+/g)].map(x=>Number(x));
-                let wid = (args.find(x => x[0] == "wid") || [])[1] || "32px";
+                let wid = (args.find(x => x[0] == "wid") || [])[1] || `${block}px`;
 
                 //dashboard stuff
                 let $grid = $(GRID_SELECTOR).eq(0);
@@ -3969,7 +3971,7 @@ var DashboardPowerups = (function () {
                 const top = Number($grid.css("top").replace('px',''));
                 const width = $grid.css("width");
                 const height = $grid.css("height");
-                const block = 38; 
+                
 
                 //horizontal lines
                 hor.forEach(x=>{
@@ -3981,7 +3983,7 @@ var DashboardPowerups = (function () {
                         .css('left',`${lineLeft}px`)
                         .css('top',`${lineTop}px`)
                         .css('height',wid)
-                        .css('width',width)
+                        .css('width','100%')
                         .css('background',color)
                         .css('z-index',0) //need to test this, should go under tiles
                         .appendTo($grid);
@@ -3996,7 +3998,7 @@ var DashboardPowerups = (function () {
                         .css('position','absolute')
                         .css('left',`${lineLeft}px`)
                         .css('top',`${lineTop}px`)
-                        .css('height',height)
+                        .css('height','100%')
                         .css('width',wid)
                         .css('background',color)
                         .css('z-index',0) //need to test this, should go under tiles
