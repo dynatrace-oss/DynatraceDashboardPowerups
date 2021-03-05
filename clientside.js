@@ -3518,7 +3518,8 @@ var DashboardPowerups = (function () {
                 let firstColName = dataTable.keys[0];
                 let rowIdx;
                 if (row > 0) {
-                    rowIdx = row - 1;
+                    if(row > dataTable.normalTable.length) rowIdx = -1;
+                    else rowIdx = row - 1;
                 } else if (row < 0) {
                     rowIdx = dataTable.normalTable.length - 1 + row;
                 } else {
