@@ -1842,14 +1842,16 @@ var DashboardPowerups = (function () {
                                 }
                             }
                         } else if (colIdx == 1) for (let k = 0; k < arr.length; k++) { //matchingConversion goals
-                            if (arr[k] !== "[]") {
+                            if (arr[k] !== "[]" && arr[k] !== "") {
                                 let actionName = dataTable[0][rowIdx][k];
                                 let goalsIdx = goals.findIndex(x => x.actionName == actionName);
                                 if (goalsIdx < 0) goals.push({
                                     actionName: actionName,
                                     count: 1,
                                     svg: `<img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`,
-                                    goalName: arr[k].substr(1, arr[k].length - 2).trim()
+                                    goalName: (arr[k].substring(0, 1) == '[' && arr[k].substr(-1) == ']') 
+                                        ? arr[k].substr(1, arr[k].length - 2).trim()
+                                        : arr[k].trim()
                                 });
                                 else goals[goalsIdx].count++;
                             }
