@@ -1805,21 +1805,27 @@ var DashboardPowerups = (function () {
                         if (typeof (dataTable[colIdx][rowIdx]) == "undefined") dataTable[colIdx][rowIdx] = [];
                         let row = $(rowEl).text();
                         if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return;
-                        let arr = row.substr(1, row.length - 2)
-                            .split(',')
+                        let arr = [];
+                        try {
+                            arr = JSON.parse(row);
+                        } catch (e) { };
+                        //row.substr(1, row.length - 2)
+                        //    .split(',')
+                        arr = arr
+                            .map(x => Array.isArray(x) ? x.join(', ') : x)
                             .map(x => x.trim())
                             .map(x => x.replace(re, '/*$1'));//clean up strings
                         dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
 
                         //TODO: replace colIdx IFs with colNames
                         if (colIdx == 0) {
-                            let filtered = arr.filter(x => 
-                                x !== "[]" && 
+                            let filtered = arr.filter(x =>
+                                x !== "[]" &&
                                 x !== "");
                             for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                                 let touple = { from: filtered[k], to: filtered[k + 1] };
                                 if (touple.from === touple.to) continue; // ignore self actions
-                                
+
                                 let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
                                 if (l < 0) {
                                     touple.weight = 1;
