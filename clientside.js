@@ -1811,13 +1811,14 @@ var DashboardPowerups = (function () {
                         } catch (e) { };
                         //row.substr(1, row.length - 2)
                         //    .split(',')
-                        try{
-                        arr = arr
-                            .map(x => Array.isArray(x) ? x.join(', ') : x)
-                            .map(x => x.trim())
-                            .map(x => x.replace(re, '/*$1'));//clean up strings
-                        } catch (e){
-                            console.warn([e,row]);
+                        try {
+                            arr = arr
+                                .map(x => Array.isArray(x) ? x.join(', ') : x)
+                                .map(x => typeof (x) != "string" ? x.toString() : x)
+                                .map(x => x.trim())
+                                .map(x => x.replace(re, '/*$1'));//clean up strings
+                        } catch (e) {
+                            console.warn([e, row]);
                         }
                         dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
 
