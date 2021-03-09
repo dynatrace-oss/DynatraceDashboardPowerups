@@ -1817,7 +1817,7 @@ var DashboardPowerups = (function () {
                             .map(x => x.trim())
                             .map(x => x.replace(re, '/*$1'));//clean up strings
                         } catch (e){
-                            console.warn(e);
+                            console.warn([e,row]);
                         }
                         dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
 
