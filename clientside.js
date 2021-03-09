@@ -1811,18 +1811,22 @@ var DashboardPowerups = (function () {
                             .map(x => x.replace(re, '/*$1'));//clean up strings
                         dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
 
-                        //TODO: relace colIdx IFs with colNames
-                        if (colIdx == 0) for (let k = 0; k < arr.length - 1; k++) { //useraction.name
-                            let touple = { from: arr[k], to: arr[k + 1] };
-                            if (touple.from === touple.to) continue; // ignore self actions
-                            //touple.from = touple.from.replace(re, '/*$1'); 
-                            //touple.to = touple.to.replace(re, '/*$1');
-                            let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
-                            if (l < 0) {
-                                touple.weight = 1;
-                                touples.push(touple);
-                            } else {
-                                touples[l].weight++;
+                        //TODO: replace colIdx IFs with colNames
+                        if (colIdx == 0) {
+                            let filtered = arr.filter(x => 
+                                x !== "[]" && 
+                                x !== "");
+                            for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
+                                let touple = { from: filtered[k], to: filtered[k + 1] };
+                                if (touple.from === touple.to) continue; // ignore self actions
+                                
+                                let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
+                                if (l < 0) {
+                                    touple.weight = 1;
+                                    touples.push(touple);
+                                } else {
+                                    touples[l].weight++;
+                                }
                             }
                         } else if (colIdx == 1) for (let k = 0; k < arr.length; k++) { //matchingConversion goals
                             if (arr[k] !== "[]") {
@@ -3518,7 +3522,7 @@ var DashboardPowerups = (function () {
                 let firstColName = dataTable.keys[0];
                 let rowIdx;
                 if (row > 0) {
-                    if(row > dataTable.normalTable.length) rowIdx = -1;
+                    if (row > dataTable.normalTable.length) rowIdx = -1;
                     else rowIdx = row - 1;
                 } else if (row < 0) {
                     rowIdx = dataTable.normalTable.length - 1 + row;
