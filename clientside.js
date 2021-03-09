@@ -1808,9 +1808,11 @@ var DashboardPowerups = (function () {
                         let arr = [];
                         try {
                             arr = JSON.parse(row);
-                        } catch (e) { };
-                        //row.substr(1, row.length - 2)
-                        //    .split(',')
+                        } catch (e) { //Sometimes it's not valid JSON...
+                            arr = row.substr(1, row.length - 2)
+                                .split(',');
+                        };
+
                         try {
                             arr = arr
                                 .map(x => Array.isArray(x) ? x.join(', ') : x)
