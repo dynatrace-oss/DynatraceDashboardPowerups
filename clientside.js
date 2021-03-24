@@ -2366,7 +2366,7 @@ var DashboardPowerups = (function () {
                 let $tile = $title.parents(TILE_SELECTOR);
                 let $table = $tile.find(TABLE_SELECTOR);
 
-                let argstring = title.split(PU_SANKEY)[1].split('!')[0];
+                let argstring = title.split(PU_SANKEY)[1].split('!')[0].trim();
                 let chartTitle = title.split(PU_SANKEY)[0];
                 let args = argstring.split(";").map(x => x.split("="));
                 if (args.length < 1) {
