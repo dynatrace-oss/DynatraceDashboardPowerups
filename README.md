@@ -259,6 +259,7 @@ Explanation:
 - `link=` - points to markdown tile via the link powerup
 - `kpi=` - the name of a User Action Property to be displayed in the main tooltip, usually something like revenue
 - `kpicurr=` - (optional) how to format the KPI if its a currency, e.g. USD, EUR, CNY. If omitted, will format with max 2 fractional digits
+- `convHack=true` - (optional) label first action with "Start: " and last action with "End: ".
 
 Example:
 ![Sankey](Assets/sankey.png)
