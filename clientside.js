@@ -1779,7 +1779,7 @@ var DashboardPowerups = (function () {
         if (!pub.config.Powerups.sankeyPU) return;
         let re = /\/\d+(\/.*)?$/;
 
-        function readTableData(table) {
+        function readTableData(table, convHack) {
             let $table = $(table);
             let dataTable = [];
             let touples = [];
@@ -1832,6 +1832,8 @@ var DashboardPowerups = (function () {
                             for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                                 let touple = { from: filtered[k], to: filtered[k + 1] };
                                 if (touple.from === touple.to) continue; // ignore self actions
+                                if(convHack && k === 0) touple.from = "Start: " + touple.from;
+                                if(convHack && k+1 === filtered.length) touple.to = "End: " + touple.to;
 
                                 let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
                                 if (l < 0) {
@@ -2375,6 +2377,7 @@ var DashboardPowerups = (function () {
                 let link = args.find(x => x[0] == "link")[1];
                 let kpi = (args.find(x => x[0] == "kpi") || [])[1];
                 let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
+                let convHack = (args.find(x => x[0] == "convHack") || [])[1] || false;
 
                 let container = findContainer(link);
                 if (typeof (container) == "undefined") {
@@ -2386,7 +2389,7 @@ var DashboardPowerups = (function () {
                     return false;
                 }
 
-                let data = readTableData($table.get(0));
+                let data = readTableData($table.get(0),convHack);
 
                 let params = {
                     title: chartTitle,
