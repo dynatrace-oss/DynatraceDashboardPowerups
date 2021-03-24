@@ -1831,9 +1831,9 @@ var DashboardPowerups = (function () {
                                 x !== "");
                             for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                                 let touple = { from: filtered[k], to: filtered[k + 1] };
-                                if (touple.from === touple.to) continue; // ignore self actions
                                 if(convHack && k === 0) touple.from = "Start: " + touple.from;
                                 if(convHack && k+1 === filtered.length) touple.to = "End: " + touple.to;
+                                if (touple.from === touple.to) continue; // ignore self actions
 
                                 let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
                                 if (l < 0) {
