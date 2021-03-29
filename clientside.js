@@ -3623,11 +3623,11 @@ var DashboardPowerups = (function () {
                 }
 
                 //display val
-                $markdown.children().hide();
-                $markdown.children(".powerupVlookup").remove();
+                $markdown.hide();
+                $markdown.parent().children(".powerupVlookup").remove();
                 let $newContainer = $("<div>")
                     .addClass("powerupVlookup")
-                    .appendTo($markdown);
+                    .insertAfter($markdown);
                 let $h1 = $("<h1>")
                     .css("color", color)
                     .css("font-size", size)
