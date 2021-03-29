@@ -1832,9 +1832,9 @@ var DashboardPowerups = (function () {
                             for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                                 let touple = { from: filtered[k], to: filtered[k + 1] };
                                 if (touple.from === touple.to) continue; // ignore self actions
-                                if(convHack && k === 0) touple.from = "Start: " + touple.from;
-                                if(convHack && k+1 === filtered.length -1) touple.to = "End: " + touple.to;
-                                
+                                if (convHack && k === 0) touple.from = "Start: " + touple.from;
+                                if (convHack && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
+
 
                                 let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
                                 if (l < 0) {
@@ -1852,7 +1852,7 @@ var DashboardPowerups = (function () {
                                     actionName: actionName,
                                     count: 1,
                                     svg: `<img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`,
-                                    goalName: (arr[k].substring(0, 1) == '[' && arr[k].substr(-1) == ']') 
+                                    goalName: (arr[k].substring(0, 1) == '[' && arr[k].substr(-1) == ']')
                                         ? arr[k].substr(1, arr[k].length - 2).trim()
                                         : arr[k].trim()
                                 });
@@ -2390,7 +2390,7 @@ var DashboardPowerups = (function () {
                     return false;
                 }
 
-                let data = readTableData($table.get(0),convHack);
+                let data = readTableData($table.get(0), convHack);
 
                 let params = {
                     title: chartTitle,
@@ -3580,8 +3580,17 @@ var DashboardPowerups = (function () {
                         } else {
                             let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
                             let compareVlookupVal = compareTable.normalTable[compareRowIdx][compareColName];
-                            let a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
-                            let b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
+                            let a, b;
+                            //a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
+                            if (typeof (vlookupVal) == "string")
+                                a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
+                            if (typeof (vlookupVal) == "number")
+                                a = vlookupVal;
+                            //b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
+                            if (typeof (compareVlookupVal) == "string")
+                                a = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
+                            if (typeof (compareVlookupVal) == "number")
+                                a = compareVlookupVal;
                             if (Number.isNaN(a) || Number.isNaN(b)) {
                                 console.log("POWERUP: WARN - vlookup could not compare vals.");
                             } else {
@@ -3591,7 +3600,11 @@ var DashboardPowerups = (function () {
                             }
                         }
                     } else if (base && !isNaN(warn) && !isNaN(crit)) {
-                        let a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
+                        let a;
+                        if (typeof (vlookupVal) == "string")
+                            a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
+                        if (typeof (vlookupVal) == "number")
+                            a = vlookupVal;
                         switch (base) {
                             case "low":
                                 if (a < warn) color = "green";
