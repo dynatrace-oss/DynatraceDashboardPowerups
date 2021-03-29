@@ -3112,6 +3112,7 @@ var DashboardPowerups = (function () {
 
             //swap markdown content
             $container.hide();
+            $container.parent().children(".powerupMath").remove();
             let $newContainer = $("<div>")
                 .addClass("powerupMath")
                 .insertAfter($container);
