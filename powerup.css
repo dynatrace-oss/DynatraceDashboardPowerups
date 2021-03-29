@@ -310,12 +310,12 @@ span.powerup-color-normal, h1.powerup-color-normal {
   font-family: BerninaSansWeb, sans-serif !important;
 }
 
-.powerupMath {
+.powerupMath, .powerupVlookup {
   display: flex;
   padding-left: 20px;
 }
 
-.powerupMath {
+.powerupMath, .powerupVlookup {
   align-items: center;
 }
 
