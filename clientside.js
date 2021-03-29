@@ -3529,6 +3529,7 @@ var DashboardPowerups = (function () {
                 let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
                 let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
                 let notfound = (args.find(x => x[0] == "notfound") || [])[1] || null;
+                let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
 
                 //find the table
                 let $tabletile = $(pub.findLinkedTile(link));
@@ -3626,7 +3627,7 @@ var DashboardPowerups = (function () {
                 $("<h1>")
                     .addClass("powerupVlookup")
                     .css("color", color)
-                    .css("font-size", "36px")
+                    .css("font-size", size)
                     .text(vlookupVal)
                     .appendTo($markdown);
                 powerupsFired['PU_VLOOKUP'] ? powerupsFired['PU_VLOOKUP']++ : powerupsFired['PU_VLOOKUP'] = 1;
