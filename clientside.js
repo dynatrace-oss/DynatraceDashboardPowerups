@@ -3624,12 +3624,14 @@ var DashboardPowerups = (function () {
                 //display val
                 $markdown.children().hide();
                 $markdown.children(".powerupVlookup").remove();
-                $("<h1>")
+                let $newContainer = $("<div>")
                     .addClass("powerupVlookup")
+                    .appendTo($markdown);
+                let $h1 = $("<h1>")
                     .css("color", color)
                     .css("font-size", size)
                     .text(vlookupVal)
-                    .appendTo($markdown);
+                    .appendTo($newContainer);
                 powerupsFired['PU_VLOOKUP'] ? powerupsFired['PU_VLOOKUP']++ : powerupsFired['PU_VLOOKUP'] = 1;
             }
         });
