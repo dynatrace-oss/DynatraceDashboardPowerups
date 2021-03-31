@@ -3534,7 +3534,7 @@ var DashboardPowerups = (function () {
 
                 //find the table
                 let $tabletile = $(pub.findLinkedTile(link));
-                let dataTable = readTableData($tabletile);
+                let dataTable = readTableData($tabletile, false);
 
                 //console.log("POWERUP: DEBUG - readTableData:");
                 //console.log(dataTable);
