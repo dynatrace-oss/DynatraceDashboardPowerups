@@ -3957,6 +3957,7 @@ var DashboardPowerups = (function () {
                 let args = argsplit(text, PU_BACKGROUND);
 
                 let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
+                let argstring = text.split(PU_BACKGROUND)[1].split(/[!\n]/)[0].trim();
                 let url = (argstring.match(/url=([^ ]+)/) || [])[1];
                 if (url) url = url.trim();
 
