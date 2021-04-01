@@ -3074,6 +3074,7 @@ var DashboardPowerups = (function () {
             let base = (args.find(x => x[0] == "base") || [])[1] || "";
             let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
             let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
+            let dates = (args.find(x => x[0] == "dates") || [])[1] == "true" ? true : false;
 
             let scope = scopeStr.trim().split(',')
                 .map(x => (x.includes(':')
@@ -3089,6 +3090,11 @@ var DashboardPowerups = (function () {
 
             scope.forEach(s => {
                 s.val = pub.findLinkedVal(s.link);
+                if(dates){
+                    let tmpdate = new Date(s.val);
+                    let tmptime = tmpdate.getTime();
+                    if(!isNaN(tmptime)) s.val = tmptime;
+                }
             });
 
 
