@@ -3993,6 +3993,7 @@ var DashboardPowerups = (function () {
                 let args = argsplit(text, PU_IMAGE);
 
                 let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
+                let argstring = text.split(PU_IMAGE)[1].split(/[!\n]/)[0].trim();
                 let url = (argstring.match(/url=([^ ]+)/) || [])[1];
                 if (url) url = url.trim();
                 let out = (argstring.match(/out=([^ ]+)/) || [])[1];
