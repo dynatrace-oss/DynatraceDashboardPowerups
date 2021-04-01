@@ -1725,28 +1725,48 @@ var DashboardPowerups = (function () {
         let link_text = `!PU\\(link\\):` + link;
         let re = new RegExp(link_text + '(?!\\w)');
         let val;
-        $(TITLE_SELECTOR).each((i_link, el_link) => {
+        $(TITLE_SELECTOR).each((i_link, el_link) => { //Check in titles first
             let $linktitle = $(el_link);
 
             if (re.test($linktitle.text())) {
                 let $linktile = $linktitle.parents(".grid-tile");
-                val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g, ''));
+                //val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g, ''));
+                val = $linktile.find(VAL_SELECTOR).text();
             }
         });
 
-        if (typeof val == "undefined")
+        if (typeof val == "undefined") //Check in markdown tiles if link not found in titles
             $(MARKDOWN_SELECTOR).each((i_link, el_link) => {
                 let $linkmd = $(el_link);
 
                 if (re.test($linkmd.text())) {
                     let $linktile = $linkmd.parents(".grid-tile");
-                    val = Number($linktile.find(`h1`).text().replace(/\D+/g, ''));
+                    //val = Number($linktile.find(`h1`).text().replace(/\D+/g, ''));
+                    val = $linktile.find(`h1`).text()
                 }
             });
         if (typeof val == "undefined") {
             console.log("Powerup: ERROR - unable to match link: " + link_text);
             return undefined;
-        } else {
+        } else { //cleanup & return val
+            val = val.trim();
+            
+            //check for a date string
+            let date_val = new Date(val);
+            if(!isNaN(date_val.getTime()))
+                return date_val.getTime();
+
+            //check for simple comma grouped number string
+            let num_val = Number(val.replace(/,/g, ''));
+            if(!isNaN(num_val))
+                return num_val;
+
+            //worst case, strip all non-numeric and make it a number
+            let last_val = Number(val.replace(/\D+/g, ''));
+            if(!isNaN(last_val))
+                return last_val;
+
+            //somehow haven't found a number yet, just return whatever we found
             return val;
         }
     }
