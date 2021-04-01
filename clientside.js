@@ -2591,7 +2591,7 @@ var DashboardPowerups = (function () {
                 let titletokens = $tabletitle.text().split(PU_MAP);
                 //let argstring = $tabletitle.text().split(PU_MAP)[1].split('!')[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(tabletile, PU_MAP);
+                let args = argsplit(tabletitle, PU_MAP);
 
                 let color = args.find(x => x[0] == "color")[1] || "green";
                 color = d3.hsl(color);
