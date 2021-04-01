@@ -243,7 +243,7 @@ var DashboardPowerups = (function () {
     }
 
     const argsplit = (str, pu) => {
-        let argstring = str.split(PU_STDEV)[1].split(/[!\n]/)[0].trim();
+        let argstring = str.split(pu)[1].split(/[!\n]/)[0].trim();
         let args = argstring.split(";").map(x => x.split("="));
         return args;
     }
@@ -3908,7 +3908,7 @@ var DashboardPowerups = (function () {
                 //let argstring = $markdown.text().split(PU_BACKGROUND)[1].split(/[!\n]/)[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
                 let args = argsplit(text,PU_BACKGROUND);
-                
+
                 let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
                 let url = (argstring.match(/url=([^ ]+)/) || [])[1];
                 if (url) url = url.trim();
