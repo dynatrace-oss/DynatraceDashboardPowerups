@@ -1754,15 +1754,20 @@ var DashboardPowerups = (function () {
         } else { //cleanup & return val
             val = val.trim();
 
+            //check for a plain number string
+            let num_val = Number(val);
+            if(!isNaN(num_val))
+                return num_val;
+
             //check for a date string
             let date_val = new Date(val);
             if (!isNaN(date_val.getTime()))
                 return date_val.getTime();
 
             //check for simple comma grouped number string
-            let num_val = Number(val.replace(/,/g, ''));
-            if (!isNaN(num_val))
-                return num_val;
+            let comma_val = Number(val.replace(/,/g, ''));
+            if (!isNaN(comma_val))
+                return comma_val;
 
             //worst case, strip all non-numeric and make it a number
             let last_val = Number(val.replace(/\D+/g, ''));
