@@ -245,6 +245,7 @@ var DashboardPowerups = (function () {
     const argsplit = (str, pu) => {
         let argstring = str.split(pu)[1].split(/[!\n]/)[0].trim();
         let args = argstring.split(";").map(x => x.split("="));
+        args.argstring = argstring;
         return args;
     }
 
@@ -1139,7 +1140,7 @@ var DashboardPowerups = (function () {
         let args = argsplit(title, PU_LINE);
         if (args.length < 3) {
             if (pub.config.Powerups.debug)
-                console.log("Powerup: ERROR - invalid argstring: " + argstring);
+                console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
             return false;
         }
         let thld = args.find(x => x[0] == "thld")[1];
@@ -1171,7 +1172,7 @@ var DashboardPowerups = (function () {
         let args = argsplit(title, PU_USQLSTACK);
         if (args.length < 1) {
             if (pub.config.Powerups.debug)
-                console.log("Powerup: ERROR - invalid argstring: " + argstring);
+                console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
             return false;
         }
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
@@ -1306,7 +1307,7 @@ var DashboardPowerups = (function () {
         let args = argsplit(title, PU_USQLCOLOR);
         if (args.length < 1) {
             if (pub.config.Powerups.debug)
-                console.log("Powerup: ERROR - invalid argstring: " + argstring);
+                console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
             return false;
         }
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
@@ -1610,8 +1611,7 @@ var DashboardPowerups = (function () {
             let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
             let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
             
-            let argstring = text.split(PU_SVG)[1].split('!')[0].trim();
-            let url = (argstring.match(/url=([^ ]+)/) || [])[1];
+            let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
             //let url = (args.find(x => x[0] == "url") || [])[1]; //this does not work due to ; in urls
             if (url) url = url.trim();
             let argObj = {
@@ -2411,7 +2411,7 @@ var DashboardPowerups = (function () {
                 let args = argsplit(title, PU_SANKEY);
                 if (args.length < 1) {
                     if (pub.config.Powerups.debug)
-                        console.log("Powerup: ERROR - invalid argstring: " + argstring);
+                        console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
                     return false;
                 }
                 let link = args.find(x => x[0] == "link")[1];
@@ -2654,7 +2654,8 @@ var DashboardPowerups = (function () {
         let scale = Number((args.find(x => x[0] == "scale") || [])[1] || "1");
 
         //determine fixed color or colorAxis
-        if (argstring.includes("vals")) {
+        //if (argstring.includes("vals")) {
+        if (args.argstring.includes("vals")) {
             let dataClasses = colorAxis.dataClasses = [];
             let vals = ((args.find(x => x[0] == "vals") || [])[1] || ".5,.7,.85,.94").split(',').map(x => Number(x));
             let names = ((args.find(x => x[0] == "names") || [])[1] || "Unacceptable,Poor,Fair,Good,Excellent").split(',');
@@ -3373,7 +3374,7 @@ var DashboardPowerups = (function () {
         let args = argsplit(title, PU_GAUGE);
         if (args.length < 2) {
             if (pub.config.Powerups.debug)
-                console.log("Powerup: ERROR - invalid argstring: " + argstring);
+                console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
             return false;
         }
         let vals = ((args.find(x => x[0] == "stops") || [])[1]);
@@ -3730,9 +3731,11 @@ var DashboardPowerups = (function () {
 
             if (title.includes(PU_TABLE)) {
                 let $table = $tile.find(TABLE_SELECTOR);
-                let argstring = title.split(PU_TABLE)[1].split(/[!\n]/)[0]; //TODO: refactor to argsplit format
-                title = title.split(PU_TABLE)[0].trim();
-                let args = argstring.split(";").map(x => x.split("="));
+                //let argstring = title.split(PU_TABLE)[1].split(/[!\n]/)[0];
+                //let args = argstring.split(";").map(x => x.split("="));
+                let args = argsplit(title,PU_TABLE);
+
+                title = title.split(PU_TABLE)[0].trim();  //for use in filenames etc
                 let col = Number((args.find(x => x[0] == "col") || [])[1]);
 
                 //decorate the table
@@ -3957,8 +3960,7 @@ var DashboardPowerups = (function () {
                 let args = argsplit(text, PU_BACKGROUND);
 
                 let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
-                let argstring = text.split(PU_BACKGROUND)[1].split(/[!\n]/)[0].trim();
-                let url = (argstring.match(/url=([^ ]+)/) || [])[1];
+                let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
                 if (url) url = url.trim();
 
                 //pass message back to extside to get the image, avoid block by CSP
@@ -3993,10 +3995,9 @@ var DashboardPowerups = (function () {
                 let args = argsplit(text, PU_IMAGE);
 
                 let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
-                let argstring = text.split(PU_IMAGE)[1].split(/[!\n]/)[0].trim();
-                let url = (argstring.match(/url=([^ ]+)/) || [])[1];
+                let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
                 if (url) url = url.trim();
-                let out = (argstring.match(/out=([^ ]+)/) || [])[1];
+                let out = (args.argstring.match(/out=([^ ]+)/) || [])[1];
                 if (out) out = out.trim();
 
                 //pass message back to extside to get the image, avoid block by CSP
