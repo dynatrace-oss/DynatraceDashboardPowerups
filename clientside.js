@@ -3128,7 +3128,7 @@ var DashboardPowerups = (function () {
             let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
             let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
             let dates = (args.find(x => x[0] == "dates") || [])[1] == "true" ? true : false;
-            let timeunit = (args.find(x => x[0] == "timeunit") || [])[1] || "s";
+            let timeunit = (args.find(x => x[0] == "timeunit") || [])[1] || "ms";
 
             let scope = scopeStr.trim().split(',')
                 .map(x => (x.includes(':')

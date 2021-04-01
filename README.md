@@ -298,6 +298,8 @@ Explanation:
 - `base=` - (optional) if using thresholds, define whether the base (normal) is `low` or `high`
 - `warn=` - (optional) if using thresholds, warning threshold, once breached color coding will be yellow
 - `crit=` - (optional) if using thresholds, critical threshold, once breached color coding will be red
+- `dates=true` - (optional) use if special date math logic is needed
+- `timeunit=` - (optional) units if doing date math: `s` for seconds, `m`, `h`, `d`. Defaults to `ms` for milliseconds.
 
 Example:
 ![Math](Assets/mathPU.png)
