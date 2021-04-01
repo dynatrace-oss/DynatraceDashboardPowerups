@@ -635,7 +635,7 @@ var DashboardPowerups = (function () {
         var PU100stack = function (chart, title) {
             //let argstring = title.split(PU_100STACK)[1].split('!')[0].trim();
             //let args = argstring.split(";").map(x => x.split("="));
-            let args = argsplit(title,PU_100STACK);
+            let args = argsplit(title, PU_100STACK);
 
             let pad = Number((args.find(x => x[0] == "pad") || [])[1]);
             chart.series.forEach((s, i) => {
@@ -763,7 +763,7 @@ var DashboardPowerups = (function () {
         let dataSet = data.filter(i => i.y != null).map(i => [i.x, i.y]);
         //let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0].trim();
         //let args = argstring.split(";").map(x => x.split("="));
-        let args = argsplit(title,PU_FORECAST);
+        let args = argsplit(title, PU_FORECAST);
 
         let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
         let colors = ((args.find(x => x[0] == "colors") || [])[1] || "#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232").split(',');
@@ -1133,10 +1133,10 @@ var DashboardPowerups = (function () {
 
     pub.PULine = function (chart, title) { //example: !PU(line):thld=4000;hcol=green;lcol=red
         if (!pub.config.Powerups.linePU) return;
-        
+
         //let argstring = title.split(PU_LINE)[1].split('!')[0].trim();
         //let args = argstring.split(";").map(x => x.split("="));
-        let args = argsplit(title,PU_LINE);
+        let args = argsplit(title, PU_LINE);
         if (args.length < 3) {
             if (pub.config.Powerups.debug)
                 console.log("Powerup: ERROR - invalid argstring: " + argstring);
@@ -1168,7 +1168,7 @@ var DashboardPowerups = (function () {
         let p = new $.Deferred();
         //let argstring = title.split(PU_USQLSTACK)[1].split('!')[0].trim();
         //let args = argstring.split(";").map(x => x.split("="));
-        let args = argsplit(title,PU_USQLSTACK);
+        let args = argsplit(title, PU_USQLSTACK);
         if (args.length < 1) {
             if (pub.config.Powerups.debug)
                 console.log("Powerup: ERROR - invalid argstring: " + argstring);
@@ -1303,7 +1303,7 @@ var DashboardPowerups = (function () {
         let p = new $.Deferred();
         //let argstring = title.split(PU_USQLCOLOR)[1].split('!')[0].trim();
         //let args = argstring.split(";").map(x => x.split("="));
-        let args = argsplit(title,PU_USQLCOLOR);
+        let args = argsplit(title, PU_USQLCOLOR);
         if (args.length < 1) {
             if (pub.config.Powerups.debug)
                 console.log("Powerup: ERROR - invalid argstring: " + argstring);
@@ -1456,7 +1456,7 @@ var DashboardPowerups = (function () {
             if (title.includes(PU_BANNER)) {
                 //let argstring = title.split(PU_BANNER)[1].split('!')[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(title,PU_BANNER);
+                let args = argsplit(title, PU_BANNER);
                 let color = args.find(x => x[0] == "color")[1];
 
                 $(BANNER_SELECTOR).css("background", color);
@@ -1512,8 +1512,8 @@ var DashboardPowerups = (function () {
                 if (pub.config.Powerups.debug) console.log("Powerup: color power-up found");
                 //let argstring = $title.text().split(PU_COLOR)[1].split('!')[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
-                
-                let args = argsplit(title,PU_COLOR);
+
+                let args = argsplit(title, PU_COLOR);
                 let base = (args.find(x => x[0] == "base") || [])[1] || "low";
                 let warn = Number(
                     (args.find(x => x[0] == "warn") || [])
@@ -1602,7 +1602,7 @@ var DashboardPowerups = (function () {
             //let argstring = $svgcontainer.text().split(PU_SVG)[1].split('!')[0].trim();
             //let args = argstring.split(";").map(x => x.split("="));
 
-            let args = argsplit(text,PU_SVG);
+            let args = argsplit(text, PU_SVG);
             let icon = (args.find(x => x[0] == "icon") || ["icon", "abort"])[1];
             let link = (args.find(x => x[0] == "link") || [])[1];
             let color = (args.find(x => x[0] == "color") || [])[1];
@@ -1750,20 +1750,20 @@ var DashboardPowerups = (function () {
             return undefined;
         } else { //cleanup & return val
             val = val.trim();
-            
+
             //check for a date string
             let date_val = new Date(val);
-            if(!isNaN(date_val.getTime()))
+            if (!isNaN(date_val.getTime()))
                 return date_val.getTime();
 
             //check for simple comma grouped number string
             let num_val = Number(val.replace(/,/g, ''));
-            if(!isNaN(num_val))
+            if (!isNaN(num_val))
                 return num_val;
 
             //worst case, strip all non-numeric and make it a number
             let last_val = Number(val.replace(/\D+/g, ''));
-            if(!isNaN(last_val))
+            if (!isNaN(last_val))
                 return last_val;
 
             //somehow haven't found a number yet, just return whatever we found
@@ -2405,7 +2405,7 @@ var DashboardPowerups = (function () {
                 let chartTitle = title.split(PU_SANKEY)[0];
                 //let args = argstring.split(";").map(x => x.split("="));
 
-                let args = argsplit(title,PU_SANKEY);
+                let args = argsplit(title, PU_SANKEY);
                 if (args.length < 1) {
                     if (pub.config.Powerups.debug)
                         console.log("Powerup: ERROR - invalid argstring: " + argstring);
@@ -2588,7 +2588,7 @@ var DashboardPowerups = (function () {
                 let titletokens = $tabletitle.text().split(PU_MAP);
                 //let argstring = $tabletitle.text().split(PU_MAP)[1].split('!')[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(tabletile,PU_MAP);
+                let args = argsplit(tabletile, PU_MAP);
 
                 let color = args.find(x => x[0] == "color")[1] || "green";
                 color = d3.hsl(color);
@@ -2641,7 +2641,7 @@ var DashboardPowerups = (function () {
         if (chart.series.length < 1 || chart.series[0].data.length < 1) return;
         //let argstring = title.split(PU_HEATMAP)[1].split('!')[0];
         //let args = argstring.split(";").map(x => x.split("="));
-        let args = argsplit(title,PU_HEATMAP);
+        let args = argsplit(title, PU_HEATMAP);
 
         let txtColor = (args.find(x => x[0] == "txtColor") || [])[1] || "#ffffff";
         //let interval = (args.find(x => x[0] == "int") || [])[1] || "1d";
@@ -2921,7 +2921,7 @@ var DashboardPowerups = (function () {
             if ($title.text().includes(PU_FUNNEL)) {
                 //let argstring = $title.text().split(PU_FUNNEL)[1].split('!')[0];
                 //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(title,PU_FUNNEL);
+                let args = argsplit(title, PU_FUNNEL);
 
                 let mode = args.find(x => x[0] == "mode")[1];
                 let small = Number(args.find(x => x[0] == "small")[1]);
@@ -3109,7 +3109,7 @@ var DashboardPowerups = (function () {
             if (pub.config.Powerups.debug) console.log("Powerup: math power-up found");
             //let argstring = text.split(PU_MATH)[1].split('!')[0];
             //let args = argstring.split(";").map(x => x.split("="));
-            let args = argsplit(text,PU_MATH);
+            let args = argsplit(text, PU_MATH);
 
             let exp = args.find(x => x[0] == "exp")[1].replace(/ /g, '');
             let scopeStr = args.find(x => x[0] == "scope")[1];
@@ -3119,6 +3119,7 @@ var DashboardPowerups = (function () {
             let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
             let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
             let dates = (args.find(x => x[0] == "dates") || [])[1] == "true" ? true : false;
+            let timeunit = (args.find(x => x[0] == "timeunit") || [])[1] || "s";
 
             let scope = scopeStr.trim().split(',')
                 .map(x => (x.includes(':')
@@ -3156,8 +3157,31 @@ var DashboardPowerups = (function () {
             });
 
             //calculate
-            let fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format;
             let val = mexp.eval(exp, tokens, pairs);
+
+            //handle units
+            if (dates) {
+                switch (timeunit) {
+                    case "s":
+                        val = val / 1000;
+                        break;
+                    case "m":
+                        val = val / (1000 * 60);
+                        break;
+                    case "h":
+                        val = val / (1000 * 60 * 60);
+                        break;
+                    case "d":
+                        val = val / (1000 * 60 * 60 * 24);
+                        break;
+                    case "ms":
+                    default:
+                        val = val;
+                }
+            }
+
+            //format
+            const fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format;
             let sVal = fmt(val);
 
             //swap markdown content
@@ -3211,7 +3235,7 @@ var DashboardPowerups = (function () {
             if (pub.config.Powerups.debug) console.log("Powerup: compare power-up found");
             //let argstring = text.split(PU_COMPARE)[1].split('!')[0];
             //let args = argstring.split(";").map(x => x.split("="));
-            let args = argsplit(text,PU_COMPARE);
+            let args = argsplit(text, PU_COMPARE);
 
             let link = args.find(x => x[0] == "link")[1];
             let lt = (args.find(x => x[0] == "lt") || [])[1] || "green";
@@ -3248,7 +3272,7 @@ var DashboardPowerups = (function () {
             if (pub.config.Powerups.debug) console.log("Powerup: mcompare power-up found");
             //let argstring = text.split(PU_MCOMPARE)[1].split('!')[0];
             //let args = argstring.split(";").map(x => x.split("="));
-            let args =argsplit(text,PU_MCOMPARE);
+            let args = argsplit(text, PU_MCOMPARE);
 
             let links = args.find(x => x[0] == "links")[1].trim();
             if (typeof (links) == "string" && links.length)
@@ -3306,7 +3330,7 @@ var DashboardPowerups = (function () {
             if (pub.config.Powerups.debug) console.log("Powerup: date power-up found");
             //let argstring = text.split(PU_DATE)[1].split('!')[0];
             //let args = argstring.split(";").map(x => x.split("="));
-            let args = argsplit(text,PU_DATE);
+            let args = argsplit(text, PU_DATE);
 
             let res = args.find(x => x[0] == "res")[1];
             let fmt = args.find(x => x[0] == "fmt")[1];
@@ -3343,7 +3367,7 @@ var DashboardPowerups = (function () {
         //let titletokens = title.split(PU_GAUGE);
         //let argstring = title.split(PU_GAUGE)[1].split('!')[0];
         //let args = argstring.split(";").map(x => x.split("="));
-        let args = argsplit(title,PU_GAUGE);
+        let args = argsplit(title, PU_GAUGE);
         if (args.length < 2) {
             if (pub.config.Powerups.debug)
                 console.log("Powerup: ERROR - invalid argstring: " + argstring);
@@ -3576,7 +3600,7 @@ var DashboardPowerups = (function () {
                     .split(/[!\n]/)[0]
                     .trim();
                 let args = argstring.split(";").map(x => x.split("="));*/
-                let args = argsplit(markdown,PU_VLOOKUP);
+                let args = argsplit(markdown, PU_VLOOKUP);
                 let color = (args.find(x => x[0] == "color") || ["white"])[1];
                 let link = (args.find(x => x[0] == "link") || [])[1];
                 let val = (args.find(x => x[0] == "val") || [""])[1];
@@ -3823,7 +3847,7 @@ var DashboardPowerups = (function () {
             if (title.includes(PU_STDEV)) {
                 //let argstring = $title.text().split(PU_STDEV)[1].split(/[!\n]/)[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(title,PU_STDEV);
+                let args = argsplit(title, PU_STDEV);
                 let color = (args.find(x => x[0] == "color") || ["white"])[1];
                 let output = (args.find(x => x[0] == "output") || ["output", "stdev"])[1].split(',');
 
@@ -3927,7 +3951,7 @@ var DashboardPowerups = (function () {
             if (text.includes(PU_BACKGROUND)) {
                 //let argstring = $markdown.text().split(PU_BACKGROUND)[1].split(/[!\n]/)[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(text,PU_BACKGROUND);
+                let args = argsplit(text, PU_BACKGROUND);
 
                 let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
                 let url = (argstring.match(/url=([^ ]+)/) || [])[1];
@@ -3962,7 +3986,7 @@ var DashboardPowerups = (function () {
             if (text.includes(PU_IMAGE)) {
                 //let argstring = $markdown.text().split(PU_IMAGE)[1].split(/[!\n]/)[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(text,PU_IMAGE);
+                let args = argsplit(text, PU_IMAGE);
 
                 let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
                 let url = (argstring.match(/url=([^ ]+)/) || [])[1];
@@ -4007,7 +4031,7 @@ var DashboardPowerups = (function () {
             if (title.includes(PU_FUNNELCOLORS)) {
                 //let argstring = $title.text().split(PU_FUNNELCOLORS)[1].split(/[!\n]/)[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(title,PU_FUNNELCOLORS);
+                let args = argsplit(title, PU_FUNNELCOLORS);
 
                 let colors = (args.find(x => x[0] == "colors") || [])[1];
                 let scale = (args.find(x => x[0] == "scale") || [])[1];
@@ -4071,7 +4095,7 @@ var DashboardPowerups = (function () {
             if (text.includes(PU_GRID)) {
                 //let argstring = $md.text().split(PU_GRID)[1].split(/[!\n]/)[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(text,PU_GRID);
+                let args = argsplit(text, PU_GRID);
 
                 let color = (args.find(x => x[0] == "color") || [])[1] || "#454646";
                 let hor = (args.find(x => x[0] == "hor") || [])[1];
