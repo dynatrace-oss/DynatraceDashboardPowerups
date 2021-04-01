@@ -1597,7 +1597,7 @@ var DashboardPowerups = (function () {
             let text = $svgcontainer.text();
             let $tile = $svgcontainer.parents(".grid-tile");
 
-            if (!$svgcontainer.text().includes(PU_SVG)) return;
+            if (!text.includes(PU_SVG)) return;
             if (pub.config.Powerups.debug) console.log("Powerup: svg power-up found");
             //let argstring = $svgcontainer.text().split(PU_SVG)[1].split('!')[0].trim();
             //let args = argstring.split(";").map(x => x.split("="));
@@ -1609,8 +1609,10 @@ var DashboardPowerups = (function () {
             let base = (args.find(x => x[0] == "base") || [])[1];
             let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
             let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
-            //let url = (argstring.match(/url=([^ ]+)/) || [])[1];
-            let url = (args.find(x => x[0] == "url") || [])[1];
+            
+            let argstring = text.split(PU_SVG)[1].split('!')[0].trim();
+            let url = (argstring.match(/url=([^ ]+)/) || [])[1];
+            //let url = (args.find(x => x[0] == "url") || [])[1]; //this does not work due to ; in urls
             if (url) url = url.trim();
             let argObj = {
                 icon: icon,
