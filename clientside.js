@@ -3697,7 +3697,7 @@ var DashboardPowerups = (function () {
                     } else if (base && !isNaN(warn) && !isNaN(crit)) {
                         let a;
                         if (typeof (vlookupVal) == "string")
-                            a = Number(vlookupVal.replace(/[,a-zA-Z ]/g, ""));
+                            a = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
                         if (typeof (vlookupVal) == "number")
                             a = vlookupVal;
                         switch (base) {
