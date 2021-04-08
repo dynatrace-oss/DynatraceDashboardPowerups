@@ -205,13 +205,17 @@ function createMetricPayload(vals) {
     let re = new RegExp(`^${BG_ENV.METRIC_KEY},`);
     let summaryLine = line.replace(re, `${BG_ENV.METRIC_SUMMARY_KEY},`);
     if (vals && Object.keys(vals).length) {
-        Object.keys(vals).filter(x => x.startsWith('PU_'))
-            .forEach(x => {
-                payload += line + `powerup=${x} ${vals[x]}\n`;
-            });
-        payload += summaryLine + `poweredup=true 1\n`;
+        let powerups = Object.keys(vals).filter(x => x.startsWith('PU_'));
+        powerups.forEach(x => {
+            payload += line + `powerup=${x} ${vals[x]}\n`;
+        });
+        if (powerups.length)
+            payload += summaryLine + `poweredup=true 1\n`;
+        else
+            payload = summaryLine + `poweredup=false 1\n`;
     } else {
-        payload = summaryLine + `poweredup=false 1\n`;
+        console.log("POWERUP: unable to send beacon, vals empty!");
+        return undefined;
     }
 
 
