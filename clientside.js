@@ -1793,7 +1793,7 @@ var DashboardPowerups = (function () {
             }
         });
         if (typeof $tile == "undefined") {
-            console.log("Powerup: ERROR - unable to match link: " + link_text);
+            console.log("Powerup: WARN - unable to match link: " + link_text);
             return undefined;
         } else {
             return $tile;
@@ -3622,7 +3622,9 @@ var DashboardPowerups = (function () {
                 let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
 
                 //find the table
-                let $tabletile = $(pub.findLinkedTile(link));
+                let tabletile = pub.findLinkedTile(link);
+                if(typeof(tabletile)=="undefined") return false;
+                let $tabletile = $(tabletile)
                 let dataTable = readTableData($tabletile, false);
 
                 //console.log("POWERUP: DEBUG - readTableData:");
@@ -3661,7 +3663,9 @@ var DashboardPowerups = (function () {
                         let compareTable;
                         if (link === compareLink) compareTable = dataTable;
                         else {
-                            let $comparetabletile = $(pub.findLinkedTile(compareLink));
+                            let comparetabletile = pub.findLinkedTile(compareLink);
+                            if(typeof(comparetabletile)=="undefined") return false;
+                            let $comparetabletile = $(comparetabletile);
                             compareTable = readTableData($comparetabletile);
                         }
                         let compareFirstColName = compareTable.keys[0];
