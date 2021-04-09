@@ -21,6 +21,7 @@ var DashboardPowerups = (function () {
     const SVT_METRIC_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-title"]';
     const SVT_UNITS_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:nth-of-type(2), [uitestid="gwt-debug-kpiValue"] > span:nth-of-type(2)';
     const COLUMN_SELECTOR = '.powerupTable > div > div > div:nth-of-type(1) > span';
+    const MENU_ICON_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-icon"]';
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
     const PU_MAP = '!PU(map):';
@@ -1661,6 +1662,10 @@ var DashboardPowerups = (function () {
                         $svg.appendTo($a);
                     }
                 });
+            
+            //hide menu icon
+            $tile.find(MENU_ICON_SELECTOR).hide();
+            
             powerupsFired['PU_SVG'] ? powerupsFired['PU_SVG']++ : powerupsFired['PU_SVG'] = 1;
         });
     }
