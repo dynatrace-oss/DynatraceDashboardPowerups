@@ -55,7 +55,7 @@ var DashboardPowerups = (function () {
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID
     ];
     const CHART_OPTS = {
-        plotBackgroundColor: '#454646',
+        //plotBackgroundColor: '#454646',
     }
     const SERIES_OPTS = {
         "animation": false,
@@ -1611,7 +1611,7 @@ var DashboardPowerups = (function () {
             let base = (args.find(x => x[0] == "base") || [])[1];
             let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
             let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
-            
+
             let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
             //let url = (args.find(x => x[0] == "url") || [])[1]; //this does not work due to ; in urls
             if (url) url = url.trim();
@@ -1662,10 +1662,10 @@ var DashboardPowerups = (function () {
                         $svg.appendTo($a);
                     }
                 });
-            
+
             //hide menu icon
             $tile.find(MENU_ICON_SELECTOR).hide();
-            
+
             powerupsFired['PU_SVG'] ? powerupsFired['PU_SVG']++ : powerupsFired['PU_SVG'] = 1;
         });
     }
@@ -1724,6 +1724,9 @@ var DashboardPowerups = (function () {
                     else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
                     else $target.addClass(class_norm);
                 }
+
+                //hide menu icon
+                $tile.find(MENU_ICON_SELECTOR).hide();
             }
         });
     }
@@ -1761,7 +1764,7 @@ var DashboardPowerups = (function () {
 
             //check for a plain number string
             let num_val = Number(val);
-            if(!isNaN(num_val))
+            if (!isNaN(num_val))
                 return num_val;
 
             //check for a date string
@@ -3628,7 +3631,7 @@ var DashboardPowerups = (function () {
 
                 //find the table
                 let tabletile = pub.findLinkedTile(link);
-                if(typeof(tabletile)=="undefined") return false;
+                if (typeof (tabletile) == "undefined") return false;
                 let $tabletile = $(tabletile)
                 let dataTable = readTableData($tabletile, false);
 
@@ -3669,7 +3672,7 @@ var DashboardPowerups = (function () {
                         if (link === compareLink) compareTable = dataTable;
                         else {
                             let comparetabletile = pub.findLinkedTile(compareLink);
-                            if(typeof(comparetabletile)=="undefined") return false;
+                            if (typeof (comparetabletile) == "undefined") return false;
                             let $comparetabletile = $(comparetabletile);
                             compareTable = readTableData($comparetabletile);
                         }
@@ -3747,7 +3750,7 @@ var DashboardPowerups = (function () {
                 let $table = $tile.find(TABLE_SELECTOR);
                 //let argstring = title.split(PU_TABLE)[1].split(/[!\n]/)[0];
                 //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(title,PU_TABLE);
+                let args = argsplit(title, PU_TABLE);
 
                 title = title.split(PU_TABLE)[0].trim();  //for use in filenames etc
                 let col = Number((args.find(x => x[0] == "col") || [])[1]);
