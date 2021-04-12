@@ -38,6 +38,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [Forecast](#Forecast)
     - [Grid](#Grid)
     - [TileCSS](#Tilecss)
+    - [Menu](#Menu)
 
 ## Installation
 1. Install the extension from the
@@ -529,7 +530,7 @@ Example:
 ![grid](Assets/grid.png)
 
 ### TileCSS
-Use CSS directives to further style a tile.
+Use CSS directives to further style a tile. Note: First version is somewhat limited; further enhancements will be made to select different parts of the tile.
 
 Syntax:
 - ``Revenue !PU(tilecss):`border:3px green solid;border-radius: 15px;transform: rotateZ(45deg);` ``
@@ -537,3 +538,20 @@ Syntax:
 Explanation:
 - `!PU(tilecss):` - denotes the powerup
 - `` `...` `` - css directives wrapped in backticks. `url()` is disallowed.
+
+Example:
+![tilecss](Assets/tilecss.png)
+
+### Menu
+Add additional context menu items. Requires Dynatrace >= 1.214.
+
+Syntax:
+- `Apdex !PU(menu):name=Application;url=#uemapplications/uemappmetrics;uemapplicationId=APPLICATION-008569CDB300AE03 !PU(menu):name=Easy_Travel;url=http://www.easytravel.com`
+
+Explanation:
+- `!PU(menu):` - denotes the powerup
+- `name=` - what text to put in the menu (do not use spaces)
+- `url=` - URL to link to. Note: Absolute URLs (ie starts with `http`) will open in a new tab.
+
+Example:
+![menu](Assets/PUmenu.png)
