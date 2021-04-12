@@ -4149,7 +4149,6 @@ var DashboardPowerups = (function () {
                                     .attr("class", a_class)
                                     .addClass("powerMenuItem")
                                     .text(name)
-                                    .on("click.PUmenu", menu_item_click_handler)
                                     .appendTo($popup);
 
                                 if (url.startsWith('http'))
