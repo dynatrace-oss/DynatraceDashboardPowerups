@@ -4170,8 +4170,8 @@ var DashboardPowerups = (function () {
 
                         let $icon = $tile.find(MENU_ICON_SELECTOR);
                         $icon
-                            .off(".PUmenu")
-                            .on("click.PUmenu", menu_icon_click_handler);
+                            .off(`.PUmenu-${name}`)
+                            .on(`click.PUmenu-${name}`, menu_icon_click_handler);
 
                         if ($icon.length) {
                             powerupsFired['PU_MENU'] ? powerupsFired['PU_MENU']++ : powerupsFired['PU_MENU'] = 1;
