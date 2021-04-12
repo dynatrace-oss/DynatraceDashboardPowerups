@@ -247,9 +247,19 @@ var DashboardPowerups = (function () {
     }
 
     const argsplit = (str, pu) => {
-        let argstring = str.split(pu)[1].split(/[!\n]/)[0].trim();
-        let args = argstring.split(";").map(x => x.split("="));
-        args.argstring = argstring;
+        let splits = str.split(pu);
+        splits.shift(); //remove leading text
+        let count = splits.length;
+        let argObjs = [];
+        splits.forEach(split => {
+            let argstring = split.split(/[!\n]/)[0].trim();
+            let args = argstring.split(";").map(x => x.split("="));
+            args.argstring = argstring;
+            argObjs.push(args);
+        })
+        //return first argObj for backwards compatibility, w/ full array as a property
+        let args = argObjs[0];
+        args.argObjs = argObjs;
         return args;
     }
 
@@ -4122,51 +4132,53 @@ var DashboardPowerups = (function () {
                     //Step 1 - Add click listener to menu_icon
                     //Step 2 - On click, add a new anchor element
 
-                    let args = argsplit(text, PU_MENU);
-                    let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
-                    if (url) url = url.trim();
-                    let name = (args.find(x => x[0] == "name") || [])[1];
-                    if (typeof (url) == "undefined"
-                        || typeof (name) == "undefined")
-                        return false;
+                    let argsArr = argsplit(text, PU_MENU);
+                    argsArr.argObjs.forEach(args => {
+                        let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
+                        if (url) url = url.trim();
+                        let name = (args.find(x => x[0] == "name") || [])[1];
+                        if (typeof (url) == "undefined"
+                            || typeof (name) == "undefined")
+                            return false;
 
-                    function menu_icon_click_handler(e) {
-                        setTimeout(() => {
-                            let $popup = $(MENU_POPUP_SELECTOR);
-                            let a_class = $popup.children("a").first().attr("class");
-                            let $a;
+                        function menu_icon_click_handler(e) {
+                            setTimeout(() => {
+                                let $popup = $(MENU_POPUP_SELECTOR);
+                                let a_class = $popup.children("a").first().attr("class");
+                                let $a;
 
-                            //check for already added
-                            $popup.children("a").each((child_idx, child) => {
-                                let $child = $(child);
-                                if ($child.text() == name) $a = $child;
-                            })
+                                //check for already added
+                                $popup.children("a").each((child_idx, child) => {
+                                    let $child = $(child);
+                                    if ($child.text() == name) $a = $child;
+                                })
 
-                            if (typeof ($a) == "undefined"
-                                || !$a.length) {
-                                $a = $("<a>")
-                                    .attr("href", url)
-                                    .attr("class", a_class)
-                                    .addClass("powerMenuItem")
-                                    .text(name)
-                                    .appendTo($popup);
+                                if (typeof ($a) == "undefined"
+                                    || !$a.length) {
+                                    $a = $("<a>")
+                                        .attr("href", url)
+                                        .attr("class", a_class)
+                                        .addClass("powerMenuItem")
+                                        .text(name)
+                                        .appendTo($popup);
 
-                                if (url.startsWith('http'))
-                                    $a.attr('target', '_blank');
-                            }
-                        }, 50);
-                    }
+                                    if (url.startsWith('http'))
+                                        $a.attr('target', '_blank');
+                                }
+                            }, 50);
+                        }
 
-                    let $icon = $tile.find(MENU_ICON_SELECTOR);
-                    $icon
-                        .off(".PUmenu")
-                        .on("click.PUmenu", menu_icon_click_handler);
+                        let $icon = $tile.find(MENU_ICON_SELECTOR);
+                        $icon
+                            .off(".PUmenu")
+                            .on("click.PUmenu", menu_icon_click_handler);
 
-                    if ($icon.length) {
-                        powerupsFired['PU_MENU'] ? powerupsFired['PU_MENU']++ : powerupsFired['PU_MENU'] = 1;
-                    } else {
-                        console.log("POWERUP: WARN - PU(menu) used but no icon found.");
-                    }
+                        if ($icon.length) {
+                            powerupsFired['PU_MENU'] ? powerupsFired['PU_MENU']++ : powerupsFired['PU_MENU'] = 1;
+                        } else {
+                            console.log("POWERUP: WARN - PU(menu) used but no icon found.");
+                        }
+                    })
                 }
             })
     }
