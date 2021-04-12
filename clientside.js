@@ -22,6 +22,8 @@ var DashboardPowerups = (function () {
     const SVT_UNITS_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:nth-of-type(2), [uitestid="gwt-debug-kpiValue"] > span:nth-of-type(2)';
     const COLUMN_SELECTOR = '.powerupTable > div > div > div:nth-of-type(1) > span';
     const MENU_ICON_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-icon"]';
+    const MENU_POPUP_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-popup"]';
+
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
     const PU_MAP = '!PU(map):';
@@ -48,6 +50,7 @@ var DashboardPowerups = (function () {
     const PU_FORECAST = '!PU(forecast):';
     const PU_TILECSS = '!PU(tilecss):';
     const PU_GRID = '!PU(grid):';
+    const PU_MENU = '!PU(menu):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
@@ -4101,6 +4104,68 @@ var DashboardPowerups = (function () {
                         });
 
                         powerupsFired['PU_TILECSS'] ? powerupsFired['PU_TILECSS']++ : powerupsFired['PU_TILECSS'] = 1;
+                    }
+                }
+            })
+    }
+
+    pub.PUmenu = function () {
+        $([TITLE_SELECTOR, MARKDOWN_SELECTOR].join(', '))
+            .each((i, el) => {
+                let $text = $(el);
+                let text = $text.text();
+                let $tile = $text.parents(TILE_SELECTOR);
+
+                if (text.includes(PU_MENU)) {
+                    //Menu PowerUp is present
+                    //Actual menu appears and disappears in DOM, rather than being hidden
+                    //Step 1 - Add click listener to menu_icon
+                    //Step 2 - On click, add a new anchor element
+
+                    let args = argsplit(text, PU_MENU);
+                    let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
+                    if (url) url = url.trim();
+                    let name = (args.find(x => x[0] == "link") || [])[1];
+                    if (typeof (url) == "undefined"
+                        || typeof (name) == "undefined")
+                        return false;
+
+                    function menu_icon_click_handler(e) {
+                        setTimeout(() => {
+                            let $popup = $(MENU_POPUP_SELECTOR);
+                            let a_class = $popup.children("a").first().attr("class");
+                            let $a;
+
+                            //check for already added
+                            $popup.children("a").each((child_idx, child) => {
+                                let $child = $(child);
+                                if (child.text() == name) $a = $child;
+                            })
+
+                            if (typeof ($a) == "undefined") {
+                                $a = $("<a>")
+                                    .attr("href", url)
+                                    .attr("class", a_class)
+                                    .addClass("powerMenuItem")
+                                    .text(name)
+                                    .on("click.PUmenu", menu_item_click_handler)
+                                    .appendTo($popup);
+
+                                if (url.startsWith('http'))
+                                    $a.attr('target', '_blank');
+                            }
+                        }, 50);
+                    }
+
+                    let $icon = $tile.find(MENU_ICON_SELECTOR);
+                    $icon
+                        .off(".PUmenu")
+                        .on("click.PUmenu", menu_icon_click_handler);
+
+                    if ($icon.length) {
+                        powerupsFired['PU_MENU'] ? powerupsFired['PU_MENU']++ : powerupsFired['PU_MENU'] = 1;
+                    } else {
+                        console.log("POWERUP: WARN - PU(menu) used but no icon found.");
                     }
                 }
             })
