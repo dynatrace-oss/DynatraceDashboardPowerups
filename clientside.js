@@ -4294,6 +4294,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.sunburnMode());
             promises.push(pub.hideEarlyAdopter());
             promises.push(pub.fixPublicDashboards());
+            promises.push(pub.PUmenu());
 
             //cleanup activities
             pub.loadChartSync();
