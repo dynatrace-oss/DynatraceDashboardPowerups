@@ -4125,7 +4125,7 @@ var DashboardPowerups = (function () {
                     let args = argsplit(text, PU_MENU);
                     let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
                     if (url) url = url.trim();
-                    let name = (args.find(x => x[0] == "link") || [])[1];
+                    let name = (args.find(x => x[0] == "name") || [])[1];
                     if (typeof (url) == "undefined"
                         || typeof (name) == "undefined")
                         return false;
