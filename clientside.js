@@ -4139,10 +4139,11 @@ var DashboardPowerups = (function () {
                             //check for already added
                             $popup.children("a").each((child_idx, child) => {
                                 let $child = $(child);
-                                if (child.text() == name) $a = $child;
+                                if ($child.text() == name) $a = $child;
                             })
 
-                            if (typeof ($a) == "undefined") {
+                            if (typeof ($a) == "undefined"
+                                || !$a.length) {
                                 $a = $("<a>")
                                     .attr("href", url)
                                     .attr("class", a_class)
