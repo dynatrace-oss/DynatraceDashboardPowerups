@@ -3142,7 +3142,7 @@ var DashboardPowerups = (function () {
             $container.children().each((i, el) => { //handle each paragraph individually
                 let $para = $(el);
                 let paratxt = $para.text();
-                if (!paratext.includes(PU_MATH)) return; //not important, next paragraph
+                if (!paratxt.includes(PU_MATH)) return; //not important, next paragraph
 
                 let args = argsplit(text, PU_MATH);
 
