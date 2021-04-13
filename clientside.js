@@ -3229,9 +3229,9 @@ var DashboardPowerups = (function () {
             } else {
                 $container.children.each((i, el) => {
                     let $para = $(el);
-                    let text = $para.text();
+                    let txt = $para.text();
                     let found = false;
-                    if (!found && text.includes(PU_MATH)) {
+                    if (!found && txt.includes(PU_MATH)) {
                         $para.hide();
                         $para.siblings(".powerupMath").remove();
                         let $h1 = $("<h1>")
