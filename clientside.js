@@ -3150,7 +3150,7 @@ var DashboardPowerups = (function () {
             let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
             let dates = (args.find(x => x[0] == "dates") || [])[1] == "true" ? true : false;
             let timeunit = (args.find(x => x[0] == "timeunit") || [])[1] || "ms";
-            let text = (args.find(x => x[0] == "text") || [])[1] == "true" ? true : false;
+            let txt = (args.find(x => x[0] == "txt") || [])[1] == "true" ? true : false;
 
             let scope = scopeStr.trim().split(',')
                 .map(x => (x.includes(':')
@@ -3216,7 +3216,7 @@ var DashboardPowerups = (function () {
             let sVal = fmt(val);
 
             //swap markdown content
-            if (!text) {
+            if (!txt) {
                 $container.hide();
                 $container.parent().children(".powerupMath").remove();
                 let $newContainer = $("<div>")
@@ -3229,9 +3229,9 @@ var DashboardPowerups = (function () {
             } else {
                 $container.children.each((i, el) => {
                     let $para = $(el);
-                    let txt = $para.text();
+                    let paratxt = $para.text();
                     let found = false;
-                    if (!found && txt.includes(PU_MATH)) {
+                    if (!found && paratxt.includes(PU_MATH)) {
                         $para.hide();
                         $para.siblings(".powerupMath").remove();
                         let $h1 = $("<h1>")
