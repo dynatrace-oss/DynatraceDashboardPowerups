@@ -3150,6 +3150,7 @@ var DashboardPowerups = (function () {
             let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
             let dates = (args.find(x => x[0] == "dates") || [])[1] == "true" ? true : false;
             let timeunit = (args.find(x => x[0] == "timeunit") || [])[1] || "ms";
+            let text = (args.find(x => x[0] == "text") || [])[1] == "true" ? true : false;
 
             let scope = scopeStr.trim().split(',')
                 .map(x => (x.includes(':')
@@ -3215,15 +3216,33 @@ var DashboardPowerups = (function () {
             let sVal = fmt(val);
 
             //swap markdown content
-            $container.hide();
-            $container.parent().children(".powerupMath").remove();
-            let $newContainer = $("<div>")
-                .addClass("powerupMath")
-                .insertAfter($container);
-            let $h1 = $("<h1>")
-                .text(sVal)
-                .css("font-size", size)
-                .appendTo($newContainer);
+            if (!text) {
+                $container.hide();
+                $container.parent().children(".powerupMath").remove();
+                let $newContainer = $("<div>")
+                    .addClass("powerupMath")
+                    .insertAfter($container);
+                let $h1 = $("<h1>")
+                    .text(sVal)
+                    .css("font-size", size)
+                    .appendTo($newContainer);
+            } else {
+                $container.children.each((i, el) => {
+                    let $para = $(el);
+                    let text = $para.text();
+                    let found = false;
+                    if (!found && text.includes(PU_MATH)) {
+                        $para.hide();
+                        $para.siblings(".powerupMath").remove();
+                        let $h1 = $("<h1>")
+                            .text(sVal)
+                            .css("font-size", size)
+                            .addClass("powerupMath")
+                            .insertAfter($newContainer);
+                        found = true;
+                    }
+                })
+            }
 
             //thresholds
             if (base && !isNaN(warn) && !isNaN(crit)) {
