@@ -3228,7 +3228,7 @@ var DashboardPowerups = (function () {
                     .css("font-size", size)
                     .appendTo($newContainer);
             } else {
-                $container.children.each((i, el) => {
+                $container.children(`h1`).each((i, el) => {
                     let $para = $(el);
                     let paratxt = $para.text();
                     let found = false;
