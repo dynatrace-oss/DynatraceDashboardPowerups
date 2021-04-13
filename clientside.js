@@ -3139,6 +3139,7 @@ var DashboardPowerups = (function () {
                 return;
             }
             if (pub.config.Powerups.debug) console.log("Powerup: math power-up found");
+            $container.parent().children(".powerupMath").remove(); //remove old maths before we get started
             $container.children().each((i, el) => { //handle each paragraph individually
                 let $para = $(el);
                 let paratxt = $para.text();
@@ -3224,7 +3225,7 @@ var DashboardPowerups = (function () {
                 let $h1;
                 if (full) {
                     $container.hide();
-                    $container.parent().children(".powerupMath").remove();
+                    //$container.parent().children(".powerupMath").remove();
                     let $newContainer = $("<div>")
                         .addClass("powerupMath")
                         .insertAfter($container);
@@ -3239,7 +3240,7 @@ var DashboardPowerups = (function () {
                         let found = false;
                         if (!found && paratxt.includes(PU_MATH)) {
                             $para.hide();
-                            $para.siblings(".powerupMath").remove();
+                            //$para.siblings(".powerupMath").remove();
                             $h1 = $("<h1>")
                                 .text(sVal)
                                 .css("font-size", size)
