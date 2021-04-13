@@ -197,6 +197,7 @@ function createMetricPayload(vals) {
     if ("configuratorTag" in vals) line += `configuratortag=${vals['configuratorTag']},`;
     if ("host" in vals) line += `host=${vals['host']},`;
     if ("tenantId" in vals) line += `tenantid=${vals['tenantId']},`;
+    if ("libLocation" in vals) line += `libLocation=${vals['libLocation']},`;
     if (openKit && openKit.config && openKit.config.meta && openKit.config.meta.applicationVersion)
         line += `version=${openKit.config.meta.applicationVersion},`;
     if (openKitSession && openKitSession.userId) line += `userid=${openKitSession.userId},`;
