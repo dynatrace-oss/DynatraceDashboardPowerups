@@ -225,25 +225,6 @@ if (typeof (INJECTED) == "undefined") {
                 switch (request.PowerUpResult) {
                     case "PU_BACKGROUND": //we asked background for an img, now we have it
                     case "PU_IMAGE":
-                        /*let p = loadImgFromStorage(request);
-                        $.when(p)
-                            .done((file) => { //found locally, insert it
-                                let target = request.targetSelector;
-                                insertImg(target, file);
-                            })
-                            .fail(() => { //hmm that didn't work, fail
-                                let err = `POWERUP: unable to load image: ${request.url}`;
-                                errorBeacon(err);
-                                console.warn(err);
-                            });*/
-                        /*let response = request.response;
-                        if (response.ok) {
-                            let clone = response.clone();
-                            caches.open('PowerUps').then(function (cache) {
-                                cache.put(url, clone);
-                            });
-                            insertImgResponse(target, request, response);
-                        }*/
                         insertImg(request.targetSelector, request.dataURL);
                         break;
                 }
@@ -276,7 +257,6 @@ if (typeof (INJECTED) == "undefined") {
 
     function injectHighchartsModules(config) {
         if (config.Powerups.heatmapPU) {
-            //injectHighchartsModule("heatmap");
             injectHighchartsModule("heatmap-fixed");
             injectClientsideString(`
             //Highcharts Heatmap bug workaround

@@ -364,7 +364,8 @@ var DashboardPowerups = (function () {
             dtVersion: dtVersion,
             dbName: dbName,
             configuratorTag: configuratorTag,
-            envName: envName
+            envName: envName,
+            libLocation: pub.config.Powerups.libLocation
         };
         window.postMessage(
             {
