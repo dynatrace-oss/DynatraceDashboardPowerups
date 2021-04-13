@@ -321,6 +321,8 @@ span.powerup-color-normal, h1.powerup-color-normal {
 
 .powerupMathText {
   color: #898989;
+  padding-left: 15px;
+  font-size: 14px;
 }
 
 .powerupStdev span {
