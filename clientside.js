@@ -3135,7 +3135,11 @@ var DashboardPowerups = (function () {
             let $tile = $container.parents(".grid-tile");
             let text = $container.text();
 
-            if (!text.includes(PU_MATH)) return;
+            if (!text.includes(PU_MATH)) {
+                text = $container.find(`.powerupMath`).siblings().text(); //find paragraph with text if it was previously hidden
+                if (!text.includes(PU_MATH))
+                    return;
+            }
             if (pub.config.Powerups.debug) console.log("Powerup: math power-up found");
             //let argstring = text.split(PU_MATH)[1].split('!')[0];
             //let args = argstring.split(";").map(x => x.split("="));
@@ -3241,6 +3245,8 @@ var DashboardPowerups = (function () {
                             .addClass("powerupMath")
                             .insertAfter($para);
                         found = true;
+                    } else {
+                        $para.addClass(".powerupMathText");
                     }
                 })
             }
