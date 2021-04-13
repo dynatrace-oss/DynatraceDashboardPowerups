@@ -3144,7 +3144,7 @@ var DashboardPowerups = (function () {
                 let paratxt = $para.text();
                 if (!paratxt.includes(PU_MATH)) return; //not important, next paragraph
 
-                let args = argsplit(text, PU_MATH);
+                let args = argsplit(paratxt, PU_MATH);
 
                 let exp = args.find(x => x[0] == "exp")[1].replace(/ /g, '');
                 let scopeStr = args.find(x => x[0] == "scope")[1];
