@@ -3156,7 +3156,7 @@ var DashboardPowerups = (function () {
                 let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
                 let dates = (args.find(x => x[0] == "dates") || [])[1] == "true" ? true : false;
                 let timeunit = (args.find(x => x[0] == "timeunit") || [])[1] || "ms";
-                let full = (args.find(x => x[0] == "full") || [])[1] == "false" ? false: true;
+                let full = (args.find(x => x[0] == "full") || [])[1] == "false" ? false : true;
 
                 let scope = scopeStr.trim().split(',')
                     .map(x => (x.includes(':')
@@ -3225,7 +3225,6 @@ var DashboardPowerups = (function () {
                 let $h1;
                 if (full) {
                     $container.hide();
-                    //$container.parent().children(".powerupMath").remove();
                     let $newContainer = $("<div>")
                         .addClass("powerupMath")
                         .insertAfter($container);
@@ -3234,23 +3233,13 @@ var DashboardPowerups = (function () {
                         .css("font-size", size)
                         .appendTo($newContainer);
                 } else {
-                    //let found = false;
-                    //$container.children().each((i, el) => { //TODO: refactor this, shouldn't be necessary anymore
-                        //let $para = $(el);
-                        //let paratxt = $para.text();
-                        //if (!found && paratxt.includes(PU_MATH)) {
-                            $para.hide();
-                            //$para.siblings(".powerupMath").remove();
-                            $h1 = $("<h1>")
-                                .text(sVal)
-                                .css("font-size", size)
-                                .addClass("powerupMath")
-                                .insertAfter($para);
-                            //found = true;
-                        //} else {
-                        //    $para.addClass(".powerupMathText");
-                        //}
-                    //})
+                    $para.hide();
+                    $h1 = $("<h1>")
+                        .text(sVal)
+                        .css("font-size", size)
+                        .addClass("powerupMath")
+                        .insertAfter($para);
+                    $h1.siblings().addClass("powerupMathText");
                 }
 
                 //thresholds

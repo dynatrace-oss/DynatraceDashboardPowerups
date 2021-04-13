@@ -301,6 +301,7 @@ Explanation:
 - `crit=` - (optional) if using thresholds, critical threshold, once breached color coding will be red
 - `dates=true` - (optional) use if special date math logic is needed
 - `timeunit=` - (optional) units if doing date math: `s` for seconds, `m`, `h`, `d`. Defaults to `ms` for milliseconds.
+- `full=false` - (optional) by default take up the full tile. Optionally, `false` to not hide other text in markdown tile. Must be false to support multiple math powerups in a single tile.
 
 Example:
 ![Math](Assets/mathPU.png)
