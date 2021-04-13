@@ -3234,10 +3234,10 @@ var DashboardPowerups = (function () {
                         .css("font-size", size)
                         .appendTo($newContainer);
                 } else {
+                    let found = false;
                     $container.children().each((i, el) => {
                         let $para = $(el);
                         let paratxt = $para.text();
-                        let found = false;
                         if (!found && paratxt.includes(PU_MATH)) {
                             $para.hide();
                             //$para.siblings(".powerupMath").remove();
