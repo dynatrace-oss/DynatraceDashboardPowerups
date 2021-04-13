@@ -3240,6 +3240,7 @@ var DashboardPowerups = (function () {
                         .addClass("powerupMath")
                         .insertAfter($para);
                     $h1.siblings().addClass("powerupMathText");
+                    $para.parent().attr("class","");
                 }
 
                 //thresholds
