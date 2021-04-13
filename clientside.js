@@ -3216,13 +3216,14 @@ var DashboardPowerups = (function () {
             let sVal = fmt(val);
 
             //swap markdown content
+            let $h1;
             if (!txt) {
                 $container.hide();
                 $container.parent().children(".powerupMath").remove();
                 let $newContainer = $("<div>")
                     .addClass("powerupMath")
                     .insertAfter($container);
-                let $h1 = $("<h1>")
+                $h1 = $("<h1>")
                     .text(sVal)
                     .css("font-size", size)
                     .appendTo($newContainer);
@@ -3234,7 +3235,7 @@ var DashboardPowerups = (function () {
                     if (!found && paratxt.includes(PU_MATH)) {
                         $para.hide();
                         $para.siblings(".powerupMath").remove();
-                        let $h1 = $("<h1>")
+                        $h1 = $("<h1>")
                             .text(sVal)
                             .css("font-size", size)
                             .addClass("powerupMath")
