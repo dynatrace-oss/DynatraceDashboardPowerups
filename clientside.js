@@ -3239,7 +3239,7 @@ var DashboardPowerups = (function () {
                             .text(sVal)
                             .css("font-size", size)
                             .addClass("powerupMath")
-                            .insertAfter($newContainer);
+                            .insertAfter($para);
                         found = true;
                     }
                 })
