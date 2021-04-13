@@ -323,6 +323,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
   color: #898989;
   padding-left: 15px;
   font-size: 14px;
+  font-weight: 500;
 }
 
 .powerupStdev span {
