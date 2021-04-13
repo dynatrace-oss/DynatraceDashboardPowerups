@@ -3234,11 +3234,11 @@ var DashboardPowerups = (function () {
                         .css("font-size", size)
                         .appendTo($newContainer);
                 } else {
-                    let found = false;
-                    $container.children().each((i, el) => {
-                        let $para = $(el);
-                        let paratxt = $para.text();
-                        if (!found && paratxt.includes(PU_MATH)) {
+                    //let found = false;
+                    //$container.children().each((i, el) => { //TODO: refactor this, shouldn't be necessary anymore
+                        //let $para = $(el);
+                        //let paratxt = $para.text();
+                        //if (!found && paratxt.includes(PU_MATH)) {
                             $para.hide();
                             //$para.siblings(".powerupMath").remove();
                             $h1 = $("<h1>")
@@ -3246,11 +3246,11 @@ var DashboardPowerups = (function () {
                                 .css("font-size", size)
                                 .addClass("powerupMath")
                                 .insertAfter($para);
-                            found = true;
-                        } else {
-                            $para.addClass(".powerupMathText");
-                        }
-                    })
+                            //found = true;
+                        //} else {
+                        //    $para.addClass(".powerupMathText");
+                        //}
+                    //})
                 }
 
                 //thresholds
