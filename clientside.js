@@ -3139,7 +3139,7 @@ var DashboardPowerups = (function () {
                 return;
             }
             if (pub.config.Powerups.debug) console.log("Powerup: math power-up found");
-            $container.parent().children(".powerupMath").remove(); //remove old maths before we get started
+            $container.children(".powerupMath").remove(); //remove old maths before we get started
             $container.children().each((i, el) => { //handle each paragraph individually
                 let $para = $(el);
                 let paratxt = $para.text();
