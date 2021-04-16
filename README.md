@@ -102,7 +102,7 @@ Example:
 
 ### Colorize
 For Single Value Tiles, either custom chart or USQL, you can add color coding by adding markup to the title:
-`!PU(color):base=high;warn=90;crit=80`
+`!PU(color):base=high;warn=90;crit=80`. Note: also see [USQL colors](#USQL-colors) PowerUp for simply changing colors for USQL and Explorer tiles.
 
 Explanation:
 - `!PU(color):` this starts the markup
@@ -192,7 +192,7 @@ Example:
 ![USQL Stacked Bar Chart](Assets/usqlstack.png)
 
 ### USQL colors
-This powerup switches the color palette for a USQL chart . Change the title like this:
+This powerup switches the color palette for a USQL or Explorer chart. Change the title like this:
 `!PU(usqlcolor):vals=satisfied,tolerating,frustrated;colors=green,yellow,red`
 
 Explanation:
