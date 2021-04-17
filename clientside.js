@@ -2754,6 +2754,9 @@ var DashboardPowerups = (function () {
             chart.newContainer = newContainer;
         }
         let $legend = $tile.find(LEGEND_SELECTOR);
+        if($legend.children().last().text().endsWith("more")){
+            $legend.children().last().text("ERROR: too many series");
+        }
 
         //data manipulation
         let newData = [];
