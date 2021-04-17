@@ -1654,7 +1654,10 @@ var DashboardPowerups = (function () {
 
                     $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
                     $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
-                    if (base == "low") {
+                    $svg.removeClass("powerup-svg-nan");
+                    if(isNaN(val)){
+                        $svg.addClass("powerup-svg-nan");
+                    } else if (base == "low") {
                         if (val < warn) $svg.addClass(class_norm);
                         else if (val < crit) $svg.addClass(class_warn);
                         else $svg.addClass(class_crit);
