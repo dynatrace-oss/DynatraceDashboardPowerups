@@ -1626,7 +1626,7 @@ var DashboardPowerups = (function () {
                     let bignum = Number($bignum.text());
                     let color = getColor(bignum);
 
-                    let $bar = $bars[i].find(TOPLIST_BAR_SELECTOR);
+                    let $bar = $bars.eq(i).find(TOPLIST_BAR_SELECTOR);
                     $bar.css("background-color",color);
                 });
             }
