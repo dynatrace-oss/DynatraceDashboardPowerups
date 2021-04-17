@@ -39,6 +39,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [Grid](#Grid)
     - [TileCSS](#Tilecss)
     - [Menu](#Menu)
+    - [Topcolor](#Topcolor)
 
 ## Installation
 1. Install the extension from the
@@ -556,3 +557,17 @@ Explanation:
 
 Example:
 ![menu](Assets/PUmenu.png)
+
+### Topcolor
+Apply coloring to toplists. Note: where possible please use Explorer tiles instead of this PowerUp. Explorer tiles should support sorting in a few sprints (~1.220).
+
+Syntax:
+- `Worst Apdex by Geo !PU(topcolor):vals=.5,.7,.85,.94;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f`
+
+Explanation:
+- `!PU(topcolor):` - denotes this powerup
+- `vals=` - thresholds, should be N-1 of them
+- `colors=` - CSS colors, should be N of them
+
+Example:
+![topcolor](Assets/topcolor.png)
