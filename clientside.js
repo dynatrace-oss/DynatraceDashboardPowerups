@@ -347,11 +347,12 @@ var DashboardPowerups = (function () {
         //try sending message to background.js instead to avoid CSP issues
         let email = $(`[debugid="userEmail"]`).text();
         let name = (email > "" ? email : $(`[debugid="userName"]`).text());
+        if (!name.length) name = "Anonymous";
         let internalUser = (name.includes('@dynatrace.com')
             || name.includes('@ruxitlabs.com')
             || location.href.match(/managed[a-z-]*.internal.dynatrace/)
             ? "true" : "false");
-        let dtVersion = $(`[uitestid="gwt-debug-systemVerisionSection"]`).text().match(/[0-9.]+/)[0];
+        let dtVersion = ($(`[uitestid="gwt-debug-systemVerisionSection"]`).text().match(/[0-9.]+/) || [])[0];
         let dbName = $(`[uitestid="gwt-debug-dashboardNameLabel"]`).text();
         let configuratorTag = ($(`[uitestid="gwt-debug-showMoreTags"]`).parent().find(`[title="Configurator"]`).length ? "true" : "false");
         let envName = ($(`[uitestid="gwt-debug-searchField"] div input`).attr("placeholder").match(/Search Dynatrace (.+).../) || [])[1];
@@ -359,7 +360,7 @@ var DashboardPowerups = (function () {
         let vals = {
             tenantId: tenantId,
             host: location.host,
-            dashboardID: location.hash.match(/id=([0-9a-f-]+)/)[1],
+            dashboardID: (location.hash.match(/id=([0-9a-f-]+)/) || [])[1],
             internalUser: internalUser,
             dtVersion: dtVersion,
             dbName: dbName,
@@ -374,9 +375,9 @@ var DashboardPowerups = (function () {
                 beaconOptOut: pub.config.Powerups.BeaconOptOut,
                 uuid: pub.config.Powerups.uuid,
                 applicationVersion: pub.VERSION,
-                operatingSystem: navigator.userAgent.match(/\(([^)]+)\)/)[1],
+                operatingSystem: (navigator.userAgent.match(/\(([^)]+)\)/) || [])[1],
                 manufacturer: 'Chrome',
-                modelId: navigator.userAgent.match(/Chrome\/([^ ]+)/)[1],
+                modelId: (navigator.userAgent.match(/Chrome\/([^ ]+)/) || [])[1],
                 screenResolution: [window.innerWidth, window.innerHeight],
                 name: name,
                 vals: vals
