@@ -1618,8 +1618,8 @@ var DashboardPowerups = (function () {
                 }
 
                 let $toplist = $tile.find(TOPLIST_SELECTOR);
-                let $bignums = $toplist.children().first();
-                let $bars = $toplist.children().last();
+                let $bignums = $toplist.children().first().children();
+                let $bars = $toplist.children().last().children();
 
                 $bignums.each((i, el)=>{
                     let $bignum = $(el);
