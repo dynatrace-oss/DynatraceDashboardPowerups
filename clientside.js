@@ -24,7 +24,7 @@ var DashboardPowerups = (function () {
     const MENU_ICON_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-icon"]';
     const MENU_POPUP_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-popup"]';
     const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] > div';
-    const TOPLIST_BAR_SELECTOR = 'div div[data-dynamic-color]';
+    const TOPLIST_BAR_SELECTOR = 'div[data-dynamic-color]';
 
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
