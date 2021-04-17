@@ -1551,8 +1551,10 @@ var DashboardPowerups = (function () {
                 let nan = (args.find(x => x[0] == "nan") || ["nan", "#b7b7b7"])[1];
 
                 let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
-                if (!$target.length)
+                if (!$target.length) {
                     $target = $tile.find(NO_DATA_SELECTOR);
+                    val = NaN;
+                }
                 if (!isNaN(warn) && !isNaN(crit)) {
 
                     $target.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
