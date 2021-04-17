@@ -3166,8 +3166,9 @@ var DashboardPowerups = (function () {
 
 
                         //add drilldowns
-                        $path.add($label).click(
-                            () => { window.location.href = linkList[idx] });
+                        if (typeof (linkList[idx]) == "string")
+                            $path.add($label).click(
+                                () => { window.location.href = linkList[idx] });
 
                     });
                     console.log("Powerup: Funnel power up found");
