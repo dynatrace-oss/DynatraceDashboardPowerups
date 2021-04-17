@@ -1613,8 +1613,8 @@ var DashboardPowerups = (function () {
                 function getColor(val){
                     let color;
                     vals.forEach((v,idx)=>{
-                        if(val < v && (!idx || vals[idx-1])) color = colors[idx];
-                        if(val >= v && (idx == vals.length - 1)) color = colors[idx+1];
+                        if(val < v && (!idx || val > vals[idx-1])) color = colors[idx];
+                        else if(val >= v && (idx == vals.length - 1)) color = colors[idx+1];
                     })
                     return color;
                 }
