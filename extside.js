@@ -146,6 +146,7 @@ if (typeof (INJECTED) == "undefined") {
     })();
 
     function injectCSS(config) {
+        let p = $.Deferred();
         if ($("#PowerUpCSS").length < 1) {
             if (config.Powerups.libLocation == "gh" //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
                 || HotFixMode) { //Or force all users to GitHub copy in case of emergency hotfix
@@ -179,8 +180,10 @@ if (typeof (INJECTED) == "undefined") {
                     .attr("type", "text/css")
                     .attr("href", ext_url + "powerup.css")
                     .appendTo("head");
+                p.resolve(true);
             }
         }
+        return p;
     }
 
     function loadConfig() {
