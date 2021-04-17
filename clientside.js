@@ -25,7 +25,7 @@ var DashboardPowerups = (function () {
     const MENU_POPUP_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-popup"]';
     const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] > div';
     const TOPLIST_BAR_SELECTOR = 'div[data-dynamic-color]';
-    const NO_DATA_SELECTOR = 'div.grid-tileContent > div > div:nth-of-type(3) > div:nth-of-type(1)';
+    const NO_DATA_SELECTOR = 'div.grid-tileContent > div > div:nth-of-type(3) > div:nth-of-type(1), [uitestid="gwt-debug-renderedCustomError"] > div > div:nth-of-type(1)';';
 
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';

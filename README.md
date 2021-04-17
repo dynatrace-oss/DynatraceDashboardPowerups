@@ -110,6 +110,7 @@ Explanation:
 - `base=high` this is the base case for your metric, ie is it good to be `low` or `high`?
 - `warn=90` this is the warning threshold, once breached color coding will be yellow
 - `crit=80` this is the critical threshold, once breached color coding will be red
+- `nan=orange` (optional) change color if no data is found or null
 So in the example of availability, high is better. Greater than 90 would be green, 90 to 80 yellow, and 80 or less red.
 
 Alternative: Absolute value comparison
