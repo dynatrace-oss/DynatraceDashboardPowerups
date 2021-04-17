@@ -23,7 +23,7 @@ var DashboardPowerups = (function () {
     const COLUMN_SELECTOR = '.powerupTable > div > div > div:nth-of-type(1) > span';
     const MENU_ICON_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-icon"]';
     const MENU_POPUP_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-popup"]';
-    const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] div';
+    const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] > div';
     const TOPLIST_BAR_SELECTOR = 'div div[data-dynamic-color]';
 
     const PU_COLOR = '!PU(color):';
