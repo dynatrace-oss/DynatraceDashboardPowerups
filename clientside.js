@@ -25,6 +25,7 @@ var DashboardPowerups = (function () {
     const MENU_POPUP_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-popup"]';
     const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] > div';
     const TOPLIST_BAR_SELECTOR = 'div[data-dynamic-color]';
+    const NO_DATA_SELECTOR = 'div > div:nth-of-type(3) > div:nth-of-type(1)';
 
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
@@ -1547,15 +1548,20 @@ var DashboardPowerups = (function () {
                     $tile.find(VAL_SELECTOR)
                         .text().replace(/,/g, ''));
                 let color = (args.find(x => x[0] == "color") || [])[1];
+                let nan = (args.find(x => x[0] == "nan") || ["nan", "#b7b7b7"])[1];
 
                 let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
+                if (typeof ($target) == "undefined")
+                    $target = $tile.find(NO_DATA_SELECTOR);
                 if (!isNaN(warn) && !isNaN(crit)) {
 
                     $target.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
                     $target.removeClass("powerup-color-critical-blink powerup-color-warning-blink threeBlink");
                     $target.removeClass("powerup-color-nan");
                     if (isNaN(val)) {
-                        $target.addClass("powerup-color-nan");
+                        $target
+                            .addClass("powerup-color-nan")
+                            .css("color", nan);
                     } else if (base == "low") {
                         if (val < warn) $target.addClass(class_norm);
                         else if (val < crit) $target.addClass(class_warn);
