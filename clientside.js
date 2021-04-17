@@ -1611,10 +1611,12 @@ var DashboardPowerups = (function () {
                 }
 
                 function getColor(val){
+                    let color;
                     vals.forEach((v,idx)=>{
-                        if(val < v) return colors[idx];
-                        if(val >= v && idx == vals.length - 1) return colors[idx+1];
+                        if(val < v) color = colors[idx];
+                        if(val >= v && idx == vals.length - 1) color = colors[idx+1];
                     })
+                    return color;
                 }
 
                 let $toplist = $tile.find(TOPLIST_SELECTOR);
