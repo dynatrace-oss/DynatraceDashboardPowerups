@@ -1547,7 +1547,10 @@ var DashboardPowerups = (function () {
 
                     $target.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
                     $target.removeClass("powerup-color-critical-blink powerup-color-warning-blink threeBlink");
-                    if (base == "low") {
+                    $target.removeClass("powerup-color-nan");
+                    if(isNaN(val)){
+                        $target.addClass("powerup-color-nan");
+                    } else if (base == "low") {
                         if (val < warn) $target.addClass(class_norm);
                         else if (val < crit) $target.addClass(class_warn);
                         else $target.addClass(class_crit);

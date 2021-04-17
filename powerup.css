@@ -152,6 +152,10 @@ span.powerup-color-normal, h1.powerup-color-normal {
   fill: green;
 }
 
+.powerup-color-nan {
+  color: #cccccc;
+}
+
 .powerup-markup {
   display: none;
 }
