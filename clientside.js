@@ -1551,7 +1551,7 @@ var DashboardPowerups = (function () {
                 let nan = (args.find(x => x[0] == "nan") || ["nan", "#b7b7b7"])[1];
 
                 let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
-                if (typeof ($target) == "undefined")
+                if (!$target.length)
                     $target = $tile.find(NO_DATA_SELECTOR);
                 if (!isNaN(warn) && !isNaN(crit)) {
 
