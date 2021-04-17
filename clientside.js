@@ -23,6 +23,8 @@ var DashboardPowerups = (function () {
     const COLUMN_SELECTOR = '.powerupTable > div > div > div:nth-of-type(1) > span';
     const MENU_ICON_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-icon"]';
     const MENU_POPUP_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-popup"]';
+    const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] div';
+    const TOPLIST_BAR_SELECTOR = 'div div[data-dynamic-color]';
 
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
@@ -51,11 +53,13 @@ var DashboardPowerups = (function () {
     const PU_TILECSS = '!PU(tilecss):';
     const PU_GRID = '!PU(grid):';
     const PU_MENU = '!PU(menu):';
+    const PU_TOPCOLOR = '!PU(topcolor):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
-        PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU
+        PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
+        PU_TOPCOLOR
     ];
     const CHART_OPTS = {
         //plotBackgroundColor: '#454646',
@@ -1530,8 +1534,6 @@ var DashboardPowerups = (function () {
             //Step1: change tile colors
             if ($title.text().includes(PU_COLOR)) { //example !PU(color):base=high;warn=90;crit=70
                 if (pub.config.Powerups.debug) console.log("Powerup: color power-up found");
-                //let argstring = $title.text().split(PU_COLOR)[1].split('!')[0].trim();
-                //let args = argstring.split(";").map(x => x.split("="));
 
                 let args = argsplit(title, PU_COLOR);
                 let base = (args.find(x => x[0] == "base") || [])[1] || "low";
@@ -1585,6 +1587,48 @@ var DashboardPowerups = (function () {
                     $target.css("color", color);
                 }
                 powerupsFired['PU_COLOR'] ? powerupsFired['PU_COLOR']++ : powerupsFired['PU_COLOR'] = 1;
+            }
+        });
+    }
+
+    pub.PUTopListColor = function () {
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let title = $title.text();
+            let $tile = $title.parents(".grid-tile");
+
+            if ($title.text().includes(PU_TOPCOLOR)) { //example !PU(topcolor):base=high;warn=90;crit=70
+                if (pub.config.Powerups.debug) console.log("Powerup: toplist color power-up found");
+
+                let args = argsplit(title, PU_TOPCOLOR);
+                let vals = ((args.find(x => x[0] == "vals") || [])[1] || ".5,.7,.85,.94").split(',').map(x => Number(x));
+                let colors = ((args.find(x => x[0] == "colors") || [])[1] || "#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f").split(',');
+
+                let sorted = !!vals.reduce((n, item) => n !== false && item >= n && item);
+                if (!sorted) {
+                    console.log("Powerup: ERROR - toplist PU must have vals sorted ascending");
+                    return false;
+                }
+
+                function getColor(val){
+                    vals.forEach((v,idx)=>{
+                        if(val < v) return colors[idx];
+                        if(val >= v && idx == vals.length - 1) return colors[idx+1];
+                    })
+                }
+
+                let $toplist = $tile.find(TOPLIST_SELECTOR);
+                let $bignums = $toplist.children().first();
+                let $bars = $toplist.children().last();
+
+                $bignums.each((i, el)=>{
+                    let $bignum = $(el);
+                    let bignum = Number($bignum.text());
+                    let color = getColor(bignum);
+
+                    let $bar = $bars[i].find(TOPLIST_BAR_SELECTOR);
+                    $bar.css("background-color",color);
+                });
             }
         });
     }
@@ -2754,7 +2798,7 @@ var DashboardPowerups = (function () {
             chart.newContainer = newContainer;
         }
         let $legend = $tile.find(LEGEND_SELECTOR);
-        if($legend.children().last().text().endsWith("more")){
+        if ($legend.children().last().text().endsWith("more")) {
             $legend.children().last().text("ERROR: too many series");
         }
 
@@ -4337,6 +4381,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUmCompare());
             promises.push(pub.PUtable());
             promises.push(pub.PUfunnelColors());
+            promises.push(pub.PUTopListColor());
             waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
 
             //misc visualizations
