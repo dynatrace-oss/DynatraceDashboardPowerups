@@ -2788,7 +2788,14 @@ var DashboardPowerups = (function () {
             //come up with a better y category
             let series_name = s.name;
             if ($legend.length) {
-                let name = $legend.find(`svg[fill='${s.color}']`).parents(".gwt-HTML").text();
+                let $colorMatches = $legend.find(`svg[fill='${s.color}']`);
+                let name;
+                if ($colorMatches.length == 1)
+                    name = $colorMatches.parents(".gwt-HTML").text();
+                else if ($colorMatches.length > 1)
+                    name = `ERROR: duplicate color in legend`;
+                else if ($colorMatches.length < 1)
+                    name = `ERROR: color not found in legend`;
                 if (name.length) series_name = name;
             }
             yNames.push(series_name);
