@@ -162,7 +162,7 @@ if (typeof (INJECTED) == "undefined") {
                     .catch(err => {
                         console.log(`POWERUP: Loading css from: GH failed...`, err);
                         //default back to local copy
-                        console.log(`POWERUP: Loading css from: ${lib}...`);
+                        console.log(`POWERUP: Loading css locally...`);
                         var $link = $("<link>")
                             .attr("id", "PowerUpCSS")
                             .attr("rel", "stylesheet")
