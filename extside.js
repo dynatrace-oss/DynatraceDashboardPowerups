@@ -44,7 +44,7 @@ if (typeof (INJECTED) == "undefined") {
             $.when(config_p).done(function (config) {
                 //Load functions to call in client context
                 let clientside_p = injectClientsideLib(config);
-                injectCSS();
+                injectCSS(config);
                 if (POWERUPDEBUG) console.log("Powerup: clientside libs injected.");
 
                 $.when(clientside_p).then(() => {
@@ -145,8 +145,34 @@ if (typeof (INJECTED) == "undefined") {
         }
     })();
 
-    function injectCSS() {
+    function injectCSS(config) {
         if ($("#PowerUpCSS").length < 1) {
+            if (config.Powerups.libLocation == "gh" //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
+                || HotFixMode) { //Or force all users to GitHub copy in case of emergency hotfix
+                console.log(`POWERUP: Loading css from: GH...`);
+                fetch('https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/powerup.css')
+                    .then(response => response.text())
+                    .then(text => { // read response body as text
+                        var $s = $("<style>")
+                            .attr("id", "PowerUpCSS")
+                            .text(text) //execute in webpage context, not extension
+                            .appendTo("head");
+                        p.resolve(true);
+                    })
+                    .catch(err => {
+                        console.log(`POWERUP: Loading css from: GH failed...`, err);
+                        //default back to local copy
+                        console.log(`POWERUP: Loading css from: ${lib}...`);
+                        var $link = $("<link>")
+                            .attr("id", "PowerUpCSS")
+                            .attr("rel", "stylesheet")
+                            .attr("type", "text/css")
+                            .attr("href", ext_url + "powerup.css")
+                            .appendTo("head");
+
+                        p.resolve(true);
+                    });
+            }
             var $link = $("<link>")
                 .attr("id", "PowerUpCSS")
                 .attr("rel", "stylesheet")
@@ -348,7 +374,7 @@ if (typeof (INJECTED) == "undefined") {
     function extsidePowerup(event) { //run powerup extside instead of clientside
         switch (event.data.PowerUp) {
             case "PU_BACKGROUND":
-            case "PU_IMAGE":                
+            case "PU_IMAGE":
                 // 1. send message from client side to background
                 // 2. background does the work
                 // 3. receive message back from background
