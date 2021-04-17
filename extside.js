@@ -172,13 +172,14 @@ if (typeof (INJECTED) == "undefined") {
 
                         p.resolve(true);
                     });
+            } else {
+                var $link = $("<link>")
+                    .attr("id", "PowerUpCSS")
+                    .attr("rel", "stylesheet")
+                    .attr("type", "text/css")
+                    .attr("href", ext_url + "powerup.css")
+                    .appendTo("head");
             }
-            var $link = $("<link>")
-                .attr("id", "PowerUpCSS")
-                .attr("rel", "stylesheet")
-                .attr("type", "text/css")
-                .attr("href", ext_url + "powerup.css")
-                .appendTo("head");
         }
     }
 
