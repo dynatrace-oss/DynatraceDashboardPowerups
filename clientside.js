@@ -1548,7 +1548,7 @@ var DashboardPowerups = (function () {
                     $target.removeClass("powerup-color-critical powerup-color-warning powerup-color-normal");
                     $target.removeClass("powerup-color-critical-blink powerup-color-warning-blink threeBlink");
                     $target.removeClass("powerup-color-nan");
-                    if(isNaN(val)){
+                    if (isNaN(val)) {
                         $target.addClass("powerup-color-nan");
                     } else if (base == "low") {
                         if (val < warn) $target.addClass(class_norm);
@@ -1655,7 +1655,7 @@ var DashboardPowerups = (function () {
                     $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
                     $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
                     $svg.removeClass("powerup-svg-nan");
-                    if(isNaN(val)){
+                    if (isNaN(val)) {
                         $svg.addClass("powerup-svg-nan");
                     } else if (base == "low") {
                         if (val < warn) $svg.addClass(class_norm);
@@ -1730,7 +1730,10 @@ var DashboardPowerups = (function () {
 
                 $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
                 $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
-                if (args.base == "low") {
+                $svg.removeClass("powerup-svg-nan");
+                if (isNaN(val)) {
+                    $svg.addClass("powerup-svg-nan");
+                } else if (args.base == "low") {
                     if (val < args.warn) $svg.addClass(class_norm);
                     else if (val < args.crit) $svg.addClass(class_warn);
                     else $svg.addClass(class_crit);
@@ -3247,7 +3250,7 @@ var DashboardPowerups = (function () {
                         .addClass("powerupMath")
                         .insertAfter($para);
                     $h1.siblings().addClass("powerupMathText");
-                    $para.parent().attr("class","");
+                    $para.parent().attr("class", "");
                 }
 
                 //thresholds
