@@ -1610,11 +1610,11 @@ var DashboardPowerups = (function () {
                     return false;
                 }
 
-                function getColor(val){
+                function getColor(val) {
                     let color;
-                    vals.forEach((v,idx)=>{
-                        if(val < v && (!idx || val >= vals[idx-1])) color = colors[idx];
-                        else if(val >= v && (idx == vals.length - 1)) color = colors[idx+1];
+                    vals.forEach((v, idx) => {
+                        if (val < v && (!idx || val >= vals[idx - 1])) color = colors[idx];
+                        else if (val >= v && (idx == vals.length - 1)) color = colors[idx + 1];
                     })
                     return color;
                 }
@@ -1623,13 +1623,13 @@ var DashboardPowerups = (function () {
                 let $bignums = $toplist.children().first().children();
                 let $bars = $toplist.children().last().children();
 
-                $bignums.each((i, el)=>{
+                $bignums.each((i, el) => {
                     let $bignum = $(el);
                     let bignum = Number($bignum.text());
                     let color = getColor(bignum);
 
                     let $bar = $bars.eq(i).find(TOPLIST_BAR_SELECTOR);
-                    $bar.css("background-color",color);
+                    $bar.css("background-color", color);
                 });
             }
         });
@@ -3024,9 +3024,9 @@ var DashboardPowerups = (function () {
                 let args = argsplit(title, PU_FUNNEL);
 
                 let mode = args.find(x => x[0] == "mode")[1];
-                let small = Number(args.find(x => x[0] == "small")[1]);
-                let big = Number(args.find(x => x[0] == "big")[1]);
-                let links = args.find(x => x[0] == "links")[1];
+                let small = Number((args.find(x => x[0] == "small") || [])[1]);
+                let big = Number((args.find(x => x[0] == "big") || [])[1]);
+                let links = (args.find(x => x[0] == "links") || [])[1];
 
                 let $linkstile = $(pub.findLinkedMarkdown(links));
                 let mdtext = $linkstile.text();
