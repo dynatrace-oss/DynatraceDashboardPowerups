@@ -2245,6 +2245,18 @@ var DashboardPowerups = (function () {
                 return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
             }
 
+            //convHack handling
+            if (params.convHack == "2") {
+                if (node.id == "START") {
+                    node.column = 0;
+                    node.display = "Start...";
+                }
+                if (node.id == "END") {
+                    node.column = 1;
+                    node.display = "...End";
+                }
+            }
+
             data.apdexList.forEach(apdex => {
                 let node = {
                     id: apdex.actionName,
@@ -2256,11 +2268,7 @@ var DashboardPowerups = (function () {
                     exitAction: (apdex.exitAction ? 'true' : 'false')
                 }
 
-                //convHack handling
-                if (params.convHack == "2") {
-                    if (node.id == "START") node.column = 0;
-                    if (node.id == "END") node.column = 1;
-                }
+
 
                 //Conversion goal handling
                 let goal = data.goals.find(x => x.actionName == apdex.actionName);
@@ -2291,10 +2299,6 @@ var DashboardPowerups = (function () {
                     (goal ? `<br>${goal.svg}` : "") +
                     (apdex.entryActionSVG ? `<br>${apdex.entryActionSVG}` : '') +
                     (apdex.exitActionSVG ? `<br>${apdex.exitActionSVG}` : '');
-                if (params.convHack == "2") {
-                    if (node.id == "START") node.display = "Start...";
-                    if (node.id == "END") node.display = "...End";
-                }
 
                 options.series[0].nodes.push(node);
             });
