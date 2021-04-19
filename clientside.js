@@ -1960,6 +1960,10 @@ var DashboardPowerups = (function () {
                             let filtered = arr.filter(x =>
                                 x !== "[]" &&
                                 x !== "");
+                            if (convHack == "2") {
+                                filtered.unshift("START");
+                                filtered.push("END");
+                            }
                             for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                                 let touple = { from: filtered[k], to: filtered[k + 1] };
                                 if (touple.from === touple.to) continue; // ignore self actions
@@ -1975,18 +1979,6 @@ var DashboardPowerups = (function () {
                                     touples[l].weight++;
                                 }
                             }
-                            /*if(convHack == "2"){
-                                let first = touples[0];
-                                touples.unshift({
-                                    from: "START",
-                                    to: first.from
-                                });
-                                let last = touples[touples.length-1];
-                                touples.push({
-                                    from: "END",
-                                    to: last.to
-                                });
-                            }*/
                         } else if (colIdx == 1) for (let k = 0; k < arr.length; k++) { //matchingConversion goals
                             if (arr[k] !== "[]" && arr[k] !== "") {
                                 let actionName = dataTable[0][rowIdx][k];
