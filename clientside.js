@@ -2176,7 +2176,7 @@ var DashboardPowerups = (function () {
                     apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
                     apdex.name = "frustrated";
                     apdex.color = "#c41425";
-                }else {
+                } else {
                     apdex.svg = "";
                     apdex.color = "#6d6d6d";
                 }
@@ -2287,7 +2287,7 @@ var DashboardPowerups = (function () {
                 }
 
                 //Color handling
-                if(params.colors) {
+                if (params.colors) {
                     node.color = node.apdex.color;
                 }
 
@@ -3280,6 +3280,7 @@ var DashboardPowerups = (function () {
                 let dates = (args.find(x => x[0] == "dates") || [])[1] == "true" ? true : false;
                 let timeunit = (args.find(x => x[0] == "timeunit") || [])[1] || "ms";
                 let full = (args.find(x => x[0] == "full") || [])[1] == "false" ? false : true;
+                let currency = (args.find(x => x[0] == "currency") || [])[1];
 
                 let scope = scopeStr.trim().split(',')
                     .map(x => (x.includes(':')
@@ -3341,7 +3342,11 @@ var DashboardPowerups = (function () {
                 }
 
                 //format
-                const fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format;
+                let fmt;
+                if (currency)
+                    fmt = Intl.NumberFormat(undefined, { style: 'currency', currency: currency }).format;
+                else
+                    fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format;
                 let sVal = fmt(val);
 
                 //swap markdown content
