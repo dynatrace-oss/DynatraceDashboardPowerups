@@ -297,6 +297,7 @@ Syntax:
 Explanation:
 - `!PU(math):` - denotes a math powerup
 - `exp=` - a math expression
+**Note: be sure to escape `*` by adding a backslash in front of it**
 - `scope=` - list of any variables used in your expression. Optionally, you may have seperate variable names from link name, e.g. `x4:link4`, otherwise assume var and link are the same string e.g. `x1`
 - `color=` - (optional) a valid CSS color, defaults to white
 - `size=` - (optional) a valid CSS font-size, defaults to 36px
