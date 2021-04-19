@@ -2257,9 +2257,9 @@ var DashboardPowerups = (function () {
                 }
 
                 //convHack handling
-                if(params.convHack == "2"){
-                    if(node.id == "START") node.column = 1;
-                    if(node.id == "END") node.column = 2;
+                if (params.convHack == "2") {
+                    if (node.id == "START") node.column = 1;
+                    if (node.id == "END") node.column = 2;
                 }
 
                 //Conversion goal handling
@@ -2291,6 +2291,10 @@ var DashboardPowerups = (function () {
                     (goal ? `<br>${goal.svg}` : "") +
                     (apdex.entryActionSVG ? `<br>${apdex.entryActionSVG}` : '') +
                     (apdex.exitActionSVG ? `<br>${apdex.exitActionSVG}` : '');
+                if (params.convHack == "2") {
+                    if (node.id == "START") node.display = node.id;
+                    if (node.id == "END") node.display = node.id;
+                }
 
                 options.series[0].nodes.push(node);
             });
