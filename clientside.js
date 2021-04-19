@@ -2256,6 +2256,12 @@ var DashboardPowerups = (function () {
                     exitAction: (apdex.exitAction ? 'true' : 'false')
                 }
 
+                //convHack handling
+                if(params.convHack == "2"){
+                    if(node.id == "START") node.column = 1;
+                    if(node.id == "END") node.column = 2;
+                }
+
                 //Conversion goal handling
                 let goal = data.goals.find(x => x.actionName == apdex.actionName);
                 if (typeof (goal) != "undefined") {
@@ -2532,7 +2538,8 @@ var DashboardPowerups = (function () {
                 let params = {
                     title: chartTitle,
                     kpi: kpi,
-                    kpicurr: kpicurr
+                    kpicurr: kpicurr,
+                    convHack: convHack
                 };
                 let sankey = newChart(data, container, params);
                 $(".highcharts-exporting-group").addClass("powerupVisible");
