@@ -1963,8 +1963,8 @@ var DashboardPowerups = (function () {
                             for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                                 let touple = { from: filtered[k], to: filtered[k + 1] };
                                 if (touple.from === touple.to) continue; // ignore self actions
-                                if (convHack && k === 0) touple.from = "Start: " + touple.from;
-                                if (convHack && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
+                                if (convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
+                                if (convHack == "true" && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
 
 
                                 let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
@@ -1974,6 +1974,18 @@ var DashboardPowerups = (function () {
                                 } else {
                                     touples[l].weight++;
                                 }
+                            }
+                            if(convHack == "2"){
+                                let first = touples[0];
+                                touples.unshift({
+                                    from: "START",
+                                    to: first.from
+                                });
+                                let last = touples[touples.length-1];
+                                touples.push({
+                                    from: "END",
+                                    to: last.to
+                                });
                             }
                         } else if (colIdx == 1) for (let k = 0; k < arr.length; k++) { //matchingConversion goals
                             if (arr[k] !== "[]" && arr[k] !== "") {
