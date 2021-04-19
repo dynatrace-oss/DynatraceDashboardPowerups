@@ -2283,8 +2283,12 @@ var DashboardPowerups = (function () {
                     apdexTolerating: apdex.tolerating.toString(),
                     apdexFrustrated: apdex.frustrated.toString(),
                     entryAction: (apdex.entryAction ? 'true' : 'false'),
-                    exitAction: (apdex.exitAction ? 'true' : 'false'),
-                    color: apdex.color
+                    exitAction: (apdex.exitAction ? 'true' : 'false')
+                }
+
+                //Color handling
+                if(params.colors) {
+                    node.color = node.apdex.color;
                 }
 
                 //Conversion goal handling
@@ -2549,6 +2553,7 @@ var DashboardPowerups = (function () {
                 let kpi = (args.find(x => x[0] == "kpi") || [])[1];
                 let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
                 let convHack = (args.find(x => x[0] == "convHack") || [])[1] || false;
+                let colors = (args.find(x => x[0] == "colors") || [])[1] || false;
 
                 let container = findContainer(link);
                 if (typeof (container) == "undefined") {
@@ -2566,7 +2571,8 @@ var DashboardPowerups = (function () {
                     title: chartTitle,
                     kpi: kpi,
                     kpicurr: kpicurr,
-                    convHack: convHack
+                    convHack: convHack,
+                    colors: colors
                 };
                 let sankey = newChart(data, container, params);
                 $(".highcharts-exporting-group").addClass("powerupVisible");
