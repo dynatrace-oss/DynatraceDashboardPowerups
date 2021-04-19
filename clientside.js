@@ -1859,7 +1859,7 @@ var DashboardPowerups = (function () {
                 return comma_val;
 
             //worst case, strip all non-numeric and make it a number
-            let last_val = Number(val.replace(/\D+/g, ''));
+            let last_val = Number(val.replace(/[^0-9.]/g, ''));
             if (!isNaN(last_val))
                 return last_val;
 
