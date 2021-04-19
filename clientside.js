@@ -2249,13 +2249,13 @@ var DashboardPowerups = (function () {
             if (params.convHack == "2") {
                 let node = {
                     id: "START",
-                    column: 0,
+                    //column: 0,
                     display: "Start..."
                 }
                 options.series[0].nodes.push(node);
                 node = {
                     id: "END",
-                    column: 1,
+                    //column: 1,
                     display: "...End"
                 }
                 options.series[0].nodes.push(node);
