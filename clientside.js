@@ -2247,14 +2247,18 @@ var DashboardPowerups = (function () {
 
             //convHack handling
             if (params.convHack == "2") {
-                if (node.id == "START") {
-                    node.column = 0;
-                    node.display = "Start...";
+                let node = {
+                    id: "START",
+                    column: 0,
+                    display: "Start..."
                 }
-                if (node.id == "END") {
-                    node.column = 1;
-                    node.display = "...End";
+                options.series[0].nodes.push(node);
+                node = {
+                    id: "END",
+                    column: 1,
+                    display: "...End"
                 }
+                options.series[0].nodes.push(node);
             }
 
             data.apdexList.forEach(apdex => {
