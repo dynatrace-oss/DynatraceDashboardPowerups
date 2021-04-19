@@ -132,6 +132,7 @@ function startBeacon(request) {
                     openKitAction.reportValue(x, request.vals[x]);
                 });
                 openKitAction.reportValue("hotfixMode", HotFixMode);
+                openKitAction.reportValue("uuid", request.uuid);
                 openKitAction.vals = request.vals; //safe store for later
             }
         }
@@ -185,8 +186,6 @@ function endBeacon(request) {
         let payload = createMetricPayload({ ...request.vals, ...openKitAction.vals });
         if (payload && payload.length) sendMetricToDT(payload);
     }
-    //if (openKitSession) openKitSession.end(); //now that we have MINT, no need to end the session on each DB powerup
-    //if (openKit) openKit.shutdown();
 }
 
 function createMetricPayload(vals) {
@@ -198,6 +197,7 @@ function createMetricPayload(vals) {
     if ("host" in vals) line += `host=${vals['host']},`;
     if ("tenantId" in vals) line += `tenantid=${vals['tenantId']},`;
     if ("libLocation" in vals) line += `liblocation=${vals['libLocation']},`;
+    if ("uuid" in vals) line += `uuid=${vals['uuid']},`
     if (openKit && openKit.config && openKit.config.meta && openKit.config.meta.applicationVersion)
         line += `version=${openKit.config.meta.applicationVersion},`;
     if (openKitSession && openKitSession.userId) line += `userid=${openKitSession.userId},`;
