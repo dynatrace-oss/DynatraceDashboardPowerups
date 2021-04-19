@@ -307,6 +307,7 @@ Explanation:
 - `dates=true` - (optional) use if special date math logic is needed
 - `timeunit=` - (optional) units if doing date math: `s` for seconds, `m`, `h`, `d`. Defaults to `ms` for milliseconds.
 - `full=false` - (optional) by default take up the full tile. Optionally, `false` to not hide other text in markdown tile. Must be false to support multiple math powerups in a single tile.
+- `currency=` - (optional) display according to an ISO currency code, e.g. `USD`, `EUR`, `CNY`, etc
 
 Example:
 ![Math](Assets/mathPU.png)
