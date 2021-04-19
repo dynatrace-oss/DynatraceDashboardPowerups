@@ -2297,7 +2297,6 @@ var DashboardPowerups = (function () {
 
             let chart = Highcharts.chart(container, options, (chart) => {
                 let $container = $(container);
-                //chart.poweredup = true;
                 chart.limit = limit = Math.min(limit, data.touples.length);
                 chart.renderer.button('-', 10, 5)
                     .attr({ zIndex: 1100 })
@@ -2317,6 +2316,9 @@ var DashboardPowerups = (function () {
                     .add();
                 chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
                     .add();
+
+                //redraw to help convHack use case
+                chart.setSize(undefined, undefined, false);
 
                 $container.find(".highcharts-plot-background")
                     .addClass("powerupPlotBackground");
