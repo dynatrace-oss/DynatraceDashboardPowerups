@@ -2164,10 +2164,22 @@ var DashboardPowerups = (function () {
                 });
 
             apdexList.forEach((apdex) => {
-                if (apdex.satisfied > Math.max(apdex.tolerating, apdex.frustrated)) apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
-                else if (apdex.tolerating > Math.max(apdex.satisfied, apdex.frustrated)) apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
-                else if (apdex.frustrated > Math.max(apdex.tolerating, apdex.satisfied)) apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
-                else apdex.svg = "";
+                if (apdex.satisfied > Math.max(apdex.tolerating, apdex.frustrated)) {
+                    apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
+                    apdex.name = "satisfied";
+                    apdex.color = "#6bcb8b";
+                } else if (apdex.tolerating > Math.max(apdex.satisfied, apdex.frustrated)) {
+                    apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
+                    apdex.name = "tolerating";
+                    apdex.color = "#ffee7c";
+                } else if (apdex.frustrated > Math.max(apdex.tolerating, apdex.satisfied)) {
+                    apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
+                    apdex.name = "frustrated";
+                    apdex.color = "#c41425";
+                }else {
+                    apdex.svg = "";
+                    apdex.color = "#6d6d6d";
+                }
             });
             touples = touples.sort((a, b) => b.weight - a.weight);
 
@@ -2250,13 +2262,15 @@ var DashboardPowerups = (function () {
                 let node = {
                     id: "START",
                     //column: 0,
-                    display: "Start..."
+                    display: "Start...",
+                    color: "#b7b7b7"
                 }
                 options.series[0].nodes.push(node);
                 node = {
                     id: "END",
                     //column: 1,
-                    display: "...End"
+                    display: "...End",
+                    color: "#b7b7b7"
                 }
                 options.series[0].nodes.push(node);
             }
@@ -2269,10 +2283,9 @@ var DashboardPowerups = (function () {
                     apdexTolerating: apdex.tolerating.toString(),
                     apdexFrustrated: apdex.frustrated.toString(),
                     entryAction: (apdex.entryAction ? 'true' : 'false'),
-                    exitAction: (apdex.exitAction ? 'true' : 'false')
+                    exitAction: (apdex.exitAction ? 'true' : 'false'),
+                    color: apdex.color
                 }
-
-
 
                 //Conversion goal handling
                 let goal = data.goals.find(x => x.actionName == apdex.actionName);
