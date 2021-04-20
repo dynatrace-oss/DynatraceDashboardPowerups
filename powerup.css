@@ -451,10 +451,21 @@ span.powerup-color-normal, h1.powerup-color-normal {
   /*width: 132px;*/
   height: 30px;
   visibility: hidden;
-  top: -20px;
+  top: -10px;
   left: 10px;
   z-index: 9000;
   color: rgb(51, 51, 51);
+}
+
+.powerupTooltip::after {
+  content: " ";
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #00a1b2 transparent transparent transparent;
 }
 
 .grid-tile:hover .powerupTooltip {
