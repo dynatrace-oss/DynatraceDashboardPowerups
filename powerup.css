@@ -448,14 +448,11 @@ span.powerup-color-normal, h1.powerup-color-normal {
   border-radius: 3px;
   background-color: white;
   opacity: 0.8;
-  /*width: 132px;*/
-  height: 30px;
   visibility: hidden;
-  /*top: -10px;
-  left: 10px;*/
   z-index: 9000;
   color: rgb(51, 51, 51);
   text-align: center;
+  padding: 5px 0px;
 }
 
 .powerupTooltip::after {

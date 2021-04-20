@@ -137,7 +137,8 @@ Explanation:
 - `base=` this is the base case for your metric, ie is it good to be low or high?
 - `warn=` this is the warning threshold, once breached color coding will be yellow
 - `crit=` this is the critical threshold, once breached color coding will be red
-- `url=` (optional) if you want the icon to be clickable, give it a url. Recommend using this as last argument.
+- `tooltip=` tooltip text for the icon
+- `url=` (optional) if you want the icon to be clickable, give it a url. REQUIRED: use this as last argument.
 Just be sure to include the `!PU(link):` with a matching string in the desired Single Value Tile
 
 Example:
