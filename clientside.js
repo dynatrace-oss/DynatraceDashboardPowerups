@@ -1687,6 +1687,7 @@ var DashboardPowerups = (function () {
             let base = (args.find(x => x[0] == "base") || [])[1];
             let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
             let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
+            let tooltip = (args.find(x => x[0] == "tooltip") || [])[1];
 
             let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
             //let url = (args.find(x => x[0] == "url") || [])[1]; //this does not work due to ; in urls
@@ -1744,6 +1745,18 @@ var DashboardPowerups = (function () {
 
             //hide menu icon
             $tile.find(MENU_ICON_SELECTOR).hide();
+
+            //add custom tooltip
+            if (tooltip) {
+                let $tooltip = $tile.find(`.powerupTooltip`);
+                if (!$tooltip.length) {
+                    $tooltip = $("<div>")
+                        .addClass("powerupTooltip")
+                        .text(tooltip)
+                        .hide()
+                        .appendTo($tile);
+                }
+            }
 
             powerupsFired['PU_SVG'] ? powerupsFired['PU_SVG']++ : powerupsFired['PU_SVG'] = 1;
         });
