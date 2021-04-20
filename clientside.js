@@ -1753,7 +1753,6 @@ var DashboardPowerups = (function () {
                     $tooltip = $("<div>")
                         .addClass("powerupTooltip")
                         .text(tooltip)
-                        .hide()
                         .appendTo($tile);
                 }
             }
