@@ -454,7 +454,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
   top: -20px;
   left: 10px;
   z-index: 9000;
-  rgb(51, 51, 51);
+  color: rgb(51, 51, 51);
 }
 
 .grid-tile:hover .powerupTooltip {

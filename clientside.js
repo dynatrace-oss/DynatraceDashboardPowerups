@@ -1748,7 +1748,7 @@ var DashboardPowerups = (function () {
 
             //add custom tooltip
             if (tooltip) {
-                tooltip.replace(/_/g," ");
+                tooltip = tooltip.replace(/_/g," ");
                 let $tooltip = $tile.find(`.powerupTooltip`);
                 if (!$tooltip.length) {
                     $tooltip = $("<div>")
