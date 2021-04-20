@@ -446,9 +446,10 @@ span.powerup-color-normal, h1.powerup-color-normal {
   pointer-events: none;
   border: 1px solid #00a1b2;
   border-radius: 3px;
+  background-color: white;
   opacity: 0.8;
-  width: 132px;
-  height: 55px;
+  /*width: 132px;*/
+  height: 30px;
   visibility: hidden;
   top: -20px;
   left: 10px;
