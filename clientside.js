@@ -4370,7 +4370,7 @@ var DashboardPowerups = (function () {
                         $child.text(newname);
                 });
 
-                $menuicon.trigger("click");
+                $popup.hide();
             }
 
             function addHideShow(e) {
