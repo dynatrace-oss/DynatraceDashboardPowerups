@@ -20,7 +20,7 @@ if (typeof (INJECTED) == "undefined") {
     const ext_url = chrome.runtime.getURL("");
     const version = chrome.runtime.getManifest().version;
     const ext_id = chrome.runtime.id;
-    const GH_URL = 'https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/';
+    const GH_URL = 'https://raw.githubusercontent.com/dynatrace-oss/DynatraceDashboardPowerups/master/';
     var HotFixMode = 0;
     var waits = 0;
     var timeout;
@@ -87,7 +87,7 @@ if (typeof (INJECTED) == "undefined") {
             if (config.Powerups.libLocation == "gh" //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
                 || HotFixMode) { //Or force all users to GitHub copy in case of emergency hotfix
                 console.log(`POWERUP: Loading libs from: GH...`);
-                fetch('https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/clientside.min.js')
+                fetch(GH_URL+'clientside.min.js')
                     .then(response => response.text())
                     .then(text => { // read response body as text
                         var $s = $("<script>")
@@ -159,7 +159,7 @@ if (typeof (INJECTED) == "undefined") {
             if (config.Powerups.libLocation == "gh" //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
                 || HotFixMode) { //Or force all users to GitHub copy in case of emergency hotfix
                 console.log(`POWERUP: Loading css from: GH...`);
-                fetch('https://raw.githubusercontent.com/LucasHocker/DynatraceDashboardPowerups/master/powerup.css')
+                fetch(GH_URL+'powerup.css')
                     .then(response => response.text())
                     .then(text => { // read response body as text
                         var $s = $("<style>")
