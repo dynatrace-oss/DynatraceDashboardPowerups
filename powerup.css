@@ -455,8 +455,8 @@ span.powerup-color-normal, h1.powerup-color-normal {
   border: 1px solid #00a1b2;
   border-radius: 3px;
   background-color: white;
-  opacity: 0.8;
-  visibility: hidden;
+  opacity: 0;
+  /*visibility: hidden;*/
   z-index: 9000;
   color: rgb(51, 51, 51);
   text-align: center;
@@ -477,5 +477,6 @@ span.powerup-color-normal, h1.powerup-color-normal {
 }
 
 .grid-tile:hover .powerupTooltip {
-  visibility: visible;
+  /*visibility: visible;*/
+  opacity: 0.8;
 }
