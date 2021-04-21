@@ -4370,7 +4370,7 @@ var DashboardPowerups = (function () {
                         $child.text(newname);
                 });
 
-                $popup.trigger("focus-out");
+                $popup.trigger("blur");
             }
 
             function addHideShow(e) {
