@@ -472,6 +472,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
   border-width: 5px;
   border-style: solid;
   border-color: #00a1b2 transparent transparent transparent;
+  min-width: 80px;
 }
 
 .grid-tile:hover .powerupTooltip {
