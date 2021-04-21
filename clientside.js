@@ -4360,15 +4360,14 @@ var DashboardPowerups = (function () {
 
                 $popup.children("a").each((child_idx, child) => {
                     let newname;
+                    let $child = $(child);
+
                     if (name == "Hide")
                         newname = "Show";
                     else if (name == "Show")
                         newname = "Hide";
-                        
-                    let $child = $(child);
-                    if ($child.text() == name) $a = $child;
-
-                    $child.text(newname);
+                    if ($child.text() == name)
+                        $child.text(newname);
                 });
             }
 
