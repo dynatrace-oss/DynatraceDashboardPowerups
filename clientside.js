@@ -4369,6 +4369,8 @@ var DashboardPowerups = (function () {
                     if ($child.text() == name)
                         $child.text(newname);
                 });
+
+                $popup.hide();
             }
 
             function addHideShow(e) {
