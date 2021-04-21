@@ -1762,7 +1762,7 @@ var DashboardPowerups = (function () {
                 if (!$tooltip.length) {
                     $tooltip = $("<div>")
                         .addClass("powerupTooltip")
-                        .text(tooltip)
+                        .html(`<span>${tooltip}</span>`)
                         .appendTo($tile);
                 }
             }
