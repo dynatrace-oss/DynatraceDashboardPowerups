@@ -26,6 +26,7 @@ var DashboardPowerups = (function () {
     const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] > div';
     const TOPLIST_BAR_SELECTOR = 'div[data-dynamic-color]';
     const NO_DATA_SELECTOR = 'div.grid-tileContent > div > div:nth-of-type(3) > div:nth-of-type(1), [uitestid="gwt-debug-renderedCustomError"] > div > div:nth-of-type(1)';
+    const TILE_CONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:first-of-type';
 
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
@@ -4344,6 +4345,57 @@ var DashboardPowerups = (function () {
             })
     }
 
+    pub.PUHideShow = function() {
+        $(MENU_ICON_SELECTOR).each((i,el)=>{
+            let $menuicon = $(el);
+            let $tile = $menuicon.parents(TILE_SELECTOR);
+            let $tilecontent = $tile.find(TILE_CONTENT_SELECTOR);
+
+            function toggle() {
+                let $popup = $(MENU_POPUP_SELECTOR);
+                let $a;
+                let name = $tilecontent.is(":visible") ? "Hide" : "Show";
+                
+                $tilecontent.toggle();
+                
+                $popup.children("a").each((child_idx, child) => {
+                    let $child = $(child);
+                    if ($child.text() == name) $a = $child;
+                    let newname = name == "Hide" ? "Show" : "Hide";
+                    $child.text(newname);
+                });
+            }
+
+            function addHideShow(e){
+                setTimeout(() => {
+                    let $popup = $(MENU_POPUP_SELECTOR);
+                    let a_class = $popup.children("a").first().attr("class");
+                    let $a;
+                    let name = $tilecontent.is(":visible") ? "Hide" : "Show";
+
+                    //check for already added
+                    $popup.children("a").each((child_idx, child) => {
+                        let $child = $(child);
+                        if ($child.text() == name) $a = $child;
+                    })
+
+                    if (typeof ($a) == "undefined"
+                        || !$a.length) {
+                        $a = $("<a>")
+                            .attr("href", url)
+                            .attr("class", a_class)
+                            .addClass("powerMenuItem")
+                            .text(name)
+                            .appendTo($popup)
+                            .on("click",toggle);
+                    }
+                }, 50);
+            }
+
+            $menuicon.on("click",addHideShow);
+        });
+    }
+
     pub.PUgrid = function () {
         const block = 38;
         $('.powerupGrid').remove();
@@ -4469,6 +4521,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.hideEarlyAdopter());
             promises.push(pub.fixPublicDashboards());
             promises.push(pub.PUmenu());
+            promises.push(pub.PUHideShow());
 
             //cleanup activities
             pub.loadChartSync();
