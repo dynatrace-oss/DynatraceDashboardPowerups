@@ -4382,7 +4382,7 @@ var DashboardPowerups = (function () {
                     if (typeof ($a) == "undefined"
                         || !$a.length) {
                         $a = $("<a>")
-                            .attr("href", url)
+                            .attr("href", "javascript:")
                             .attr("class", a_class)
                             .addClass("powerMenuItem")
                             .text(name)
