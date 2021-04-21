@@ -1749,7 +1749,7 @@ var DashboardPowerups = (function () {
 
             //add custom tooltip
             if (tooltip) {
-                tooltip = tooltip.replace(/_/g," ");
+                tooltip = tooltip.replace(/_/g, " ");
                 let $tooltip = $tile.find(`.powerupTooltip`);
                 if (!$tooltip.length) {
                     $tooltip = $("<div>")
@@ -4345,8 +4345,8 @@ var DashboardPowerups = (function () {
             })
     }
 
-    pub.PUHideShow = function() {
-        $(MENU_ICON_SELECTOR).each((i,el)=>{
+    pub.PUHideShow = function () {
+        $(MENU_ICON_SELECTOR).each((i, el) => {
             let $menuicon = $(el);
             let $tile = $menuicon.parents(TILE_SELECTOR);
             let $tilecontent = $tile.find(TILE_CONTENT_SELECTOR);
@@ -4355,18 +4355,24 @@ var DashboardPowerups = (function () {
                 let $popup = $(MENU_POPUP_SELECTOR);
                 let $a;
                 let name = $tilecontent.is(":visible") ? "Hide" : "Show";
-                
+
                 $tilecontent.toggle();
-                
+
                 $popup.children("a").each((child_idx, child) => {
+                    let newname;
+                    if (name == "Hide")
+                        newname = "Show";
+                    else if (name == "Show")
+                        newname = "Hide";
+                        
                     let $child = $(child);
                     if ($child.text() == name) $a = $child;
-                    let newname = name == "Hide" ? "Show" : "Hide";
+
                     $child.text(newname);
                 });
             }
 
-            function addHideShow(e){
+            function addHideShow(e) {
                 setTimeout(() => {
                     let $popup = $(MENU_POPUP_SELECTOR);
                     let a_class = $popup.children("a").first().attr("class");
@@ -4387,12 +4393,12 @@ var DashboardPowerups = (function () {
                             .addClass("powerMenuItem")
                             .text(name)
                             .appendTo($popup)
-                            .on("click",toggle);
+                            .on("click", toggle);
                     }
                 }, 50);
             }
 
-            $menuicon.on("click",addHideShow);
+            $menuicon.on("click", addHideShow);
         });
     }
 
