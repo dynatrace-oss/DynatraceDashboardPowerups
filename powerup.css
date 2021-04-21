@@ -461,6 +461,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
   color: rgb(51, 51, 51);
   text-align: center;
   padding: 5px 0px;
+  min-width: 80px;
 }
 
 .powerupTooltip::after {
@@ -472,7 +473,6 @@ span.powerup-color-normal, h1.powerup-color-normal {
   border-width: 5px;
   border-style: solid;
   border-color: #00a1b2 transparent transparent transparent;
-  min-width: 80px;
 }
 
 .grid-tile:hover .powerupTooltip {
