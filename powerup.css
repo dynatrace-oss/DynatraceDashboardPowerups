@@ -462,6 +462,8 @@ span.powerup-color-normal, h1.powerup-color-normal {
   text-align: center;
   padding: 5px 0px;
   min-width: 80px;
+  bottom: 100%;
+	left: 50%;
 }
 
 .powerupTooltip::after {
