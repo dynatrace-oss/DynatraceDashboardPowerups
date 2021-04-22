@@ -2332,9 +2332,9 @@ var DashboardPowerups = (function () {
                 if (params.kpicurr && params.kpicurr.length)
                     style = { style: 'currency', currency: params.kpicurr };
                 if (typeof (rev) != "undefined") {
-                    node.revenue = Intl.NumberFormat(locale, style).format(rev.sum);
+                    node[params.kpi] = Intl.NumberFormat(locale, style).format(rev.sum);
                 } else {
-                    node.revenue = Intl.NumberFormat(locale, style).format(0);
+                    node[params.kpi] = Intl.NumberFormat(locale, style).format(0);
                 }
 
 
