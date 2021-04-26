@@ -2354,7 +2354,7 @@ var DashboardPowerups = (function () {
                     .attr({ zIndex: 1100 })
                     .on('click', function () {
                         let newLimit = Math.max(Math.round(chart.limit * .5), 2);
-                        chart.destroy();
+                        if(chart) chart.destroy();
                         newChart(data, container, params, newLimit);
                     })
                     .add();
@@ -2362,7 +2362,7 @@ var DashboardPowerups = (function () {
                     .attr({ zIndex: 1100 })
                     .on('click', function () {
                         let newLimit = Math.min(chart.limit * 2, data.touples.length);
-                        chart.destroy();
+                        if(chart) chart.destroy();
                         newChart(data, container, params, newLimit);
                     })
                     .add();
