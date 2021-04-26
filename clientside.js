@@ -2354,8 +2354,13 @@ var DashboardPowerups = (function () {
                     .attr({ zIndex: 1100 })
                     .on('click', function () {
                         let newLimit = Math.max(Math.round(chart.limit * .5), 2);
-                        if(chart && typeof(chart.destroy) != "undefined") chart.destroy();
-                        else chart = null;
+                        if (chart && typeof (chart.destroy) != "undefined") {
+                            try {
+                                chart.destroy();
+                            } catch (e) {
+                                console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                            }
+                        } else chart = null;
                         newChart(data, container, params, newLimit);
                     })
                     .add();
@@ -2363,8 +2368,13 @@ var DashboardPowerups = (function () {
                     .attr({ zIndex: 1100 })
                     .on('click', function () {
                         let newLimit = Math.min(chart.limit * 2, data.touples.length);
-                        if(chart && typeof(chart.destroy) != "undefined") chart.destroy();
-                        else chart = null;
+                        if (chart && typeof (chart.destroy) != "undefined") {
+                            try {
+                                chart.destroy();
+                            } catch (e) {
+                                console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                            }
+                        } else chart = null;
                         newChart(data, container, params, newLimit);
                     })
                     .add();
@@ -4380,7 +4390,7 @@ var DashboardPowerups = (function () {
                         $child.text(newname);
                 });
 
-                $popup.parent().parent().css("visibility","hidden");
+                $popup.parent().parent().css("visibility", "hidden");
             }
 
             function addHideShow(e) {
