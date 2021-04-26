@@ -1933,6 +1933,13 @@ var DashboardPowerups = (function () {
         if (!pub.config.Powerups.sankeyPU) return;
         let re = /\/\d+(\/.*)?$/;
 
+        //workaround from: https://github.com/highcharts/highcharts/issues/9300
+        Highcharts.seriesTypes.sankey.prototype.destroy = function () {
+            // Nodes must also be destroyed (#8682, #9300)
+            this.data = [].concat(this.points, this.nodes);
+            Highcharts.Series.prototype.destroy.call(this);
+        };
+
         function readTableData(table, convHack) {
             let $table = $(table);
             let dataTable = [];
