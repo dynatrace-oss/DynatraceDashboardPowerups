@@ -2301,7 +2301,7 @@ var DashboardPowerups = (function () {
             data.apdexList.forEach(apdex => {
                 let node = {
                     id: apdex.actionName,
-                    apdex: apdex,
+                    //apdex: apdex,
                     apdexSatisfied: apdex.satisfied.toString(),
                     apdexTolerating: apdex.tolerating.toString(),
                     apdexFrustrated: apdex.frustrated.toString(),
@@ -2311,7 +2311,7 @@ var DashboardPowerups = (function () {
 
                 //Color handling
                 if (params.colors) {
-                    node.color = node.apdex.color;
+                    node.color = apdex.color;
                 }
 
                 //Conversion goal handling
