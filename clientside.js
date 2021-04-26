@@ -2366,7 +2366,8 @@ var DashboardPowerups = (function () {
                     .add();
                 chart.renderer.button('+', 40, 5)
                     .attr({ zIndex: 1100 })
-                    .on('click', function () {
+                    .on('click', function (e) {
+                        e.stopPropagation();
                         let newLimit = Math.min(chart.limit * 2, data.touples.length);
                         if (chart && typeof (chart.destroy) != "undefined") {
                             try {
