@@ -1978,7 +1978,7 @@ var DashboardPowerups = (function () {
                 }
             }
 
-            function readTableData(table, convHack) {
+            function readTableData(table, params) {
                 let $table = $(table);
                 let dataTable = [];
                 let touples = [];
@@ -2028,15 +2028,20 @@ var DashboardPowerups = (function () {
                                 let filtered = arr.filter(x =>
                                     x !== "[]" &&
                                     x !== "");
-                                if (convHack == "2") {
+                                if(isArray(params.exclude) && params.exclude.length){
+                                    params.exclude.forEach(ex={
+                                        filtered = filtered.filter(x => x !== ex);
+                                    });
+                                }
+                                if (params.convHack == "2") {
                                     filtered.unshift("START");
                                     filtered.push("END");
                                 }
                                 for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                                     let touple = { from: filtered[k], to: filtered[k + 1] };
                                     if (touple.from === touple.to) continue; // ignore self actions
-                                    if (convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
-                                    if (convHack == "true" && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
+                                    if (params.convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
+                                    if (params.convHack == "true" && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
 
 
                                     let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
@@ -2227,7 +2232,31 @@ var DashboardPowerups = (function () {
 
                                     });
                                 });
+                            } else if (colIdx == 9) for (let k = 0; k < arr.length; k++) { //duration
+                                /*let val = arr[k];
+                                if (val !== "") {
+                                    let actionName = dataTable[0][rowIdx][k];
+                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+
+                                    if (apdexIdx < 0) {
+                                        let apdexObj = { actionName: actionName, satisfied: 0, tolerating: 0, frustrated: 0 };
+                                        apdexIdx = apdexList.length;
+                                        apdexList.push(apdexObj);
+                                    }
+                                    switch (val) {
+                                        case 'SATISFIED':
+                                            apdexList[apdexIdx].satisfied++;
+                                            break;
+                                        case 'TOLERATING':
+                                            apdexList[apdexIdx].tolerating++;
+                                            break;
+                                        case 'FRUSTRATED':
+                                            apdexList[apdexIdx].frustrated++;
+                                            break;
+                                    }
+                                }*/
                             }
+
                         })
                     });
 
@@ -2622,10 +2651,7 @@ var DashboardPowerups = (function () {
                     let $tile = $title.parents(TILE_SELECTOR);
                     let $table = $tile.find(TABLE_SELECTOR);
 
-                    //let argstring = title.split(PU_SANKEY)[1].split('!')[0].trim();
                     let chartTitle = title.split(PU_SANKEY)[0];
-                    //let args = argstring.split(";").map(x => x.split("="));
-
                     let args = argsplit(title, PU_SANKEY);
                     if (args.length < 1) {
                         if (pub.config.Powerups.debug)
@@ -2637,6 +2663,8 @@ var DashboardPowerups = (function () {
                     let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
                     let convHack = (args.find(x => x[0] == "convHack") || [])[1] || "2";
                     let colors = (args.find(x => x[0] == "colors") || [])[1] || "apdex";
+                    let exclude = (args.find(x => x[0] == "exclude") || ["exclude",""])[1]
+                        .split(",");
 
                     let container = findContainer(link);
                     if (typeof (container) == "undefined") {
@@ -2648,15 +2676,15 @@ var DashboardPowerups = (function () {
                         return false;
                     }
 
-                    let data = readTableData($table.get(0), convHack);
-
                     let params = {
                         title: chartTitle,
                         kpi: kpi,
                         kpicurr: kpicurr,
                         convHack: convHack,
-                        colors: colors
+                        colors: colors,
+                        exclude: exclude
                     };
+                    let data = readTableData($table.get(0), params);
                     let sankey = newChart(data, container, params);
                     $(".highcharts-exporting-group").addClass("powerupVisible");
                     powerupsFired['PU_SANKEY'] ? powerupsFired['PU_SANKEY']++ : powerupsFired['PU_SANKEY'] = 1;
