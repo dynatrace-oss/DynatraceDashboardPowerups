@@ -2635,7 +2635,7 @@ var DashboardPowerups = (function () {
                     let link = args.find(x => x[0] == "link")[1];
                     let kpi = (args.find(x => x[0] == "kpi") || [])[1];
                     let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
-                    let convHack = (args.find(x => x[0] == "convHack") || [])[1] || false;
+                    let convHack = (args.find(x => x[0] == "convHack") || [])[1] || "2";
                     let colors = (args.find(x => x[0] == "colors") || [])[1] || false;
 
                     let container = findContainer(link);
