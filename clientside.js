@@ -2028,8 +2028,8 @@ var DashboardPowerups = (function () {
                                 let filtered = arr.filter(x =>
                                     x !== "[]" &&
                                     x !== "");
-                                if(isArray(params.exclude) && params.exclude.length){
-                                    params.exclude.forEach(ex={
+                                if (isArray(params.exclude) && params.exclude.length) {
+                                    params.exclude.forEach(ex => {
                                         filtered = filtered.filter(x => x !== ex);
                                     });
                                 }
@@ -2663,7 +2663,7 @@ var DashboardPowerups = (function () {
                     let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
                     let convHack = (args.find(x => x[0] == "convHack") || [])[1] || "2";
                     let colors = (args.find(x => x[0] == "colors") || [])[1] || "apdex";
-                    let exclude = (args.find(x => x[0] == "exclude") || ["exclude",""])[1]
+                    let exclude = (args.find(x => x[0] == "exclude") || ["exclude", ""])[1]
                         .split(",");
 
                     let container = findContainer(link);
