@@ -2460,7 +2460,7 @@ var DashboardPowerups = (function () {
                         let style = { style: 'currency', currency: params.kpicurr };
                         currFmt = Intl.NumberFormat(locale, style).format;
                     }
-                    let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name}"`);
+                    let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name.replace(/"/g,`""`)}"`);
                     let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
 
                     if (data.UAPs.doubles.length) {
