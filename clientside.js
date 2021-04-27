@@ -1932,354 +1932,354 @@ var DashboardPowerups = (function () {
     pub.sankeyPowerUp = function () {
         if (!pub.config.Powerups.sankeyPU) return;
         let re = /\/\d+(\/.*)?$/;
-        (function(H) {
+        (function (H) {
 
-        //workaround from: https://github.com/highcharts/highcharts/issues/9300
-        H.seriesTypes.sankey.prototype.destroy = function () {
-            // Nodes must also be destroyed (#8682, #9300)
-            this.data = [].concat(this.points, this.nodes);
-            H.Series.prototype.destroy.call(this);
-        };
-
-        //workaround for "TypeError: this[c].destroy is not a function" error
-        H.Point.prototype.destroyElements = function () {
-            var point = this,
-                props = [
-                    'graphic',
-                    'dataLabel',
-                    'dataLabelUpper',
-                    'connector',
-                    'shadowGroup'
-                ],
-                prop,
-                i = props.length;
-            while (i--) {
-                prop = props[i];
-                if (point[prop]) {
-                    point[prop] = point[prop].destroy();
-                }
-            }
-            // Handle point.dataLabels and point.connectors
-            if (point.dataLabels) {
-                H.each(point.dataLabels, function (label) {
-                    if (label.element) {
-                        label.destroy();
-                    }
-                });
-                delete point.dataLabels;
-            }
-            if (point.connectors) {
-                H.each(point.connectors, function (connector) {
-                    if (connector.element) {
-                        connector.destroy();
-                    }
-                });
-                delete point.connectors;
-            }
-        }
-
-        function readTableData(table, convHack) {
-            let $table = $(table);
-            let dataTable = [];
-            let touples = [];
-            let goals = [];
-            let apdexList = [];
-            let UAPs = {
-                strings: [], //{actionName, key, val, count}
-                doubles: [], //{actionName, key, sum, count}
-                longs: [], //{actionName, key, sum, count}
-                dates: [] //{actionName, key, val, count}
+            //workaround from: https://github.com/highcharts/highcharts/issues/9300
+            H.seriesTypes.sankey.prototype.destroy = function () {
+                // Nodes must also be destroyed (#8682, #9300)
+                this.data = [].concat(this.points, this.nodes);
+                H.Series.prototype.destroy.call(this);
             };
 
-            $table
-                .children('div:first-of-type')
-                .children('div')
-                .each((colIdx, col) => {
-                    let $rows = $(col).find('span');
-                    let colName = $rows.eq(0).text();
-                    let rowCount = $rows.length;
-                    if (typeof (dataTable[colIdx]) == "undefined") dataTable[colIdx] = [];
-
-                    $rows.each(function (rowIdx, rowEl) {
-                        if (typeof (dataTable[colIdx][rowIdx]) == "undefined") dataTable[colIdx][rowIdx] = [];
-                        let row = $(rowEl).text();
-                        if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return;
-                        let arr = [];
-                        try {
-                            arr = JSON.parse(row);
-                        } catch (e) { //Sometimes it's not valid JSON...
-                            arr = row.substr(1, row.length - 2)
-                                .split(',');
-                        };
-
-                        try {
-                            arr = arr
-                                .map(x => Array.isArray(x) ? x.join(', ') : x)
-                                .map(x => typeof (x) != "string" ? x.toString() : x) //consider correctly handling types later
-                                .map(x => typeof (x) == "string" ? x.trim() : x)
-                                .map(x => typeof (x) == "string" ? x.replace(re, '/*$1') : x);//clean up strings
-                        } catch (e) {
-                            console.warn([e, row]);
-                        }
-                        dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
-
-                        //TODO: replace colIdx IFs with colNames
-                        if (colIdx == 0) {
-                            let filtered = arr.filter(x =>
-                                x !== "[]" &&
-                                x !== "");
-                            if (convHack == "2") {
-                                filtered.unshift("START");
-                                filtered.push("END");
-                            }
-                            for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
-                                let touple = { from: filtered[k], to: filtered[k + 1] };
-                                if (touple.from === touple.to) continue; // ignore self actions
-                                if (convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
-                                if (convHack == "true" && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
-
-
-                                let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
-                                if (l < 0) {
-                                    touple.weight = 1;
-                                    touples.push(touple);
-                                } else {
-                                    touples[l].weight++;
-                                }
-                            }
-                        } else if (colIdx == 1) for (let k = 0; k < arr.length; k++) { //matchingConversion goals
-                            if (arr[k] !== "[]" && arr[k] !== "") {
-                                let actionName = dataTable[0][rowIdx][k];
-                                let goalsIdx = goals.findIndex(x => x.actionName == actionName);
-                                if (goalsIdx < 0) goals.push({
-                                    actionName: actionName,
-                                    count: 1,
-                                    svg: `<img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`,
-                                    goalName: (arr[k].substring(0, 1) == '[' && arr[k].substr(-1) == ']')
-                                        ? arr[k].substr(1, arr[k].length - 2).trim()
-                                        : arr[k].trim()
-                                });
-                                else goals[goalsIdx].count++;
-                            }
-                        } else if (colIdx == 2) for (let k = 0; k < arr.length; k++) { //apdex
-                            let val = arr[k];
-                            if (val !== "") {
-                                let actionName = dataTable[0][rowIdx][k];
-                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
-
-                                if (apdexIdx < 0) {
-                                    let apdexObj = { actionName: actionName, satisfied: 0, tolerating: 0, frustrated: 0 };
-                                    apdexIdx = apdexList.length;
-                                    apdexList.push(apdexObj);
-                                }
-                                switch (val) {
-                                    case 'SATISFIED':
-                                        apdexList[apdexIdx].satisfied++;
-                                        break;
-                                    case 'TOLERATING':
-                                        apdexList[apdexIdx].tolerating++;
-                                        break;
-                                    case 'FRUSTRATED':
-                                        apdexList[apdexIdx].frustrated++;
-                                        break;
-                                }
-                            }
-                        } else if (colIdx == 3) for (let k = 0; k < arr.length; k++) { //entry actions
-                            let val = arr[k];
-                            if (val === "true") {
-                                let actionName = dataTable[0][rowIdx][k];
-                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
-
-                                if (apdexIdx > -1) {
-                                    if (!apdexList[apdexIdx].entryAction)
-                                        apdexList[apdexIdx].entryAction = true;
-                                    apdexList[apdexIdx].entryActionSVG = `<img src='${pub.SVGLib() + 'entry.svg'}'  onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
-                                }
-                            }
-                        }
-                        else if (colIdx == 4) for (let k = 0; k < arr.length; k++) { //exit actions
-                            let val = arr[k];
-                            if (val === "true") {
-                                let actionName = dataTable[0][rowIdx][k];
-                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
-
-                                if (apdexIdx > -1) {
-                                    if (!apdexList[apdexIdx].exitAction)
-                                        apdexList[apdexIdx].exitAction = true;
-                                    apdexList[apdexIdx].exitActionSVG = `<img src='${pub.SVGLib() + 'exit.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
-                                }
-                            }
-                        } else if (colIdx == 5) { //UAP-String
-                            let uapRow;
-
-                            try {
-                                uapRow = JSON.parse(row);
-                            } catch (e) {
-                                console.log("Powerup: Sankey - String: unable to parse JSON");
-                            }
-                            if (typeof (uapRow) == "undefined") return;
-
-                            uapRow.forEach((uapCol, uapColIdx) => {
-                                uapCol.forEach((uapVal, uapValIdx) => {
-                                    let actionName = dataTable[0][rowIdx][uapColIdx];
-                                    let uapIdx = UAPs.strings.findIndex(x =>
-                                        x.actionName == actionName &&
-                                        x.key == uapVal.key &&
-                                        x.val == uapVal.value
-                                    );
-
-                                    if (uapIdx < 0) {
-                                        let uapObj = { actionName: actionName, key: uapVal.key, val: uapVal.value, count: 1 };
-                                        UAPs.strings.push(uapObj);
-                                    } else {
-                                        let uap = UAPs.strings[uapIdx];
-                                        uap.count++;
-                                    }
-
-                                });
-                            });
-                        } else if (colIdx == 6) { //UAP-Double
-                            let uapRow;
-
-                            try {
-                                uapRow = JSON.parse(row);
-                            } catch (e) {
-                                console.log("Powerup: Sankey - String: unable to parse JSON");
-                            }
-                            if (typeof (uapRow) == "undefined") return;
-
-                            uapRow.forEach((uapCol, uapColIdx) => {
-                                uapCol.forEach((uapVal, uapValIdx) => {
-                                    let actionName = dataTable[0][rowIdx][uapColIdx];
-                                    let uapIdx = UAPs.doubles.findIndex(x =>
-                                        x.actionName == actionName &&
-                                        x.key == uapVal.key
-                                    );
-                                    let val = Number(uapVal.value);
-
-                                    if (uapIdx < 0) {
-                                        let uapObj = { actionName: actionName, key: uapVal.key, sum: val, count: 1 };
-                                        UAPs.doubles.push(uapObj);
-                                    } else {
-                                        let uap = UAPs.doubles[uapIdx];
-                                        uap.count++;
-                                        uap.sum += val;
-                                    }
-
-                                });
-                            });
-                        } else if (colIdx == 7) for (let k = 0; k < arr.length; k++) { //UAP-Long
-                            let uapRow;
-
-                            try {
-                                uapRow = JSON.parse(row);
-                            } catch (e) {
-                                console.log("Powerup: Sankey - String: unable to parse JSON");
-                            }
-                            if (typeof (uapRow) == "undefined") return;
-
-                            uapRow.forEach((uapCol, uapColIdx) => {
-                                uapCol.forEach((uapVal, uapValIdx) => {
-                                    let actionName = dataTable[0][rowIdx][uapColIdx];
-                                    let uapIdx = UAPs.longs.findIndex(x =>
-                                        x.actionName == actionName &&
-                                        x.key == uapVal.key
-                                    );
-                                    let val = Number(uapVal.value);
-
-                                    if (uapIdx < 0) {
-                                        let uapObj = { actionName: actionName, key: uapVal.key, sum: val, count: 1 };
-                                        UAPs.longs.push(uapObj);
-                                    } else {
-                                        let uap = UAPs.longs[uapIdx];
-                                        uap.count++;
-                                        uap.sum += val;
-                                    }
-
-                                });
-                            });
-                        } else if (colIdx == 8) for (let k = 0; k < arr.length; k++) { //UAP-Date
-                            let uapRow;
-
-                            try {
-                                uapRow = JSON.parse(row);
-                            } catch (e) {
-                                console.log("Powerup: Sankey - String: unable to parse JSON");
-                            }
-                            if (typeof (uapRow) == "undefined") return;
-
-                            uapRow.forEach((uapCol, uapColIdx) => {
-                                uapCol.forEach((uapVal, uapValIdx) => {
-                                    let actionName = dataTable[0][rowIdx][uapColIdx];
-                                    let uapIdx = UAPs.dates.findIndex(x =>
-                                        x.actionName == actionName &&
-                                        x.key == uapVal.key &&
-                                        x.val == uapVal.value
-                                    );
-
-                                    if (uapIdx < 0) {
-                                        let uapObj = { actionName: actionName, key: uapVal.key, val: uapVal.value, count: 1 };
-                                        UAPs.dates.push(uapObj);
-                                    } else {
-                                        let uap = UAPs.dates[uapIdx];
-                                        uap.count++;
-                                    }
-
-                                });
-                            });
-                        }
-                    })
-                });
-
-            apdexList.forEach((apdex) => {
-                if (apdex.satisfied > Math.max(apdex.tolerating, apdex.frustrated)) {
-                    apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
-                    apdex.name = "satisfied";
-                    apdex.color = "#6bcb8b";
-                } else if (apdex.tolerating > Math.max(apdex.satisfied, apdex.frustrated)) {
-                    apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
-                    apdex.name = "tolerating";
-                    apdex.color = "#ffee7c";
-                } else if (apdex.frustrated > Math.max(apdex.tolerating, apdex.satisfied)) {
-                    apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
-                    apdex.name = "frustrated";
-                    apdex.color = "#c41425";
-                } else {
-                    apdex.svg = "";
-                    apdex.color = "#6d6d6d";
+            //workaround for "TypeError: this[c].destroy is not a function" error
+            H.Point.prototype.destroyElements = function () {
+                var point = this,
+                    props = [
+                        'graphic',
+                        'dataLabel',
+                        'dataLabelUpper',
+                        'connector',
+                        'shadowGroup'
+                    ],
+                    prop,
+                    i = props.length;
+                while (i--) {
+                    prop = props[i];
+                    if (point[prop]) {
+                        point[prop] = point[prop].destroy();
+                    }
                 }
-            });
-            touples = touples.sort((a, b) => b.weight - a.weight);
+                // Handle point.dataLabels and point.connectors
+                if (point.dataLabels) {
+                    H.each(point.dataLabels, function (label) {
+                        if (label.element) {
+                            label.destroy();
+                        }
+                    });
+                    delete point.dataLabels;
+                }
+                if (point.connectors) {
+                    H.each(point.connectors, function (connector) {
+                        if (connector.element) {
+                            connector.destroy();
+                        }
+                    });
+                    delete point.connectors;
+                }
+            }
 
-            return ({ touples: touples, goals: goals, apdexList: apdexList, UAPs: UAPs });
-        }
+            function readTableData(table, convHack) {
+                let $table = $(table);
+                let dataTable = [];
+                let touples = [];
+                let goals = [];
+                let apdexList = [];
+                let UAPs = {
+                    strings: [], //{actionName, key, val, count}
+                    doubles: [], //{actionName, key, sum, count}
+                    longs: [], //{actionName, key, sum, count}
+                    dates: [] //{actionName, key, val, count}
+                };
 
-        function newChart(data, container, params, limit = 20) {
-            let options = {
-                type: 'sankey',
-                title: {
-                    text: params.title
-                },
-                chart: {
-                    marginLeft: 100,
-                    marginBottom: 200,
-                    marginRight: 100
-                },
-                series: [{
-                    data: data.touples.slice(0, limit),
+                $table
+                    .children('div:first-of-type')
+                    .children('div')
+                    .each((colIdx, col) => {
+                        let $rows = $(col).find('span');
+                        let colName = $rows.eq(0).text();
+                        let rowCount = $rows.length;
+                        if (typeof (dataTable[colIdx]) == "undefined") dataTable[colIdx] = [];
+
+                        $rows.each(function (rowIdx, rowEl) {
+                            if (typeof (dataTable[colIdx][rowIdx]) == "undefined") dataTable[colIdx][rowIdx] = [];
+                            let row = $(rowEl).text();
+                            if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return;
+                            let arr = [];
+                            try {
+                                arr = JSON.parse(row);
+                            } catch (e) { //Sometimes it's not valid JSON...
+                                arr = row.substr(1, row.length - 2)
+                                    .split(',');
+                            };
+
+                            try {
+                                arr = arr
+                                    .map(x => Array.isArray(x) ? x.join(', ') : x)
+                                    .map(x => typeof (x) != "string" ? x.toString() : x) //consider correctly handling types later
+                                    .map(x => typeof (x) == "string" ? x.trim() : x)
+                                    .map(x => typeof (x) == "string" ? x.replace(re, '/*$1') : x);//clean up strings
+                            } catch (e) {
+                                console.warn([e, row]);
+                            }
+                            dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
+
+                            //TODO: replace colIdx IFs with colNames
+                            if (colIdx == 0) {
+                                let filtered = arr.filter(x =>
+                                    x !== "[]" &&
+                                    x !== "");
+                                if (convHack == "2") {
+                                    filtered.unshift("START");
+                                    filtered.push("END");
+                                }
+                                for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
+                                    let touple = { from: filtered[k], to: filtered[k + 1] };
+                                    if (touple.from === touple.to) continue; // ignore self actions
+                                    if (convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
+                                    if (convHack == "true" && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
+
+
+                                    let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
+                                    if (l < 0) {
+                                        touple.weight = 1;
+                                        touples.push(touple);
+                                    } else {
+                                        touples[l].weight++;
+                                    }
+                                }
+                            } else if (colIdx == 1) for (let k = 0; k < arr.length; k++) { //matchingConversion goals
+                                if (arr[k] !== "[]" && arr[k] !== "") {
+                                    let actionName = dataTable[0][rowIdx][k];
+                                    let goalsIdx = goals.findIndex(x => x.actionName == actionName);
+                                    if (goalsIdx < 0) goals.push({
+                                        actionName: actionName,
+                                        count: 1,
+                                        svg: `<img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`,
+                                        goalName: (arr[k].substring(0, 1) == '[' && arr[k].substr(-1) == ']')
+                                            ? arr[k].substr(1, arr[k].length - 2).trim()
+                                            : arr[k].trim()
+                                    });
+                                    else goals[goalsIdx].count++;
+                                }
+                            } else if (colIdx == 2) for (let k = 0; k < arr.length; k++) { //apdex
+                                let val = arr[k];
+                                if (val !== "") {
+                                    let actionName = dataTable[0][rowIdx][k];
+                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+
+                                    if (apdexIdx < 0) {
+                                        let apdexObj = { actionName: actionName, satisfied: 0, tolerating: 0, frustrated: 0 };
+                                        apdexIdx = apdexList.length;
+                                        apdexList.push(apdexObj);
+                                    }
+                                    switch (val) {
+                                        case 'SATISFIED':
+                                            apdexList[apdexIdx].satisfied++;
+                                            break;
+                                        case 'TOLERATING':
+                                            apdexList[apdexIdx].tolerating++;
+                                            break;
+                                        case 'FRUSTRATED':
+                                            apdexList[apdexIdx].frustrated++;
+                                            break;
+                                    }
+                                }
+                            } else if (colIdx == 3) for (let k = 0; k < arr.length; k++) { //entry actions
+                                let val = arr[k];
+                                if (val === "true") {
+                                    let actionName = dataTable[0][rowIdx][k];
+                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+
+                                    if (apdexIdx > -1) {
+                                        if (!apdexList[apdexIdx].entryAction)
+                                            apdexList[apdexIdx].entryAction = true;
+                                        apdexList[apdexIdx].entryActionSVG = `<img src='${pub.SVGLib() + 'entry.svg'}'  onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
+                                    }
+                                }
+                            }
+                            else if (colIdx == 4) for (let k = 0; k < arr.length; k++) { //exit actions
+                                let val = arr[k];
+                                if (val === "true") {
+                                    let actionName = dataTable[0][rowIdx][k];
+                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+
+                                    if (apdexIdx > -1) {
+                                        if (!apdexList[apdexIdx].exitAction)
+                                            apdexList[apdexIdx].exitAction = true;
+                                        apdexList[apdexIdx].exitActionSVG = `<img src='${pub.SVGLib() + 'exit.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
+                                    }
+                                }
+                            } else if (colIdx == 5) { //UAP-String
+                                let uapRow;
+
+                                try {
+                                    uapRow = JSON.parse(row);
+                                } catch (e) {
+                                    console.log("Powerup: Sankey - String: unable to parse JSON");
+                                }
+                                if (typeof (uapRow) == "undefined") return;
+
+                                uapRow.forEach((uapCol, uapColIdx) => {
+                                    uapCol.forEach((uapVal, uapValIdx) => {
+                                        let actionName = dataTable[0][rowIdx][uapColIdx];
+                                        let uapIdx = UAPs.strings.findIndex(x =>
+                                            x.actionName == actionName &&
+                                            x.key == uapVal.key &&
+                                            x.val == uapVal.value
+                                        );
+
+                                        if (uapIdx < 0) {
+                                            let uapObj = { actionName: actionName, key: uapVal.key, val: uapVal.value, count: 1 };
+                                            UAPs.strings.push(uapObj);
+                                        } else {
+                                            let uap = UAPs.strings[uapIdx];
+                                            uap.count++;
+                                        }
+
+                                    });
+                                });
+                            } else if (colIdx == 6) { //UAP-Double
+                                let uapRow;
+
+                                try {
+                                    uapRow = JSON.parse(row);
+                                } catch (e) {
+                                    console.log("Powerup: Sankey - String: unable to parse JSON");
+                                }
+                                if (typeof (uapRow) == "undefined") return;
+
+                                uapRow.forEach((uapCol, uapColIdx) => {
+                                    uapCol.forEach((uapVal, uapValIdx) => {
+                                        let actionName = dataTable[0][rowIdx][uapColIdx];
+                                        let uapIdx = UAPs.doubles.findIndex(x =>
+                                            x.actionName == actionName &&
+                                            x.key == uapVal.key
+                                        );
+                                        let val = Number(uapVal.value);
+
+                                        if (uapIdx < 0) {
+                                            let uapObj = { actionName: actionName, key: uapVal.key, sum: val, count: 1 };
+                                            UAPs.doubles.push(uapObj);
+                                        } else {
+                                            let uap = UAPs.doubles[uapIdx];
+                                            uap.count++;
+                                            uap.sum += val;
+                                        }
+
+                                    });
+                                });
+                            } else if (colIdx == 7) for (let k = 0; k < arr.length; k++) { //UAP-Long
+                                let uapRow;
+
+                                try {
+                                    uapRow = JSON.parse(row);
+                                } catch (e) {
+                                    console.log("Powerup: Sankey - String: unable to parse JSON");
+                                }
+                                if (typeof (uapRow) == "undefined") return;
+
+                                uapRow.forEach((uapCol, uapColIdx) => {
+                                    uapCol.forEach((uapVal, uapValIdx) => {
+                                        let actionName = dataTable[0][rowIdx][uapColIdx];
+                                        let uapIdx = UAPs.longs.findIndex(x =>
+                                            x.actionName == actionName &&
+                                            x.key == uapVal.key
+                                        );
+                                        let val = Number(uapVal.value);
+
+                                        if (uapIdx < 0) {
+                                            let uapObj = { actionName: actionName, key: uapVal.key, sum: val, count: 1 };
+                                            UAPs.longs.push(uapObj);
+                                        } else {
+                                            let uap = UAPs.longs[uapIdx];
+                                            uap.count++;
+                                            uap.sum += val;
+                                        }
+
+                                    });
+                                });
+                            } else if (colIdx == 8) for (let k = 0; k < arr.length; k++) { //UAP-Date
+                                let uapRow;
+
+                                try {
+                                    uapRow = JSON.parse(row);
+                                } catch (e) {
+                                    console.log("Powerup: Sankey - String: unable to parse JSON");
+                                }
+                                if (typeof (uapRow) == "undefined") return;
+
+                                uapRow.forEach((uapCol, uapColIdx) => {
+                                    uapCol.forEach((uapVal, uapValIdx) => {
+                                        let actionName = dataTable[0][rowIdx][uapColIdx];
+                                        let uapIdx = UAPs.dates.findIndex(x =>
+                                            x.actionName == actionName &&
+                                            x.key == uapVal.key &&
+                                            x.val == uapVal.value
+                                        );
+
+                                        if (uapIdx < 0) {
+                                            let uapObj = { actionName: actionName, key: uapVal.key, val: uapVal.value, count: 1 };
+                                            UAPs.dates.push(uapObj);
+                                        } else {
+                                            let uap = UAPs.dates[uapIdx];
+                                            uap.count++;
+                                        }
+
+                                    });
+                                });
+                            }
+                        })
+                    });
+
+                apdexList.forEach((apdex) => {
+                    if (apdex.satisfied > Math.max(apdex.tolerating, apdex.frustrated)) {
+                        apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
+                        apdex.name = "satisfied";
+                        apdex.color = "#6bcb8b";
+                    } else if (apdex.tolerating > Math.max(apdex.satisfied, apdex.frustrated)) {
+                        apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
+                        apdex.name = "tolerating";
+                        apdex.color = "#ffee7c";
+                    } else if (apdex.frustrated > Math.max(apdex.tolerating, apdex.satisfied)) {
+                        apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
+                        apdex.name = "frustrated";
+                        apdex.color = "#c41425";
+                    } else {
+                        apdex.svg = "";
+                        apdex.color = "#6d6d6d";
+                    }
+                });
+                touples = touples.sort((a, b) => b.weight - a.weight);
+
+                return ({ touples: touples, goals: goals, apdexList: apdexList, UAPs: UAPs });
+            }
+
+            function newChart(data, container, params, limit = 20) {
+                let options = {
                     type: 'sankey',
-                    name: 'UserActions',
-                    cursor: 'crosshair',
-                    clip: false,
-                    dataLabels: {
-                        enabled: true,
-                        useHTML: true,
-                        nodeFormat: '{point.display}',
-                        padding: 0
+                    title: {
+                        text: params.title
                     },
-                    nodes: [],
-                    tooltip: {
-                        nodeFormat: `<div class="powerup-sankey-tooltip">
+                    chart: {
+                        marginLeft: 100,
+                        marginBottom: 200,
+                        marginRight: 100
+                    },
+                    series: [{
+                        data: data.touples.slice(0, limit),
+                        type: 'sankey',
+                        name: 'UserActions',
+                        cursor: 'crosshair',
+                        clip: false,
+                        dataLabels: {
+                            enabled: true,
+                            useHTML: true,
+                            nodeFormat: '{point.display}',
+                            padding: 0
+                        },
+                        nodes: [],
+                        tooltip: {
+                            nodeFormat: `<div class="powerup-sankey-tooltip">
                             <b>{point.name}</b><br>
                             UserActions in sample: {point.sum}<br>
                             <u>Apdex</u><br>
@@ -2292,375 +2292,376 @@ var DashboardPowerups = (function () {
                             ${uc(params.kpi)}: {point.${params.kpi}}
                             </div>
                         `.trim(),
-                        pointFormat: `<div class="powerup-sankey-tooltip">
+                            pointFormat: `<div class="powerup-sankey-tooltip">
                         {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>
                         </div>
                         `.trim(),
-                        headerFormat: ''
-                    }
-                }],
-                tooltip: {
-                    useHTML: true,
-                    outside: true,
-                    borderWidth: 0,
-                    backgroundColor: 'none',
-                    shadow: false,
-                    className: 'powerup-sankey-tooltip'
-                },
-                exporting: {
-                    enabled: true,
-                    fallbackToExportServer: true,
-                    libURL: pub.POWERUP_EXT_URL + '3rdParty/Highcharts/lib',
-                    buttons: {
-                        contextButton: {
-                            //    ["printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG", "separator", "downloadCSV", "downloadXLS", "viewData", "openInCloud"]
-                            menuItems: ["downloadSVG", "downloadPDF", "separator", "printChart"]
+                            headerFormat: ''
+                        }
+                    }],
+                    tooltip: {
+                        useHTML: true,
+                        outside: true,
+                        borderWidth: 0,
+                        backgroundColor: 'none',
+                        shadow: false,
+                        className: 'powerup-sankey-tooltip'
+                    },
+                    exporting: {
+                        enabled: true,
+                        fallbackToExportServer: true,
+                        libURL: pub.POWERUP_EXT_URL + '3rdParty/Highcharts/lib',
+                        buttons: {
+                            contextButton: {
+                                //    ["printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG", "separator", "downloadCSV", "downloadXLS", "viewData", "openInCloud"]
+                                menuItems: ["downloadSVG", "downloadPDF", "separator", "printChart"]
+                            }
                         }
                     }
                 }
-            }
 
-            function uc(str) {
-                if (!str) return false;
-                return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-            }
-
-            //convHack handling
-            if (params.convHack == "2") {
-                let node = {
-                    id: "START",
-                    //column: 0,
-                    display: "Start...",
-                    color: "#b7b7b7"
-                }
-                options.series[0].nodes.push(node);
-                node = {
-                    id: "END",
-                    //column: 1,
-                    display: "...End",
-                    color: "#b7b7b7"
-                }
-                options.series[0].nodes.push(node);
-            }
-
-            data.apdexList.forEach(apdex => {
-                let node = {
-                    id: apdex.actionName,
-                    apdex: apdex,
-                    apdexSatisfied: apdex.satisfied.toString(),
-                    apdexTolerating: apdex.tolerating.toString(),
-                    apdexFrustrated: apdex.frustrated.toString(),
-                    entryAction: (apdex.entryAction ? 'true' : 'false'),
-                    exitAction: (apdex.exitAction ? 'true' : 'false')
+                function uc(str) {
+                    if (!str) return false;
+                    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
                 }
 
-                //Color handling
-                if (params.colors) {
-                    node.color = apdex.color;
-                }
-
-                //Conversion goal handling
-                let goal = data.goals.find(x => x.actionName == apdex.actionName);
-                if (typeof (goal) != "undefined") {
-                    node.goal = goal;
-                    node.conversionGoal = goal.goalName;
-                } else {
-                    node.conversionGoal = 'false';
-                }
-
-                //Revenue (UAPs)
-                let locale = navigator.language;
-                let rev = data.UAPs.doubles.find(x =>
-                    x.actionName == apdex.actionName &&
-                    x.key == params.kpi);
-                let style = { maximumFractionDigits: 2 };
-                if (params.kpicurr && params.kpicurr.length)
-                    style = { style: 'currency', currency: params.kpicurr };
-                if (typeof (rev) != "undefined") {
-                    node[params.kpi] = Intl.NumberFormat(locale, style).format(rev.sum);
-                } else {
-                    node[params.kpi] = Intl.NumberFormat(locale, style).format(0);
-                }
-
-
-                //Node label
-                node.display = apdex.svg +
-                    (goal ? `<br>${goal.svg}` : "") +
-                    (apdex.entryActionSVG ? `<br>${apdex.entryActionSVG}` : '') +
-                    (apdex.exitActionSVG ? `<br>${apdex.exitActionSVG}` : '');
-
-                options.series[0].nodes.push(node);
-            });
-
-            let chart = H.chart(container, options, (chart) => {
-                let $container = $(container);
-                chart.limit = limit = Math.min(limit, data.touples.length);
-                chart.renderer.button('-', 10, 5)
-                    .attr({ zIndex: 1100 })
-                    .on('click', function (e) {
-                        e.stopPropagation();
-                        let newLimit = Math.max(Math.round(chart.limit * .5), 2);
-                        if (chart && typeof (chart.destroy) != "undefined") {
-                            try {
-                                chart.destroy();
-                            } catch (e) {
-                                console.warn(`POWERUP: exception on chart.destroy on click`, e);
-                            }
-                        } else chart = null;
-                        newChart(data, container, params, newLimit);
-                    })
-                    .add();
-                chart.renderer.button('+', 40, 5)
-                    .attr({ zIndex: 1100 })
-                    .on('click', function (e) {
-                        e.stopPropagation();
-                        let newLimit = Math.min(chart.limit * 2, data.touples.length);
-                        if (chart && typeof (chart.destroy) != "undefined") {
-                            try {
-                                chart.destroy();
-                            } catch (e) {
-                                console.warn(`POWERUP: exception on chart.destroy on click`, e);
-                            }
-                        } else chart = null;
-                        newChart(data, container, params, newLimit);
-                    })
-                    .add();
-                chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
-                    .add();
-
-                //redraw to help convHack use case
-                chart.setSize(undefined, undefined, false);
-
-                $container.find(".highcharts-plot-background")
-                    .addClass("powerupPlotBackground");
-
-                $container.find(".highcharts-node")
-                    .click(filterPopup);
-                $container.find(".highcharts-data-label")
-                    .click(filterPopup);
-
-
-                function filterPopup(e) {
-                    let el = e.target;
-                    let $el = $(el);
-                    let node;
-                    if ($el.is(".highcharts-node"))
-                        node = chart.series[0].nodes.find(x => x.graphic.element === el);
-                    else if ($el.parents(".highcharts-data-label").length)
-                        node = chart.series[0].nodes.find(x => x.dataLabel.div === $el.parents(".highcharts-data-label")[0]);
-                    else
-                        return false;
-
-                    if (typeof (node) === "undefined") return false;
-                    let name = node.apdex.actionName;
-                    let fmt = Intl.NumberFormat().format;
-                    let currFmt = fmt;
-                    if (params.kpicurr && params.kpicurr.length) {
-                        let locale = navigator.language;
-                        let style = { style: 'currency', currency: params.kpicurr };
-                        currFmt = Intl.NumberFormat(locale, style).format;
+                //convHack handling
+                if (params.convHack == "2") {
+                    let node = {
+                        id: "START",
+                        //column: 0,
+                        display: "Start...",
+                        color: "#b7b7b7"
                     }
-                    let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name.replace(/"/g,`""`)}"`);
-                    let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
+                    options.series[0].nodes.push(node);
+                    node = {
+                        id: "END",
+                        //column: 1,
+                        display: "...End",
+                        color: "#b7b7b7"
+                    }
+                    options.series[0].nodes.push(node);
+                }
 
-                    if (data.UAPs.doubles.length) {
-                        html += `<li>Double Properties:<ul>`;
-                        data.UAPs.doubles
-                            .filter(x => x.actionName === name)
-                            .sort((a, b) => {
-                                if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
-                                else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
-                                else return a.sum - b.sum;
-                            })
-                            .forEach(x => {
-                                let fmter = (x.key === params.kpi ? currFmt : fmt);
-                                let sublink = link + encodeURIComponent(` AND useraction.doubleProperties.${x.key} IS NOT NULL`);
-                                html += `<li><a href="${sublink}">${x.key}</a>: <ul>`
-                                    + `<li>sum: ${fmter(x.sum)}</li>`
-                                    + `<li>count: ${fmt(x.count)}</li>`
-                                    + `<li>avg: ${fmter(x.sum / x.count)}</li>`
-                                    + `</ul></li>`;
-                            });
-                        html += `</ul></li>` //end double
+                data.apdexList.forEach(apdex => {
+                    let node = {
+                        id: apdex.actionName,
+                        apdex: apdex,
+                        apdexSatisfied: apdex.satisfied.toString(),
+                        apdexTolerating: apdex.tolerating.toString(),
+                        apdexFrustrated: apdex.frustrated.toString(),
+                        entryAction: (apdex.entryAction ? 'true' : 'false'),
+                        exitAction: (apdex.exitAction ? 'true' : 'false')
                     }
 
-                    if (data.UAPs.longs.length) {
-                        html += `<li>Long Properties:<ul>`;
-                        data.UAPs.longs
-                            .filter(x => x.actionName === name)
-                            .sort((a, b) => {
-                                if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
-                                else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
-                                else return a.sum - b.sum;
-                            })
-                            .forEach(x => {
-                                let sublink = link + encodeURIComponent(` AND useraction.longProperties.${x.key} IS NOT NULL`);
-                                html += `<li><a href="${sublink}">${x.key}</a>: <ul>`
-                                    + `<li>sum: ${fmt(x.sum)}</li>`
-                                    + `<li>count: ${fmt(x.count)}</li>`
-                                    + `<li>avg: ${fmt(x.sum / x.count)}</li>`
-                                    + `</ul></li>`;
-                            });
-                        html += `</ul></li>` //end long
+                    //Color handling
+                    if (params.colors) {
+                        node.color = apdex.color;
                     }
 
-                    if (data.UAPs.strings.length) {
-                        html += `<li>String Properties:<ul>`;
-                        let lastKey, list = "";
-                        data.UAPs.strings
-                            .filter(x => x.actionName === name)
-                            .sort((a, b) => {
-                                if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
-                                else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
-                                else return b.count - a.count;
-                            })
-                            .forEach(x => {
-                                if (x.key !== lastKey) {
-                                    if (list.length) list += `</ul></li>`;
-                                    html += list;
-                                    let sublink = link + encodeURIComponent(` AND useraction.stringProperties.${x.key} IS NOT NULL`);
-                                    list = `<li><a href="${sublink}">${x.key}</a>:<ul>`;
-                                }
-                                let sublink = link + encodeURIComponent(` AND useraction.stringProperties.${x.key} = "${x.val}"`);
-                                list += `<li><a href="${sublink}">${x.val}</a> (${x.count})</li>`;
-                                lastKey = x.key;
-                            });
-                        if (list.length) list += `</ul></li>`;
-                        html += list;
-                        html += `</ul></li>` //end string
+                    //Conversion goal handling
+                    let goal = data.goals.find(x => x.actionName == apdex.actionName);
+                    if (typeof (goal) != "undefined") {
+                        node.goal = goal;
+                        node.conversionGoal = goal.goalName;
+                    } else {
+                        node.conversionGoal = 'false';
                     }
 
-                    if (data.UAPs.dates.length) {
-                        html += `<li>Date Properties:<ul>`;
-                        lastKey = ""; list = "";
-                        data.UAPs.dates
-                            .filter(x => x.actionName === name)
-                            .sort((a, b) => {
-                                if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
-                                else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
-                                else return b.count - a.count;
-                            })
-                            .forEach(x => {
-                                if (x.key !== lastKey) {
-                                    if (list.length) list += `</ul></li>`;
-                                    html += list;
-                                    let sublink = link + encodeURIComponent(` AND useraction.dateProperties.${x.key} IS NOT NULL`);
-                                    list = `<li><a href="${sublink}">${x.key}</a>:<ul>`;
-                                }
-                                let sublink = link + encodeURIComponent(` AND useraction.dateProperties.${x.key} = ${x.val}`);
-                                list += `<li><a href="${sublink}">${x.val}</a> (${x.count})</li>`;
-                                lastKey = x.key;
-                            });
-                        if (list.length) list += `</ul></li>`;
-                        html += list;
-                        html += `</ul></li>` //end date
+                    //Revenue (UAPs)
+                    let locale = navigator.language;
+                    let rev = data.UAPs.doubles.find(x =>
+                        x.actionName == apdex.actionName &&
+                        x.key == params.kpi);
+                    let style = { maximumFractionDigits: 2 };
+                    if (params.kpicurr && params.kpicurr.length)
+                        style = { style: 'currency', currency: params.kpicurr };
+                    if (typeof (rev) != "undefined") {
+                        node[params.kpi] = Intl.NumberFormat(locale, style).format(rev.sum);
+                    } else {
+                        node[params.kpi] = Intl.NumberFormat(locale, style).format(0);
                     }
 
-                    let $popup = $("<div>")
-                        .addClass("powerupSankeyDetailPopup")
-                        .html(html)
-                        .click(() => { $popup.remove(); })
-                        .appendTo(container);
-                }
-            });
 
-            return chart;
-        }
+                    //Node label
+                    node.display = apdex.svg +
+                        (goal ? `<br>${goal.svg}` : "") +
+                        (apdex.entryActionSVG ? `<br>${apdex.entryActionSVG}` : '') +
+                        (apdex.exitActionSVG ? `<br>${apdex.exitActionSVG}` : '');
 
-        function findContainer(link) {
-            let container, markdown;
-            $(MARKDOWN_SELECTOR)
-                .each(function (i, el) {
-                    let $el = $(el);
-                    let text = $el.text();
-                    if (!text.includes(PU_LINK)) return;
-                    if (text.split(PU_LINK)[1].includes(link))
-                        markdown = el;
+                    options.series[0].nodes.push(node);
                 });
 
-            if (markdown) { // change behavior here. instead of swapping out the markdown, hide it and add a container div
-                let $containers = $(markdown).siblings("[data-highcharts-chart]").children(".highcharts-container");
-                $containers.each((i, c) => { //sankey already exists, destroy and recreate later
-                    let oldChart = Highcharts.charts
+                let chart = H.chart(container, options, (chart) => {
+                    let $container = $(container);
+                    chart.limit = limit = Math.min(limit, data.touples.length);
+                    chart.renderer.button('-', 10, 5)
+                        .attr({ zIndex: 1100 })
+                        .on('click', function (e) {
+                            e.stopPropagation();
+                            let newLimit = Math.max(Math.round(chart.limit * .5), 2);
+                            if (chart && typeof (chart.destroy) != "undefined") {
+                                try {
+                                    chart.destroy();
+                                } catch (e) {
+                                    console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                                }
+                            } else chart = null;
+                            newChart(data, container, params, newLimit);
+                        })
+                        .add();
+                    chart.renderer.button('+', 40, 5)
+                        .attr({ zIndex: 1100 })
+                        .on('click', function (e) {
+                            e.stopPropagation();
+                            let newLimit = Math.min(chart.limit * 2, data.touples.length);
+                            if (chart && typeof (chart.destroy) != "undefined") {
+                                try {
+                                    chart.destroy();
+                                } catch (e) {
+                                    console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                                }
+                            } else chart = null;
+                            newChart(data, container, params, newLimit);
+                        })
+                        .add();
+                    chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
+                        .add();
+
+                    //redraw to help convHack use case
+                    chart.setSize(undefined, undefined, false);
+
+                    $container.find(".highcharts-plot-background")
+                        .addClass("powerupPlotBackground");
+
+                    $container.find(".highcharts-node")
+                        .click(filterPopup);
+                    $container.find(".highcharts-data-label")
+                        .click(filterPopup);
+
+
+                    function filterPopup(e) {
+                        let el = e.target;
+                        let $el = $(el);
+                        let node;
+                        if ($el.is(".highcharts-node"))
+                            node = chart.series[0].nodes.find(x => x.graphic.element === el);
+                        else if ($el.parents(".highcharts-data-label").length)
+                            node = chart.series[0].nodes.find(x => x.dataLabel.div === $el.parents(".highcharts-data-label")[0]);
+                        else
+                            return false;
+
+                        if (typeof (node) === "undefined"
+                            || typeof (node.apdex) == "undefined") return false;
+                        let name = node.apdex.actionName;
+                        let fmt = Intl.NumberFormat().format;
+                        let currFmt = fmt;
+                        if (params.kpicurr && params.kpicurr.length) {
+                            let locale = navigator.language;
+                            let style = { style: 'currency', currency: params.kpicurr };
+                            currFmt = Intl.NumberFormat(locale, style).format;
+                        }
+                        let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name.replace(/"/g, `""`)}"`);
+                        let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
+
+                        if (data.UAPs.doubles.length) {
+                            html += `<li>Double Properties:<ul>`;
+                            data.UAPs.doubles
+                                .filter(x => x.actionName === name)
+                                .sort((a, b) => {
+                                    if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
+                                    else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
+                                    else return a.sum - b.sum;
+                                })
+                                .forEach(x => {
+                                    let fmter = (x.key === params.kpi ? currFmt : fmt);
+                                    let sublink = link + encodeURIComponent(` AND useraction.doubleProperties.${x.key} IS NOT NULL`);
+                                    html += `<li><a href="${sublink}">${x.key}</a>: <ul>`
+                                        + `<li>sum: ${fmter(x.sum)}</li>`
+                                        + `<li>count: ${fmt(x.count)}</li>`
+                                        + `<li>avg: ${fmter(x.sum / x.count)}</li>`
+                                        + `</ul></li>`;
+                                });
+                            html += `</ul></li>` //end double
+                        }
+
+                        if (data.UAPs.longs.length) {
+                            html += `<li>Long Properties:<ul>`;
+                            data.UAPs.longs
+                                .filter(x => x.actionName === name)
+                                .sort((a, b) => {
+                                    if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
+                                    else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
+                                    else return a.sum - b.sum;
+                                })
+                                .forEach(x => {
+                                    let sublink = link + encodeURIComponent(` AND useraction.longProperties.${x.key} IS NOT NULL`);
+                                    html += `<li><a href="${sublink}">${x.key}</a>: <ul>`
+                                        + `<li>sum: ${fmt(x.sum)}</li>`
+                                        + `<li>count: ${fmt(x.count)}</li>`
+                                        + `<li>avg: ${fmt(x.sum / x.count)}</li>`
+                                        + `</ul></li>`;
+                                });
+                            html += `</ul></li>` //end long
+                        }
+
+                        if (data.UAPs.strings.length) {
+                            html += `<li>String Properties:<ul>`;
+                            let lastKey, list = "";
+                            data.UAPs.strings
+                                .filter(x => x.actionName === name)
+                                .sort((a, b) => {
+                                    if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
+                                    else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
+                                    else return b.count - a.count;
+                                })
+                                .forEach(x => {
+                                    if (x.key !== lastKey) {
+                                        if (list.length) list += `</ul></li>`;
+                                        html += list;
+                                        let sublink = link + encodeURIComponent(` AND useraction.stringProperties.${x.key} IS NOT NULL`);
+                                        list = `<li><a href="${sublink}">${x.key}</a>:<ul>`;
+                                    }
+                                    let sublink = link + encodeURIComponent(` AND useraction.stringProperties.${x.key} = "${x.val}"`);
+                                    list += `<li><a href="${sublink}">${x.val}</a> (${x.count})</li>`;
+                                    lastKey = x.key;
+                                });
+                            if (list.length) list += `</ul></li>`;
+                            html += list;
+                            html += `</ul></li>` //end string
+                        }
+
+                        if (data.UAPs.dates.length) {
+                            html += `<li>Date Properties:<ul>`;
+                            lastKey = ""; list = "";
+                            data.UAPs.dates
+                                .filter(x => x.actionName === name)
+                                .sort((a, b) => {
+                                    if (a.key.toLowerCase() < b.key.toLowerCase()) return -1;
+                                    else if (a.key.toLowerCase() > b.key.toLowerCase()) return 1;
+                                    else return b.count - a.count;
+                                })
+                                .forEach(x => {
+                                    if (x.key !== lastKey) {
+                                        if (list.length) list += `</ul></li>`;
+                                        html += list;
+                                        let sublink = link + encodeURIComponent(` AND useraction.dateProperties.${x.key} IS NOT NULL`);
+                                        list = `<li><a href="${sublink}">${x.key}</a>:<ul>`;
+                                    }
+                                    let sublink = link + encodeURIComponent(` AND useraction.dateProperties.${x.key} = ${x.val}`);
+                                    list += `<li><a href="${sublink}">${x.val}</a> (${x.count})</li>`;
+                                    lastKey = x.key;
+                                });
+                            if (list.length) list += `</ul></li>`;
+                            html += list;
+                            html += `</ul></li>` //end date
+                        }
+
+                        let $popup = $("<div>")
+                            .addClass("powerupSankeyDetailPopup")
+                            .html(html)
+                            .click(() => { $popup.remove(); })
+                            .appendTo(container);
+                    }
+                });
+
+                return chart;
+            }
+
+            function findContainer(link) {
+                let container, markdown;
+                $(MARKDOWN_SELECTOR)
+                    .each(function (i, el) {
+                        let $el = $(el);
+                        let text = $el.text();
+                        if (!text.includes(PU_LINK)) return;
+                        if (text.split(PU_LINK)[1].includes(link))
+                            markdown = el;
+                    });
+
+                if (markdown) { // change behavior here. instead of swapping out the markdown, hide it and add a container div
+                    let $containers = $(markdown).siblings("[data-highcharts-chart]").children(".highcharts-container");
+                    $containers.each((i, c) => { //sankey already exists, destroy and recreate later
+                        let oldChart = Highcharts.charts
+                            .filter(x => typeof (x) !== "undefined")
+                            .find(x => x.container === c);
+                        container = $(c).parent().get(0);
+                        if (oldChart) oldChart.destroy();
+                    });
+                    if (!$containers.length) { //hide the markdown, add a container
+                        $(markdown).hide();
+                        let $c = $("<div>")
+                            .addClass("powerupHighchartsContainer")
+                            .insertAfter(markdown);
+                        container = $c.get(0);
+                    }
+                }
+                return container;
+            }
+
+            function destroyChartsAndContainers(tile) {
+                let $tile = $(tile);
+                let $containers = $tile.find(".highcharts-container");
+
+                $containers.each((i, c) => {
+                    let oldChart = H.charts
                         .filter(x => typeof (x) !== "undefined")
                         .find(x => x.container === c);
-                    container = $(c).parent().get(0);
-                    if (oldChart) oldChart.destroy();
-                });
-                if (!$containers.length) { //hide the markdown, add a container
-                    $(markdown).hide();
-                    let $c = $("<div>")
-                        .addClass("powerupHighchartsContainer")
-                        .insertAfter(markdown);
-                    container = $c.get(0);
-                }
+                    if (oldChart) oldChart.destory();
+                    $(c).remove();
+                })
             }
-            return container;
-        }
-
-        function destroyChartsAndContainers(tile) {
-            let $tile = $(tile);
-            let $containers = $tile.find(".highcharts-container");
-
-            $containers.each((i, c) => {
-                let oldChart = H.charts
-                    .filter(x => typeof (x) !== "undefined")
-                    .find(x => x.container === c);
-                if (oldChart) oldChart.destory();
-                $(c).remove();
-            })
-        }
 
 
-        //$(TABLE_SELECTOR)
-        $(TITLE_SELECTOR)
-            .each(function (i, el) {
-                let $title = $(el);
-                let title = $title.text();
-                if (!title.includes(PU_SANKEY)) return;
-                let $tile = $title.parents(TILE_SELECTOR);
-                let $table = $tile.find(TABLE_SELECTOR);
+            //$(TABLE_SELECTOR)
+            $(TITLE_SELECTOR)
+                .each(function (i, el) {
+                    let $title = $(el);
+                    let title = $title.text();
+                    if (!title.includes(PU_SANKEY)) return;
+                    let $tile = $title.parents(TILE_SELECTOR);
+                    let $table = $tile.find(TABLE_SELECTOR);
 
-                //let argstring = title.split(PU_SANKEY)[1].split('!')[0].trim();
-                let chartTitle = title.split(PU_SANKEY)[0];
-                //let args = argstring.split(";").map(x => x.split("="));
+                    //let argstring = title.split(PU_SANKEY)[1].split('!')[0].trim();
+                    let chartTitle = title.split(PU_SANKEY)[0];
+                    //let args = argstring.split(";").map(x => x.split("="));
 
-                let args = argsplit(title, PU_SANKEY);
-                if (args.length < 1) {
-                    if (pub.config.Powerups.debug)
-                        console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
-                    return false;
-                }
-                let link = args.find(x => x[0] == "link")[1];
-                let kpi = (args.find(x => x[0] == "kpi") || [])[1];
-                let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
-                let convHack = (args.find(x => x[0] == "convHack") || [])[1] || false;
-                let colors = (args.find(x => x[0] == "colors") || [])[1] || false;
+                    let args = argsplit(title, PU_SANKEY);
+                    if (args.length < 1) {
+                        if (pub.config.Powerups.debug)
+                            console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
+                        return false;
+                    }
+                    let link = args.find(x => x[0] == "link")[1];
+                    let kpi = (args.find(x => x[0] == "kpi") || [])[1];
+                    let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
+                    let convHack = (args.find(x => x[0] == "convHack") || [])[1] || false;
+                    let colors = (args.find(x => x[0] == "colors") || [])[1] || false;
 
-                let container = findContainer(link);
-                if (typeof (container) == "undefined") {
-                    console.log("Powerup: WARN - Sankey container is undefined.");
-                    return false;
-                }
-                if (!$table.length) { //USQL error or no data
-                    //destroyChartsAndContainers($tile.get(0));
-                    return false;
-                }
+                    let container = findContainer(link);
+                    if (typeof (container) == "undefined") {
+                        console.log("Powerup: WARN - Sankey container is undefined.");
+                        return false;
+                    }
+                    if (!$table.length) { //USQL error or no data
+                        //destroyChartsAndContainers($tile.get(0));
+                        return false;
+                    }
 
-                let data = readTableData($table.get(0), convHack);
+                    let data = readTableData($table.get(0), convHack);
 
-                let params = {
-                    title: chartTitle,
-                    kpi: kpi,
-                    kpicurr: kpicurr,
-                    convHack: convHack,
-                    colors: colors
-                };
-                let sankey = newChart(data, container, params);
-                $(".highcharts-exporting-group").addClass("powerupVisible");
-                powerupsFired['PU_SANKEY'] ? powerupsFired['PU_SANKEY']++ : powerupsFired['PU_SANKEY'] = 1;
-            });
-        return true;
+                    let params = {
+                        title: chartTitle,
+                        kpi: kpi,
+                        kpicurr: kpicurr,
+                        convHack: convHack,
+                        colors: colors
+                    };
+                    let sankey = newChart(data, container, params);
+                    $(".highcharts-exporting-group").addClass("powerupVisible");
+                    powerupsFired['PU_SANKEY'] ? powerupsFired['PU_SANKEY']++ : powerupsFired['PU_SANKEY'] = 1;
+                });
+            return true;
         })(Highcharts);
     }
 
