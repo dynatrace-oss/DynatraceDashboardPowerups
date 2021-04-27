@@ -2028,7 +2028,7 @@ var DashboardPowerups = (function () {
                                 let filtered = arr.filter(x =>
                                     x !== "[]" &&
                                     x !== "");
-                                if (isArray(params.exclude) && params.exclude.length) {
+                                if (Array.isArray(params.exclude) && params.exclude.length) {
                                     params.exclude.forEach(ex => {
                                         filtered = filtered.filter(x => x !== ex);
                                     });
