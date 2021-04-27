@@ -2030,7 +2030,7 @@ var DashboardPowerups = (function () {
                                     x !== "");
                                 if (Array.isArray(params.exclude) && params.exclude.length) {
                                     params.exclude.forEach(ex => {
-                                        filtered = filtered.filter(x => x !== ex);
+                                        filtered = filtered.filter(x => !x.contains(ex));
                                     });
                                 }
                                 if (params.convHack == "2") {
