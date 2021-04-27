@@ -1932,16 +1932,17 @@ var DashboardPowerups = (function () {
     pub.sankeyPowerUp = function () {
         if (!pub.config.Powerups.sankeyPU) return;
         let re = /\/\d+(\/.*)?$/;
+        (function(H) {
 
         //workaround from: https://github.com/highcharts/highcharts/issues/9300
-        Highcharts.seriesTypes.sankey.prototype.destroy = function () {
+        H.seriesTypes.sankey.prototype.destroy = function () {
             // Nodes must also be destroyed (#8682, #9300)
             this.data = [].concat(this.points, this.nodes);
-            Highcharts.Series.prototype.destroy.call(this);
+            H.Series.prototype.destroy.call(this);
         };
 
         //workaround for "TypeError: this[c].destroy is not a function" error
-        Highcharts.Point.prototype.destroyElements = function () {
+        H.Point.prototype.destroyElements = function () {
             var point = this,
                 props = [
                     'graphic',
@@ -1960,7 +1961,7 @@ var DashboardPowerups = (function () {
             }
             // Handle point.dataLabels and point.connectors
             if (point.dataLabels) {
-                each(point.dataLabels, function (label) {
+                H.each(point.dataLabels, function (label) {
                     if (label.element) {
                         label.destroy();
                     }
@@ -1968,7 +1969,7 @@ var DashboardPowerups = (function () {
                 delete point.dataLabels;
             }
             if (point.connectors) {
-                each(point.connectors, function (connector) {
+                H.each(point.connectors, function (connector) {
                     if (connector.element) {
                         connector.destroy();
                     }
@@ -2391,7 +2392,7 @@ var DashboardPowerups = (function () {
                 options.series[0].nodes.push(node);
             });
 
-            let chart = Highcharts.chart(container, options, (chart) => {
+            let chart = H.chart(container, options, (chart) => {
                 let $container = $(container);
                 chart.limit = limit = Math.min(limit, data.touples.length);
                 chart.renderer.button('-', 10, 5)
@@ -2602,7 +2603,7 @@ var DashboardPowerups = (function () {
             let $containers = $tile.find(".highcharts-container");
 
             $containers.each((i, c) => {
-                let oldChart = Highcharts.charts
+                let oldChart = H.charts
                     .filter(x => typeof (x) !== "undefined")
                     .find(x => x.container === c);
                 if (oldChart) oldChart.destory();
@@ -2660,6 +2661,7 @@ var DashboardPowerups = (function () {
                 powerupsFired['PU_SANKEY'] ? powerupsFired['PU_SANKEY']++ : powerupsFired['PU_SANKEY'] = 1;
             });
         return true;
+        })(Highcharts);
     }
 
     pub.mapPowerUp = function () {
