@@ -2355,7 +2355,7 @@ var DashboardPowerups = (function () {
                     }
 
                     //Color handling
-                    if (params.colors) {
+                    if (params.colors == "apdex") {
                         node.color = apdex.color;
                     }
 
@@ -2636,7 +2636,7 @@ var DashboardPowerups = (function () {
                     let kpi = (args.find(x => x[0] == "kpi") || [])[1];
                     let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
                     let convHack = (args.find(x => x[0] == "convHack") || [])[1] || "2";
-                    let colors = (args.find(x => x[0] == "colors") || [])[1] || false;
+                    let colors = (args.find(x => x[0] == "colors") || [])[1] || "apdex";
 
                     let container = findContainer(link);
                     if (typeof (container) == "undefined") {
