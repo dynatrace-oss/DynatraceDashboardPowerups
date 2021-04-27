@@ -1940,6 +1940,43 @@ var DashboardPowerups = (function () {
             Highcharts.Series.prototype.destroy.call(this);
         };
 
+        //workaround for "TypeError: this[c].destroy is not a function" error
+        Highcharts.Point.prototype.destroyElements = function () {
+            var point = this,
+                props = [
+                    'graphic',
+                    'dataLabel',
+                    'dataLabelUpper',
+                    'connector',
+                    'shadowGroup'
+                ],
+                prop,
+                i = props.length;
+            while (i--) {
+                prop = props[i];
+                if (point[prop]) {
+                    point[prop] = point[prop].destroy();
+                }
+            }
+            // Handle point.dataLabels and point.connectors
+            if (point.dataLabels) {
+                each(point.dataLabels, function (label) {
+                    if (label.element) {
+                        label.destroy();
+                    }
+                });
+                delete point.dataLabels;
+            }
+            if (point.connectors) {
+                each(point.connectors, function (connector) {
+                    if (connector.element) {
+                        connector.destroy();
+                    }
+                });
+                delete point.connectors;
+            }
+        }
+
         function readTableData(table, convHack) {
             let $table = $(table);
             let dataTable = [];
