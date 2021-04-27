@@ -2663,8 +2663,8 @@ var DashboardPowerups = (function () {
                     let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
                     let convHack = (args.find(x => x[0] == "convHack") || [])[1] || "2";
                     let colors = (args.find(x => x[0] == "colors") || [])[1] || "apdex";
-                    let exclude = (args.find(x => x[0] == "exclude") || ["exclude", ""])[1]
-                        .split(",");
+                    let exclude = (args.find(x => x[0] == "exclude") || [])[1];
+                    if(exclude) exclude = exclude.split(",");
 
                     let container = findContainer(link);
                     if (typeof (container) == "undefined") {
