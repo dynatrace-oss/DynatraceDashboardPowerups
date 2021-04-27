@@ -2346,7 +2346,7 @@ var DashboardPowerups = (function () {
             data.apdexList.forEach(apdex => {
                 let node = {
                     id: apdex.actionName,
-                    //apdex: apdex,
+                    apdex: apdex,
                     apdexSatisfied: apdex.satisfied.toString(),
                     apdexTolerating: apdex.tolerating.toString(),
                     apdexFrustrated: apdex.frustrated.toString(),
