@@ -2033,6 +2033,13 @@ var DashboardPowerups = (function () {
                                         filtered = filtered.filter(x => !x.includes(ex));
                                     });
                                 }
+                                if (params && params.filter && params.filter.from && params.filter.to) {
+                                    let fromIdx = filtered.findIndex((x, i, arr) =>
+                                        x === params.filter.from
+                                        && arr.length > i + 1
+                                        && arr[i + 1] === params.filter.to);
+                                    if(fromIdx < 0) return false; //this row filtered out
+                                }
                                 if (params.convHack == "2") {
                                     filtered.unshift("START");
                                     filtered.push("END");
@@ -2458,22 +2465,22 @@ var DashboardPowerups = (function () {
                     chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
                         .add();
                     //display filter text
-                    if(params && params.filter && params.filter.from && params.filter.to){
-                        chart.renderer.text(`X - ${params.filter.from} -> ${params.filter.to}`, 10, 50)
-                        .attr({ zIndex: 1100 })
-                        .on('click', function (e) {
-                            e.stopPropagation();
-                            if(params && params.filter) delete params.filter;
-                            if (chart && typeof (chart.destroy) != "undefined") {
-                                try {
-                                    chart.destroy();
-                                } catch (e) {
-                                    console.warn(`POWERUP: exception on chart.destroy on click`, e);
-                                }
-                            } else chart = null;
-                            newChart(data, container, params, limit);
-                        })
-                        .add();
+                    if (params && params.filter && params.filter.from && params.filter.to) {
+                        chart.renderer.text(`X - ${params.filter.from} -> ${params.filter.to}`, 10, 55)
+                            .attr({ zIndex: 1100 })
+                            .on('click', function (e) {
+                                e.stopPropagation();
+                                if (params && params.filter) delete params.filter;
+                                if (chart && typeof (chart.destroy) != "undefined") {
+                                    try {
+                                        chart.destroy();
+                                    } catch (e) {
+                                        console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                                    }
+                                } else chart = null;
+                                newChart(data, container, params, limit);
+                            })
+                            .add();
                     }
 
                     //redraw to help convHack use case
@@ -2503,19 +2510,19 @@ var DashboardPowerups = (function () {
                         to: ${link.to}`);
 
                         e.stopPropagation();
-                            let filter = {
-                                from: link.from,
-                                to: link.to
+                        let filter = {
+                            from: link.from,
+                            to: link.to
+                        }
+                        params.filter = filter;
+                        if (chart && typeof (chart.destroy) != "undefined") {
+                            try {
+                                chart.destroy();
+                            } catch (e) {
+                                console.warn(`POWERUP: exception on chart.destroy on click`, e);
                             }
-                            params.filter = filter;
-                            if (chart && typeof (chart.destroy) != "undefined") {
-                                try {
-                                    chart.destroy();
-                                } catch (e) {
-                                    console.warn(`POWERUP: exception on chart.destroy on click`, e);
-                                }
-                            } else chart = null;
-                            newChart(data, container, params, limit);
+                        } else chart = null;
+                        newChart(data, container, params, limit);
                     }
 
                     function filterPopup(e) {
