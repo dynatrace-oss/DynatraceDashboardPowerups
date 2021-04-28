@@ -2332,6 +2332,7 @@ var DashboardPowerups = (function () {
                             &nbsp;&nbsp; Tolerating: {point.apdexTolerating}<br>
                             &nbsp;&nbsp; Frustrated: {point.apdexFrustrated}<br>
                             Errors: {point.errors}<br>
+                            Avg Duration: {point.avgDuration}<br>
                             Is entry action: {point.entryAction}<br>
                             Is exit action: {point.exitAction}<br>
                             Goal: {point.conversionGoal}<br>
@@ -2399,6 +2400,16 @@ var DashboardPowerups = (function () {
                         entryAction: (apdex.entryAction ? 'true' : 'false'),
                         exitAction: (apdex.exitAction ? 'true' : 'false'),
                         errors: apdex.errors
+                    }
+
+                    //avg duration
+                    if (Array.isArray(apdex.durations)) {
+                        let durations = node.apdex.durations.map(x => Number(x.replace(/[,ms]*/g, '')));
+                        let min = durations.reduce((acc, curr) => Math.min(acc, curr));
+                        let max = durations.reduce((acc, curr) => Math.max(acc, curr));
+                        let sum = durations.reduce((acc, curr) => acc + curr, 0);
+                        let avg = sum / durations.length;
+                        node.avgDuration = avg;
                     }
 
                     //Color handling
