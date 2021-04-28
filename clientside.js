@@ -2009,7 +2009,7 @@ var DashboardPowerups = (function () {
                                 arr = JSON.parse(row);
                             } catch (e) { //Sometimes it's not valid JSON...
                                 arr = row.substr(1, row.length - 2)
-                                    .split(',');
+                                    .split(', ');
                             };
 
                             try {
