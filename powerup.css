@@ -289,6 +289,10 @@ span.powerup-color-normal, h1.powerup-color-normal {
   cursor: context-menu;
 }
 
+.powerupHighchartsContainer .highcharts-sankey-series .highcharts-link {
+  cursor: alias;
+}
+
 .powerupSankeyDetailPopup {
   z-index: 1200;
   background: #242424;
