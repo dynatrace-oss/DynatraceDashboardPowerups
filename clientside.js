@@ -2262,8 +2262,12 @@ var DashboardPowerups = (function () {
                                         if (typeof (apdexList[apdexIdx].errors) == "undefined")
                                             apdexList[apdexIdx].errors = 0;
 
-                                        if (isNaN(Number(val)))
-                                            apdexList[apdexIdx].errors += Number(val);
+                                        let num = Number(val);
+                                        if (isNaN(num)) {
+                                            if(num > 0){
+                                                apdexList[apdexIdx].errors += num;
+                                            }
+                                        }
                                     }
                                 }
                             }
