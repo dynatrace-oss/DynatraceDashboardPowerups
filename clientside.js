@@ -2252,20 +2252,22 @@ var DashboardPowerups = (function () {
                                         apdexList[apdexIdx].durations.push(val);
                                     }
                                 }
-                            } else if (colIdx == 10) for (let k = 0; k < arr.length; k++) { //errors
-                                let val = arr[k];
-                                if (val !== "") {
-                                    let actionName = dataTable[0][rowIdx][k];
-                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+                            } else if (colIdx == 10) {
+                                for (let k = 0; k < arr.length; k++) { //errors
+                                    let val = arr[k];
+                                    if (val !== "") {
+                                        let actionName = dataTable[0][rowIdx][k];
+                                        let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                                    if (apdexIdx > 0) {
-                                        if (typeof (apdexList[apdexIdx].errors) == "undefined")
-                                            apdexList[apdexIdx].errors = 0;
+                                        if (apdexIdx > 0) {
+                                            if (typeof (apdexList[apdexIdx].errors) == "undefined")
+                                                apdexList[apdexIdx].errors = 0;
 
-                                        let num = Number(val);
-                                        if (isNaN(num)) {
-                                            if(num > 0){
-                                                apdexList[apdexIdx].errors += num;
+                                            let num = Number(val);
+                                            if (isNaN(num)) {
+                                                if (num > 0) {
+                                                    apdexList[apdexIdx].errors += num;
+                                                }
                                             }
                                         }
                                     }
@@ -2555,11 +2557,11 @@ var DashboardPowerups = (function () {
                         let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name.replace(/"/g, `""`)}"`);
                         let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
 
-                        if(Array.isArray(node.apdex.durations)){
-                            let durations = node.apdex.durations.map(x => Number(x.replace(/[,ms]*/g,'')));
-                            let min = durations.reduce((acc, curr) => Math.min(acc,curr));
-                            let max = durations.reduce((acc, curr) => Math.max(acc,curr));
-                            let sum = durations.reduce((acc, curr) => acc + curr,0);
+                        if (Array.isArray(node.apdex.durations)) {
+                            let durations = node.apdex.durations.map(x => Number(x.replace(/[,ms]*/g, '')));
+                            let min = durations.reduce((acc, curr) => Math.min(acc, curr));
+                            let max = durations.reduce((acc, curr) => Math.max(acc, curr));
+                            let sum = durations.reduce((acc, curr) => acc + curr, 0);
                             let avg = sum / durations.length;
                             html += `<li>Action Duration (ms): <ul>`;
                             html += `<li>min: ${fmt(min)}</li>`;
@@ -2567,7 +2569,7 @@ var DashboardPowerups = (function () {
                             html += `<li>avg: ${fmt(avg)}</li>`;
                             html += `</ul></li>`;
                         }
-                        if(typeof(node.apdex.errors)!="undefined"){
+                        if (typeof (node.apdex.errors) != "undefined") {
                             html += `<li>Errors: ${node.apdex.errors}</li>`;
                         }
 
