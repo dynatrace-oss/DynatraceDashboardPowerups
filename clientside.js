@@ -2552,7 +2552,7 @@ var DashboardPowerups = (function () {
                         let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
 
                         if(Array.isArray(node.apdex.durations)){
-                            let durations = node.apdex.durations.map(x => x.replace(/[,ms]*/,''));
+                            let durations = node.apdex.durations.map(x => x.replace(/[,ms]*/g,''));
                             let min = durations.reduce((acc, curr) => Math.min(acc,curr));
                             let max = durations.reduce((acc, curr) => Math.max(acc,curr));
                             let sum = durations.reduce((acc, curr) => acc + curr,0);
