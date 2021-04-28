@@ -2454,8 +2454,10 @@ var DashboardPowerups = (function () {
                             newChart(data, container, params, newLimit);
                         })
                         .add();
+                    //display limit text
                     chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
                         .add();
+                    //display filter text
                     if(params && params.filter && params.filter.from && params.filter.to){
                         chart.renderer.text(`X - ${params.filter.from} -> ${params.filter.to}`, 100, 25)
                         .attr({ zIndex: 1100 })
@@ -2513,7 +2515,7 @@ var DashboardPowerups = (function () {
                                     console.warn(`POWERUP: exception on chart.destroy on click`, e);
                                 }
                             } else chart = null;
-                            newChart(data, container, params, newLimit);
+                            newChart(data, container, params, limit);
                     }
 
                     function filterPopup(e) {
