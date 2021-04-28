@@ -2558,9 +2558,9 @@ var DashboardPowerups = (function () {
                             let sum = durations.reduce((acc, curr) => acc + curr,0);
                             let avg = sum / durations.length;
                             html += `<li>Action Duration (ms): <ul>`;
-                            html += `<li>min: ${min}</li>`;
-                            html += `<li>max: ${max}</li>`;
-                            html += `<li>avg: ${avg}</li>`;
+                            html += `<li>min: ${fmt(min)}</li>`;
+                            html += `<li>max: ${fmt(max)}</li>`;
+                            html += `<li>avg: ${fmt(avg)}</li>`;
                             html += `</ul></li>`;
                         }
                         if(typeof(node.apdex.errors)!="undefined"){
