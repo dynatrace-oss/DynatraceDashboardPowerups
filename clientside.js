@@ -2331,6 +2331,7 @@ var DashboardPowerups = (function () {
                             &nbsp;&nbsp; Satisfied: {point.apdexSatisfied}<br>
                             &nbsp;&nbsp; Tolerating: {point.apdexTolerating}<br>
                             &nbsp;&nbsp; Frustrated: {point.apdexFrustrated}<br>
+                            Errors: {point.errors}<br>
                             Is entry action: {point.entryAction}<br>
                             Is exit action: {point.exitAction}<br>
                             Goal: {point.conversionGoal}<br>
@@ -2396,7 +2397,8 @@ var DashboardPowerups = (function () {
                         apdexTolerating: apdex.tolerating.toString(),
                         apdexFrustrated: apdex.frustrated.toString(),
                         entryAction: (apdex.entryAction ? 'true' : 'false'),
-                        exitAction: (apdex.exitAction ? 'true' : 'false')
+                        exitAction: (apdex.exitAction ? 'true' : 'false'),
+                        errors: apdex.errors
                     }
 
                     //Color handling
