@@ -2456,6 +2456,23 @@ var DashboardPowerups = (function () {
                         .add();
                     chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
                         .add();
+                    if(params && params.filter && params.filter.from && params.filter.to){
+                        chart.renderer.text(`X - ${params.filter.from} -> ${params.filter.to}`, 100, 25)
+                        .attr({ zIndex: 1100 })
+                        .on('click', function (e) {
+                            e.stopPropagation();
+                            if(params && params.filter) delete params.filter;
+                            if (chart && typeof (chart.destroy) != "undefined") {
+                                try {
+                                    chart.destroy();
+                                } catch (e) {
+                                    console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                                }
+                            } else chart = null;
+                            newChart(data, container, params, newLimit);
+                        })
+                        .add();
+                    }
 
                     //redraw to help convHack use case
                     chart.setSize(undefined, undefined, false);
@@ -2482,6 +2499,21 @@ var DashboardPowerups = (function () {
 
                         alert(`from: ${link.from}
                         to: ${link.to}`);
+
+                        e.stopPropagation();
+                            let filter = {
+                                from: link.from,
+                                to: link.to
+                            }
+                            params.filter = filter;
+                            if (chart && typeof (chart.destroy) != "undefined") {
+                                try {
+                                    chart.destroy();
+                                } catch (e) {
+                                    console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                                }
+                            } else chart = null;
+                            newChart(data, container, params, newLimit);
                     }
 
                     function filterPopup(e) {
