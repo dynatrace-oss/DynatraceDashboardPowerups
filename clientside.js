@@ -2240,28 +2240,18 @@ var DashboardPowerups = (function () {
                                     });
                                 });
                             } else if (colIdx == 9) for (let k = 0; k < arr.length; k++) { //duration
-                                /*let val = arr[k];
+                                let val = arr[k];
                                 if (val !== "") {
                                     let actionName = dataTable[0][rowIdx][k];
                                     let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                                    if (apdexIdx < 0) {
-                                        let apdexObj = { actionName: actionName, satisfied: 0, tolerating: 0, frustrated: 0 };
-                                        apdexIdx = apdexList.length;
-                                        apdexList.push(apdexObj);
+                                    if (apdexIdx > 0) {
+                                        if(!Array.isArray(apdexList[apdexIdx].durations))
+                                        apdexList[apdexIdx].durations = [];
+
+                                        apdexList[apdexIdx].durations.push(val);
                                     }
-                                    switch (val) {
-                                        case 'SATISFIED':
-                                            apdexList[apdexIdx].satisfied++;
-                                            break;
-                                        case 'TOLERATING':
-                                            apdexList[apdexIdx].tolerating++;
-                                            break;
-                                        case 'FRUSTRATED':
-                                            apdexList[apdexIdx].frustrated++;
-                                            break;
-                                    }
-                                }*/
+                                }
                             }
 
                         })
