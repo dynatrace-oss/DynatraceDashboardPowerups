@@ -2463,11 +2463,26 @@ var DashboardPowerups = (function () {
                     $container.find(".highcharts-plot-background")
                         .addClass("powerupPlotBackground");
 
+                    //attach click handlers
                     $container.find(".highcharts-node")
                         .click(filterPopup);
                     $container.find(".highcharts-data-label")
                         .click(filterPopup);
+                    $container.find(".highcharts-link")
+                        .click(filterSankey);
 
+
+                    function filterSankey(e) {
+                        let el = e.target;
+                        let $el = $(el);
+                        let link;
+                        if ($el.is(".highcharts-link"))
+                            link = chart.series[0].data.find(x => x.graphic.element === el);
+                        if (typeof (link) === "undefined") return false;
+
+                        alert(`from: ${link.from}
+                        to: ${link.to}`);
+                    }
 
                     function filterPopup(e) {
                         let el = e.target;
@@ -2664,7 +2679,7 @@ var DashboardPowerups = (function () {
                     let convHack = (args.find(x => x[0] == "convHack") || [])[1] || "2";
                     let colors = (args.find(x => x[0] == "colors") || [])[1] || "apdex";
                     let exclude = (args.find(x => x[0] == "exclude") || [])[1];
-                    if(exclude) exclude = exclude.split(",");
+                    if (exclude) exclude = exclude.split(",");
 
                     let container = findContainer(link);
                     if (typeof (container) == "undefined") {
