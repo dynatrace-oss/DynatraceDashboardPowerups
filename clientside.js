@@ -2459,7 +2459,7 @@ var DashboardPowerups = (function () {
                         .add();
                     //display filter text
                     if(params && params.filter && params.filter.from && params.filter.to){
-                        chart.renderer.text(`X - ${params.filter.from} -> ${params.filter.to}`, 100, 25)
+                        chart.renderer.text(`X - ${params.filter.from} -> ${params.filter.to}`, 10, 50)
                         .attr({ zIndex: 1100 })
                         .on('click', function (e) {
                             e.stopPropagation();
@@ -2471,7 +2471,7 @@ var DashboardPowerups = (function () {
                                     console.warn(`POWERUP: exception on chart.destroy on click`, e);
                                 }
                             } else chart = null;
-                            newChart(data, container, params, newLimit);
+                            newChart(data, container, params, limit);
                         })
                         .add();
                     }
