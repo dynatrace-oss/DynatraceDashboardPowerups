@@ -2332,7 +2332,7 @@ var DashboardPowerups = (function () {
                             &nbsp;&nbsp; Tolerating: {point.apdexTolerating}<br>
                             &nbsp;&nbsp; Frustrated: {point.apdexFrustrated}<br>
                             Errors: {point.errors}<br>
-                            Avg Duration: {point.avgDuration}<br>
+                            Avg Duration: {point.avgDuration}ms<br>
                             Is entry action: {point.entryAction}<br>
                             Is exit action: {point.exitAction}<br>
                             Goal: {point.conversionGoal}<br>
