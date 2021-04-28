@@ -2478,6 +2478,7 @@ var DashboardPowerups = (function () {
                                         console.warn(`POWERUP: exception on chart.destroy on click`, e);
                                     }
                                 } else chart = null;
+                                let data = readTableData($table.get(0), params);
                                 newChart(data, container, params, limit);
                             })
                             .add();
@@ -2522,6 +2523,7 @@ var DashboardPowerups = (function () {
                                 console.warn(`POWERUP: exception on chart.destroy on click`, e);
                             }
                         } else chart = null;
+                        let data = readTableData($table.get(0), params);
                         newChart(data, container, params, limit);
                     }
 
