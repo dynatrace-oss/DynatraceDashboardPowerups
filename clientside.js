@@ -2478,7 +2478,7 @@ var DashboardPowerups = (function () {
                                         console.warn(`POWERUP: exception on chart.destroy on click`, e);
                                     }
                                 } else chart = null;
-                                let data = readTableData($table.get(0), params);
+                                let data = readTableData(params.table, params);
                                 newChart(data, container, params, limit);
                             })
                             .add();
@@ -2523,7 +2523,7 @@ var DashboardPowerups = (function () {
                                 console.warn(`POWERUP: exception on chart.destroy on click`, e);
                             }
                         } else chart = null;
-                        let data = readTableData($table.get(0), params);
+                        let data = readTableData(params.table, params);
                         newChart(data, container, params, limit);
                     }
 
@@ -2740,7 +2740,8 @@ var DashboardPowerups = (function () {
                         kpicurr: kpicurr,
                         convHack: convHack,
                         colors: colors,
-                        exclude: exclude
+                        exclude: exclude,
+                        table: $table
                     };
                     let data = readTableData($table.get(0), params);
                     let sankey = newChart(data, container, params);
