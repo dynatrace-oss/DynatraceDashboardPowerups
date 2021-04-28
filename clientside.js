@@ -2252,7 +2252,7 @@ var DashboardPowerups = (function () {
                                         apdexList[apdexIdx].durations.push(val);
                                     }
                                 }
-                            } else if (colIdx == 9) for (let k = 0; k < arr.length; k++) { //errors
+                            } else if (colIdx == 10) for (let k = 0; k < arr.length; k++) { //errors
                                 let val = arr[k];
                                 if (val !== "") {
                                     let actionName = dataTable[0][rowIdx][k];
@@ -2552,12 +2552,21 @@ var DashboardPowerups = (function () {
                         let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
 
                         if(Array.isArray(node.apdex.durations)){
-                            html += `<li>Action Duration: ${node.apdex.durations}</li>`;
+                            let durations = node.apdex.durations.map(x => x.replace(/[,ms]*/,''));
+                            let min = durations.reduce((acc, curr) => Math.min(acc,curr));
+                            let max = durations.reduce((acc, curr) => Math.max(acc,curr));
+                            let sum = durations.reduce((acc, curr) => acc + curr,0);
+                            let avg = sum / durations.length;
+                            html += `<li>Action Duration (ms): <ul>`;
+                            html += `<li>min: ${min}</li>`;
+                            html += `<li>max: ${max}</li>`;
+                            html += `<li>avg: ${avg}</li>`;
+                            html += `</ul></li>`;
                         }
                         if(typeof(node.apdex.errors)!="undefined"){
                             html += `<li>Errors: ${node.apdex.errors}</li>`;
                         }
-                        
+
                         if (data.UAPs.doubles.length) {
                             html += `<li>Double Properties:<ul>`;
                             data.UAPs.doubles
