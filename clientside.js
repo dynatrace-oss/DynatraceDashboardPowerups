@@ -2479,7 +2479,7 @@ var DashboardPowerups = (function () {
                                     }
                                 } else chart = null;
                                 let data = readTableData(params.table, params);
-                                newChart(data, container, params, limit);
+                                newChart(data, container, params, 20);
                             })
                             .add();
                     }
@@ -2506,9 +2506,6 @@ var DashboardPowerups = (function () {
                         if ($el.is(".highcharts-link"))
                             link = chart.series[0].data.find(x => x.graphic.element === el);
                         if (typeof (link) === "undefined") return false;
-
-                        alert(`from: ${link.from}
-                        to: ${link.to}`);
 
                         e.stopPropagation();
                         let filter = {
