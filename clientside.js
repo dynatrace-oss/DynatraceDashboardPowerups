@@ -2033,16 +2033,16 @@ var DashboardPowerups = (function () {
                                         filtered = filtered.filter(x => !x.includes(ex));
                                     });
                                 }
+                                if (params.convHack == "2") {
+                                    filtered.unshift("START");
+                                    filtered.push("END");
+                                }
                                 if (params && params.filter && params.filter.from && params.filter.to) {
                                     let fromIdx = filtered.findIndex((x, i, arr) =>
                                         x === params.filter.from
                                         && arr.length > i + 1
                                         && arr[i + 1] === params.filter.to);
-                                    if(fromIdx < 0) return false; //this row filtered out
-                                }
-                                if (params.convHack == "2") {
-                                    filtered.unshift("START");
-                                    filtered.push("END");
+                                    if(fromIdx < 0) filtered = []; //this row filtered out
                                 }
                                 for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                                     let touple = { from: filtered[k], to: filtered[k + 1] };
