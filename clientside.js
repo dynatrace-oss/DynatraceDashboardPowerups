@@ -2245,7 +2245,7 @@ var DashboardPowerups = (function () {
                                     let actionName = dataTable[0][rowIdx][k];
                                     let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                                    if (apdexIdx > 0) {
+                                    if (apdexIdx > -1) {
                                         if (!Array.isArray(apdexList[apdexIdx].durations))
                                             apdexList[apdexIdx].durations = [];
 
@@ -2259,12 +2259,12 @@ var DashboardPowerups = (function () {
                                         let actionName = dataTable[0][rowIdx][k];
                                         let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                                        if (apdexIdx > 0) {
+                                        if (apdexIdx > -1) {
                                             if (typeof (apdexList[apdexIdx].errors) == "undefined")
                                                 apdexList[apdexIdx].errors = 0;
 
                                             let num = Number(val);
-                                            if (isNaN(num)) {
+                                            if (!isNaN(num)) {
                                                 if (num > 0) {
                                                     apdexList[apdexIdx].errors += num;
                                                 }
