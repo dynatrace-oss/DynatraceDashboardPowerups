@@ -2409,7 +2409,8 @@ var DashboardPowerups = (function () {
                         let max = durations.reduce((acc, curr) => Math.max(acc, curr));
                         let sum = durations.reduce((acc, curr) => acc + curr, 0);
                         let avg = sum / durations.length;
-                        node.avgDuration = avg;
+                        fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format;
+                        node.avgDuration = fmt(avg);
                     }
 
                     //Color handling
