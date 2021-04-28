@@ -2268,15 +2268,15 @@ var DashboardPowerups = (function () {
                     });
 
                 apdexList.forEach((apdex) => {
-                    if (apdex.satisfied > Math.max(apdex.tolerating, apdex.frustrated)) {
+                    if (apdex.satisfied >= Math.max(apdex.tolerating, apdex.frustrated)) {
                         apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
                         apdex.name = "satisfied";
                         apdex.color = "#6bcb8b";
-                    } else if (apdex.tolerating > Math.max(apdex.satisfied, apdex.frustrated)) {
+                    } else if (apdex.tolerating >= Math.max(apdex.satisfied, apdex.frustrated)) {
                         apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
                         apdex.name = "tolerating";
                         apdex.color = "#ffee7c";
-                    } else if (apdex.frustrated > Math.max(apdex.tolerating, apdex.satisfied)) {
+                    } else if (apdex.frustrated >= Math.max(apdex.tolerating, apdex.satisfied)) {
                         apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
                         apdex.name = "frustrated";
                         apdex.color = "#c41425";
