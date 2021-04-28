@@ -2042,7 +2042,7 @@ var DashboardPowerups = (function () {
                                         x === params.filter.from
                                         && arr.length > i + 1
                                         && arr[i + 1] === params.filter.to);
-                                    if(fromIdx < 0) filtered = []; //this row filtered out
+                                    if (fromIdx < 0) filtered = []; //this row filtered out
                                 }
                                 for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                                     let touple = { from: filtered[k], to: filtered[k + 1] };
@@ -2246,14 +2246,27 @@ var DashboardPowerups = (function () {
                                     let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
                                     if (apdexIdx > 0) {
-                                        if(!Array.isArray(apdexList[apdexIdx].durations))
-                                        apdexList[apdexIdx].durations = [];
+                                        if (!Array.isArray(apdexList[apdexIdx].durations))
+                                            apdexList[apdexIdx].durations = [];
 
                                         apdexList[apdexIdx].durations.push(val);
                                     }
                                 }
-                            }
+                            } else if (colIdx == 9) for (let k = 0; k < arr.length; k++) { //errors
+                                let val = arr[k];
+                                if (val !== "") {
+                                    let actionName = dataTable[0][rowIdx][k];
+                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
+                                    if (apdexIdx > 0) {
+                                        if (typeof (apdexList[apdexIdx].errors) == "undefined")
+                                            apdexList[apdexIdx].errors = 0;
+
+                                        if (isNaN(Number(val)))
+                                            apdexList[apdexIdx].errors += Number(val);
+                                    }
+                                }
+                            }
                         })
                     });
 
@@ -2538,6 +2551,13 @@ var DashboardPowerups = (function () {
                         let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name.replace(/"/g, `""`)}"`);
                         let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
 
+                        if(Array.isArray(node.apdex.durations)){
+                            html += `<li>Action Duration: ${node.apdex.durations}</li>`;
+                        }
+                        if(typeof(node.apdex.errors)!="undefined"){
+                            html += `<li>Errors: ${node.apdex.errors}</li>`;
+                        }
+                        
                         if (data.UAPs.doubles.length) {
                             html += `<li>Double Properties:<ul>`;
                             data.UAPs.doubles
