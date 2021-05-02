@@ -2044,7 +2044,7 @@ var DashboardPowerups = (function () {
 
                                 try {
                                     arr = arr
-                                        .map(x => Array.isArray(x) ? x.join(', ') : x)
+                                        //.map(x => Array.isArray(x) ? x.join(', ') : x) //why are we doing this in the first place?
                                         .map(x => typeof (x) != "string" ? x.toString() : x) //consider correctly handling types later
                                         .map(x => typeof (x) == "string" ? x.trim() : x)
                                         .map(x => typeof (x) == "string" ? x.replace(re, '/*$1') : x);//clean up strings
