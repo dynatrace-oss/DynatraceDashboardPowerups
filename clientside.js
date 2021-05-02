@@ -2445,7 +2445,7 @@ var DashboardPowerups = (function () {
 
 
                     //Node label
-                    node.display = apdex.svg +
+                    node.display = //apdex.svg +
                         (goal ? `<br>${goal.svg}` : "") +
                         (apdex.entryActionSVG ? `<br>${apdex.entryActionSVG}` : '') +
                         (apdex.exitActionSVG ? `<br>${apdex.exitActionSVG}` : '');
