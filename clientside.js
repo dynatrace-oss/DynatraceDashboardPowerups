@@ -2554,6 +2554,15 @@ var DashboardPowerups = (function () {
                         newChart(data, container, params, limit);
                     }
 
+                    function filterProp(e){
+                        let el = e.target;
+                        let $el = $(el);
+                        let type = $el.data("type");
+                        let key = $el.data("key");
+                        let val = $el.data("val");
+                        alert(`${type}\n${key}\n${val}`);
+                    }
+
                     function filterPopup(e) {
                         let el = e.target;
                         let $el = $(el);
@@ -2653,7 +2662,10 @@ var DashboardPowerups = (function () {
                                         list = `<li><a href="${sublink}">${x.key}</a>:<ul>`;
                                     }
                                     let sublink = link + encodeURIComponent(` AND useraction.stringProperties.${x.key} = "${x.val}"`);
-                                    list += `<li><a href="${sublink}">${x.val}</a> (${x.count})</li>`;
+                                    list += `<li><a href="${sublink}">${x.val}</a> 
+                                        (<a href="javascript:" class="powerupFilterProp" data-type="string" 
+                                        data-key="${x.key}" data-val="${x.val}">${x.count}</a>
+                                        )</li>`;
                                     lastKey = x.key;
                                 });
                             if (list.length) list += `</ul></li>`;
@@ -2692,6 +2704,9 @@ var DashboardPowerups = (function () {
                             .html(html)
                             .click(() => { $popup.remove(); })
                             .appendTo(container);
+
+                        $popup.find(`.powerupFilterProp`)
+                            .on("click",filterProp);
                     }
                 });
 
