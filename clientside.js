@@ -2039,10 +2039,17 @@ var DashboardPowerups = (function () {
                                 }
                                 if (Array.isArray(params.filter)) {
                                     params.filter.forEach(f => {
-                                        let fromIdx = filtered.findIndex((x, i, arr) =>
+                                        let fromIdx;
+                                        if (f.from !== undefined && f.to !== undefined){
+                                            fromIdx = filtered.findIndex((x, i, arr) =>
                                             x === f.from
                                             && arr.length > i + 1
                                             && arr[i + 1] === f.to);
+                                        } else if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
+                                            fromIdx = filtered.findIndex((x, i, arr) =>
+                                            true);
+                                        } else {}
+                                        
                                         if (fromIdx < 0) filtered = []; //this row filtered out
                                     });
                                 }
@@ -2492,29 +2499,29 @@ var DashboardPowerups = (function () {
                     //display filter text
                     if (Array.isArray(params.filter)) {
                         let y = 55, inc = 20;
-                        params.filter.forEach((f,fidx)=>{
+                        params.filter.forEach((f, fidx) => {
                             let txt;
-                            if(f.from !== undefined && f.to !== undefined)
+                            if (f.from !== undefined && f.to !== undefined)
                                 txt = `X - ${f.from} -> ${f.to}`;
-                            else if(f.type !== undefined && f.key !== undefined && f.val !== undefined)
+                            else if (f.type !== undefined && f.key !== undefined && f.val !== undefined)
                                 txt = `X - (${f.type}) ${f.key}=${f.val}`;
                             else txt = "X - ERROR";
                             chart.renderer.text(txt, 10, y)
-                            .attr({ zIndex: 1100 })
-                            .on('click', function (e) {
-                                e.stopPropagation();
-                                if (Array.isArray(params.filter)) params.filter.splice(fidx,1);
-                                if (chart && typeof (chart.destroy) != "undefined") {
-                                    try {
-                                        chart.destroy();
-                                    } catch (e) {
-                                        console.warn(`POWERUP: exception on chart.destroy on click`, e);
-                                    }
-                                } else chart = null;
-                                let data = readTableData(params.table, params);
-                                newChart(data, container, params, 20);
-                            })
-                            .add();
+                                .attr({ zIndex: 1100 })
+                                .on('click', function (e) {
+                                    e.stopPropagation();
+                                    if (Array.isArray(params.filter)) params.filter.splice(fidx, 1);
+                                    if (chart && typeof (chart.destroy) != "undefined") {
+                                        try {
+                                            chart.destroy();
+                                        } catch (e) {
+                                            console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                                        }
+                                    } else chart = null;
+                                    let data = readTableData(params.table, params);
+                                    newChart(data, container, params, 20);
+                                })
+                                .add();
                             y += inc;
                         });
                     }
@@ -2560,7 +2567,7 @@ var DashboardPowerups = (function () {
                         newChart(data, container, params, limit);
                     }
 
-                    function filterProp(e){
+                    function filterProp(e) {
                         let el = e.target;
                         let $el = $(el);
                         let type = $el.data("type");
@@ -2730,7 +2737,7 @@ var DashboardPowerups = (function () {
                             .appendTo(container);
 
                         $popup.find(`.powerupFilterProp`)
-                            .on("click",filterProp);
+                            .on("click", filterProp);
                     }
                 });
 
