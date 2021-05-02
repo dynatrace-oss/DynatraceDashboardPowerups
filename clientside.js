@@ -2052,9 +2052,11 @@ var DashboardPowerups = (function () {
                                     console.warn([e, row]);
                                 }
                                 dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
+                                if(Object.keys())
                                 normalTable[rowIdx][colName] = arr;
                             });
                         });
+                    normalTable.unshift();//row 0 was the titles
                     return normalTable;
                 }
 
