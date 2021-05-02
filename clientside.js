@@ -1981,6 +1981,7 @@ var DashboardPowerups = (function () {
             function readTableData(table, params) {
                 let $table = $(table);
                 let dataTable = [];
+                let normalTable = [];
                 let touples = [];
                 let goals = [];
                 let apdexList = [];
@@ -2002,6 +2003,7 @@ var DashboardPowerups = (function () {
 
                         $rows.each(function (rowIdx, rowEl) {
                             if (typeof (dataTable[colIdx][rowIdx]) == "undefined") dataTable[colIdx][rowIdx] = [];
+                            if (typeof (normalTable[rowIdx]) == "undefined") normalTable[rowIdx] = {};
                             let row = $(rowEl).text();
                             if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return;
                             let arr = [];
@@ -2022,6 +2024,7 @@ var DashboardPowerups = (function () {
                                 console.warn([e, row]);
                             }
                             dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
+                            normalTable[rowIdx][colName] = arr;
 
                             //TODO: replace colIdx IFs with colNames
                             if (colIdx == 0) {
