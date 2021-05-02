@@ -2043,6 +2043,12 @@ var DashboardPowerups = (function () {
                                 };
 
                                 try {
+                                    switch(colName){
+                                        case "useraction.matchingConversionGoals":
+                                            arr = arr
+                                                .map(x => Array.isArray(x) ? x.join(', ') : x);
+                                        default:
+                                    }
                                     arr = arr
                                         //.map(x => Array.isArray(x) ? x.join(', ') : x) //why are we doing this in the first place?
                                         //.map(x => typeof (x) != "string" ? x.toString() : x) //consider correctly handling types later
