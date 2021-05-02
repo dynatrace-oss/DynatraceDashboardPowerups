@@ -2055,7 +2055,7 @@ var DashboardPowerups = (function () {
                                 normalTable[rowIdx][colName] = arr;
                             });
                         });
-                    normalTable.unshift();//row 0 was the titles
+                    normalTable.shift();//row 0 was the titles
                     return normalTable;
                 }
 
