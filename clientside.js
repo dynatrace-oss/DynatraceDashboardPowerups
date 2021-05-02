@@ -1981,150 +1981,226 @@ var DashboardPowerups = (function () {
             function readTableData(table, params) {
                 let $table = $(table);
                 let dataTable = [];
-                let normalTable = [];
+                let normalTable = []; //replaces dataTable
+                let filteredTable = []; //replaces dataTable
                 let touples = [];
                 let goals = [];
                 let apdexList = [];
+                let actionDetailList = []; //replaces apdexList
                 let UAPs = {
                     strings: [], //{actionName, key, val, count}
                     doubles: [], //{actionName, key, sum, count}
                     longs: [], //{actionName, key, sum, count}
                     dates: [] //{actionName, key, val, count}
                 };
+                let data = { 
+                    touples: touples, 
+                    goals: goals, 
+                    apdexList: apdexList, 
+                    UAPs: UAPs 
+                };
 
-                $table
-                    .children('div:first-of-type')
-                    .children('div')
-                    .each((colIdx, col) => {
-                        let $rows = $(col).find('span');
-                        let colName = $rows.eq(0).text();
-                        let rowCount = $rows.length;
-                        if (typeof (dataTable[colIdx]) == "undefined") dataTable[colIdx] = [];
+                //new refactored approach
+                normalTable = buildNormalTable($table);
+                filteredTable = filterTable(normalTable);
+                touples = buildTouples(filteredTable);
+                goals = buildGoals(filteredTable);
+                actionDetailList = buildactionDetailList(filteredTable);
+                addEntryActionsToList(actionDetailList,filteredTable);
+                addExitActionsToList(actionDetailList,filteredTable);
+                addUAPStringToList(UAPs,filteredTable);
+                addUAPDoubleToList(UAPs,filteredTable);
+                addUAPLongToList(UAPs,filteredTable);
+                addUAPDateToList(UAPs,filteredTable);
+                addDurationToList(actionDetailList,filteredTable);
+                addErrorsToList(actionDetailList,filteredTable);
+                addApdexStylesToList(actionDetailList);
+                touples = sortTouples(touples);
+                return(data);
 
-                        $rows.each(function (rowIdx, rowEl) {
-                            if (typeof (dataTable[colIdx][rowIdx]) == "undefined") dataTable[colIdx][rowIdx] = [];
-                            if (typeof (normalTable[rowIdx]) == "undefined") normalTable[rowIdx] = {};
-                            let row = $(rowEl).text();
-                            if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return;
-                            let arr = [];
-                            try {
-                                arr = JSON.parse(row);
-                            } catch (e) { //Sometimes it's not valid JSON...
-                                arr = row.substr(1, row.length - 2)
-                                    .split(', ');
-                            };
 
-                            try {
-                                arr = arr
-                                    .map(x => Array.isArray(x) ? x.join(', ') : x)
-                                    .map(x => typeof (x) != "string" ? x.toString() : x) //consider correctly handling types later
-                                    .map(x => typeof (x) == "string" ? x.trim() : x)
-                                    .map(x => typeof (x) == "string" ? x.replace(re, '/*$1') : x);//clean up strings
-                            } catch (e) {
-                                console.warn([e, row]);
+                function buildNormalTable(table){
+                    $(table)
+                        .children('div:first-of-type')
+                        .children('div')
+                        .each((colIdx, col) => {
+                            let $rows = $(col).find('span');
+                            let colName = $rows.eq(0).text();
+                            let rowCount = $rows.length;
+                            if (typeof (dataTable[colIdx]) == "undefined") dataTable[colIdx] = [];
+
+                            $rows.each(function (rowIdx, rowEl) {
+                                if (typeof (dataTable[colIdx][rowIdx]) == "undefined") dataTable[colIdx][rowIdx] = [];
+                                if (typeof (normalTable[rowIdx]) == "undefined") normalTable[rowIdx] = {};
+                                let row = $(rowEl).text();
+                                if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return;
+                                let arr = [];
+                                try {
+                                    arr = JSON.parse(row);
+                                } catch (e) { //Sometimes it's not valid JSON...
+                                    arr = row.substr(1, row.length - 2)
+                                        .split(', ');
+                                };
+
+                                try {
+                                    arr = arr
+                                        .map(x => Array.isArray(x) ? x.join(', ') : x)
+                                        .map(x => typeof (x) != "string" ? x.toString() : x) //consider correctly handling types later
+                                        .map(x => typeof (x) == "string" ? x.trim() : x)
+                                        .map(x => typeof (x) == "string" ? x.replace(re, '/*$1') : x);//clean up strings
+                                } catch (e) {
+                                    console.warn([e, row]);
+                                }
+                                dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
+                                normalTable[rowIdx][colName] = arr;
+                            });
+                        });
+                    return normalTable;
+                }
+
+                function filterTable(normalTable){
+                    let filteredTable = [];
+                    normalTable.forEach((row,rowIdx)=>{
+                        let filtered = row["useraction.name"].filter(x =>
+                            x !== "[]" &&
+                            x !== "");
+                        if (Array.isArray(params.exclude) && params.exclude.length) {
+                            params.exclude.forEach(ex => {
+                                filtered = filtered.filter(x => !x.includes(ex));
+                            });
+                        }
+                        if (params.convHack == "2") {
+                            filtered.unshift("START");
+                            filtered.push("END");
+                        }
+                        if (Array.isArray(params.filter)) {
+                            params.filter.forEach(f => {
+                                let fromIdx;
+                                if (f.from !== undefined && f.to !== undefined){
+                                    fromIdx = filtered.findIndex((x, i, arr) =>
+                                    x === f.from
+                                    && arr.length > i + 1
+                                    && arr[i + 1] === f.to);
+                                } else if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
+                                    fromIdx = filtered.findIndex((x, i, arr) =>
+                                    true);
+                                } else {}
+                                
+                                if (fromIdx < 0) filtered = []; //this row filtered out
+                            });
+                        }
+                        if(filtered.length){
+                            row.filtered = filtered;
+                            filteredTable.push(row);
+                        }
+                    });
+                    return filteredTable;
+                }
+
+                function buildTouples(filteredTable){
+                    let touples = [];
+                    filteredTable.forEach(row=>{
+                        let filtered = row.filtered;
+                        for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
+                            let touple = { from: filtered[k], to: filtered[k + 1] };
+                            if (touple.from === touple.to) continue; // ignore self actions
+                            if (params.convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
+                            if (params.convHack == "true" && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
+
+                            let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
+                            if (l < 0) {
+                                touple.weight = 1;
+                                touples.push(touple);
+                            } else {
+                                touples[l].weight++;
                             }
-                            dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
-                            normalTable[rowIdx][colName] = arr;
+                        }
+                    });
+                    return touples;
+                }
 
-                            //TODO: replace colIdx IFs with colNames
-                            if (colIdx == 0) {
-                                let filtered = arr.filter(x =>
-                                    x !== "[]" &&
-                                    x !== "");
-                                if (Array.isArray(params.exclude) && params.exclude.length) {
-                                    params.exclude.forEach(ex => {
-                                        filtered = filtered.filter(x => !x.includes(ex));
-                                    });
-                                }
-                                if (params.convHack == "2") {
-                                    filtered.unshift("START");
-                                    filtered.push("END");
-                                }
-                                if (Array.isArray(params.filter)) {
-                                    params.filter.forEach(f => {
-                                        let fromIdx;
-                                        if (f.from !== undefined && f.to !== undefined){
-                                            fromIdx = filtered.findIndex((x, i, arr) =>
-                                            x === f.from
-                                            && arr.length > i + 1
-                                            && arr[i + 1] === f.to);
-                                        } else if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
-                                            fromIdx = filtered.findIndex((x, i, arr) =>
-                                            true);
-                                        } else {}
-                                        
-                                        if (fromIdx < 0) filtered = []; //this row filtered out
-                                    });
-                                }
-                                for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
-                                    let touple = { from: filtered[k], to: filtered[k + 1] };
-                                    if (touple.from === touple.to) continue; // ignore self actions
-                                    if (params.convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
-                                    if (params.convHack == "true" && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
+                function  buildGoals(filteredTable) {
+                    let goals = [];
+                    filteredTable.forEach(row=>{
+                        let arr = row["useraction.matchingConversionGoals"];
+                        for (let k = 0; k < arr.length; k++) { //matchingConversion goals
+                            if (arr[k] !== "[]" && arr[k] !== "") {
+                                let actionName = row["useraction.name"][k];
+                                let goalsIdx = goals.findIndex(x => x.actionName == actionName);
+                                if (goalsIdx < 0) goals.push({
+                                    actionName: actionName,
+                                    count: 1,
+                                    svg: `<img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`,
+                                    goalName: (arr[k].substring(0, 1) == '[' && arr[k].substr(-1) == ']')
+                                        ? arr[k].substr(1, arr[k].length - 2).trim()
+                                        : arr[k].trim()
+                                });
+                                else goals[goalsIdx].count++;
+                            }
+                        }
+                    });
+                    return goals;
+                }
 
+                function buildactionDetailList(filteredTable){
+                    let apdexList = [];
+                    filteredTable.forEach(row=>{
+                        let arr = row["useraction.apdexCategory"];
+                        for (let k = 0; k < arr.length; k++) { //apdex
+                            let val = arr[k];
+                            if (val !== "") {
+                                let actionName = row["useraction.name"][k];
+                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                                    let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
-                                    if (l < 0) {
-                                        touple.weight = 1;
-                                        touples.push(touple);
-                                    } else {
-                                        touples[l].weight++;
-                                    }
+                                if (apdexIdx < 0) {
+                                    let apdexObj = { actionName: actionName, satisfied: 0, tolerating: 0, frustrated: 0 };
+                                    apdexIdx = apdexList.length;
+                                    apdexList.push(apdexObj);
                                 }
-                            } else if (colIdx == 1) for (let k = 0; k < arr.length; k++) { //matchingConversion goals
-                                if (arr[k] !== "[]" && arr[k] !== "") {
-                                    let actionName = dataTable[0][rowIdx][k];
-                                    let goalsIdx = goals.findIndex(x => x.actionName == actionName);
-                                    if (goalsIdx < 0) goals.push({
-                                        actionName: actionName,
-                                        count: 1,
-                                        svg: `<img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`,
-                                        goalName: (arr[k].substring(0, 1) == '[' && arr[k].substr(-1) == ']')
-                                            ? arr[k].substr(1, arr[k].length - 2).trim()
-                                            : arr[k].trim()
-                                    });
-                                    else goals[goalsIdx].count++;
+                                switch (val) {
+                                    case 'SATISFIED':
+                                        apdexList[apdexIdx].satisfied++;
+                                        break;
+                                    case 'TOLERATING':
+                                        apdexList[apdexIdx].tolerating++;
+                                        break;
+                                    case 'FRUSTRATED':
+                                        apdexList[apdexIdx].frustrated++;
+                                        break;
                                 }
-                            } else if (colIdx == 2) for (let k = 0; k < arr.length; k++) { //apdex
-                                let val = arr[k];
-                                if (val !== "") {
-                                    let actionName = dataTable[0][rowIdx][k];
-                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+                            }
+                        }
+                    });
+                    return apdexList;
+                } 
+                            
+                function addEntryActionsToList(apdexList,filteredTable){
+                    filteredTable.forEach(row=>{
+                        let arr = row["useraction.isEntryAction"];
+                            for (let k = 0; k < arr.length; k++) { //entry actions
+                            let val = arr[k];
+                            if (val === "true") {
+                                let actionName = row["useraction.name"][k];
+                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                                    if (apdexIdx < 0) {
-                                        let apdexObj = { actionName: actionName, satisfied: 0, tolerating: 0, frustrated: 0 };
-                                        apdexIdx = apdexList.length;
-                                        apdexList.push(apdexObj);
-                                    }
-                                    switch (val) {
-                                        case 'SATISFIED':
-                                            apdexList[apdexIdx].satisfied++;
-                                            break;
-                                        case 'TOLERATING':
-                                            apdexList[apdexIdx].tolerating++;
-                                            break;
-                                        case 'FRUSTRATED':
-                                            apdexList[apdexIdx].frustrated++;
-                                            break;
-                                    }
+                                if (apdexIdx > -1) {
+                                    if (!apdexList[apdexIdx].entryAction)
+                                        apdexList[apdexIdx].entryAction = true;
+                                    apdexList[apdexIdx].entryActionSVG = `<img src='${pub.SVGLib() + 'entry.svg'}'  onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
                                 }
-                            } else if (colIdx == 3) for (let k = 0; k < arr.length; k++) { //entry actions
+                            }
+                        }
+                    });
+                    return apdexList;
+                }
+
+                function addExitActionsToList(apdexList,filteredTable){
+                    filteredTable.forEach(row=>{
+                        let arr = row["useraction.isExitAction"];
+                            for (let k = 0; k < arr.length; k++) { //exit actions
                                 let val = arr[k];
                                 if (val === "true") {
-                                    let actionName = dataTable[0][rowIdx][k];
-                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
-
-                                    if (apdexIdx > -1) {
-                                        if (!apdexList[apdexIdx].entryAction)
-                                            apdexList[apdexIdx].entryAction = true;
-                                        apdexList[apdexIdx].entryActionSVG = `<img src='${pub.SVGLib() + 'entry.svg'}'  onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
-                                    }
-                                }
-                            }
-                            else if (colIdx == 4) for (let k = 0; k < arr.length; k++) { //exit actions
-                                let val = arr[k];
-                                if (val === "true") {
-                                    let actionName = dataTable[0][rowIdx][k];
+                                    let actionName = row["useraction.name"][k];
                                     let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
                                     if (apdexIdx > -1) {
@@ -2133,19 +2209,16 @@ var DashboardPowerups = (function () {
                                         apdexList[apdexIdx].exitActionSVG = `<img src='${pub.SVGLib() + 'exit.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
                                     }
                                 }
-                            } else if (colIdx == 5) { //UAP-String
-                                let uapRow;
-
-                                try {
-                                    uapRow = JSON.parse(row);
-                                } catch (e) {
-                                    console.log("Powerup: Sankey - String: unable to parse JSON");
-                                }
-                                if (typeof (uapRow) == "undefined") return;
-
-                                uapRow.forEach((uapCol, uapColIdx) => {
+                            } 
+                    });
+                }
+                            
+                function addUAPStringToList(UAPs,filteredTable){
+                    filteredTable.forEach(row=>{
+                        let arr = row["useraction.isExitAction"];
+                                arr.forEach((uapCol, uapColIdx) => {
                                     uapCol.forEach((uapVal, uapValIdx) => {
-                                        let actionName = dataTable[0][rowIdx][uapColIdx];
+                                        let actionName = row["useraction.name"][k];
                                         let uapIdx = UAPs.strings.findIndex(x =>
                                             x.actionName == actionName &&
                                             x.key == uapVal.key &&
@@ -2159,10 +2232,12 @@ var DashboardPowerups = (function () {
                                             let uap = UAPs.strings[uapIdx];
                                             uap.count++;
                                         }
-
                                     });
                                 });
-                            } else if (colIdx == 6) { //UAP-Double
+                            }); 
+                        }
+                            
+                            /*else if (colIdx == 6) { //UAP-Double
                                 let uapRow;
 
                                 try {
@@ -2286,7 +2361,9 @@ var DashboardPowerups = (function () {
                                 }
                             }
                         })
-                    });
+                    });*/
+
+                
 
                 apdexList.forEach((apdex) => {
                     if (apdex.satisfied >= Math.max(apdex.tolerating, apdex.frustrated)) {
