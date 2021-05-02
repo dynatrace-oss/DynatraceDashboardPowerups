@@ -2222,7 +2222,7 @@ var DashboardPowerups = (function () {
                             
                 function addUAPStringToList(UAPs,filteredTable){
                     filteredTable.forEach(row=>{
-                        let arr = row["useraction.isExitAction"];
+                        let arr = row["useraction.stringProperties"];
                                 arr.forEach((uapCol, uapColIdx) => {
                                     uapCol.forEach((uapVal, uapValIdx) => {
                                         let actionName = row["useraction.name"][k];
