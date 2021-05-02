@@ -2497,7 +2497,7 @@ var DashboardPowerups = (function () {
                             .attr({ zIndex: 1100 })
                             .on('click', function (e) {
                                 e.stopPropagation();
-                                if (Array.isArray(params.filter)) params.filter = params.filter.splice(fidx,1);
+                                if (Array.isArray(params.filter)) params.filter.splice(fidx,1);
                                 if (chart && typeof (chart.destroy) != "undefined") {
                                     try {
                                         chart.destroy();
