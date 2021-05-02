@@ -2493,7 +2493,13 @@ var DashboardPowerups = (function () {
                     if (Array.isArray(params.filter)) {
                         let y = 55, inc = 20;
                         params.filter.forEach((f,fidx)=>{
-                            chart.renderer.text(`X - ${f.from} -> ${f.to}`, 10, y)
+                            let txt;
+                            if(f.from !== undefined && f.to !== undefined)
+                                txt = `X - ${f.from} -> ${f.to}`;
+                            else if(f.type !== undefined && f.key !== undefined && f.val !== undefined)
+                                txt = `X - (${f.type}) ${f.key}=${f.val}`;
+                            else txt = "X - ERROR";
+                            chart.renderer.text(txt, 10, y)
                             .attr({ zIndex: 1100 })
                             .on('click', function (e) {
                                 e.stopPropagation();
@@ -2560,7 +2566,25 @@ var DashboardPowerups = (function () {
                         let type = $el.data("type");
                         let key = $el.data("key");
                         let val = $el.data("val");
-                        alert(`${type}\n${key}\n${val}`);
+                        //alert(`${type}\n${key}\n${val}`);
+
+                        //e.stopPropagation();
+                        let filter = {
+                            type: type,
+                            key: key,
+                            val: val
+                        }
+                        if (!Array.isArray(params.filter)) params.filter = [];
+                        params.filter.push(filter);
+                        if (chart && typeof (chart.destroy) != "undefined") {
+                            try {
+                                chart.destroy();
+                            } catch (e) {
+                                console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                            }
+                        } else chart = null;
+                        let data = readTableData(params.table, params);
+                        newChart(data, container, params, limit);
                     }
 
                     function filterPopup(e) {
@@ -2664,8 +2688,8 @@ var DashboardPowerups = (function () {
                                     let sublink = link + encodeURIComponent(` AND useraction.stringProperties.${x.key} = "${x.val}"`);
                                     list += `<li><a href="${sublink}">${x.val}</a> 
                                         (<a href="javascript:" class="powerupFilterProp" data-type="string" 
-                                        data-key="${x.key}" data-val="${x.val}">${x.count}</a>
-                                        )</li>`;
+                                        data-key="${x.key}" data-val="${x.val}">${x.count}</a>)
+                                        </li>`;
                                     lastKey = x.key;
                                 });
                             if (list.length) list += `</ul></li>`;
