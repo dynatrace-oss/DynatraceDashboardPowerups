@@ -2037,12 +2037,14 @@ var DashboardPowerups = (function () {
                                     filtered.unshift("START");
                                     filtered.push("END");
                                 }
-                                if (params && params.filter && params.filter.from && params.filter.to) {
-                                    let fromIdx = filtered.findIndex((x, i, arr) =>
-                                        x === params.filter.from
-                                        && arr.length > i + 1
-                                        && arr[i + 1] === params.filter.to);
-                                    if (fromIdx < 0) filtered = []; //this row filtered out
+                                if (Array.isArray(params.filter)) {
+                                    params.filter.forEach(f => {
+                                        let fromIdx = filtered.findIndex((x, i, arr) =>
+                                            x === f.from
+                                            && arr.length > i + 1
+                                            && arr[i + 1] === f.to);
+                                        if (fromIdx < 0) filtered = []; //this row filtered out
+                                    });
                                 }
                                 for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                                     let touple = { from: filtered[k], to: filtered[k + 1] };
@@ -2488,12 +2490,14 @@ var DashboardPowerups = (function () {
                     chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
                         .add();
                     //display filter text
-                    if (params && params.filter && params.filter.from && params.filter.to) {
-                        chart.renderer.text(`X - ${params.filter.from} -> ${params.filter.to}`, 10, 55)
+                    if (Array.isArray(params.filter)) {
+                        let y = 55, inc = 20;
+                        params.filter.forEach((f,fidx)=>{
+                            chart.renderer.text(`X - ${f.from} -> ${f.to}`, 10, y)
                             .attr({ zIndex: 1100 })
                             .on('click', function (e) {
                                 e.stopPropagation();
-                                if (params && params.filter) delete params.filter;
+                                if (Array.isArray(params.filter)) params.filter = params.filter.splice(fidx,1);
                                 if (chart && typeof (chart.destroy) != "undefined") {
                                     try {
                                         chart.destroy();
@@ -2505,6 +2509,8 @@ var DashboardPowerups = (function () {
                                 newChart(data, container, params, 20);
                             })
                             .add();
+                            y += inc;
+                        });
                     }
 
                     //redraw to help convHack use case
@@ -2535,7 +2541,8 @@ var DashboardPowerups = (function () {
                             from: link.from,
                             to: link.to
                         }
-                        params.filter = filter;
+                        if (!Array.isArray(params.filter)) params.filter = [];
+                        params.filter.push(filter);
                         if (chart && typeof (chart.destroy) != "undefined") {
                             try {
                                 chart.destroy();
