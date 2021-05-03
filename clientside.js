@@ -2321,7 +2321,7 @@ var DashboardPowerups = (function () {
                 }
 
                 function addDurationToList(apdexList, filteredTable) {
-                    filteredTable.forEach(row => {
+                    filteredTable.forEach((row,rowIdx) => {
                         let arr = row["useraction.duration"];
                         for (let k = 0; k < arr.length; k++) { //duration
                             let val = arr[k];
@@ -2340,7 +2340,7 @@ var DashboardPowerups = (function () {
                     });
                 }
                 function addErrorsToList(apdexList, filteredTable) {
-                    filteredTable.forEach(row => {
+                    filteredTable.forEach((row,rowIdx) => {
                         let arr = row["useraction.errors"];
                         for (let k = 0; k < arr.length; k++) { //errors
                             let val = arr[k];
