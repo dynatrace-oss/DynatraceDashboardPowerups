@@ -2187,7 +2187,7 @@ var DashboardPowerups = (function () {
                         let arr = row["useraction.isEntryAction"];
                         for (let k = 0; k < arr.length; k++) { //entry actions
                             let val = arr[k];
-                            if (val === "true") {
+                            if (val === "true" || val === true) {
                                 let actionName = row["useraction.name"][k];
                                 let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
@@ -2207,7 +2207,7 @@ var DashboardPowerups = (function () {
                         let arr = row["useraction.isExitAction"];
                         for (let k = 0; k < arr.length; k++) { //exit actions
                             let val = arr[k];
-                            if (val === "true") {
+                            if (val === "true" || val === true) {
                                 let actionName = row["useraction.name"][k];
                                 let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
