@@ -2341,7 +2341,7 @@ var DashboardPowerups = (function () {
                 }
                 function addErrorsToList(apdexList, filteredTable) {
                     filteredTable.forEach((row,rowIdx) => {
-                        let arr = row["useraction.errors"];
+                        let arr = row["useraction.errorCount"];
                         for (let k = 0; k < arr.length; k++) { //errors
                             let val = arr[k];
                             if (val !== "") {
