@@ -2386,7 +2386,7 @@ var DashboardPowerups = (function () {
                 }
 
                 function sortTouples(touples) {
-                    touples = touples.sort((a, b) => b.weight - a.weight);
+                    return touples.sort((a, b) => b.weight - a.weight);
                 }
                 //return ({ touples: touples, goals: goals, apdexList: apdexList, UAPs: UAPs });
             }
