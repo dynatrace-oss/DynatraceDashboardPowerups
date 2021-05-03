@@ -1993,12 +1993,6 @@ var DashboardPowerups = (function () {
                     longs: [], //{actionName, key, sum, count}
                     dates: [] //{actionName, key, val, count}
                 };
-                let data = {
-                    touples: touples,
-                    goals: goals,
-                    apdexList: apdexList,
-                    UAPs: UAPs
-                };
 
                 //new refactored approach
                 normalTable = buildNormalTable($table);
@@ -2016,6 +2010,13 @@ var DashboardPowerups = (function () {
                 addErrorsToList(actionDetailList, filteredTable);
                 addApdexStylesToList(actionDetailList);
                 touples = sortTouples(touples);
+
+                let data = {
+                    touples: touples,
+                    goals: goals,
+                    apdexList: actionDetailList,
+                    UAPs: UAPs
+                };
                 return (data);
 
 
