@@ -2090,8 +2090,14 @@ var DashboardPowerups = (function () {
                                         && arr.length > i + 1
                                         && arr[i + 1] === f.to);
                                 } else if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
-                                    fromIdx = filtered.findIndex((x, i, arr) =>
-                                        true);
+                                    switch(f.type){
+                                        case "string":
+                                            fromIdx = row["useraction.stringProperties"].findIndex((x, i, arr) =>
+                                                x.key === f.key &&
+                                                x.val === f.val);
+                                        break;
+                                    }
+                                    
                                 } else { }
 
                                 if (fromIdx < 0) filtered = []; //this row filtered out
