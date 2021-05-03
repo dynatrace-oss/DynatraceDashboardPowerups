@@ -1764,14 +1764,16 @@ var DashboardPowerups = (function () {
                         .addClass("powerupTooltip")
                         .html(`<span>${tooltip}</span>`)
                         .appendTo($tile);
-                    /*$tile.on("mouseover",()=>{
+                    $tile.on("mouseover",()=>{
                         let offset = $tile.offset();
-                        $tooltip.appendTo(`.grid-dashboard`)
-                            .offset(offset);
+                        $tooltip.appendTo(`body`)
+                            .offset(offset)
+                            .style("opacity","0.8");
                     });
                     $tile.on("mouseout",()=>{
-                        $tooltip.appendTo($tile);
-                    })*/
+                        $tooltip.appendTo($tile)
+                            .style("opacity","");
+                    })
                 }
             }
 
