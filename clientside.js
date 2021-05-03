@@ -1765,7 +1765,7 @@ var DashboardPowerups = (function () {
                         .html(`<span>${tooltip}</span>`)
                         .appendTo($tile);
                     $tile.on("mouseover",()=>{
-                        let offset = $tooltip.offset();
+                        let offset = $tile.offset();
                         $tooltip.appendTo(`body`)
                             .offset(offset);
                     });
