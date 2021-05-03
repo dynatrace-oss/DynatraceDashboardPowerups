@@ -1993,11 +1993,11 @@ var DashboardPowerups = (function () {
                     longs: [], //{actionName, key, sum, count}
                     dates: [] //{actionName, key, val, count}
                 };
-                let data = { 
-                    touples: touples, 
-                    goals: goals, 
-                    apdexList: apdexList, 
-                    UAPs: UAPs 
+                let data = {
+                    touples: touples,
+                    goals: goals,
+                    apdexList: apdexList,
+                    UAPs: UAPs
                 };
 
                 //new refactored approach
@@ -2006,20 +2006,20 @@ var DashboardPowerups = (function () {
                 touples = buildTouples(filteredTable);
                 goals = buildGoals(filteredTable);
                 actionDetailList = buildactionDetailList(filteredTable);
-                addEntryActionsToList(actionDetailList,filteredTable);
-                addExitActionsToList(actionDetailList,filteredTable);
-                addUAPStringToList(UAPs,filteredTable);
-                addUAPDoubleToList(UAPs,filteredTable);
-                addUAPLongToList(UAPs,filteredTable);
-                addUAPDateToList(UAPs,filteredTable);
-                addDurationToList(actionDetailList,filteredTable);
-                addErrorsToList(actionDetailList,filteredTable);
+                addEntryActionsToList(actionDetailList, filteredTable);
+                addExitActionsToList(actionDetailList, filteredTable);
+                addUAPStringToList(UAPs, filteredTable);
+                addUAPDoubleToList(UAPs, filteredTable);
+                addUAPLongToList(UAPs, filteredTable);
+                addUAPDateToList(UAPs, filteredTable);
+                addDurationToList(actionDetailList, filteredTable);
+                addErrorsToList(actionDetailList, filteredTable);
                 addApdexStylesToList(actionDetailList);
                 touples = sortTouples(touples);
-                return(data);
+                return (data);
 
 
-                function buildNormalTable(table){
+                function buildNormalTable(table) {
                     $(table)
                         .children('div:first-of-type')
                         .children('div')
@@ -2043,7 +2043,7 @@ var DashboardPowerups = (function () {
                                 };
 
                                 try {
-                                    switch(colName){
+                                    switch (colName) {
                                         case "useraction.matchingConversionGoals":
                                             arr = arr
                                                 .map(x => Array.isArray(x) ? x.join(', ') : x);
@@ -2065,9 +2065,9 @@ var DashboardPowerups = (function () {
                     return normalTable;
                 }
 
-                function filterTable(normalTable){
+                function filterTable(normalTable) {
                     let filteredTable = [];
-                    normalTable.forEach((row,rowIdx)=>{
+                    normalTable.forEach((row, rowIdx) => {
                         let filtered = row["useraction.name"].filter(x =>
                             x !== "[]" &&
                             x !== "");
@@ -2083,20 +2083,20 @@ var DashboardPowerups = (function () {
                         if (Array.isArray(params.filter)) {
                             params.filter.forEach(f => {
                                 let fromIdx;
-                                if (f.from !== undefined && f.to !== undefined){
+                                if (f.from !== undefined && f.to !== undefined) {
                                     fromIdx = filtered.findIndex((x, i, arr) =>
-                                    x === f.from
-                                    && arr.length > i + 1
-                                    && arr[i + 1] === f.to);
+                                        x === f.from
+                                        && arr.length > i + 1
+                                        && arr[i + 1] === f.to);
                                 } else if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
                                     fromIdx = filtered.findIndex((x, i, arr) =>
-                                    true);
-                                } else {}
-                                
+                                        true);
+                                } else { }
+
                                 if (fromIdx < 0) filtered = []; //this row filtered out
                             });
                         }
-                        if(filtered.length){
+                        if (filtered.length) {
                             row.filtered = filtered;
                             filteredTable.push(row);
                         }
@@ -2104,9 +2104,9 @@ var DashboardPowerups = (function () {
                     return filteredTable;
                 }
 
-                function buildTouples(filteredTable){
+                function buildTouples(filteredTable) {
                     let touples = [];
-                    filteredTable.forEach(row=>{
+                    filteredTable.forEach(row => {
                         let filtered = row.filtered;
                         for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                             let touple = { from: filtered[k], to: filtered[k + 1] };
@@ -2126,9 +2126,9 @@ var DashboardPowerups = (function () {
                     return touples;
                 }
 
-                function  buildGoals(filteredTable) {
+                function buildGoals(filteredTable) {
                     let goals = [];
-                    filteredTable.forEach(row=>{
+                    filteredTable.forEach(row => {
                         let arr = row["useraction.matchingConversionGoals"];
                         for (let k = 0; k < arr.length; k++) { //matchingConversion goals
                             if (Array.isArray(arr[k]) && arr[k].length) {
@@ -2149,9 +2149,9 @@ var DashboardPowerups = (function () {
                     return goals;
                 }
 
-                function buildactionDetailList(filteredTable){
+                function buildactionDetailList(filteredTable) {
                     let apdexList = [];
-                    filteredTable.forEach(row=>{
+                    filteredTable.forEach(row => {
                         let arr = row["useraction.apdexCategory"];
                         for (let k = 0; k < arr.length; k++) { //apdex
                             let val = arr[k];
@@ -2179,12 +2179,12 @@ var DashboardPowerups = (function () {
                         }
                     });
                     return apdexList;
-                } 
-                            
-                function addEntryActionsToList(apdexList,filteredTable){
-                    filteredTable.forEach(row=>{
+                }
+
+                function addEntryActionsToList(apdexList, filteredTable) {
+                    filteredTable.forEach(row => {
                         let arr = row["useraction.isEntryAction"];
-                            for (let k = 0; k < arr.length; k++) { //entry actions
+                        for (let k = 0; k < arr.length; k++) { //entry actions
                             let val = arr[k];
                             if (val === "true") {
                                 let actionName = row["useraction.name"][k];
@@ -2201,198 +2201,194 @@ var DashboardPowerups = (function () {
                     return apdexList;
                 }
 
-                function addExitActionsToList(apdexList,filteredTable){
-                    filteredTable.forEach(row=>{
+                function addExitActionsToList(apdexList, filteredTable) {
+                    filteredTable.forEach(row => {
                         let arr = row["useraction.isExitAction"];
-                            for (let k = 0; k < arr.length; k++) { //exit actions
-                                let val = arr[k];
-                                if (val === "true") {
-                                    let actionName = row["useraction.name"][k];
-                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+                        for (let k = 0; k < arr.length; k++) { //exit actions
+                            let val = arr[k];
+                            if (val === "true") {
+                                let actionName = row["useraction.name"][k];
+                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                                    if (apdexIdx > -1) {
-                                        if (!apdexList[apdexIdx].exitAction)
-                                            apdexList[apdexIdx].exitAction = true;
-                                        apdexList[apdexIdx].exitActionSVG = `<img src='${pub.SVGLib() + 'exit.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
-                                    }
+                                if (apdexIdx > -1) {
+                                    if (!apdexList[apdexIdx].exitAction)
+                                        apdexList[apdexIdx].exitAction = true;
+                                    apdexList[apdexIdx].exitActionSVG = `<img src='${pub.SVGLib() + 'exit.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
                                 }
-                            } 
+                            }
+                        }
                     });
                 }
-                            
-                function addUAPStringToList(UAPs,filteredTable){
-                    filteredTable.forEach(row=>{
+
+                function addUAPStringToList(UAPs, filteredTable) {
+                    filteredTable.forEach(row => {
                         let arr = row["useraction.stringProperties"];
-                                arr.forEach((uapCol, uapColIdx) => {
-                                    uapCol.forEach((uapVal, uapValIdx) => {
-                                        let actionName = row["useraction.name"][uapColIdx];
-                                        let uapIdx = UAPs.strings.findIndex(x =>
-                                            x.actionName == actionName &&
-                                            x.key == uapVal.key &&
-                                            x.val == uapVal.value
-                                        );
+                        arr.forEach((uapCol, uapColIdx) => {
+                            uapCol.forEach((uapVal, uapValIdx) => {
+                                let actionName = row["useraction.name"][uapColIdx];
+                                let uapIdx = UAPs.strings.findIndex(x =>
+                                    x.actionName == actionName &&
+                                    x.key == uapVal.key &&
+                                    x.val == uapVal.value
+                                );
 
-                                        if (uapIdx < 0) {
-                                            let uapObj = { actionName: actionName, key: uapVal.key, val: uapVal.value, count: 1 };
-                                            UAPs.strings.push(uapObj);
-                                        } else {
-                                            let uap = UAPs.strings[uapIdx];
-                                            uap.count++;
-                                        }
-                                    });
-                                });
-                            }); 
+                                if (uapIdx < 0) {
+                                    let uapObj = { actionName: actionName, key: uapVal.key, val: uapVal.value, count: 1 };
+                                    UAPs.strings.push(uapObj);
+                                } else {
+                                    let uap = UAPs.strings[uapIdx];
+                                    uap.count++;
+                                }
+                            });
+                        });
+                    });
+                }
+
+                function addUAPDoubleToList(UAPs, filteredTable) {
+                    filteredTable.forEach(row => {
+                        let arr = row["useraction.doubleProperties"];
+                        arr.forEach((uapCol, uapColIdx) => {
+                            uapCol.forEach((uapVal, uapValIdx) => {
+                                let actionName = row["useraction.name"][uapColIdx];
+                                let uapIdx = UAPs.doubles.findIndex(x =>
+                                    x.actionName == actionName &&
+                                    x.key == uapVal.key
+                                );
+                                let val = Number(uapVal.value);
+
+                                if (uapIdx < 0) {
+                                    let uapObj = { actionName: actionName, key: uapVal.key, sum: val, count: 1 };
+                                    UAPs.doubles.push(uapObj);
+                                } else {
+                                    let uap = UAPs.doubles[uapIdx];
+                                    uap.count++;
+                                    uap.sum += val;
+                                }
+                            });
+                        });
+                    });
+                }
+
+                function addUAPLongToList(UAPs, filteredTable) {
+                    filteredTable.forEach(row => {
+                        let arr = row["useraction.longProperties"];
+                        arr.forEach((uapCol, uapColIdx) => {
+                            uapCol.forEach((uapVal, uapValIdx) => {
+                                let actionName = row["useraction.name"][uapColIdx];
+                                let uapIdx = UAPs.longs.findIndex(x =>
+                                    x.actionName == actionName &&
+                                    x.key == uapVal.key
+                                );
+                                let val = Number(uapVal.value);
+
+                                if (uapIdx < 0) {
+                                    let uapObj = { actionName: actionName, key: uapVal.key, sum: val, count: 1 };
+                                    UAPs.longs.push(uapObj);
+                                } else {
+                                    let uap = UAPs.longs[uapIdx];
+                                    uap.count++;
+                                    uap.sum += val;
+                                }
+
+                            });
+                        });
+                    });
+                }
+
+                function addUAPDateToList(UAPs, filteredTable) {
+                    filteredTable.forEach(row => {
+                        let arr = row["useraction.dateProperties"];
+                        arr.forEach((uapCol, uapColIdx) => {
+                            uapCol.forEach((uapVal, uapValIdx) => {
+                                let actionName = row["useraction.name"][uapColIdx];
+                                let uapIdx = UAPs.dates.findIndex(x =>
+                                    x.actionName == actionName &&
+                                    x.key == uapVal.key &&
+                                    x.val == uapVal.value
+                                );
+
+                                if (uapIdx < 0) {
+                                    let uapObj = { actionName: actionName, key: uapVal.key, val: uapVal.value, count: 1 };
+                                    UAPs.dates.push(uapObj);
+                                } else {
+                                    let uap = UAPs.dates[uapIdx];
+                                    uap.count++;
+                                }
+
+                            });
+                        });
+                    });
+                }
+
+                function addDurationToList(apdexList, filteredTable) {
+                    filteredTable.forEach(row => {
+                        let arr = row["useraction.duration"];
+                        for (let k = 0; k < arr.length; k++) { //duration
+                            let val = arr[k];
+                            if (val !== "") {
+                                let actionName = row["useraction.name"][rowIdx][k];
+                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+
+                                if (apdexIdx > -1) {
+                                    if (!Array.isArray(apdexList[apdexIdx].durations))
+                                        apdexList[apdexIdx].durations = [];
+
+                                    apdexList[apdexIdx].durations.push(val);
+                                }
+                            }
                         }
-                            
-                            /*else if (colIdx == 6) { //UAP-Double
-                                let uapRow;
+                    });
+                }
+                function addErrorsToList(apdexList, filteredTable) {
+                    filteredTable.forEach(row => {
+                        let arr = row["useraction.errors"];
+                        for (let k = 0; k < arr.length; k++) { //errors
+                            let val = arr[k];
+                            if (val !== "") {
+                                let actionName = row["useraction.name"][rowIdx][k];
+                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                                try {
-                                    uapRow = JSON.parse(row);
-                                } catch (e) {
-                                    console.log("Powerup: Sankey - String: unable to parse JSON");
-                                }
-                                if (typeof (uapRow) == "undefined") return;
+                                if (apdexIdx > -1) {
+                                    if (typeof (apdexList[apdexIdx].errors) == "undefined")
+                                        apdexList[apdexIdx].errors = 0;
 
-                                uapRow.forEach((uapCol, uapColIdx) => {
-                                    uapCol.forEach((uapVal, uapValIdx) => {
-                                        let actionName = dataTable[0][rowIdx][uapColIdx];
-                                        let uapIdx = UAPs.doubles.findIndex(x =>
-                                            x.actionName == actionName &&
-                                            x.key == uapVal.key
-                                        );
-                                        let val = Number(uapVal.value);
-
-                                        if (uapIdx < 0) {
-                                            let uapObj = { actionName: actionName, key: uapVal.key, sum: val, count: 1 };
-                                            UAPs.doubles.push(uapObj);
-                                        } else {
-                                            let uap = UAPs.doubles[uapIdx];
-                                            uap.count++;
-                                            uap.sum += val;
-                                        }
-
-                                    });
-                                });
-                            } else if (colIdx == 7) for (let k = 0; k < arr.length; k++) { //UAP-Long
-                                let uapRow;
-
-                                try {
-                                    uapRow = JSON.parse(row);
-                                } catch (e) {
-                                    console.log("Powerup: Sankey - String: unable to parse JSON");
-                                }
-                                if (typeof (uapRow) == "undefined") return;
-
-                                uapRow.forEach((uapCol, uapColIdx) => {
-                                    uapCol.forEach((uapVal, uapValIdx) => {
-                                        let actionName = dataTable[0][rowIdx][uapColIdx];
-                                        let uapIdx = UAPs.longs.findIndex(x =>
-                                            x.actionName == actionName &&
-                                            x.key == uapVal.key
-                                        );
-                                        let val = Number(uapVal.value);
-
-                                        if (uapIdx < 0) {
-                                            let uapObj = { actionName: actionName, key: uapVal.key, sum: val, count: 1 };
-                                            UAPs.longs.push(uapObj);
-                                        } else {
-                                            let uap = UAPs.longs[uapIdx];
-                                            uap.count++;
-                                            uap.sum += val;
-                                        }
-
-                                    });
-                                });
-                            } else if (colIdx == 8) for (let k = 0; k < arr.length; k++) { //UAP-Date
-                                let uapRow;
-
-                                try {
-                                    uapRow = JSON.parse(row);
-                                } catch (e) {
-                                    console.log("Powerup: Sankey - String: unable to parse JSON");
-                                }
-                                if (typeof (uapRow) == "undefined") return;
-
-                                uapRow.forEach((uapCol, uapColIdx) => {
-                                    uapCol.forEach((uapVal, uapValIdx) => {
-                                        let actionName = dataTable[0][rowIdx][uapColIdx];
-                                        let uapIdx = UAPs.dates.findIndex(x =>
-                                            x.actionName == actionName &&
-                                            x.key == uapVal.key &&
-                                            x.val == uapVal.value
-                                        );
-
-                                        if (uapIdx < 0) {
-                                            let uapObj = { actionName: actionName, key: uapVal.key, val: uapVal.value, count: 1 };
-                                            UAPs.dates.push(uapObj);
-                                        } else {
-                                            let uap = UAPs.dates[uapIdx];
-                                            uap.count++;
-                                        }
-
-                                    });
-                                });
-                            } else if (colIdx == 9) for (let k = 0; k < arr.length; k++) { //duration
-                                let val = arr[k];
-                                if (val !== "") {
-                                    let actionName = dataTable[0][rowIdx][k];
-                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
-
-                                    if (apdexIdx > -1) {
-                                        if (!Array.isArray(apdexList[apdexIdx].durations))
-                                            apdexList[apdexIdx].durations = [];
-
-                                        apdexList[apdexIdx].durations.push(val);
-                                    }
-                                }
-                            } else if (colIdx == 10) {
-                                for (let k = 0; k < arr.length; k++) { //errors
-                                    let val = arr[k];
-                                    if (val !== "") {
-                                        let actionName = dataTable[0][rowIdx][k];
-                                        let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
-
-                                        if (apdexIdx > -1) {
-                                            if (typeof (apdexList[apdexIdx].errors) == "undefined")
-                                                apdexList[apdexIdx].errors = 0;
-
-                                            let num = Number(val);
-                                            if (!isNaN(num)) {
-                                                if (num > 0) {
-                                                    apdexList[apdexIdx].errors += num;
-                                                }
-                                            }
+                                    let num = Number(val);
+                                    if (!isNaN(num)) {
+                                        if (num > 0) {
+                                            apdexList[apdexIdx].errors += num;
                                         }
                                     }
                                 }
                             }
-                        })
-                    });*/
+                        }
+                    });
+                }
 
-                
+                function addApdexStylesToList(apdexList) {
+                    apdexList.forEach((apdex) => {
+                        if (apdex.satisfied >= Math.max(apdex.tolerating, apdex.frustrated)) {
+                            apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
+                            apdex.name = "satisfied";
+                            apdex.color = "#6bcb8b";
+                        } else if (apdex.tolerating >= Math.max(apdex.satisfied, apdex.frustrated)) {
+                            apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
+                            apdex.name = "tolerating";
+                            apdex.color = "#ffee7c";
+                        } else if (apdex.frustrated >= Math.max(apdex.tolerating, apdex.satisfied)) {
+                            apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
+                            apdex.name = "frustrated";
+                            apdex.color = "#c41425";
+                        } else {
+                            apdex.svg = "";
+                            apdex.color = "#6d6d6d";
+                        }
+                    });
+                }
 
-                apdexList.forEach((apdex) => {
-                    if (apdex.satisfied >= Math.max(apdex.tolerating, apdex.frustrated)) {
-                        apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
-                        apdex.name = "satisfied";
-                        apdex.color = "#6bcb8b";
-                    } else if (apdex.tolerating >= Math.max(apdex.satisfied, apdex.frustrated)) {
-                        apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
-                        apdex.name = "tolerating";
-                        apdex.color = "#ffee7c";
-                    } else if (apdex.frustrated >= Math.max(apdex.tolerating, apdex.satisfied)) {
-                        apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
-                        apdex.name = "frustrated";
-                        apdex.color = "#c41425";
-                    } else {
-                        apdex.svg = "";
-                        apdex.color = "#6d6d6d";
-                    }
-                });
-                touples = touples.sort((a, b) => b.weight - a.weight);
-
-                return ({ touples: touples, goals: goals, apdexList: apdexList, UAPs: UAPs });
+                function sortTouples(touples) {
+                    touples = touples.sort((a, b) => b.weight - a.weight);
+                }
+                //return ({ touples: touples, goals: goals, apdexList: apdexList, UAPs: UAPs });
             }
 
             function newChart(data, container, params, limit = 20) {
