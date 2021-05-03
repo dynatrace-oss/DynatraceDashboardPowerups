@@ -2132,7 +2132,7 @@ var DashboardPowerups = (function () {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.matchingConversionGoals"];
                         for (let k = 0; k < arr.length; k++) { //matchingConversion goals
-                            if (Array.isArray(arr[k]) && arr[k].length) {
+                            if (arr[k]!="") {
                                 let actionName = row["useraction.name"][k];
                                 let goalsIdx = goals.findIndex(x => x.actionName == actionName);
                                 if (goalsIdx < 0) goals.push({
