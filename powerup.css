@@ -454,7 +454,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
 }
 
 .powerupTooltip {
-  position: absolute;
+  position: relative;
   pointer-events: none;
   border: 1px solid #00a1b2;
   border-radius: 3px;
