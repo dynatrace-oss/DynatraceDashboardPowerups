@@ -1766,7 +1766,7 @@ var DashboardPowerups = (function () {
                         .appendTo($tile);
                     $tile.on("mouseover",()=>{
                         let offset = $tile.offset();
-                        $tooltip.appendTo(`body`)
+                        $tooltip.appendTo(`.grid-dashboard`)
                             .offset(offset);
                     });
                     $tile.on("mouseout",()=>{
