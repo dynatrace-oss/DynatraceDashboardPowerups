@@ -2092,7 +2092,9 @@ var DashboardPowerups = (function () {
                                 } else if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
                                     switch(f.type){
                                         case "string":
-                                            fromIdx = row["useraction.stringProperties"].findIndex((x, i, arr) =>
+                                            fromIdx = row["useraction.stringProperties"]
+                                            .flat()
+                                            .findIndex((x, i, arr) =>
                                                 x.key === f.key &&
                                                 x.val === f.val);
                                         break;
