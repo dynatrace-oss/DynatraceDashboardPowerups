@@ -2225,7 +2225,7 @@ var DashboardPowerups = (function () {
                         let arr = row["useraction.stringProperties"];
                                 arr.forEach((uapCol, uapColIdx) => {
                                     uapCol.forEach((uapVal, uapValIdx) => {
-                                        let actionName = row["useraction.name"][k];
+                                        let actionName = row["useraction.name"][uapColIdx];
                                         let uapIdx = UAPs.strings.findIndex(x =>
                                             x.actionName == actionName &&
                                             x.key == uapVal.key &&
