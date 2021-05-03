@@ -2096,7 +2096,7 @@ var DashboardPowerups = (function () {
                                             .flat()
                                             .findIndex((x, i, arr) =>
                                                 x.key === f.key &&
-                                                x.val === f.val);
+                                                x.value === f.val);
                                         break;
                                     }
                                     
