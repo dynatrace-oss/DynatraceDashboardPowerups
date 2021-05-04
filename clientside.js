@@ -1768,11 +1768,11 @@ var DashboardPowerups = (function () {
                         let offset = $tile.offset();
                         $tooltip.appendTo(`body`)
                             .offset(offset)
-                            .style("opacity","0.8");
+                            .addClass("powerupTooltipHover");
                     });
                     $tile.on("mouseout",()=>{
                         $tooltip.appendTo($tile)
-                            .style("opacity","");
+                            .removeClass("powerupTooltipHover");
                     })
                 }
             }

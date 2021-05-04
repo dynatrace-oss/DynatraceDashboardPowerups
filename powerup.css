@@ -480,7 +480,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
   border-color: transparent;
 }
 
-.grid-tile:hover .powerupTooltip {
+.grid-tile:hover .powerupTooltip, .powerupTooltipHover {
   /*visibility: visible;*/
   opacity: 0.8;
 }
