@@ -2129,8 +2129,8 @@ var DashboardPowerups = (function () {
                             });
                         }
                         if (filtered.length) {
-                            row.filtered = filtered.name;
-                            row.filteredApp = filtered.app;
+                            row.filtered = filtered.map(x => x.name);
+                            row.filteredApp = filtered.map(x => x.app);
                             filteredTable.push(row);
                         }
                     });
