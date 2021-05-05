@@ -2869,7 +2869,7 @@ var DashboardPowerups = (function () {
 
                 function sessionPopup(e) {
                     let html = `<h3>Session List</h3><table>`;
-                    html += `<tr><th>SR</th><th>UX</th><th>UserId</th></tr>`;
+                    html += `<tr><th>SR</th><th>UX</th><th>Goal</th><th>UserId</th></tr>`;
                     data.filteredTable.forEach(session => {
                         html += `<tr>`;
                         if(session.hasSessionReplay==="true")
@@ -2889,6 +2889,10 @@ var DashboardPowerups = (function () {
                             default:
                                 html += `<td></td>`;
                         }
+                        if(sesssion.matchingConversionGoalsCount)
+                            html += `<td><img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`;
+                        else 
+                            html += `<td></td>`;
                         let id = session.userId !== "null" ? session.userId : "anonymous";
                         html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"&gtf=defaultTimeFrame&gf=defaultManagementZone'>${id}</a></td>`;
                         html += `</tr>`
