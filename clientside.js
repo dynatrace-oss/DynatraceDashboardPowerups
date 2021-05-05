@@ -2869,9 +2869,9 @@ var DashboardPowerups = (function () {
 
                 function sessionPopup(e) {
                     let html = `<h3>Session List</h3><table>`;
+                    html += `<tr><th>Replay</th><th>UX Score</th><th>UserId</th></tr>`;
                     data.filteredTable.forEach(session => {
                         html += `<tr>`;
-                        html += `<tr><th>Replay</th><th>UX Score</th><th>UserId</th>`;
                         if(session.hasSessionReplay==="true")
                             html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
                         else 
