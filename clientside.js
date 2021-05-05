@@ -2868,26 +2868,30 @@ var DashboardPowerups = (function () {
 
 
                 function sessionPopup(e) {
-                    let html = `<h3>Session List</h3><ul>`;
+                    let html = `<h3>Session List</h3><table>`;
                     data.filteredTable.forEach(session => {
-                        html += `<li>`;
+                        html += `<tr>`;
                         if(session.hasSessionReplay==="true")
-                            html += `<img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></div>`;
+                            html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
+                        else 
+                            html += `<td></td>`;
                         switch(session.userExperienceScore){
                             case "SATISFIED":
-                                html += `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
+                                html += `<td><img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></td>`;
                                 break;
                             case "TOLERATING":
-                                html += `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
+                                html += `<td><img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></td>`;
                                 break;
                             case "FRUSTRATED":
-                                html += `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
+                                html += `<td><img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></td>`;
                                 break;
                             default:
+                                html += `<td></td>`;
                         }
-                        html += `<a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"'>${session.userId}</a></li>`;
+                        html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"'>${session.userId}</a></td>`;
+                        html += `</tr>`
                     })
-                    html += `</ul>`;
+                    html += `</table>`;
                     let $popup = $("<div>")
                         .addClass("powerupSankeyDetailPopup")
                         .html(html)
