@@ -2145,7 +2145,7 @@ var DashboardPowerups = (function () {
                                 from: row.filtered[k],
                                 fromApp: row.filteredApp[k], 
                                 to: row.filtered[k + 1],
-                                toApp: row.filteredApp[k] 
+                                toApp: row.filteredApp[k + 1] 
                             };
                             if (touple.from === touple.to) continue; // ignore self actions
                             if (params.convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
