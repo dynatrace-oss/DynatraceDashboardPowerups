@@ -2085,23 +2085,23 @@ var DashboardPowerups = (function () {
                 function filterTable(normalTable) {
                     let filteredTable = [];
                     normalTable.forEach((row, rowIdx) => {
-                        let filtered = row["useraction.name"].filter(x =>
-                            x !== "[]" &&
-                            x !== "");
+                        let filtered = row.filter(x =>
+                            x["useraction.name"] !== "[]" &&
+                            x["useraction.name"] !== "");
                         if (Array.isArray(params.exclude) && params.exclude.length) {
                             params.exclude.forEach(ex => {
-                                filtered = filtered.filter(x => !x.includes(ex));
+                                filtered = filtered.filter(x => !x["useraction.name"].includes(ex));
                             });
                         }
                         if (params.convHack == "2") {
-                            filtered.unshift("START");
-                            filtered.push("END");
+                            filtered["useraction.name"].unshift("START");
+                            filtered["useraction.name"].push("END");
                         }
                         if (Array.isArray(params.filter)) {
                             params.filter.forEach(f => {
                                 let fromIdx;
                                 if (f.from !== undefined && f.to !== undefined) {
-                                    fromIdx = filtered.findIndex((x, i, arr) =>
+                                    fromIdx = filtered["useraction.name"].findIndex((x, i, arr) =>
                                         x === f.from
                                         && arr.length > i + 1
                                         && arr[i + 1] === f.to);
@@ -2122,7 +2122,8 @@ var DashboardPowerups = (function () {
                             });
                         }
                         if (filtered.length) {
-                            row.filtered = filtered;
+                            row.filtered = filtered["useraction.name"];
+                            row.filteredApp = filtered["useraction.application"];
                             filteredTable.push(row);
                         }
                     });
@@ -2132,9 +2133,13 @@ var DashboardPowerups = (function () {
                 function buildTouples(filteredTable) {
                     let touples = [];
                     filteredTable.forEach(row => {
-                        let filtered = row.filtered;
                         for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
-                            let touple = { from: filtered[k], to: filtered[k + 1] };
+                            let touple = { 
+                                from: row.filtered[k],
+                                fromApp: row.filteredApp[k], 
+                                to: row.filtered[k + 1],
+                                toApp: row.filteredApp[k] 
+                            };
                             if (touple.from === touple.to) continue; // ignore self actions
                             if (params.convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
                             if (params.convHack == "true" && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
