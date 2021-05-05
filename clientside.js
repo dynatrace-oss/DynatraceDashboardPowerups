@@ -2637,6 +2637,13 @@ var DashboardPowerups = (function () {
                         });
                     }
 
+                    //recolor links based on to node instead of from
+                    chart.series[0].points.forEach(p=>{
+                        p.update({
+                            color: p.toNode.color
+                        }, false, false); 
+                    })
+
                     //redraw to help convHack use case
                     chart.setSize(undefined, undefined, false);
 
