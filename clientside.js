@@ -1764,13 +1764,13 @@ var DashboardPowerups = (function () {
                         .addClass("powerupTooltip")
                         .html(`<span>${tooltip}</span>`)
                         .appendTo($tile);
-                    $tile.on("mouseover",()=>{
+                    $tile.on("mouseover", () => {
                         let offset = $tile.offset();
                         $tooltip.appendTo(`body`)
                             .offset(offset)
                             .addClass("powerupTooltipHover");
                     });
-                    $tile.on("mouseout",()=>{
+                    $tile.on("mouseout", () => {
                         $tooltip.appendTo($tile)
                             .removeClass("powerupTooltipHover");
                     })
@@ -2100,16 +2100,16 @@ var DashboardPowerups = (function () {
                                         && arr.length > i + 1
                                         && arr[i + 1] === f.to);
                                 } else if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
-                                    switch(f.type){
+                                    switch (f.type) {
                                         case "string":
                                             fromIdx = row["useraction.stringProperties"]
-                                            .flat()
-                                            .findIndex((x, i, arr) =>
-                                                x.key === f.key &&
-                                                x.value === f.val);
-                                        break;
+                                                .flat()
+                                                .findIndex((x, i, arr) =>
+                                                    x.key === f.key &&
+                                                    x.value === f.val);
+                                            break;
                                     }
-                                    
+
                                 } else { }
 
                                 if (fromIdx < 0) filtered = []; //this row filtered out
@@ -2150,7 +2150,7 @@ var DashboardPowerups = (function () {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.matchingConversionGoals"];
                         for (let k = 0; k < arr.length; k++) { //matchingConversion goals
-                            if (arr[k]!="") {
+                            if (arr[k] != "") {
                                 let actionName = row["useraction.name"][k];
                                 let goalsIdx = goals.findIndex(x => x.actionName == actionName);
                                 if (goalsIdx < 0) goals.push({
@@ -2340,7 +2340,7 @@ var DashboardPowerups = (function () {
                 }
 
                 function addDurationToList(apdexList, filteredTable) {
-                    filteredTable.forEach((row,rowIdx) => {
+                    filteredTable.forEach((row, rowIdx) => {
                         let arr = row["useraction.duration"];
                         for (let k = 0; k < arr.length; k++) { //duration
                             let val = arr[k];
@@ -2359,7 +2359,7 @@ var DashboardPowerups = (function () {
                     });
                 }
                 function addErrorsToList(apdexList, filteredTable) {
-                    filteredTable.forEach((row,rowIdx) => {
+                    filteredTable.forEach((row, rowIdx) => {
                         let arr = row["useraction.errorCount"];
                         for (let k = 0; k < arr.length; k++) { //errors
                             let val = arr[k];
@@ -2411,6 +2411,7 @@ var DashboardPowerups = (function () {
             }
 
             function newChart(data, container, params, limit = 20) {
+                const HARDMAX = 100;
                 let options = {
                     type: 'sankey',
                     title: {
@@ -2564,37 +2565,42 @@ var DashboardPowerups = (function () {
 
                 let chart = H.chart(container, options, (chart) => {
                     let $container = $(container);
-                    chart.limit = limit = Math.min(limit, data.touples.length);
-                    chart.renderer.button('-', 10, 5)
-                        .attr({ zIndex: 1100 })
-                        .on('click', function (e) {
-                            e.stopPropagation();
-                            let newLimit = Math.max(Math.round(chart.limit * .5), 2);
-                            if (chart && typeof (chart.destroy) != "undefined") {
-                                try {
-                                    chart.destroy();
-                                } catch (e) {
-                                    console.warn(`POWERUP: exception on chart.destroy on click`, e);
-                                }
-                            } else chart = null;
-                            newChart(data, container, params, newLimit);
-                        })
-                        .add();
-                    chart.renderer.button('+', 40, 5)
-                        .attr({ zIndex: 1100 })
-                        .on('click', function (e) {
-                            e.stopPropagation();
-                            let newLimit = Math.min(chart.limit * 2, data.touples.length);
-                            if (chart && typeof (chart.destroy) != "undefined") {
-                                try {
-                                    chart.destroy();
-                                } catch (e) {
-                                    console.warn(`POWERUP: exception on chart.destroy on click`, e);
-                                }
-                            } else chart = null;
-                            newChart(data, container, params, newLimit);
-                        })
-                        .add();
+                    if (chart.limit > 2) {
+                        chart.limit = limit = Math.min(limit, data.touples.length);
+                        chart.renderer.button('-', 10, 5)
+                            .attr({ zIndex: 1100 })
+                            .on('click', function (e) {
+                                e.stopPropagation();
+                                let newLimit = Math.max(Math.round(chart.limit * .5), 2);
+                                if (chart && typeof (chart.destroy) != "undefined") {
+                                    try {
+                                        chart.destroy();
+                                    } catch (e) {
+                                        console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                                    }
+                                } else chart = null;
+                                newChart(data, container, params, newLimit);
+                            })
+                            .add();
+                    }
+                    if (chart.limit < HARDMAX && chart.limit < data.touples.length) {
+                        chart.renderer.button('+', 40, 5)
+                            .attr({ zIndex: 1100 })
+                            .on('click', function (e) {
+                                e.stopPropagation();
+                                let newLimit = Math.min(chart.limit * 2, data.touples.length);
+                                newLimit = Math.min(newLimit, HARDMAX); //set a hard max
+                                if (chart && typeof (chart.destroy) != "undefined") {
+                                    try {
+                                        chart.destroy();
+                                    } catch (e) {
+                                        console.warn(`POWERUP: exception on chart.destroy on click`, e);
+                                    }
+                                } else chart = null;
+                                newChart(data, container, params, newLimit);
+                            })
+                            .add();
+                    }
                     //display limit text
                     chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
                         .add();
