@@ -2101,8 +2101,8 @@ var DashboardPowerups = (function () {
                             });
                         }
                         if (params.convHack == "2") {
-                            filtered.name.unshift("START");
-                            filtered.name.push("END");
+                            filtered.unshift({name: "START", app: ""});
+                            filtered.push({name: "END", app: ""});
                         }
                         if (Array.isArray(params.filter)) {
                             params.filter.forEach(f => {
