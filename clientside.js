@@ -2140,7 +2140,7 @@ var DashboardPowerups = (function () {
                 function buildTouples(filteredTable) {
                     let touples = [];
                     filteredTable.forEach(row => {
-                        for (let k = 0; k < filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
+                        for (let k = 0; k < row.filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                             let touple = { 
                                 from: row.filtered[k],
                                 fromApp: row.filteredApp[k], 
