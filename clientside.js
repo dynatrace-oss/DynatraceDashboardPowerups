@@ -2411,7 +2411,7 @@ var DashboardPowerups = (function () {
                 //return ({ touples: touples, goals: goals, apdexList: apdexList, UAPs: UAPs });
             }
 
-            function newChart(data, container, params, limit = 20) {
+            function newChart(data, container, params, limit = 21) {
                 const HARDMAX = 100;
                 let options = {
                     type: 'sankey',
@@ -2603,7 +2603,7 @@ var DashboardPowerups = (function () {
                             .add();
                     }
                     //display limit text
-                    chart.renderer.text(`${limit}/${data.touples.length} actions`, 70, 25)
+                    chart.renderer.text(`${limit-1}/${data.touples.length-1} actions`, 70, 25)
                         .add();
                     chart.renderer.text(`Showing ${data.rows} sessions`, chart.chartWidth -160, chart.chartHeight -25)
                         .add();
