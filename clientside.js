@@ -2003,6 +2003,7 @@ var DashboardPowerups = (function () {
                     longs: [], //{actionName, key, sum, count}
                     dates: [] //{actionName, key, val, count}
                 };
+                let sessionList = [];
 
                 //new refactored approach
                 normalTable = buildNormalTable($table);
@@ -2019,6 +2020,7 @@ var DashboardPowerups = (function () {
                 addDurationToList(actionDetailList, filteredTable);
                 addErrorsToList(actionDetailList, filteredTable);
                 addApdexStylesToList(actionDetailList);
+                sessionList = buildSessionList(filteredTable);
                 touples = sortTouples(touples);
 
                 let data = {
@@ -2026,7 +2028,8 @@ var DashboardPowerups = (function () {
                     goals: goals,
                     apdexList: actionDetailList,
                     UAPs: UAPs,
-                    rows: filteredTable.length
+                    rows: filteredTable.length,
+                    sessionList: sessionList
                 };
                 return (data);
 
@@ -2412,7 +2415,10 @@ var DashboardPowerups = (function () {
                 function sortTouples(touples) {
                     return touples.sort((a, b) => b.weight - a.weight);
                 }
-                //return ({ touples: touples, goals: goals, apdexList: apdexList, UAPs: UAPs });
+                
+                function buildSessionList(table){
+                    return table.map(x => x["userSessionId"]);
+                }
             }
 
             function newChart(data, container, params, limit = 21) {
@@ -2609,8 +2615,10 @@ var DashboardPowerups = (function () {
                     //display limit text
                     chart.renderer.text(`${limit - 1}/${data.touples.length - 1} actions`, 70, 25)
                         .add();
-                    chart.renderer.text(`Showing ${data.rows} sessions`, chart.chartWidth - 160, chart.chartHeight - 25)
-                        .add();
+                    chart.renderer.text(`Showing <a href="javascript:">${data.rows}</a> sessions`, 
+                        chart.chartWidth - 160, chart.chartHeight - 25)
+                        .add()
+                        .on("click",sessionPopup);
                     //display filter text
                     if (Array.isArray(params.filter)) {
                         let y = 55, inc = 20;
@@ -2862,8 +2870,20 @@ var DashboardPowerups = (function () {
                             .on("click", filterProp);
                     }
                 });
-
                 return chart;
+            }
+
+            function sessionPopup(e){
+                let html = `<h3>Session List</h3><ul>`;
+                data.sessionList.forEach(sessionId=>{
+                    html += `<li><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${sessionId}"'</a></li>`;
+                })
+                html += `</ul>`;
+                let $popup = $("<div>")
+                            .addClass("powerupSankeyDetailPopup")
+                            .html(html)
+                            .click(() => { $popup.remove(); })
+                            .appendTo(container);
             }
 
             function findContainer(link) {
