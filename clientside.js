@@ -2875,7 +2875,7 @@ var DashboardPowerups = (function () {
                 function sessionPopup(e) {
                     let html = `<h3>Session List</h3><ul>`;
                     data.sessionList.forEach(sessionId => {
-                        html += `<li><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${sessionId}"'${sessionId}</a></li>`;
+                        html += `<li><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${sessionId}"'>${sessionId}</a></li>`;
                     })
                     html += `</ul>`;
                     let $popup = $("<div>")
