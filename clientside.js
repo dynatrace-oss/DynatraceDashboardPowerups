@@ -2045,32 +2045,36 @@ var DashboardPowerups = (function () {
                                 if (typeof (dataTable[colIdx][rowIdx]) == "undefined") dataTable[colIdx][rowIdx] = [];
                                 if (typeof (normalTable[rowIdx]) == "undefined") normalTable[rowIdx] = {};
                                 let row = $(rowEl).text();
-                                //if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return; //old error handling, need to remove to allow for session level data
                                 let arr = [];
-                                try {
-                                    arr = JSON.parse(row);
-                                } catch (e) { //Sometimes it's not valid JSON...
-                                    arr = row.substr(1, row.length - 2)
-                                        .split(', ');
-                                };
+                                if (row.substring(0, 1) != '[' || row.substr(-1) != ']') { //old error handling, need to remove to allow for session level data
+                                    normalTable[rowIdx][colName] = row;
+                                } else {
 
-                                try {
-                                    switch (colName) {
-                                        case "useraction.matchingConversionGoals":
-                                            arr = arr
-                                                .map(x => Array.isArray(x) ? x.join(', ') : x);
-                                        default:
+                                    try {
+                                        arr = JSON.parse(row);
+                                    } catch (e) { //Sometimes it's not valid JSON...
+                                        arr = row.substr(1, row.length - 2)
+                                            .split(', ');
+                                    };
+
+                                    try {
+                                        switch (colName) {
+                                            case "useraction.matchingConversionGoals":
+                                                arr = arr
+                                                    .map(x => Array.isArray(x) ? x.join(', ') : x);
+                                            default:
+                                        }
+                                        arr = arr
+                                            //.map(x => Array.isArray(x) ? x.join(', ') : x) //why are we doing this in the first place?
+                                            //.map(x => typeof (x) != "string" ? x.toString() : x) //consider correctly handling types later
+                                            .map(x => typeof (x) == "string" ? x.trim() : x)
+                                            .map(x => typeof (x) == "string" ? x.replace(re, '/*$1') : x);//clean up strings
+                                    } catch (e) {
+                                        console.warn([e, row]);
                                     }
-                                    arr = arr
-                                        //.map(x => Array.isArray(x) ? x.join(', ') : x) //why are we doing this in the first place?
-                                        //.map(x => typeof (x) != "string" ? x.toString() : x) //consider correctly handling types later
-                                        .map(x => typeof (x) == "string" ? x.trim() : x)
-                                        .map(x => typeof (x) == "string" ? x.replace(re, '/*$1') : x);//clean up strings
-                                } catch (e) {
-                                    console.warn([e, row]);
+                                    dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
+                                    normalTable[rowIdx][colName] = arr;
                                 }
-                                dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
-                                normalTable[rowIdx][colName] = arr;
                             });
                         });
                     normalTable.shift();//row 0 was the titles
@@ -2603,9 +2607,9 @@ var DashboardPowerups = (function () {
                             .add();
                     }
                     //display limit text
-                    chart.renderer.text(`${limit-1}/${data.touples.length-1} actions`, 70, 25)
+                    chart.renderer.text(`${limit - 1}/${data.touples.length - 1} actions`, 70, 25)
                         .add();
-                    chart.renderer.text(`Showing ${data.rows} sessions`, chart.chartWidth -160, chart.chartHeight -25)
+                    chart.renderer.text(`Showing ${data.rows} sessions`, chart.chartWidth - 160, chart.chartHeight - 25)
                         .add();
                     //display filter text
                     if (Array.isArray(params.filter)) {
@@ -2638,10 +2642,10 @@ var DashboardPowerups = (function () {
                     }
 
                     //recolor links based on to node instead of from
-                    chart.series[0].points.forEach(p=>{
+                    chart.series[0].points.forEach(p => {
                         p.update({
                             color: p.toNode.color
-                        }, false, false); 
+                        }, false, false);
                     })
 
                     //redraw to help convHack use case
