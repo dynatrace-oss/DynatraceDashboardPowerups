@@ -2045,7 +2045,7 @@ var DashboardPowerups = (function () {
                                 if (typeof (dataTable[colIdx][rowIdx]) == "undefined") dataTable[colIdx][rowIdx] = [];
                                 if (typeof (normalTable[rowIdx]) == "undefined") normalTable[rowIdx] = {};
                                 let row = $(rowEl).text();
-                                if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return;
+                                //if (row.substring(0, 1) != '[' || row.substr(-1) != ']') return; //old error handling, need to remove to allow for session level data
                                 let arr = [];
                                 try {
                                     arr = JSON.parse(row);
