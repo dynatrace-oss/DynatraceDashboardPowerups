@@ -2026,7 +2026,7 @@ var DashboardPowerups = (function () {
                     goals: goals,
                     apdexList: actionDetailList,
                     UAPs: UAPs,
-                    rows: filterTable.length
+                    rows: filteredTable.length
                 };
                 return (data);
 
