@@ -232,6 +232,10 @@ span.powerup-color-normal, h1.powerup-color-normal {
   fill: #7c38a1;
 }
 
+.powerup-icon-teal {
+  fill: #00a1b2;
+}
+
 .powerup-sankey-tooltip {
   z-index: 1100;
   background: white;

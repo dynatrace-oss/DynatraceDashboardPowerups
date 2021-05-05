@@ -2870,7 +2870,22 @@ var DashboardPowerups = (function () {
                 function sessionPopup(e) {
                     let html = `<h3>Session List</h3><ul>`;
                     data.filteredTable.forEach(session => {
-                        html += `<li><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"'>${session.userTag}</a></li>`;
+                        html += `<li>`;
+                        if(session.hasSessionReplay==="true")
+                            html += `<img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></div>`;
+                        switch(session.userExperienceScore){
+                            case "SATISFIED":
+                                html += `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
+                                break;
+                            case "TOLERATING":
+                                html += `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
+                                break;
+                            case "FRUSTRATED":
+                                html += `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
+                                break;
+                            default:
+                        }
+                        html += `<a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"'>${session.userId}</a></li>`;
                     })
                     html += `</ul>`;
                     let $popup = $("<div>")
