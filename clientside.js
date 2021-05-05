@@ -2415,8 +2415,8 @@ var DashboardPowerups = (function () {
                 function sortTouples(touples) {
                     return touples.sort((a, b) => b.weight - a.weight);
                 }
-                
-                function buildSessionList(table){
+
+                function buildSessionList(table) {
                     return table.map(x => x["userSessionId"]);
                 }
             }
@@ -2615,10 +2615,10 @@ var DashboardPowerups = (function () {
                     //display limit text
                     chart.renderer.text(`${limit - 1}/${data.touples.length - 1} actions`, 70, 25)
                         .add();
-                    chart.renderer.text(`Showing <a href="javascript:">${data.rows}</a> sessions`, 
+                    chart.renderer.text(`Showing <a href="javascript:">${data.rows}</a> sessions`,
                         chart.chartWidth - 160, chart.chartHeight - 25)
                         .add()
-                        .on("click",sessionPopup);
+                        .on("click", sessionPopup);
                     //display filter text
                     if (Array.isArray(params.filter)) {
                         let y = 55, inc = 20;
@@ -2870,20 +2870,21 @@ var DashboardPowerups = (function () {
                             .on("click", filterProp);
                     }
                 });
-                return chart;
-            }
 
-            function sessionPopup(e){
-                let html = `<h3>Session List</h3><ul>`;
-                data.sessionList.forEach(sessionId=>{
-                    html += `<li><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${sessionId}"'</a></li>`;
-                })
-                html += `</ul>`;
-                let $popup = $("<div>")
-                            .addClass("powerupSankeyDetailPopup")
-                            .html(html)
-                            .click(() => { $popup.remove(); })
-                            .appendTo(container);
+
+                function sessionPopup(e) {
+                    let html = `<h3>Session List</h3><ul>`;
+                    data.sessionList.forEach(sessionId => {
+                        html += `<li><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${sessionId}"'</a></li>`;
+                    })
+                    html += `</ul>`;
+                    let $popup = $("<div>")
+                        .addClass("powerupSankeyDetailPopup")
+                        .html(html)
+                        .click(() => { $popup.remove(); })
+                        .appendTo(container);
+                }
+                return chart;
             }
 
             function findContainer(link) {
