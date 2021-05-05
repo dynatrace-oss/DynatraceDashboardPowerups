@@ -2871,6 +2871,7 @@ var DashboardPowerups = (function () {
                     let html = `<h3>Session List</h3><table>`;
                     data.filteredTable.forEach(session => {
                         html += `<tr>`;
+                        html += `<tr><th>Replay</th><th>UX Score</th><th>UserId</th>`;
                         if(session.hasSessionReplay==="true")
                             html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
                         else 
@@ -2888,7 +2889,8 @@ var DashboardPowerups = (function () {
                             default:
                                 html += `<td></td>`;
                         }
-                        html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"'>${session.userId}</a></td>`;
+                        let id = session.userId !== "null" ? session.userId : "anonymous";
+                        html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"'>${id}</a></td>`;
                         html += `</tr>`
                     })
                     html += `</table>`;
