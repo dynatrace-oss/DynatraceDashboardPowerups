@@ -2605,7 +2605,7 @@ var DashboardPowerups = (function () {
                     //display limit text
                     chart.renderer.text(`${limit}/${data.touples.length} actions`, 70, 25)
                         .add();
-                    chart.renderer.text(`Showing ${data.rows} sessions`, chart.plotWidth -100, chart.plotHeight -10)
+                    chart.renderer.text(`Showing ${data.rows} sessions`, chart.charWidth -160, chart.chartHeight -25)
                         .add();
                     //display filter text
                     if (Array.isArray(params.filter)) {
