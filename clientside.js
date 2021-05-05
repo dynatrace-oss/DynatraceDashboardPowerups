@@ -2025,7 +2025,8 @@ var DashboardPowerups = (function () {
                     touples: touples,
                     goals: goals,
                     apdexList: actionDetailList,
-                    UAPs: UAPs
+                    UAPs: UAPs,
+                    rows: filterTable.length
                 };
                 return (data);
 
@@ -2602,7 +2603,9 @@ var DashboardPowerups = (function () {
                             .add();
                     }
                     //display limit text
-                    chart.renderer.text(`${limit}/${data.touples.length}`, 70, 25)
+                    chart.renderer.text(`${limit}/${data.touples.length} actions`, 70, 25)
+                        .add();
+                    chart.renderer.text(`Showing ${data.rows} sessions`, chart.plotWidth -100, chart.plotHeight -10)
                         .add();
                     //display filter text
                     if (Array.isArray(params.filter)) {
