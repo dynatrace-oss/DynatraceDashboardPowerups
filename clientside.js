@@ -2889,7 +2889,7 @@ var DashboardPowerups = (function () {
                             default:
                                 html += `<td></td>`;
                         }
-                        if(Number(session.matchingConversionGoalsCount))
+                        if(session.useraction.matchingConversionGoals.filter(x=>x != "").length)
                             html += `<td><img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`;
                         else 
                             html += `<td></td>`;
