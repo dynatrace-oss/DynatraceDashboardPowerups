@@ -2880,7 +2880,7 @@ var DashboardPowerups = (function () {
                             case "SATISFIED":
                                 html += `<td><img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></td>`;
                                 break;
-                            case "TOLERATING":
+                            case "TOLERATED":
                                 html += `<td><img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></td>`;
                                 break;
                             case "FRUSTRATED":
