@@ -2565,8 +2565,8 @@ var DashboardPowerups = (function () {
 
                 let chart = H.chart(container, options, (chart) => {
                     let $container = $(container);
+                    chart.limit = limit = Math.min(limit, data.touples.length);
                     if (chart.limit > 2) {
-                        chart.limit = limit = Math.min(limit, data.touples.length);
                         chart.renderer.button('-', 10, 5)
                             .attr({ zIndex: 1100 })
                             .on('click', function (e) {
