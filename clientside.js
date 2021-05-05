@@ -2003,7 +2003,6 @@ var DashboardPowerups = (function () {
                     longs: [], //{actionName, key, sum, count}
                     dates: [] //{actionName, key, val, count}
                 };
-                let sessionList = [];
 
                 //new refactored approach
                 normalTable = buildNormalTable($table);
@@ -2020,7 +2019,6 @@ var DashboardPowerups = (function () {
                 addDurationToList(actionDetailList, filteredTable);
                 addErrorsToList(actionDetailList, filteredTable);
                 addApdexStylesToList(actionDetailList);
-                sessionList = buildSessionList(filteredTable);
                 touples = sortTouples(touples);
 
                 let data = {
@@ -2029,7 +2027,7 @@ var DashboardPowerups = (function () {
                     apdexList: actionDetailList,
                     UAPs: UAPs,
                     rows: filteredTable.length,
-                    sessionList: sessionList
+                    filteredTable: filteredTable
                 };
                 return (data);
 
@@ -2416,9 +2414,6 @@ var DashboardPowerups = (function () {
                     return touples.sort((a, b) => b.weight - a.weight);
                 }
 
-                function buildSessionList(table) {
-                    return table.map(x => x["userSessionId"]);
-                }
             }
 
             function newChart(data, container, params, limit = 21) {
@@ -2874,8 +2869,8 @@ var DashboardPowerups = (function () {
 
                 function sessionPopup(e) {
                     let html = `<h3>Session List</h3><ul>`;
-                    data.sessionList.forEach(sessionId => {
-                        html += `<li><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${sessionId}"'>${sessionId}</a></li>`;
+                    data.filteredTable.forEach(session => {
+                        html += `<li><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"'>${session.userTag}</a></li>`;
                     })
                     html += `</ul>`;
                     let $popup = $("<div>")
