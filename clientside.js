@@ -2085,23 +2085,30 @@ var DashboardPowerups = (function () {
                 function filterTable(normalTable) {
                     let filteredTable = [];
                     normalTable.forEach((row, rowIdx) => {
-                        let filtered = row.filter(x =>
-                            x["useraction.name"] !== "[]" &&
-                            x["useraction.name"] !== "");
+                        let actions = [];
+                        row["useraction.name"].forEach((action,aIdx)=>{
+                            actions.push({
+                                name: action,
+                                app: row["useraction.application"][aIdx]
+                            })
+                        })
+                        let filtered = actions.filter(x =>
+                            x.name !== "[]" &&
+                            x.name !== "");
                         if (Array.isArray(params.exclude) && params.exclude.length) {
                             params.exclude.forEach(ex => {
-                                filtered = filtered.filter(x => !x["useraction.name"].includes(ex));
+                                filtered = filtered.filter(x => !x.name.includes(ex));
                             });
                         }
                         if (params.convHack == "2") {
-                            filtered["useraction.name"].unshift("START");
-                            filtered["useraction.name"].push("END");
+                            filtered.name.unshift("START");
+                            filtered.name.push("END");
                         }
                         if (Array.isArray(params.filter)) {
                             params.filter.forEach(f => {
                                 let fromIdx;
                                 if (f.from !== undefined && f.to !== undefined) {
-                                    fromIdx = filtered["useraction.name"].findIndex((x, i, arr) =>
+                                    fromIdx = filtered.name.findIndex((x, i, arr) =>
                                         x === f.from
                                         && arr.length > i + 1
                                         && arr[i + 1] === f.to);
@@ -2122,8 +2129,8 @@ var DashboardPowerups = (function () {
                             });
                         }
                         if (filtered.length) {
-                            row.filtered = filtered["useraction.name"];
-                            row.filteredApp = filtered["useraction.application"];
+                            row.filtered = filtered.name;
+                            row.filteredApp = filtered.app;
                             filteredTable.push(row);
                         }
                     });
