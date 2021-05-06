@@ -117,7 +117,7 @@ function startBeacon(request) {
 
     console.log("POWERUP: DEBUG - OpenKit start beacon");
     let deviceId = request.uuid.replace(/[-a-z]/g,'').slice(0,19); //openkit only supports INT, so convert it
-    if (!openKit || !openKit.isInitialized()) {
+    if (!openKit || !openKit.initialized || openKit.isShutdown) {
         openKit = new OpenKitBuilder(
             BG_ENV.OPENKIT_URL, 
             BG_ENV.OPENKIT_APPID, 
@@ -128,13 +128,12 @@ function startBeacon(request) {
             .withManufacturer(request.manufacturer)
             .withModelId(request.modelId)
             .withScreenResolution(request.screenResolution[0], request.screenResolution[1])
-            .withLogLevel(10)
+            .withLogLevel(20)
             .build();
     }
 
     if (openKit) {
-        //if (!openKitSession || openKitSession.isShutdown())
-        if (!openKitSession)
+        if (!openKitSession || openKitSession._isShutdown)
             openKitSession = openKit.createSession();
         if (openKitSession) {
             if (!openKitSession.userId || openKitSession.userId !== request.name) {
