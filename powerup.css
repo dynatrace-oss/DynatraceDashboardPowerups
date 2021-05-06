@@ -300,7 +300,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
 .powerupSankeyDetailPopup {
   z-index: 1200;
   background: #242424;
-  opacity: 0.8;
+  opacity: 0.95;
   height: 80%;
   width: 80%;
   margin: 50px 20px;
@@ -490,8 +490,14 @@ span.powerup-color-normal, h1.powerup-color-normal {
 }
 
 .powerupFilterProp {
-  color: #9355b7;
+  color: #a972cc;
+  font-weight: bold;
   cursor: zoom-in;
+  text-decoration: none;
+}
+
+.powerupFilterProp:hover {
+  text-decoration: underline;
 }
 
 .powerupRemoveFilter {
