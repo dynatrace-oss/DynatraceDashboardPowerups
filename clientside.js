@@ -2658,6 +2658,7 @@ var DashboardPowerups = (function () {
                             else txt = "X - ERROR";
                             chart.renderer.text(txt, 10, y)
                                 .attr({ zIndex: 1100 })
+                                .addClass("powerupRemoveFilter")
                                 .on('click', function (e) {
                                     e.stopPropagation();
                                     if (Array.isArray(params.filter)) params.filter.splice(fidx, 1);

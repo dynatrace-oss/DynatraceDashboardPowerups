@@ -294,7 +294,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
 }
 
 .powerupHighchartsContainer .highcharts-sankey-series .highcharts-link {
-  cursor: alias;
+  cursor: zoom-in;
 }
 
 .powerupSankeyDetailPopup {
@@ -487,4 +487,13 @@ span.powerup-color-normal, h1.powerup-color-normal {
 .grid-tile:hover .powerupTooltip, .powerupTooltipHover {
   /*visibility: visible;*/
   opacity: 0.8;
+}
+
+.powerupFilterProp {
+  color: #9355b7;
+  cursor: zoom-in;
+}
+
+.powerupRemoveFilter {
+  cursor: zoom-out;
 }
