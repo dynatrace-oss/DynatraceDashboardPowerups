@@ -510,3 +510,7 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
 .powerupRemoveFilter {
   cursor: zoom-out;
 }
+
+.powerupSankeyDetailPopup th {
+  text-align: left;
+}
