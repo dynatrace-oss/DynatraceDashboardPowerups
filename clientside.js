@@ -2151,7 +2151,11 @@ var DashboardPowerups = (function () {
                             if (params.convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
                             if (params.convHack == "true" && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
 
-                            let l = touples.findIndex(t => t.from === touple.from && t.to === touple.to);
+                            let l = touples.findIndex(
+                                t => t.from === touple.from 
+                                && t.to === touple.to
+                                && t.fromApp === touple.fromApp
+                                && t.toApp === touple.toApp);
                             if (l < 0) {
                                 touple.weight = 1;
                                 touples.push(touple);
@@ -2194,10 +2198,19 @@ var DashboardPowerups = (function () {
                             let val = arr[k];
                             if (val !== "") {
                                 let actionName = row["useraction.name"][k];
-                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+                                let app = row["useraction.application"][k];
+                                let apdexIdx = apdexList.findIndex(x => 
+                                    x.actionName == actionName
+                                    && x.app == app);
 
                                 if (apdexIdx < 0) {
-                                    let apdexObj = { actionName: actionName, satisfied: 0, tolerating: 0, frustrated: 0 };
+                                    let apdexObj = { 
+                                        actionName: actionName, 
+                                        satisfied: 0, 
+                                        tolerating: 0, 
+                                        frustrated: 0, 
+                                        app: app
+                                    };
                                     apdexIdx = apdexList.length;
                                     apdexList.push(apdexObj);
                                 }
@@ -2456,6 +2469,7 @@ var DashboardPowerups = (function () {
                         tooltip: {
                             nodeFormat: `<div class="powerup-sankey-tooltip">
                             <b>{point.name}</b><br>
+                            App: {point.app}<br>
                             UserActions in sample: {point.sum}<br>
                             <u>Apdex</u><br>
                             &nbsp;&nbsp; Satisfied: {point.apdexSatisfied}<br>
@@ -2523,6 +2537,7 @@ var DashboardPowerups = (function () {
                 data.apdexList.forEach(apdex => {
                     let node = {
                         id: apdex.actionName,
+                        app: apdex.app,
                         apdex: apdex,
                         apdexSatisfied: apdex.satisfied.toString(),
                         apdexTolerating: apdex.tolerating.toString(),
