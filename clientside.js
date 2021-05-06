@@ -2108,7 +2108,7 @@ var DashboardPowerups = (function () {
                             params.filter.forEach(f => {
                                 let fromIdx;
                                 if (f.from !== undefined && f.to !== undefined) {
-                                    fromIdx = filtered.name.findIndex((x, i, arr) =>
+                                    fromIdx = filtered.findIndex((x, i, arr) =>
                                         x === f.from
                                         && arr.length > i + 1
                                         && arr[i + 1] === f.to);
@@ -2123,6 +2123,9 @@ var DashboardPowerups = (function () {
                                             break;
                                     }
 
+                                } else if (f.app !== undefined) {
+                                    fromIdx = filtered.app.findIndex((x, i, arr) =>
+                                        x === f.app);
                                 } else { }
 
                                 if (fromIdx < 0) filtered = []; //this row filtered out
@@ -2722,17 +2725,17 @@ var DashboardPowerups = (function () {
                     function filterProp(e) {
                         let el = e.target;
                         let $el = $(el);
-                        let type = $el.data("type");
+                        /*let type = $el.data("type");
                         let key = $el.data("key");
-                        let val = $el.data("val");
-                        //alert(`${type}\n${key}\n${val}`);
+                        let val = $el.data("val");*/
 
-                        //e.stopPropagation();
-                        let filter = {
+                        //e.stopPropagation(); //allow window to close via propogation
+                        /*let filter = {
                             type: type,
                             key: key,
                             val: val
-                        }
+                        }*/
+                        let filter = $el.data();
                         if (!Array.isArray(params.filter)) params.filter = [];
                         params.filter.push(filter);
                         if (chart && typeof (chart.destroy) != "undefined") {
@@ -2769,6 +2772,9 @@ var DashboardPowerups = (function () {
                         }
                         let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name.replace(/"/g, `""`)}"`);
                         let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
+
+                        //app
+                        html += `<li>App: <a href="javascript:" class="powerupFilterProp" data-app="${node.app}" >${node.app}</a></li>`;
 
                         if (Array.isArray(node.apdex.durations)) {
                             let durations = node.apdex.durations.map(x => Number(x.replace(/[,ms]*/g, '')));
