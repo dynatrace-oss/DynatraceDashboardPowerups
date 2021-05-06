@@ -2109,9 +2109,9 @@ var DashboardPowerups = (function () {
                                 let fromIdx;
                                 if (f.from !== undefined && f.to !== undefined) {
                                     fromIdx = filtered.findIndex((x, i, arr) =>
-                                        x === f.from
+                                        x.name === f.from
                                         && arr.length > i + 1
-                                        && arr[i + 1] === f.to);
+                                        && arr[i + 1].name === f.to);
                                 } else if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
                                     switch (f.type) {
                                         case "string":
@@ -2124,8 +2124,8 @@ var DashboardPowerups = (function () {
                                     }
 
                                 } else if (f.app !== undefined) {
-                                    fromIdx = filtered.app.findIndex((x, i, arr) =>
-                                        x === f.app);
+                                    fromIdx = filtered.findIndex((x, i, arr) =>
+                                        x.app === f.app);
                                 } else { }
 
                                 if (fromIdx < 0) filtered = []; //this row filtered out
