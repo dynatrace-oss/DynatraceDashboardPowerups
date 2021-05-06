@@ -2904,6 +2904,9 @@ var DashboardPowerups = (function () {
 
 
                 function sessionPopup(e) {
+                    let hash = window.location.hash.split(';').map(x=>x.split('='));
+                    let gtf = (hash.find(x=>x[0]==="gtf") || ['gtf','-2h'])[1];
+                    let gf = (hash.find(x=>x[0]==="gf") || ['gf','all'])[1];
                     let html = `<h3>Session List</h3><table>`;
                     html += `<tr><th>SR</th><th>UX</th><th>Goal</th><th>UserId</th></tr>`;
                     data.filteredTable.forEach(session => {
@@ -2930,7 +2933,7 @@ var DashboardPowerups = (function () {
                         else 
                             html += `<td></td>`;
                         let id = session.userId !== "null" ? session.userId : "anonymous";
-                        html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"&gtf=defaultTimeFrame&gf=defaultManagementZone'>${id}</a></td>`;
+                        html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`;
                         html += `</tr>`
                     })
                     html += `</table>`;
