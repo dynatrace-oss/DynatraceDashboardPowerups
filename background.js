@@ -128,6 +128,7 @@ function startBeacon(request) {
             .withManufacturer(request.manufacturer)
             .withModelId(request.modelId)
             .withScreenResolution(request.screenResolution[0], request.screenResolution[1])
+            .withLogLevel(LogLevel.Debug)
             .build();
     }
 
