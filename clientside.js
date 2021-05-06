@@ -2653,6 +2653,8 @@ var DashboardPowerups = (function () {
                                 txt = `X - ${f.from} -> ${f.to}`;
                             else if (f.type !== undefined && f.key !== undefined && f.val !== undefined)
                                 txt = `X - (${f.type}) ${f.key}=${f.val}`;
+                            else if (f.app !== undefined)
+                                txt = `X - app: ${f.app}`;
                             else txt = "X - ERROR";
                             chart.renderer.text(txt, 10, y)
                                 .attr({ zIndex: 1100 })
