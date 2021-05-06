@@ -496,7 +496,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
   text-decoration: none;
 }
 
-.powerupFilterProp, .powerupSankeyDetailPopup a.powerupFilterProp:hover {
+.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hover {
   text-decoration: underline;
 }
 
