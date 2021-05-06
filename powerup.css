@@ -489,14 +489,14 @@ span.powerup-color-normal, h1.powerup-color-normal {
   opacity: 0.8;
 }
 
-.powerupSankeyDetailPopup a.powerupFilterProp {
+.powerupFilterProp, .powerupSankeyDetailPopup a.powerupFilterProp {
   color: #a972cc;
   font-weight: bold;
   cursor: zoom-in;
   text-decoration: none;
 }
 
-.powerupSankeyDetailPopup a.powerupFilterProp:hover {
+.powerupFilterProp, .powerupSankeyDetailPopup a.powerupFilterProp:hover {
   text-decoration: underline;
 }
 
