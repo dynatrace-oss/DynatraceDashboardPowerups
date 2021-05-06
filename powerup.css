@@ -503,7 +503,3 @@ span.powerup-color-normal, h1.powerup-color-normal {
 .powerupRemoveFilter {
   cursor: zoom-out;
 }
-
-.powerupSankeyDrilldown {
-  cursor: zoom-in;
-}

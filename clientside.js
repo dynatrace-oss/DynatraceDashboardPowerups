@@ -2640,7 +2640,7 @@ var DashboardPowerups = (function () {
                     //display limit text
                     chart.renderer.text(`${limit - 1}/${data.touples.length - 1} actions`, 70, 25)
                         .add();
-                    chart.renderer.text(`Showing <a href="javascript:" class="powerupSankeyDrilldown">${data.rows}</a> sessions`,
+                    chart.renderer.text(`Showing <a href="javascript:" class="powerupFilterProp">${data.rows}</a> sessions`,
                         chart.chartWidth - 160, chart.chartHeight - 25)
                         .add()
                         .on("click", sessionPopup);
