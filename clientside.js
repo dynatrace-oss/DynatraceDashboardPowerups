@@ -410,9 +410,9 @@ var DashboardPowerups = (function () {
             {
                 OpenKit: "crash_beacon",
                 e: {
-                    name: JSON.stringify(e.name),
-                    message: JSON.stringify(e.message),
-                    stack: JSON.stringify(e.stack)
+                    name: e.name,
+                    message: e.message,
+                    stack: e.stack
                 }
             }, "*");
     }
