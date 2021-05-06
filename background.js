@@ -116,8 +116,13 @@ function startBeacon(request) {
     if (request.beaconOptOut) return false;
 
     console.log("POWERUP: DEBUG - OpenKit start beacon");
+    let deviceId = request.uuid.replace(/[-a-z]/g,'').slice(0,19); //openkit only supports INT, so convert it
     if (!openKit || !openKit.isInitialized()) {
-        openKit = new OpenKitBuilder(BG_ENV.OPENKIT_URL, BG_ENV.OPENKIT_APPID, request.uuid)
+        openKit = new OpenKitBuilder(
+            BG_ENV.OPENKIT_URL, 
+            BG_ENV.OPENKIT_APPID, 
+            deviceId
+            )
             .withApplicationVersion(request.applicationVersion)
             .withOperatingSystem(request.operatingSystem)
             .withManufacturer(request.manufacturer)
