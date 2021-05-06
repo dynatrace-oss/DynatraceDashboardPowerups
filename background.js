@@ -127,7 +127,8 @@ function startBeacon(request) {
     }
 
     if (openKit) {
-        if (!openKitSession || openKitSession.isShutdown())
+        //if (!openKitSession || openKitSession.isShutdown())
+        if (!openKitSession)
             openKitSession = openKit.createSession();
         if (openKitSession) {
             if (!openKitSession.userId || openKitSession.userId !== request.name) {
