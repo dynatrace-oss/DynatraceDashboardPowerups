@@ -2010,6 +2010,7 @@ var DashboardPowerups = (function () {
 
                 //new refactored approach
                 normalTable = buildNormalTable($table);
+                if(!validateNormalTable(normalTable)) return false;
                 filteredTable = filterTable(normalTable);
                 touples = buildTouples(filteredTable);
                 goals = buildGoals(filteredTable);
@@ -2084,6 +2085,29 @@ var DashboardPowerups = (function () {
                         });
                     normalTable.shift();//row 0 was the titles
                     return normalTable;
+                }
+
+                function validateNormalTable(table){
+                    if(!table.length){
+                        let error = `POWERUP: WARN - Sankey - No sessions found via USQL.`
+                        console.log(error);
+                        errorBeacon(error);
+                        displayError(error);
+                        return false;
+                    } else if(Object.keys(table[0]).length < 50) {
+                        let error = `POWERUP: WARN - Sankey - Missing columns. USQL should include 'SELECT useraction.*, usersession.* FROM usersession'`;
+                        console.log(error);
+                        errorBeacon(error);
+                        displayError(error);
+                        return false;
+                    }
+                    return true;
+                }
+
+                function displayError(error) {
+                    $container = $(params.container);
+                    let html = `<h2>${error}</h2>`;
+                    $container.html(html);
                 }
 
                 function filterTable(normalTable) {
@@ -3036,7 +3060,8 @@ var DashboardPowerups = (function () {
                         convHack: convHack,
                         colors: colors,
                         exclude: exclude,
-                        table: $table
+                        table: $table,
+                        container: container
                     };
                     let data = readTableData($table.get(0), params);
                     let sankey = newChart(data, container, params);
