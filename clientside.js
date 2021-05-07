@@ -2473,6 +2473,7 @@ var DashboardPowerups = (function () {
             }
 
             function newChart(data, container, params, limit = 21) {
+                if(!data) return false;
                 const HARDMAX = 100;
                 let options = {
                     type: 'sankey',
