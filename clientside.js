@@ -252,7 +252,9 @@ var DashboardPowerups = (function () {
 
     const waitForHCmod = (mod, fn, retries = 5) => {
         if (retries < 1) {
-            console.log(`POWERUP: CRITICAL - failed to load Highcharts module ${mod}`);
+            let error = `POWERUP: CRITICAL - failed to load Highcharts module ${mod}`;
+            console.log(error);
+            errorBeacon(error);
             return;
         }
         if (mod in Highcharts.seriesTypes) fn();
@@ -510,7 +512,9 @@ var DashboardPowerups = (function () {
             if (pub.PUHighchartsMutex.blocking) {
                 pub.PUHighchartsMutex.blocked++;
                 if (pub.PUHighchartsMutex.blocked % 100 == 0) {
-                    console.log("Powerup: WARN - PUHighcharts mutex blocked, skipped " + pub.PUHighchartsMutex.blocked);
+                    let error = "Powerup: WARN - PUHighcharts mutex blocked, skipped " + pub.PUHighchartsMutex.blocked;
+                    console.log(error);
+                    errorBeacon(error);
                 }
                 return false;
             } else {
@@ -620,7 +624,7 @@ var DashboardPowerups = (function () {
                 })
                 .off("click.powerup")
                 .on("click.powerup", (e) => {
-                    console.log("Powerup: clicked plot background");
+                    //console.log("Powerup: clicked plot background");
                     e.stopImmediatePropagation();
                 })
                 .addClass("powerupPlotBackground"); //change cursor
@@ -783,9 +787,11 @@ var DashboardPowerups = (function () {
                             console.log("Powerup: DEBUG - ignoring empty chart");
                         }
                     } catch (e) {
-                        console.log("Powerup: CRITICAL - failed to redraw, error:");
+                        let error = `Powerup: CRITICAL - failed to redraw. ${e.name}: ${e.message}`;
+                        console.log(error);
                         console.log(e);
                         console.log(chart);
+                        errorBeacon(error);
                     }
                 }
                 mainPromise.resolve(true);
@@ -1173,12 +1179,11 @@ var DashboardPowerups = (function () {
     pub.PULine = function (chart, title) { //example: !PU(line):thld=4000;hcol=green;lcol=red
         if (!pub.config.Powerups.linePU) return;
 
-        //let argstring = title.split(PU_LINE)[1].split('!')[0].trim();
-        //let args = argstring.split(";").map(x => x.split("="));
         let args = argsplit(title, PU_LINE);
         if (args.length < 3) {
-            if (pub.config.Powerups.debug)
-                console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
+            let error = "Powerup: ERROR - invalid argstring: " + args.argstring;
+            console.log(error);
+            errorBeacon(error);
             return false;
         }
         let thld = args.find(x => x[0] == "thld")[1];
@@ -1209,8 +1214,9 @@ var DashboardPowerups = (function () {
         //let args = argstring.split(";").map(x => x.split("="));
         let args = argsplit(title, PU_USQLSTACK);
         if (args.length < 1) {
-            if (pub.config.Powerups.debug)
-                console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
+            let error = "Powerup: ERROR - invalid argstring: " + args.argstring;
+            console.log(error);
+            errorBeacon(error);
             return false;
         }
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
@@ -1253,7 +1259,9 @@ var DashboardPowerups = (function () {
             chart.redraw(false);
             return true;
         } else if (chart.series.length < 1) { //something's broken, just abort
-            console.log("Powerup: WARN - USQLStack did not find a series, aborting.");
+            let error = "Powerup: WARN - USQLStack did not find a series, aborting.";
+            console.log(error);
+            errorBeacon(error);
             return false;
         }
 
@@ -1344,8 +1352,9 @@ var DashboardPowerups = (function () {
         //let args = argstring.split(";").map(x => x.split("="));
         let args = argsplit(title, PU_USQLCOLOR);
         if (args.length < 1) {
-            if (pub.config.Powerups.debug)
-                console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
+            let error = "Powerup: ERROR - invalid argstring: " + args.argstring;
+            console.log(error);
+            errorBeacon(error);
             return false;
         }
         let colors = ((args.find(x => x[0] == "colors") || [])[1]);
@@ -1628,7 +1637,9 @@ var DashboardPowerups = (function () {
 
                 let sorted = !!vals.reduce((n, item) => n !== false && item >= n && item);
                 if (!sorted) {
-                    console.log("Powerup: ERROR - toplist PU must have vals sorted ascending");
+                    let error = "Powerup: ERROR - toplist PU must have vals sorted ascending";
+                    console.log(error);
+                    errorBeacon(error);
                     return false;
                 }
 
@@ -1875,7 +1886,9 @@ var DashboardPowerups = (function () {
                 }
             });
         if (typeof val == "undefined") {
-            console.log("Powerup: ERROR - unable to match link: " + link_text);
+            let error = "Powerup: ERROR - unable to match link: " + link_text;
+            console.log(error);
+            errorBeacon(error);
             return undefined;
         } else { //cleanup & return val
             val = val.trim();
@@ -1919,7 +1932,9 @@ var DashboardPowerups = (function () {
             }
         });
         if (typeof $tile == "undefined") {
-            console.log("Powerup: WARN - unable to match link: " + link_text);
+            let error = "Powerup: WARN - unable to match link: " + link_text;
+            console.log(error);
+            errorBeacon(error);
             return undefined;
         } else {
             return $tile;
@@ -1936,7 +1951,9 @@ var DashboardPowerups = (function () {
             }
         });
         if (typeof tile == "undefined") {
-            console.log("Powerup: ERROR - unable to match markdown with link: " + link_text);
+            let error = "Powerup: ERROR - unable to match markdown with link: " + link_text;
+            console.log(error);
+            errorBeacon(error);
             return undefined;
         } else {
             return tile;
@@ -2010,7 +2027,7 @@ var DashboardPowerups = (function () {
 
                 //new refactored approach
                 normalTable = buildNormalTable($table);
-                if(!validateNormalTable(normalTable)) return false;
+                if (!validateNormalTable(normalTable)) return false;
                 filteredTable = filterTable(normalTable);
                 touples = buildTouples(filteredTable);
                 goals = buildGoals(filteredTable);
@@ -2087,14 +2104,14 @@ var DashboardPowerups = (function () {
                     return normalTable;
                 }
 
-                function validateNormalTable(table){
-                    if(!table.length){
+                function validateNormalTable(table) {
+                    if (!table.length) {
                         let error = `POWERUP: WARN - Sankey - No sessions found via USQL.`
                         console.log(error);
                         errorBeacon(error);
                         displayError(error);
                         return false;
-                    } else if(Object.keys(table[0]).length < 50) {
+                    } else if (Object.keys(table[0]).length < 50) {
                         let error = `POWERUP: WARN - Sankey - Missing columns. USQL should include 'SELECT useraction.*, usersession.* FROM usersession'`;
                         console.log(error);
                         errorBeacon(error);
@@ -2114,7 +2131,7 @@ var DashboardPowerups = (function () {
                     let filteredTable = [];
                     normalTable.forEach((row, rowIdx) => {
                         let actions = [];
-                        row["useraction.name"].forEach((action,aIdx)=>{
+                        row["useraction.name"].forEach((action, aIdx) => {
                             actions.push({
                                 name: action,
                                 app: row["useraction.application"][aIdx]
@@ -2129,8 +2146,8 @@ var DashboardPowerups = (function () {
                             });
                         }
                         if (params.convHack == "2") {
-                            filtered.unshift({name: "START", app: ""});
-                            filtered.push({name: "END", app: ""});
+                            filtered.unshift({ name: "START", app: "" });
+                            filtered.push({ name: "END", app: "" });
                         }
                         if (Array.isArray(params.filter)) {
                             params.filter.forEach(f => {
@@ -2172,21 +2189,21 @@ var DashboardPowerups = (function () {
                     let touples = [];
                     filteredTable.forEach(row => {
                         for (let k = 0; k < row.filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
-                            let touple = { 
+                            let touple = {
                                 from: row.filtered[k],
-                                fromApp: row.filteredApp[k], 
+                                fromApp: row.filteredApp[k],
                                 to: row.filtered[k + 1],
-                                toApp: row.filteredApp[k + 1] 
+                                toApp: row.filteredApp[k + 1]
                             };
                             if (touple.from === touple.to) continue; // ignore self actions
                             if (params.convHack == "true" && k === 0) touple.from = "Start: " + touple.from;
                             if (params.convHack == "true" && k + 1 === filtered.length - 1) touple.to = "End: " + touple.to;
 
                             let l = touples.findIndex(
-                                t => t.from === touple.from 
-                                && t.to === touple.to
-                                && t.fromApp === touple.fromApp
-                                && t.toApp === touple.toApp);
+                                t => t.from === touple.from
+                                    && t.to === touple.to
+                                    && t.fromApp === touple.fromApp
+                                    && t.toApp === touple.toApp);
                             if (l < 0) {
                                 touple.weight = 1;
                                 touples.push(touple);
@@ -2230,16 +2247,16 @@ var DashboardPowerups = (function () {
                             if (val !== "") {
                                 let actionName = row["useraction.name"][k];
                                 let app = row["useraction.application"][k];
-                                let apdexIdx = apdexList.findIndex(x => 
+                                let apdexIdx = apdexList.findIndex(x =>
                                     x.actionName == actionName
                                     && x.app == app);
 
                                 if (apdexIdx < 0) {
-                                    let apdexObj = { 
-                                        actionName: actionName, 
-                                        satisfied: 0, 
-                                        tolerating: 0, 
-                                        frustrated: 0, 
+                                    let apdexObj = {
+                                        actionName: actionName,
+                                        satisfied: 0,
+                                        tolerating: 0,
+                                        frustrated: 0,
                                         app: app
                                     };
                                     apdexIdx = apdexList.length;
@@ -2473,7 +2490,7 @@ var DashboardPowerups = (function () {
             }
 
             function newChart(data, container, params, limit = 21) {
-                if(!data) return false;
+                if (!data) return false;
                 const HARDMAX = 100;
                 let options = {
                     type: 'sankey',
@@ -2933,18 +2950,18 @@ var DashboardPowerups = (function () {
 
 
                 function sessionPopup(e) {
-                    let hash = window.location.hash.split(';').map(x=>x.split('='));
-                    let gtf = (hash.find(x=>x[0]==="gtf") || ['gtf','-2h'])[1];
-                    let gf = (hash.find(x=>x[0]==="gf") || ['gf','all'])[1];
+                    let hash = window.location.hash.split(';').map(x => x.split('='));
+                    let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
+                    let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
                     let html = `<h3>Session List</h3><table>`;
                     html += `<tr><th>SR</th><th>UX</th><th>Goal</th><th>UserId</th></tr>`;
                     data.filteredTable.forEach(session => {
                         html += `<tr>`;
-                        if(session.hasSessionReplay==="true")
+                        if (session.hasSessionReplay === "true")
                             html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
-                        else 
+                        else
                             html += `<td></td>`;
-                        switch(session.userExperienceScore){
+                        switch (session.userExperienceScore) {
                             case "SATISFIED":
                                 html += `<td><img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></td>`;
                                 break;
@@ -2957,9 +2974,9 @@ var DashboardPowerups = (function () {
                             default:
                                 html += `<td></td>`;
                         }
-                        if(session["useraction.matchingConversionGoals"].filter(x=>x != "").length)
+                        if (session["useraction.matchingConversionGoals"].filter(x => x != "").length)
                             html += `<td><img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`;
-                        else 
+                        else
                             html += `<td></td>`;
                         let id = session.userId !== "null" ? session.userId : "anonymous";
                         html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`;
@@ -3032,8 +3049,9 @@ var DashboardPowerups = (function () {
                     let chartTitle = title.split(PU_SANKEY)[0];
                     let args = argsplit(title, PU_SANKEY);
                     if (args.length < 1) {
-                        if (pub.config.Powerups.debug)
-                            console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
+                        let error = "Powerup: ERROR - invalid argstring: " + args.argstring;
+                        console.log(error);
+                        errorBeacon(error);
                         return false;
                     }
                     let link = args.find(x => x[0] == "link")[1];
@@ -3046,7 +3064,9 @@ var DashboardPowerups = (function () {
 
                     let container = findContainer(link);
                     if (typeof (container) == "undefined") {
-                        console.log("Powerup: WARN - Sankey container is undefined.");
+                        let error = "Powerup: WARN - Sankey container is undefined.";
+                        console.log(error);
+                        errorBeacon(error);
                         return false;
                     }
                     if (!$table.length) { //USQL error or no data
@@ -3293,7 +3313,9 @@ var DashboardPowerups = (function () {
 
             let sorted = !!vals.reduce((n, item) => n !== false && item >= n && item);
             if (!sorted) {
-                console.log("Powerup: ERROR - Heatmap PU must have vals sorted ascending");
+                let error = "Powerup: ERROR - Heatmap PU must have vals sorted ascending";
+                console.log(error)
+                errorBeacon(error);
                 return false;
             }
 
@@ -3374,7 +3396,9 @@ var DashboardPowerups = (function () {
         }
         chart.series.forEach((s, sIdx) => {
             if (s.type != "column") {
-                console.log("Powerup: ERROR - Please use a bar chart as a source for heatmap powerup.");
+                let error = "Powerup: ERROR - Please use a bar chart as a source for heatmap powerup.";
+                console.log(error);
+                errorBeacon(error);
                 return;
             }
 
@@ -4038,8 +4062,9 @@ var DashboardPowerups = (function () {
         //let args = argstring.split(";").map(x => x.split("="));
         let args = argsplit(title, PU_GAUGE);
         if (args.length < 2) {
-            if (pub.config.Powerups.debug)
-                console.log("Powerup: ERROR - invalid argstring: " + args.argstring);
+            let error = "Powerup: ERROR - invalid argstring: " + args.argstring;
+            console.log(error);
+            errorBeacon(error);
             return false;
         }
         let vals = ((args.find(x => x[0] == "stops") || [])[1]);
@@ -4206,7 +4231,6 @@ var DashboardPowerups = (function () {
         //make white text black
         $('[data-page-content="canvas"]').find('*')
             .filter((i, el) => {
-                //console.log($(el).css('background-color'));
                 return $(el).css('color') === d3.rgb('white').toString();
             })
             .css('color', "black");
@@ -4287,9 +4311,6 @@ var DashboardPowerups = (function () {
                 let $tabletile = $(tabletile)
                 let dataTable = readTableData($tabletile, false);
 
-                //console.log("POWERUP: DEBUG - readTableData:");
-                //console.log(dataTable);
-
                 //lookup val in table
                 let firstColName = dataTable.keys[0];
                 let rowIdx;
@@ -4305,7 +4326,9 @@ var DashboardPowerups = (function () {
                 let vlookupVal;
                 let colName = (Number.isNaN(col) ? col : dataTable.keys[col]);
                 if (rowIdx < 0) {
-                    console.log("POWERUP: WARN - vlookup val not found in table.");
+                    let error = "POWERUP: WARN - vlookup val not found in table.";
+                    console.log(error);
+                    //errorBeacon(error);
                     //return false;
                     vlookupVal = notfound;
                 } else {
@@ -4530,8 +4553,6 @@ var DashboardPowerups = (function () {
                 let dataTable = readTableData($tile);
                 if (!dataTable) return false;
 
-                //console.log("POWERUP: DEBUG - readTableData:");
-                //console.log(dataTable);
                 let key = dataTable.keys[0];
                 let sum = dataTable.normalTable.reduce((agg, x) => agg + x[key], 0);
                 let avg = sum / dataTable.normalTable.length;

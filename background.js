@@ -55,7 +55,6 @@ function getVersion() {
 
 function getAckedVersion(callback) {
     chrome.storage.local.get(['Powerups'], function (result) {
-        //console.log('Powerup: (popup) config from storage is: ' + JSON.stringify(result));
         if (result && result.Powerups && result.Powerups.ackedVersion) {
             callback(result.Powerups.ackedVersion);
         } else {
