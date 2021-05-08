@@ -4649,7 +4649,7 @@ var DashboardPowerups = (function () {
                     .addClass('powerupHoneycomb')
                     .insertAfter($table);
                 
-                let chart = Highcharts.chart('container', {
+                let chart = Highcharts.chart($container[0], {
                     chart: {
                         type: 'tilemap',
                         inverted: true,
