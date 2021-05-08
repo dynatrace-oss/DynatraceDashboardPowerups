@@ -4708,7 +4708,7 @@ var DashboardPowerups = (function () {
                     tooltip: {
                         headerFormat: '',
                         //pointFormat: 'The population of <b> {point.name}</b> is <b>{point.value}</b>'
-                        pointFormat: `<b>{point.${dataTable.keys[0]}}</b>: {point.${dataTable.keys[1]}}`
+                        pointFormat: `<b>{point.name}</b>: {point.value}`
                     },
                 
                     plotOptions: {
