@@ -4649,6 +4649,20 @@ var DashboardPowerups = (function () {
                     .addClass('powerupHoneycomb')
                     .insertAfter($table);
                 
+                //prep the data
+                let data = [];
+                let name = dataTable.keys[0];
+                let value = dataTable.keys[1];
+                dataTable.normalTable.forEach((x,i)=>{
+                    data.push({
+                        name: x[name],
+                        value: x[value],
+                        x: Math.round(i/2),
+                        y: Math.round(i/2)
+                    });
+                });
+
+                //chart options
                 let options = {
                     chart: {
                         type: 'tilemap',
@@ -4711,8 +4725,8 @@ var DashboardPowerups = (function () {
                     },
                 
                     series: [{
-                        name: '',
-                        data: dataTable.normalTable
+                        name: 'data',
+                        data: data
                     }]
                 }
                 let chart = Highcharts.chart($container[0], options);
