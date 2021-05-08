@@ -214,6 +214,7 @@ if (typeof (INJECTED) == "undefined") {
                 gaugePU: true,
                 comparePU: true,
                 tablePU: true,
+                honeycombPU: true,
                 debug: false,
                 colorPUTarget: "Text",
                 animateCritical: "3 Pulses",
@@ -312,6 +313,8 @@ if (typeof (INJECTED) == "undefined") {
             injectHighchartsModule("treemap");
         if (config.Powerups.gaugePU)
             injectHighchartsModule("solid-gauge");
+        if (config.Powerups.honeycombPU)
+            injectHighchartsModule("tilemap");
     }
 
     function injectD3Modules(config) {
