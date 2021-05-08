@@ -4649,7 +4649,7 @@ var DashboardPowerups = (function () {
                     .addClass('powerupHoneycomb')
                     .insertAfter($table);
                 
-                let chart = Highcharts.chart($container[0], {
+                let options = {
                     chart: {
                         type: 'tilemap',
                         inverted: true,
@@ -4715,7 +4715,8 @@ var DashboardPowerups = (function () {
                         data: dataTable.normalTable
                         
                     }]
-                });
+                }
+                let chart = Highcharts.chart($container[0], options);
  
             powerupsFired['PU_HONEYCOMB'] ? powerupsFired['PU_HONEYCOMB']++ : powerupsFired['PU_HONEYCOMB'] = 1;
             }
