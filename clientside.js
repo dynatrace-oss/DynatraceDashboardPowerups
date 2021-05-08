@@ -4668,7 +4668,7 @@ var DashboardPowerups = (function () {
                         visible: false
                     },
                 
-                    /*colorAxis: {
+                    colorAxis: {
                         dataClasses: [{
                             from: 0,
                             to: 1000000,
@@ -4689,7 +4689,7 @@ var DashboardPowerups = (function () {
                             color: '#FF2371',
                             name: '> 20M'
                         }]
-                    },*/
+                    },
                 
                     tooltip: {
                         headerFormat: '',
@@ -4713,7 +4713,6 @@ var DashboardPowerups = (function () {
                     series: [{
                         name: '',
                         data: dataTable.normalTable
-                        
                     }]
                 }
                 let chart = Highcharts.chart($container[0], options);
