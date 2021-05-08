@@ -64,12 +64,13 @@ var DashboardPowerups = (function () {
     const PU_GRID = '!PU(grid):';
     const PU_MENU = '!PU(menu):';
     const PU_TOPCOLOR = '!PU(topcolor):';
+    const PU_HONEYCOMB = '!PU(honeycomb):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR
+        PU_TOPCOLOR, PU_HONEYCOMB
     ];
     const CHART_OPTS = {
         //plotBackgroundColor: '#454646',
@@ -4624,6 +4625,28 @@ var DashboardPowerups = (function () {
         return true;
     }
 
+    pub.PUhoneycomb = function () {
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let title = $title.text();
+            let $tile = $title.parents(TILE_SELECTOR);
+
+            if (title.includes(PU_HONEYCOMB)) {
+                let args = argsplit(title, PU_HONEYCOMB);
+                let color = (args.find(x => x[0] == "color") || ["white"])[1];
+                let output = (args.find(x => x[0] == "output") || ["output", "stdev"])[1].split(',');
+
+                //find the table
+                let dataTable = readTableData($tile);
+                if (!dataTable) return false;
+                console.log(dataTable);
+ 
+            powerupsFired['PU_HONEYCOMB'] ? powerupsFired['PU_HONEYCOMB']++ : powerupsFired['PU_HONEYCOMB'] = 1;
+            }
+        });
+        return true;
+    }
+
     pub.hideEarlyAdopter = function () {
         $(`[uitestid="gwt-debug-dashboard-tile-filter-indicator-icon"]`).siblings()
             .each((i, el) => {
@@ -5014,6 +5037,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUfunnelColors());
             promises.push(pub.PUTopListColor());
             waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
+            promises.push(pub.PUhoneycomb());
 
             //misc visualizations
             promises.push(pub.PUbackground());
