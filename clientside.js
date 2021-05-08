@@ -4637,9 +4637,85 @@ var DashboardPowerups = (function () {
                 let output = (args.find(x => x[0] == "output") || ["output", "stdev"])[1].split(',');
 
                 //find the table
-                let dataTable = readTableData($tile);
+                let dataTable = readTableData($tile,false);
                 if (!dataTable) return false;
                 console.log(dataTable);
+
+                //swap in a container for our new chart
+                let $table = $tile.find(TABLE_SELECTOR);
+                $table.hide();
+                $tile.find('.powerupHoneycomb').remove();
+                let $container = $("<div>")
+                    .addClass('powerupHoneycomb')
+                    .insertAfter($table);
+                
+                let chart = Highcharts.chart('container', {
+                    chart: {
+                        type: 'tilemap',
+                        inverted: true,
+                        height: '80%'
+                    },
+                
+                    title: {
+                        text: ''
+                    },
+                
+                    xAxis: {
+                        visible: false
+                    },
+                
+                    yAxis: {
+                        visible: false
+                    },
+                
+                    /*colorAxis: {
+                        dataClasses: [{
+                            from: 0,
+                            to: 1000000,
+                            color: '#F9EDB3',
+                            name: '< 1M'
+                        }, {
+                            from: 1000000,
+                            to: 5000000,
+                            color: '#FFC428',
+                            name: '1M - 5M'
+                        }, {
+                            from: 5000000,
+                            to: 20000000,
+                            color: '#FF7987',
+                            name: '5M - 20M'
+                        }, {
+                            from: 20000000,
+                            color: '#FF2371',
+                            name: '> 20M'
+                        }]
+                    },*/
+                
+                    tooltip: {
+                        headerFormat: '',
+                        //pointFormat: 'The population of <b> {point.name}</b> is <b>{point.value}</b>'
+                        pointFormat: `<b>{point.${dataTable.keys[0]}}</b>: {point.${dataTable.keys[1]}}`
+                    },
+                
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: true,
+                                format: '',
+                                color: '#000000',
+                                style: {
+                                    textOutline: false
+                                }
+                            }
+                        }
+                    },
+                
+                    series: [{
+                        name: '',
+                        data: dataTable.normalTable
+                        
+                    }]
+                });
  
             powerupsFired['PU_HONEYCOMB'] ? powerupsFired['PU_HONEYCOMB']++ : powerupsFired['PU_HONEYCOMB'] = 1;
             }
