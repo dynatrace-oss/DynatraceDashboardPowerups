@@ -4637,7 +4637,7 @@ var DashboardPowerups = (function () {
                 let output = (args.find(x => x[0] == "output") || ["output", "stdev"])[1].split(',');
 
                 //find the table
-                let dataTable = readTableData($tile,false);
+                let dataTable = readTableData($tile,true);
                 if (!dataTable) return false;
                 console.log(dataTable);
 
