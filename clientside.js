@@ -299,6 +299,7 @@ var DashboardPowerups = (function () {
                     dataTable[i][j] = $el2.text();
                     if (getColors && i === 0) {
                         colors[j] = $el2.find(`span`).css("border-left-color");
+                        if(colors[j] == undefined) $el2.css("border-left-color"); //default to grayish
                     }
                     if (getLinks) {
                         let $a = $el2.find(`a`);
@@ -4689,7 +4690,6 @@ var DashboardPowerups = (function () {
                         y: y++
                     }
                     if (point.color != undefined) p.color = point.color
-                    else p.color = '#a972cc';
                     data.push(p);
                 });
 
