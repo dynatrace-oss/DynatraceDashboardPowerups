@@ -4680,8 +4680,8 @@ var DashboardPowerups = (function () {
                     let p = {
                         name: point[name],
                         value: point[value],
-                        x: x,
-                        y: y++
+                       // x: x,
+                       // y: y++
                     }
                     if(point.color != undefined) p.color = point.color
                     else point.color = '#a972cc';
