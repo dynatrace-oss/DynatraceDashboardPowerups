@@ -4670,18 +4670,18 @@ var DashboardPowerups = (function () {
                 let value = dataTable.keys[1];
                 let xmax = Math.ceil(Math.sqrt(dataTable.normalTable.length));
                 let ymax = Math.floor(Math.sqrt(dataTable.normalTable.length));
-                let x = xmax;
-                let y = ymax;
+                let x = 0;
+                let y = 0;
                 dataTable.normalTable.forEach((point,i)=>{
-                    if(y<0){
-                        x--;
-                        y=ymax;
+                    if(y>=ymax){
+                        x++;
+                        y=0;
                     }
                     let p = {
                         name: point[name],
                         value: point[value],
                         x: x,
-                        y: y--
+                        y: y++
                     }
                     if(point.color != undefined) p.color = point.color
                     else point.color = '#a972cc';
@@ -4692,7 +4692,7 @@ var DashboardPowerups = (function () {
                 let options = {
                     chart: {
                         type: 'tilemap',
-                        inverted: true,
+                        //inverted: true,
                         height: '80%',
                         backgroundColor: '#353535'
                     },
