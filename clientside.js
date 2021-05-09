@@ -4663,7 +4663,7 @@ var DashboardPowerups = (function () {
                 $tile.find('.powerupHoneycomb').each((i, el) => {
                     Highcharts.charts.filter(x => typeof (x) !== "undefined")
                         .filter(x => x.container === el)
-                        .destroy();
+                        .forEach(chart=>{chart.destroy();});
                     $(el).remove();
                 });
                 let $container = $("<div>")
