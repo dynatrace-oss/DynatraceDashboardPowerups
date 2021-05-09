@@ -4689,7 +4689,7 @@ var DashboardPowerups = (function () {
                         y: y++
                     }
                     if (point.color != undefined) p.color = point.color
-                    else point.color = '#a972cc';
+                    else p.color = '#a972cc';
                     data.push(p);
                 });
 
