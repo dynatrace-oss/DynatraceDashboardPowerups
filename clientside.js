@@ -281,12 +281,13 @@ var DashboardPowerups = (function () {
     }
 
     //Read data from USQL table
-    function readTableData(tabletile, forceLastColumnNumber = true) {
+    function readTableData(tabletile, forceLastColumnNumber = true, getColors = false) {
         let $tabletile = $(tabletile);
         if (!$tabletile.length) return false;
         let dataTable = [];
         let normalTable = [];
         let keys = [];
+        let colors = [];
         $tabletile
             .find(TABLE_COL_SELECTOR)
             .each(function (i, el) {
@@ -294,6 +295,9 @@ var DashboardPowerups = (function () {
                 $el.find('span, a').each(function (j, el2) {
                     if (typeof (dataTable[i]) == "undefined") dataTable[i] = [];
                     dataTable[i][j] = $(el2).text();
+                    if(getColors && i===0){
+                        colors[j] = $(el2).css("border-left-color");
+                    }
                 });
             });
 
@@ -315,6 +319,7 @@ var DashboardPowerups = (function () {
                 } else {
                     obj[key] = dataTable[j][i] || 0;
                 }
+                if(getColors) obj[color] = colors[i];
             }
             normalTable.push(obj);
         }
@@ -4637,7 +4642,7 @@ var DashboardPowerups = (function () {
                 let output = (args.find(x => x[0] == "output") || ["output", "stdev"])[1].split(',');
 
                 //find the table
-                let dataTable = readTableData($tile,true);
+                let dataTable = readTableData($tile,true,true);
                 if (!dataTable) return false;
                 console.log(dataTable);
 
@@ -4666,7 +4671,8 @@ var DashboardPowerups = (function () {
                         name: point[name],
                         value: point[value],
                         x: x,
-                        y: y--
+                        y: y--,
+                        color: point[color]
                     });
                 });
 
@@ -4674,7 +4680,7 @@ var DashboardPowerups = (function () {
                 let options = {
                     chart: {
                         type: 'tilemap',
-                        //inverted: true,
+                        inverted: true,
                         height: '80%'
                     },
                 
