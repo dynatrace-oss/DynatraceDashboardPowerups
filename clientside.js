@@ -4674,29 +4674,37 @@ var DashboardPowerups = (function () {
                 let data = [];
                 let name = dataTable.keys[0];
                 let value = dataTable.keys[1];
-                let xmax = Math.ceil(Math.sqrt(dataTable.normalTable.length));
-                let ymax = Math.floor(Math.sqrt(dataTable.normalTable.length));
-                let x = 0;
-                let y = 0;
-                dataTable.normalTable.forEach((point, i) => {
-                    if (y >= ymax) {
-                        x++;
-                        y = 0;
-                    }
+                let rows = dataTable.normalTable.length;
+                function add(i,x,y){
+                    xt = Math.round(x + y/2);
+                    yt = Math.round(Math.sqrt(3)/2 * y);
+
+                    let point = dataTable.normalTable[i];
                     let p = {
                         name: point[name],
                         value: point[value],
-                        x: x,
-                        y: y++
+                        x: xt,
+                        y: yt
                     }
                     if (point.color != undefined) p.color = point.color
                     else p.color = '#cccccc';
+                    if(i<rows)
                     data.push(p);
-                });
+                }
+                let x = 0, y = 0, j=0;
+                add(j++,x, y); // add the first cell
+                for (let N = 1; j<64; ++N ) {
+                    for(let i=0; i<N; ++i) add(j++, ++x, y);  // move right
+                    for(let i=0; i<N-1; ++i) add(j++, x, ++y); // move down right. Note N-1
+                    for(let i=0; i<N; ++i) add(j++, --x, ++y); // move down left
+                    for(let i=0; i<N; ++i) add(j++, --x, y); // move left
+                    for(let i=0; i<N; ++i) add(j++, x, --y); // move up left
+                    for(let i=0; i<N; ++i) add(j++, ++x, --y); // move up right
+                }
 
                 //chart options
                 let options = {
-                    chart: {
+                        chart: {
                         type: 'tilemap',
                         //inverted: true,
                         height: '80%',
@@ -4717,22 +4725,22 @@ var DashboardPowerups = (function () {
                     },
                     colorAxis: {
                         dataClasses: [{
-                            from: 0,
+                        from: 0,
                             to: 50,
                             color: 'green',
                             name: 'green'
                         }, {
-                            from: 50,
+                        from: 50,
                             to: 75,
                             color: 'yellow',
                             name: 'yellow'
                         }, {
-                            from: 75,
+                        from: 75,
                             to: 90,
                             color: 'orange',
                             name: 'orange'
                         }, {
-                            from: 90,
+                        from: 90,
                             color: 'red',
                             name: 'red'
                         }]
@@ -4746,12 +4754,12 @@ var DashboardPowerups = (function () {
 
                     plotOptions: {
                         series: {
-                            dataLabels: {
-                                enabled: true,
+                        dataLabels: {
+                        enabled: true,
                                 format: '',
                                 color: '#000000',
                                 style: {
-                                    textOutline: false
+                        textOutline: false
                                 }
                             }
                         }
@@ -4771,29 +4779,29 @@ var DashboardPowerups = (function () {
     }
 
     pub.hideEarlyAdopter = function () {
-        $(`[uitestid="gwt-debug-dashboard-tile-filter-indicator-icon"]`).siblings()
-            .each((i, el) => {
-                let $el = $(el);
-                if ($el.text() == "Early Adopter") {
-                    $el.hide();
-                    let $tile = $el.parents(TILE_SELECTOR);
-                    let $title = $tile.find(TITLE_SELECTOR);
-                    $title.css("width", "100%");
-                }
-            });
+                        $(`[uitestid="gwt-debug-dashboard-tile-filter-indicator-icon"]`).siblings()
+                            .each((i, el) => {
+                                let $el = $(el);
+                                if ($el.text() == "Early Adopter") {
+                                    $el.hide();
+                                    let $tile = $el.parents(TILE_SELECTOR);
+                                    let $title = $tile.find(TITLE_SELECTOR);
+                                    $title.css("width", "100%");
+                                }
+                            });
     }
 
     pub.PUbackground = function () {
-        let backgrounded = false;
+                        let backgrounded = false;
         $(MARKDOWN_SELECTOR).each((i, el) => {
-            let $markdown = $(el);
+                        let $markdown = $(el);
             let text = $markdown.text();
             let $tile = $markdown.parents(TILE_SELECTOR);
 
             if (text.includes(PU_BACKGROUND)) {
-                //let argstring = $markdown.text().split(PU_BACKGROUND)[1].split(/[!\n]/)[0].trim();
-                //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(text, PU_BACKGROUND);
+                        //let argstring = $markdown.text().split(PU_BACKGROUND)[1].split(/[!\n]/)[0].trim();
+                        //let args = argstring.split(";").map(x => x.split("="));
+                        let args = argsplit(text, PU_BACKGROUND);
 
                 let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
                 let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
@@ -4813,102 +4821,102 @@ var DashboardPowerups = (function () {
             }
         });
         if (!backgrounded) {  //if dashboard changed and new dashboard doesn't have background remove old one
-            $(`.powerupBackground`)
-                .css(`background-image`, "")
-                .removeClass('powerupBackground');
+                        $(`.powerupBackground`)
+                            .css(`background-image`, "")
+                            .removeClass('powerupBackground');
         }
     }
 
     pub.PUimage = function () {
-        $(MARKDOWN_SELECTOR).each((i, el) => {
-            let $markdown = $(el);
-            let text = $markdown.text();
-            let $tile = $markdown.parents(TILE_SELECTOR);
+                        $(MARKDOWN_SELECTOR).each((i, el) => {
+                            let $markdown = $(el);
+                            let text = $markdown.text();
+                            let $tile = $markdown.parents(TILE_SELECTOR);
 
-            if (text.includes(PU_IMAGE)) {
-                //let argstring = $markdown.text().split(PU_IMAGE)[1].split(/[!\n]/)[0].trim();
-                //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(text, PU_IMAGE);
+                            if (text.includes(PU_IMAGE)) {
+                                //let argstring = $markdown.text().split(PU_IMAGE)[1].split(/[!\n]/)[0].trim();
+                                //let args = argstring.split(";").map(x => x.split("="));
+                                let args = argsplit(text, PU_IMAGE);
 
-                let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
-                let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
-                if (url) url = url.trim();
-                let out = (args.argstring.match(/out=([^ ]+)/) || [])[1];
-                if (out) out = out.trim();
+                                let width = (args.find(x => x[0] == "width") || ["width", "100%"])[1];
+                                let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
+                                if (url) url = url.trim();
+                                let out = (args.argstring.match(/out=([^ ]+)/) || [])[1];
+                                if (out) out = out.trim();
 
-                //pass message back to extside to get the image, avoid block by CSP
-                $markdown.hide();
-                $markdown.siblings('.powerupImage').remove();
-                let id = `PUimage-` + uniqId();
-                let $target = $('<div>')
-                    .attr('id', id)
-                    .addClass('powerupImage')
-                    .insertAfter($markdown);
-                if (out) {
-                    let $a = $(`<a>`)
-                        .attr('href', out)
-                        .addClass('powerupImage')
-                        .insertBefore($target);
-                    if (out.startsWith('http'))
-                        $a.attr('target', '_blank');
-                    $target.appendTo($a);
-                }
-                window.postMessage(
-                    {
-                        PowerUp: "PU_IMAGE",
-                        url: url,
-                        targetSelector: `#${id}`
-                    }, "*");
-                powerupsFired['PU_IMAGE'] ? powerupsFired['PU_IMAGE']++ : powerupsFired['PU_IMAGE'] = 1;
-            }
-        })
-    }
+                                //pass message back to extside to get the image, avoid block by CSP
+                                $markdown.hide();
+                                $markdown.siblings('.powerupImage').remove();
+                                let id = `PUimage-` + uniqId();
+                                let $target = $('<div>')
+                                    .attr('id', id)
+                                    .addClass('powerupImage')
+                                    .insertAfter($markdown);
+                                if (out) {
+                                    let $a = $(`<a>`)
+                                        .attr('href', out)
+                                        .addClass('powerupImage')
+                                        .insertBefore($target);
+                                    if (out.startsWith('http'))
+                                        $a.attr('target', '_blank');
+                                    $target.appendTo($a);
+                                }
+                                window.postMessage(
+                                    {
+                                        PowerUp: "PU_IMAGE",
+                                        url: url,
+                                        targetSelector: `#${id}`
+                                    }, "*");
+                                powerupsFired['PU_IMAGE'] ? powerupsFired['PU_IMAGE']++ : powerupsFired['PU_IMAGE'] = 1;
+                            }
+                        })
+                    }
 
     pub.PUfunnelColors = function () {
-        $(TITLE_SELECTOR).each((i, el) => {
-            let $title = $(el);
-            let title = $title.text();
-            let $tile = $title.parents(TILE_SELECTOR);
+                        $(TITLE_SELECTOR).each((i, el) => {
+                            let $title = $(el);
+                            let title = $title.text();
+                            let $tile = $title.parents(TILE_SELECTOR);
 
-            if (title.includes(PU_FUNNELCOLORS)) {
-                //let argstring = $title.text().split(PU_FUNNELCOLORS)[1].split(/[!\n]/)[0].trim();
-                //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(title, PU_FUNNELCOLORS);
+                            if (title.includes(PU_FUNNELCOLORS)) {
+                                //let argstring = $title.text().split(PU_FUNNELCOLORS)[1].split(/[!\n]/)[0].trim();
+                                //let args = argstring.split(";").map(x => x.split("="));
+                                let args = argsplit(title, PU_FUNNELCOLORS);
 
-                let colors = (args.find(x => x[0] == "colors") || [])[1];
-                let scale = (args.find(x => x[0] == "scale") || [])[1];
-                if (colors) colors = colors.split(',');
-                if (scale) scale = scale.split(',');
+                                let colors = (args.find(x => x[0] == "colors") || [])[1];
+                                let scale = (args.find(x => x[0] == "scale") || [])[1];
+                                if (colors) colors = colors.split(',');
+                                if (scale) scale = scale.split(',');
 
-                if (colors && colors.length) {
-                    $tile.find(FUNNEL_SELECTOR).find(`path`).each((idx, path) => {
-                        $(path).css('fill', colors[idx]);
-                    });
-                    powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
-                } else if (scale && scale.length == 2) {
-                    let $paths = $tile.find(FUNNEL_SELECTOR).find(`path`);
-                    $paths.each((idx, path) => {
-                        let percent = idx / $paths.length;
-                        let color = d3.interpolateHsl(scale[0], scale[1])(percent);
-                        $(path).css('fill', color);
-                    });
-                    powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
-                }
-            }
-        });
+                                if (colors && colors.length) {
+                                    $tile.find(FUNNEL_SELECTOR).find(`path`).each((idx, path) => {
+                                        $(path).css('fill', colors[idx]);
+                                    });
+                                    powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
+                                } else if (scale && scale.length == 2) {
+                                    let $paths = $tile.find(FUNNEL_SELECTOR).find(`path`);
+                                    $paths.each((idx, path) => {
+                                        let percent = idx / $paths.length;
+                                        let color = d3.interpolateHsl(scale[0], scale[1])(percent);
+                                        $(path).css('fill', color);
+                                    });
+                                    powerupsFired['PU_FUNNELCOLORS'] ? powerupsFired['PU_FUNNELCOLORS']++ : powerupsFired['PU_FUNNELCOLORS'] = 1;
+                                }
+                            }
+                        });
     }
 
     pub.PUtilecss = function () {
-        let reTitle = new RegExp('!PU\\(tilecss\\):`[^`]+`');
+                        let reTitle = new RegExp('!PU\\(tilecss\\):`[^`]+`');
         let reCSS = /[ ]*([\w-]+):[ ]*([^;]+);/g;
         let reURL = /[uU][rR][lL]\([^)]*\)/;
         $([TITLE_SELECTOR, MARKDOWN_SELECTOR].join(', '))
             .each((i, el) => {
-                let $text = $(el);
+                        let $text = $(el);
                 let $tile = $text.parents(TILE_SELECTOR);
 
                 if ($text.text().includes(PU_TILECSS)) {
-                    let match = $text.text().match(reTitle);
+                        let match = $text.text().match(reTitle);
                     if (match && match.length) {
                         let cssText = match[0];
                         let oldstyle = $tile.attr('style');
@@ -4926,125 +4934,125 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUmenu = function () {
-        $([TITLE_SELECTOR, MARKDOWN_SELECTOR].join(', '))
-            .each((i, el) => {
-                let $text = $(el);
-                let text = $text.text();
-                let $tile = $text.parents(TILE_SELECTOR);
+                        $([TITLE_SELECTOR, MARKDOWN_SELECTOR].join(', '))
+                            .each((i, el) => {
+                                let $text = $(el);
+                                let text = $text.text();
+                                let $tile = $text.parents(TILE_SELECTOR);
 
-                if (text.includes(PU_MENU)) {
-                    //Menu PowerUp is present
-                    //Actual menu appears and disappears in DOM, rather than being hidden
-                    //Step 1 - Add click listener to menu_icon
-                    //Step 2 - On click, add a new anchor element
+                                if (text.includes(PU_MENU)) {
+                                    //Menu PowerUp is present
+                                    //Actual menu appears and disappears in DOM, rather than being hidden
+                                    //Step 1 - Add click listener to menu_icon
+                                    //Step 2 - On click, add a new anchor element
 
-                    let argsArr = argsplit(text, PU_MENU);
-                    argsArr.argObjs.forEach(args => {
-                        let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
-                        if (url) url = url.trim();
-                        let name = (args.find(x => x[0] == "name") || [])[1];
-                        if (typeof (url) == "undefined"
-                            || typeof (name) == "undefined")
-                            return false;
+                                    let argsArr = argsplit(text, PU_MENU);
+                                    argsArr.argObjs.forEach(args => {
+                                        let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
+                                        if (url) url = url.trim();
+                                        let name = (args.find(x => x[0] == "name") || [])[1];
+                                        if (typeof (url) == "undefined"
+                                            || typeof (name) == "undefined")
+                                            return false;
 
-                        function menu_icon_click_handler(e) {
-                            setTimeout(() => {
-                                let $popup = $(MENU_POPUP_SELECTOR);
-                                let a_class = $popup.children("a").first().attr("class");
-                                let $a;
+                                        function menu_icon_click_handler(e) {
+                                            setTimeout(() => {
+                                                let $popup = $(MENU_POPUP_SELECTOR);
+                                                let a_class = $popup.children("a").first().attr("class");
+                                                let $a;
 
-                                //check for already added
-                                $popup.children("a").each((child_idx, child) => {
-                                    let $child = $(child);
-                                    if ($child.text() == name) $a = $child;
-                                })
+                                                //check for already added
+                                                $popup.children("a").each((child_idx, child) => {
+                                                    let $child = $(child);
+                                                    if ($child.text() == name) $a = $child;
+                                                })
 
-                                if (typeof ($a) == "undefined"
-                                    || !$a.length) {
-                                    $a = $("<a>")
-                                        .attr("href", url)
-                                        .attr("class", a_class)
-                                        .addClass("powerMenuItem")
-                                        .text(name)
-                                        .appendTo($popup);
+                                                if (typeof ($a) == "undefined"
+                                                    || !$a.length) {
+                                                    $a = $("<a>")
+                                                        .attr("href", url)
+                                                        .attr("class", a_class)
+                                                        .addClass("powerMenuItem")
+                                                        .text(name)
+                                                        .appendTo($popup);
 
-                                    if (url.startsWith('http'))
-                                        $a.attr('target', '_blank');
+                                                    if (url.startsWith('http'))
+                                                        $a.attr('target', '_blank');
+                                                }
+                                            }, 50);
+                                        }
+
+                                        let $icon = $tile.find(MENU_ICON_SELECTOR);
+                                        $icon
+                                            .off(`.PUmenu-${name}`)
+                                            .on(`click.PUmenu-${name}`, menu_icon_click_handler);
+
+                                        if ($icon.length) {
+                                            powerupsFired['PU_MENU'] ? powerupsFired['PU_MENU']++ : powerupsFired['PU_MENU'] = 1;
+                                        } else {
+                                            console.log("POWERUP: WARN - PU(menu) used but no icon found.");
+                                        }
+                                    })
                                 }
-                            }, 50);
-                        }
-
-                        let $icon = $tile.find(MENU_ICON_SELECTOR);
-                        $icon
-                            .off(`.PUmenu-${name}`)
-                            .on(`click.PUmenu-${name}`, menu_icon_click_handler);
-
-                        if ($icon.length) {
-                            powerupsFired['PU_MENU'] ? powerupsFired['PU_MENU']++ : powerupsFired['PU_MENU'] = 1;
-                        } else {
-                            console.log("POWERUP: WARN - PU(menu) used but no icon found.");
-                        }
-                    })
-                }
-            })
-    }
+                            })
+                    }
 
     pub.PUHideShow = function () {
-        $(MENU_ICON_SELECTOR).each((i, el) => {
-            let $menuicon = $(el);
-            let $tile = $menuicon.parents(TILE_SELECTOR);
-            let $tilecontent = $tile.find(TILE_CONTENT_SELECTOR);
+                        $(MENU_ICON_SELECTOR).each((i, el) => {
+                            let $menuicon = $(el);
+                            let $tile = $menuicon.parents(TILE_SELECTOR);
+                            let $tilecontent = $tile.find(TILE_CONTENT_SELECTOR);
 
-            function toggle() {
-                let $popup = $(MENU_POPUP_SELECTOR);
-                let $a;
-                let name = $tilecontent.is(":visible") ? "Hide" : "Show";
+                            function toggle() {
+                                let $popup = $(MENU_POPUP_SELECTOR);
+                                let $a;
+                                let name = $tilecontent.is(":visible") ? "Hide" : "Show";
 
-                $tilecontent.toggle();
+                                $tilecontent.toggle();
 
-                $popup.children("a").each((child_idx, child) => {
-                    let newname;
-                    let $child = $(child);
+                                $popup.children("a").each((child_idx, child) => {
+                                    let newname;
+                                    let $child = $(child);
 
-                    if (name == "Hide")
-                        newname = "Show";
-                    else if (name == "Show")
-                        newname = "Hide";
-                    if ($child.text() == name)
-                        $child.text(newname);
-                });
+                                    if (name == "Hide")
+                                        newname = "Show";
+                                    else if (name == "Show")
+                                        newname = "Hide";
+                                    if ($child.text() == name)
+                                        $child.text(newname);
+                                });
 
-                $popup.parent().parent().css("visibility", "hidden");
-            }
+                                $popup.parent().parent().css("visibility", "hidden");
+                            }
 
-            function addHideShow(e) {
-                setTimeout(() => {
-                    let $popup = $(MENU_POPUP_SELECTOR);
-                    let a_class = $popup.children("a").first().attr("class");
-                    let $a;
-                    let name = $tilecontent.is(":visible") ? "Hide" : "Show";
+                            function addHideShow(e) {
+                                setTimeout(() => {
+                                    let $popup = $(MENU_POPUP_SELECTOR);
+                                    let a_class = $popup.children("a").first().attr("class");
+                                    let $a;
+                                    let name = $tilecontent.is(":visible") ? "Hide" : "Show";
 
-                    //check for already added
-                    $popup.children("a").each((child_idx, child) => {
-                        let $child = $(child);
-                        if ($child.text() == name) $a = $child;
-                    })
+                                    //check for already added
+                                    $popup.children("a").each((child_idx, child) => {
+                                        let $child = $(child);
+                                        if ($child.text() == name) $a = $child;
+                                    })
 
-                    if (typeof ($a) == "undefined"
-                        || !$a.length) {
-                        $a = $("<a>")
-                            .attr("href", "javascript:")
-                            .attr("class", a_class)
-                            .addClass("powerMenuItem")
-                            .text(name)
-                            .appendTo($popup)
-                            .on("click", toggle);
-                    }
-                }, 50);
-            }
+                                    if (typeof ($a) == "undefined"
+                                        || !$a.length) {
+                                        $a = $("<a>")
+                                            .attr("href", "javascript:")
+                                            .attr("class", a_class)
+                                            .addClass("powerMenuItem")
+                                            .text(name)
+                                            .appendTo($popup)
+                                            .on("click", toggle);
+                                    }
+                                }, 50);
+                            }
 
-            $menuicon.on("click", addHideShow);
-        });
+                            $menuicon.on("click", addHideShow);
+                        });
     }
 
     pub.PUgrid = function () {
@@ -5052,14 +5060,14 @@ var DashboardPowerups = (function () {
         $('.powerupGrid').remove();
 
         $(MARKDOWN_SELECTOR).each((i, el) => {
-            let $md = $(el);
+                        let $md = $(el);
             let text = $md.text();
             let $tile = $md.parents(TILE_SELECTOR);
 
             if (text.includes(PU_GRID)) {
-                //let argstring = $md.text().split(PU_GRID)[1].split(/[!\n]/)[0].trim();
-                //let args = argstring.split(";").map(x => x.split("="));
-                let args = argsplit(text, PU_GRID);
+                        //let argstring = $md.text().split(PU_GRID)[1].split(/[!\n]/)[0].trim();
+                        //let args = argstring.split(";").map(x => x.split("="));
+                        let args = argsplit(text, PU_GRID);
 
                 let color = (args.find(x => x[0] == "color") || [])[1] || "#454646";
                 let hor = (args.find(x => x[0] == "hor") || [])[1];
@@ -5079,7 +5087,7 @@ var DashboardPowerups = (function () {
 
                 //horizontal lines
                 hor.forEach(x => {
-                    let lineLeft = left;
+                        let lineLeft = left;
                     let lineTop = top + x * block;
                     let lineWidth = wid;
                     if (lineTop) {
@@ -5090,8 +5098,8 @@ var DashboardPowerups = (function () {
                         lineWidth += 1 * margin;
                     }
                     let $line = $("<div>")
-                        .addClass('powerupGrid')
-                        .css('position', 'absolute')
+                    .addClass('powerupGrid')
+                    .css('position', 'absolute')
                         .css('left', `${lineLeft}px`)
                         .css('top', `${lineTop}px`)
                         .css('height', `${lineWidth}px`)
@@ -5103,15 +5111,15 @@ var DashboardPowerups = (function () {
 
                 //vertical lines
                 ver.forEach(x => {
-                    let lineLeft = left + x * block;
+                            let lineLeft = left + x * block;
                     let lineTop = top;
                     let lineWidth = wid;
                     if (lineLeft) {
-                        lineLeft -= margin;
+                            lineLeft -= margin;
                         lineWidth += 2 * margin;
                     }
                     else {
-                        lineWidth += 1 * margin;
+                            lineWidth += 1 * margin;
                     }
 
                     let $line = $("<div>")
@@ -5133,14 +5141,14 @@ var DashboardPowerups = (function () {
     }
 
     pub.fireAllPowerUps = function (update = false) {
-        let mainPromise = new $.Deferred();
+                                let mainPromise = new $.Deferred();
         let promises = [];
 
         if (!pub.config.beaconOptOut) startBeacon();
 
         try {
-            //data gathering operations
-            promises.push(pub.PUvlookup());
+                                //data gathering operations
+                                promises.push(pub.PUvlookup());
             promises.push(pub.PUstdev());
 
             //data processing operations
@@ -5159,7 +5167,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUtable());
             promises.push(pub.PUfunnelColors());
             promises.push(pub.PUTopListColor());
-            waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
+            waitForHCmod('sankey', () => {promises.push(pub.sankeyPowerUp())});
             promises.push(pub.PUhoneycomb());
 
             //misc visualizations
@@ -5179,16 +5187,16 @@ var DashboardPowerups = (function () {
             pub.loadChartSync();
 
         } catch (e) {
-            crashBeacon(e);
+                                crashBeacon(e);
             console.warn("POWERUP: ERROR ", e);
         }
         $.when.apply($, promises).always(function () {
-            let p = pub.cleanMarkup();
+                                let p = pub.cleanMarkup();
             if (!pub.config.beaconOptOut) endBeacon();
             if (pub.config.Powerups.debug)
                 console.log("Powerup: DEBUG - fire all PowerUps" + (update ? " (update)" : ""));
             $.when(p).always(() => {
-                mainPromise.resolve();
+                                mainPromise.resolve();
             });
         });
 
@@ -5206,27 +5214,27 @@ var DashboardPowerups = (function () {
             Step 7 - once powerups are complete, reenable observer, repeat from step 4
             */
         const time = 200;
-        const MO_CONFIG = { attributes: true, childList: true, subtree: false };
-        var GO = {};
-        var observer = {};
-        var timeout = {};
+        const MO_CONFIG = {attributes: true, childList: true, subtree: false };
+        var GO = { };
+        var observer = { };
+        var timeout = { };
         const firstRunRaceTime = 1000;
 
         const mutationHappening = (mutationsList, obs) => {
             if (pub.config.Powerups.debug) {
-                console.log("Powerup: DEBUG - mutations happening:");
+                                console.log("Powerup: DEBUG - mutations happening:");
                 console.log(mutationsList);
             }
             clearTimeout(timeout);
             timeout = setTimeout(() => {
-                mutationsDone(mutationsList, obs);
+                                mutationsDone(mutationsList, obs);
             }, time);
         }
 
         const mutationsDone = (mutationsList, obs) => {
-            let p;
+                                let p;
             if (pub.config.Powerups.debug) {
-                console.log("Powerup: DEBUG - mutations have stopped.");
+                                console.log("Powerup: DEBUG - mutations have stopped.");
             }
             observer.disconnect();
             if (window.location.hash.startsWith("#dashboard;") ||
@@ -5234,27 +5242,27 @@ var DashboardPowerups = (function () {
                 if ($('[uitestid="gwt-debug-dashboardGrid"]').length &&        //grid is loaded
                     !$(".loader:visible").length &&                            //main loading distractor gone
                     !$('[uitestid="gwt-debug-tileLoader"]:visible').length) {  //tile distractors hidden)
-                    p = pub.fireAllPowerUps();
+                                p = pub.fireAllPowerUps();
                 } else { //still loading apparently, wait and try again
-                    clearTimeout(timeout);
+                                clearTimeout(timeout);
                     timeout = setTimeout(() => {
-                        mutationsDone(mutationsList, obs);
+                                mutationsDone(mutationsList, obs);
                     }, firstRunRaceTime);
                 }
 
                 $.when(p).done(() => {
-                    GO.observeGrid();
+                                GO.observeGrid();
                 })
             }
         }
 
         GO.launchGridObserver = () => {
-            observer = new MutationObserver(mutationHappening);
+                                observer = new MutationObserver(mutationHappening);
             GO.observeGrid();
 
             //backstop initial race condition
             timeout = setTimeout(() => {
-                mutationsDone(undefined, undefined);
+                                mutationsDone(undefined, undefined);
             }, firstRunRaceTime);
         };
 
@@ -5265,15 +5273,15 @@ var DashboardPowerups = (function () {
             let $grid = $(GRID_SELECTOR);
             if ($grid.length < 1) return false;
             $grid.each((i, grid) => {
-                observer.observe(grid, { attributes: true, childList: true, subtree: false });
+                                observer.observe(grid, { attributes: true, childList: true, subtree: false });
             });
 
             let $titles = $(TITLE_SELECTOR);
             if ($titles.length) {
-                $titles.each((i, title) => {
-                    observer.observe(title, { attributes: true, childList: true, subtree: false });
-                })
-            }
+                                $titles.each((i, title) => {
+                                    observer.observe(title, { attributes: true, childList: true, subtree: false });
+                                })
+                            }
         }
 
         return GO;
