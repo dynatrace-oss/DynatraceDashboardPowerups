@@ -4684,7 +4684,7 @@ var DashboardPowerups = (function () {
                     chart: {
                         type: 'tilemap',
                         inverted: true,
-                        height: '80%'
+                        //height: '80%'
                     },
                     pane: {
                         background: {
@@ -4694,9 +4694,7 @@ var DashboardPowerups = (function () {
                     credits: {
                         enabled: false
                     },
-                    title: {
-                        text: ''
-                    },
+                    title: null,
                     xAxis: {
                         visible: false
                     },
