@@ -319,7 +319,7 @@ var DashboardPowerups = (function () {
                 } else {
                     obj[key] = dataTable[j][i] || 0;
                 }
-                if(getColors) obj[color] = colors[i];
+                if(getColors) obj.color = colors[i];
             }
             normalTable.push(obj);
         }
