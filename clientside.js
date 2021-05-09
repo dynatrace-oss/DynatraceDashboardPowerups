@@ -306,6 +306,7 @@ var DashboardPowerups = (function () {
         for (let i = 0; i < numKeys; i++) {
             keys.push(dataTable[i].shift());
         }
+        if(getColors && colors.length) colors.shift(); //1st row is label
         let numRows = dataTable[0].length;
 
         for (let i = 0; i < numRows; i++) {
