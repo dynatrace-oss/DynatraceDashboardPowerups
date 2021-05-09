@@ -4659,7 +4659,12 @@ var DashboardPowerups = (function () {
                 //swap in a container for our new chart
                 let $table = $tile.find(TABLE_SELECTOR);
                 $table.hide();
-                $tile.find('.powerupHoneycomb').remove();
+                $tile.find('.powerupHoneycomb').each((i,el)=>{
+                    Highcharts.charts.filter(x => typeof (x) !== "undefined")
+                        .filter(x => x.container === el)
+                        .destroy();
+                    $(el).remove();
+                });
                 let $container = $("<div>")
                     .addClass('powerupHoneycomb')
                     .insertAfter($table);
@@ -4680,8 +4685,8 @@ var DashboardPowerups = (function () {
                     let p = {
                         name: point[name],
                         value: point[value],
-                       // x: x,
-                       // y: y++
+                        x: x,
+                        y: y++
                     }
                     if(point.color != undefined) p.color = point.color
                     else point.color = '#a972cc';
