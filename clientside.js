@@ -4674,7 +4674,7 @@ var DashboardPowerups = (function () {
                 let options = {
                     chart: {
                         type: 'tilemap',
-                        inverted: true,
+                        //inverted: true,
                         height: '80%'
                     },
                 
@@ -4690,7 +4690,7 @@ var DashboardPowerups = (function () {
                         visible: false
                     },
                 
-                    colorAxis: {
+                    /*colorAxis: {
                         dataClasses: [{
                             from: 0,
                             to: 1000000,
@@ -4711,7 +4711,7 @@ var DashboardPowerups = (function () {
                             color: '#FF2371',
                             name: '> 20M'
                         }]
-                    },
+                    },*/
                 
                     tooltip: {
                         headerFormat: '',
