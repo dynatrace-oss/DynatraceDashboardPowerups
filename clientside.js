@@ -4676,10 +4676,12 @@ var DashboardPowerups = (function () {
                 let value = dataTable.keys[1];
                 let rows = dataTable.normalTable.length;
                 function add(i,x,y){
+                    if(i>=rows) return false;
                     xt = Math.round(x + y/2);
                     yt = Math.round(Math.sqrt(3)/2 * y);
 
                     let point = dataTable.normalTable[i];
+                    if(point == undefined) return false;
                     let p = {
                         name: point[name],
                         value: point[value],
@@ -4688,7 +4690,6 @@ var DashboardPowerups = (function () {
                     }
                     if (point.color != undefined) p.color = point.color
                     else p.color = '#cccccc';
-                    if(i<rows)
                     data.push(p);
                 }
                 let x = 0, y = 0, j=0;
