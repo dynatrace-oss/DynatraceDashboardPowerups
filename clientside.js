@@ -4657,14 +4657,14 @@ var DashboardPowerups = (function () {
                 let ymax = Math.floor(Math.sqrt(dataTable.normalTable.length));
                 let x = xmax;
                 let y = ymax;
-                dataTable.normalTable.forEach((x,i)=>{
+                dataTable.normalTable.forEach((point,i)=>{
                     if(y<0){
                         x--;
                         y=ymax;
                     }
                     data.push({
-                        name: x[name],
-                        value: x[value],
+                        name: point[name],
+                        value: point[value],
                         x: x,
                         y: y--
                     });
