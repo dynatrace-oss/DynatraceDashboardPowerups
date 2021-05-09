@@ -311,7 +311,7 @@ var DashboardPowerups = (function () {
                 if (forceLastColumnNumber //Last column should be a number
                     && j == numKeys - 1
                     && dataTable[j][i] != null) {
-                    obj[key] = Number(dataTable[j][i].replace(/[,a-z ]/g, ''));
+                    obj[key] = Number(dataTable[j][i].replace(/[,a-z %]/g, ''));
                 } else {
                     obj[key] = dataTable[j][i] || 0;
                 }
@@ -4690,28 +4690,28 @@ var DashboardPowerups = (function () {
                         visible: false
                     },
                 
-                    /*colorAxis: {
+                    colorAxis: {
                         dataClasses: [{
                             from: 0,
-                            to: 1000000,
+                            to: 50,
                             color: '#F9EDB3',
                             name: '< 1M'
                         }, {
-                            from: 1000000,
-                            to: 5000000,
+                            from: 50,
+                            to: 75,
                             color: '#FFC428',
                             name: '1M - 5M'
                         }, {
-                            from: 5000000,
-                            to: 20000000,
+                            from: 75,
+                            to: 90,
                             color: '#FF7987',
                             name: '5M - 20M'
                         }, {
-                            from: 20000000,
+                            from: 90,
                             color: '#FF2371',
                             name: '> 20M'
                         }]
-                    },*/
+                    },
                 
                     tooltip: {
                         headerFormat: '',
