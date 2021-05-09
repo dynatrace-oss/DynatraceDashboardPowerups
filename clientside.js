@@ -281,22 +281,28 @@ var DashboardPowerups = (function () {
     }
 
     //Read data from USQL table
-    function readTableData(tabletile, forceLastColumnNumber = true, getColors = false) {
+    function readTableData(tabletile, forceLastColumnNumber = true, getColors = false, getLinks = true) {
         let $tabletile = $(tabletile);
         if (!$tabletile.length) return false;
         let dataTable = [];
         let normalTable = [];
         let keys = [];
         let colors = [];
+        let links = [];
         $tabletile
             .find(TABLE_COL_SELECTOR)
             .each(function (i, el) {
                 let $el = $(el);
                 $el.find('span').each(function (j, el2) {
+                    let $el2 = $(el2);
                     if (typeof (dataTable[i]) == "undefined") dataTable[i] = [];
-                    dataTable[i][j] = $(el2).text();
+                    dataTable[i][j] = $el2.text();
                     if(getColors && i===0){
-                        colors[j] = $(el2).css("border-left-color");
+                        colors[j] = $el2.css("border-left-color");
+                    }
+                    if(getLinks){
+                        let $a = $el2.find(`a`);
+                        if($a.length) links[j] = $a.attr("href");
                     }
                 });
             });
@@ -307,6 +313,7 @@ var DashboardPowerups = (function () {
             keys.push(dataTable[i].shift());
         }
         if(getColors && colors.length) colors.shift(); //1st row is label
+        if(getLinks && links.length) links.shift();
         let numRows = dataTable[0].length;
 
         for (let i = 0; i < numRows; i++) {
@@ -321,6 +328,7 @@ var DashboardPowerups = (function () {
                     obj[key] = dataTable[j][i] || 0;
                 }
                 if(getColors) obj.color = colors[i];
+                if(getLinks) obj.link = links[i];
             }
             normalTable.push(obj);
         }
@@ -4642,8 +4650,6 @@ var DashboardPowerups = (function () {
 
             if (title.includes(PU_HONEYCOMB)) {
                 let args = argsplit(title, PU_HONEYCOMB);
-                let color = (args.find(x => x[0] == "color") || ["white"])[1];
-                let output = (args.find(x => x[0] == "output") || ["output", "stdev"])[1].split(',');
 
                 //find the table
                 let dataTable = readTableData($tile,true,true);
@@ -4678,6 +4684,7 @@ var DashboardPowerups = (function () {
                         y: y--
                     }
                     if(point.color != undefined) p.color = point.color
+                    else point.color = '#a972cc';
                     data.push(p);
                 });
 
