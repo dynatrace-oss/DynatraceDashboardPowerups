@@ -4136,6 +4136,9 @@ var DashboardPowerups = (function () {
                     borderColor: '#454646'
                 }
             },
+            credits: {
+                enabled: false
+            },
             exporting: {
                 enabled: false
             },
@@ -4683,19 +4686,23 @@ var DashboardPowerups = (function () {
                         inverted: true,
                         height: '80%'
                     },
-                
+                    pane: {
+                        background: {
+                            backgroundColor: '#454646'
+                        }
+                    },
+                    credits: {
+                        enabled: false
+                    },
                     title: {
                         text: ''
                     },
-                
                     xAxis: {
                         visible: false
                     },
-                
                     yAxis: {
                         visible: false
                     },
-                
                     colorAxis: {
                         dataClasses: [{
                             from: 0,
