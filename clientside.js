@@ -297,12 +297,12 @@ var DashboardPowerups = (function () {
                     let $el2 = $(el2);
                     if (typeof (dataTable[i]) == "undefined") dataTable[i] = [];
                     dataTable[i][j] = $el2.text();
-                    if(getColors && i===0){
-                        colors[j] = $el2.css("border-left-color");
+                    if (getColors && i === 0) {
+                        colors[j] = $el2.find(`span`).css("border-left-color");
                     }
-                    if(getLinks){
+                    if (getLinks) {
                         let $a = $el2.find(`a`);
-                        if($a.length) links[j] = $a.attr("href");
+                        if ($a.length) links[j] = $a.attr("href");
                     }
                 });
             });
@@ -312,8 +312,8 @@ var DashboardPowerups = (function () {
         for (let i = 0; i < numKeys; i++) {
             keys.push(dataTable[i].shift());
         }
-        if(getColors && colors.length) colors.shift(); //1st row is label
-        if(getLinks && links.length) links.shift();
+        if (getColors && colors.length) colors.shift(); //1st row is label
+        if (getLinks && links.length) links.shift();
         let numRows = dataTable[0].length;
 
         for (let i = 0; i < numRows; i++) {
@@ -327,8 +327,8 @@ var DashboardPowerups = (function () {
                 } else {
                     obj[key] = dataTable[j][i] || 0;
                 }
-                if(getColors) obj.color = colors[i];
-                if(getLinks) obj.link = links[i];
+                if (getColors) obj.color = colors[i];
+                if (getLinks) obj.link = links[i];
             }
             normalTable.push(obj);
         }
@@ -4652,14 +4652,14 @@ var DashboardPowerups = (function () {
                 let args = argsplit(title, PU_HONEYCOMB);
 
                 //find the table
-                let dataTable = readTableData($tile,true,true);
+                let dataTable = readTableData($tile, true, true);
                 if (!dataTable) return false;
                 console.log(dataTable);
 
                 //swap in a container for our new chart
                 let $table = $tile.find(TABLE_SELECTOR);
                 $table.hide();
-                $tile.find('.powerupHoneycomb').each((i,el)=>{
+                $tile.find('.powerupHoneycomb').each((i, el) => {
                     Highcharts.charts.filter(x => typeof (x) !== "undefined")
                         .filter(x => x.container === el)
                         .destroy();
@@ -4668,7 +4668,7 @@ var DashboardPowerups = (function () {
                 let $container = $("<div>")
                     .addClass('powerupHoneycomb')
                     .insertAfter($table);
-                
+
                 //prep the data
                 let data = [];
                 let name = dataTable.keys[0];
@@ -4677,10 +4677,10 @@ var DashboardPowerups = (function () {
                 let ymax = Math.floor(Math.sqrt(dataTable.normalTable.length));
                 let x = 0;
                 let y = 0;
-                dataTable.normalTable.forEach((point,i)=>{
-                    if(y>=ymax){
+                dataTable.normalTable.forEach((point, i) => {
+                    if (y >= ymax) {
                         x++;
-                        y=0;
+                        y = 0;
                     }
                     let p = {
                         name: point[name],
@@ -4688,7 +4688,7 @@ var DashboardPowerups = (function () {
                         x: x,
                         y: y++
                     }
-                    if(point.color != undefined) p.color = point.color
+                    if (point.color != undefined) p.color = point.color
                     else point.color = '#a972cc';
                     data.push(p);
                 });
@@ -4736,13 +4736,13 @@ var DashboardPowerups = (function () {
                             name: 'red'
                         }]
                     },
-                
+
                     tooltip: {
                         headerFormat: '',
                         //pointFormat: 'The population of <b> {point.name}</b> is <b>{point.value}</b>'
                         pointFormat: `<b>{point.name}</b>: {point.value}`
                     },
-                
+
                     plotOptions: {
                         series: {
                             dataLabels: {
@@ -4755,15 +4755,15 @@ var DashboardPowerups = (function () {
                             }
                         }
                     },
-                
+
                     series: [{
                         name: 'data',
                         data: data
                     }]
                 }
                 let chart = Highcharts.chart($container[0], options);
- 
-            powerupsFired['PU_HONEYCOMB'] ? powerupsFired['PU_HONEYCOMB']++ : powerupsFired['PU_HONEYCOMB'] = 1;
+
+                powerupsFired['PU_HONEYCOMB'] ? powerupsFired['PU_HONEYCOMB']++ : powerupsFired['PU_HONEYCOMB'] = 1;
             }
         });
         return true;
