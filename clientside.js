@@ -4670,13 +4670,14 @@ var DashboardPowerups = (function () {
                         x--;
                         y=ymax;
                     }
-                    data.push({
+                    let p = {
                         name: point[name],
                         value: point[value],
                         x: x,
-                        y: y--,
-                        color: point.color
-                    });
+                        y: y--
+                    }
+                    if(point.color != undefined) p.color = point.color
+                    data.push(p);
                 });
 
                 //chart options
@@ -4684,7 +4685,7 @@ var DashboardPowerups = (function () {
                     chart: {
                         type: 'tilemap',
                         inverted: true,
-                        //height: '80%'
+                        height: '80%'
                     },
                     pane: {
                         background: {
