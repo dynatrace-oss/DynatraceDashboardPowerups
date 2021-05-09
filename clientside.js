@@ -4672,7 +4672,7 @@ var DashboardPowerups = (function () {
                         value: point[value],
                         x: x,
                         y: y--,
-                        color: point[color]
+                        color: point.color
                     });
                 });
 
