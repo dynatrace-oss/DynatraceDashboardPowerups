@@ -578,3 +578,15 @@ Explanation:
 
 Example:
 ![topcolor](Assets/topcolor.png)
+
+### Honeycomb
+Transform an Explorer tile table into honeycombs. Color coding should be done in Explorer.
+
+Syntax:
+- `CPU Usage !PU(honeycomb):`
+
+Explanation:
+- `!PU(honeycomb):` - denotes this powerup
+
+Example:
+![honeycomb](Assets/honeycomb.png)
