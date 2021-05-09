@@ -4685,12 +4685,8 @@ var DashboardPowerups = (function () {
                     chart: {
                         type: 'tilemap',
                         inverted: true,
-                        height: '80%'
-                    },
-                    pane: {
-                        background: {
-                            backgroundColor: '#454646'
-                        }
+                        height: '80%',
+                        backgroundColor: '#353535'
                     },
                     credits: {
                         enabled: false
@@ -4701,6 +4697,9 @@ var DashboardPowerups = (function () {
                     },
                     yAxis: {
                         visible: false
+                    },
+                    legend: {
+                        enabled: false
                     },
                     colorAxis: {
                         dataClasses: [{
