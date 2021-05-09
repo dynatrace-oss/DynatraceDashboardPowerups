@@ -292,7 +292,7 @@ var DashboardPowerups = (function () {
             .find(TABLE_COL_SELECTOR)
             .each(function (i, el) {
                 let $el = $(el);
-                $el.find('span, a').each(function (j, el2) {
+                $el.find('span').each(function (j, el2) {
                     if (typeof (dataTable[i]) == "undefined") dataTable[i] = [];
                     dataTable[i][j] = $(el2).text();
                     if(getColors && i===0){
