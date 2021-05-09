@@ -4686,7 +4686,12 @@ var DashboardPowerups = (function () {
                         name: point[name],
                         value: point[value],
                         x: xt,
-                        y: yt
+                        y: yt,
+                        events: {
+                            click: ()=>{
+                                window.location.assign(point.link);
+                            }
+                        }
                     }
                     if (point.color != undefined) p.color = point.color
                     else p.color = '#cccccc';
