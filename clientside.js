@@ -4694,22 +4694,22 @@ var DashboardPowerups = (function () {
                         dataClasses: [{
                             from: 0,
                             to: 50,
-                            color: '#F9EDB3',
-                            name: '< 1M'
+                            color: 'green',
+                            name: 'green'
                         }, {
                             from: 50,
                             to: 75,
-                            color: '#FFC428',
-                            name: '1M - 5M'
+                            color: 'yellow',
+                            name: 'yellow'
                         }, {
                             from: 75,
                             to: 90,
-                            color: '#FF7987',
-                            name: '5M - 20M'
+                            color: 'orange',
+                            name: 'orange'
                         }, {
                             from: 90,
-                            color: '#FF2371',
-                            name: '> 20M'
+                            color: 'red',
+                            name: 'red'
                         }]
                     },
                 
