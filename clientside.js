@@ -4651,9 +4651,20 @@ var DashboardPowerups = (function () {
 
             if (title.includes(PU_HONEYCOMB)) {
                 let args = argsplit(title, PU_HONEYCOMB);
+                let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',');
 
                 //find the table
                 let dataTable = readTableData($tile, true, true);
+                if(Array.isArray(links) && links.length){
+                    links.forEach(link=>{
+                        let linkedTile = findLinkedTile(link);
+                        if(linkedTile == undefined) return false;
+                        let linkedTable = readTableData($tile, true, true);
+                        if (!linkedTable) return false;
+                        dataTable = dataTable.concat(linkedTable);
+                    })
+                    
+                }
                 if (!dataTable) return false;
                 console.log(dataTable);
 
