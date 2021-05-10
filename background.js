@@ -70,7 +70,7 @@ var filter = {
     }]
 };
 
-var openKit, openKitSession, openKitAction;
+var openKit, openKitSession, openKitAction, webRequestTracer;
 
 function listenForBeaconMessages() {
     if (typeof (BEACON_LISTENING) == "undefined") {
@@ -115,13 +115,13 @@ function startBeacon(request) {
     if (request.beaconOptOut) return false;
 
     console.log("POWERUP: DEBUG - OpenKit start beacon");
-    let deviceId = request.uuid.replace(/[-a-z]/g,'').slice(0,19); //openkit only supports INT, so convert it
+    let deviceId = request.uuid.replace(/[-a-z]/g, '').slice(0, 19); //openkit only supports INT, so convert it
     if (!openKit || !openKit.initialized || openKit.isShutdown) {
         openKit = new OpenKitBuilder(
-            BG_ENV.OPENKIT_URL, 
-            BG_ENV.OPENKIT_APPID, 
+            BG_ENV.OPENKIT_URL,
+            BG_ENV.OPENKIT_APPID,
             deviceId
-            )
+        )
             .withApplicationVersion(request.applicationVersion)
             .withOperatingSystem(request.operatingSystem)
             .withManufacturer(request.manufacturer)
@@ -300,14 +300,37 @@ function backgroundPowerup(request, sender) {
                 }
                 caches.match(url).then(function (response) {
                     if (response !== undefined) { //found in cache
+                        if (openKitAction)
+                            webRequestTracer = openKitAction.traceWebRequest(url);
+
                         messageBackDataURLFromResponse(response, request, sender)
+
+                        if (webRequestTracer) {
+                            webRequestTracer.setBytesSent(0);
+                            webRequestTracer.setBytesReceived(0);
+                            webRequestTracer.stop(203);
+                        }
                         return true;
                     } else {  //not in cache, go get it
+                        if (openKitAction)
+                            webRequestTracer = openKitAction.traceWebRequest(url);
                         return fetch(url).then(response => {
+                            let status = response.status;
+
                             let responseClone = response.clone(); //cache it for later
                             caches.open('PowerUps').then(function (cache) {
                                 cache.put(url, responseClone);
                             });
+
+                            if (webRequestTracer) { //OpenKit web tracer
+                                response.clone().blob().then(blob => {
+                                    let size = blob.size;
+                                    webRequestTracer.setBytesSent(0);
+                                    webRequestTracer.setBytesReceived(size);
+                                    webRequestTracer.stop(status);
+                                })
+                            }
+
                             messageBackDataURLFromResponse(response, request, sender)
                             return true;
                         }).catch(function () {
