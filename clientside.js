@@ -1196,15 +1196,19 @@ var DashboardPowerups = (function () {
         if (!pub.config.Powerups.linePU) return;
 
         let args = argsplit(title, PU_LINE);
-        if (args.length < 3) {
-            let error = "Powerup: ERROR - invalid argstring: " + args.argstring;
+        let thld = (args.find(x => x[0] == "thld") || [])[1];
+        let hcol = (args.find(x => x[0] == "hcol") || [])[1];
+        let lcol = (args.find(x => x[0] == "lcol") || [])[1];
+        if (args.length < 3
+            || thld == undefined
+            || hcol == undefined
+            || lcol == undefined) {
+            let error = `Powerup: ERROR - ${PU_LINE} - invalid argstring: ${args.argstring}`;
             console.log(error);
             errorBeacon(error);
             return false;
         }
-        let thld = args.find(x => x[0] == "thld")[1];
-        let hcol = args.find(x => x[0] == "hcol")[1];
-        let lcol = args.find(x => x[0] == "lcol")[1];
+        
 
         let series_opts = {
             threshold: thld,
