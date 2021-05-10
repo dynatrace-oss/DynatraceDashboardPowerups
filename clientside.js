@@ -1740,7 +1740,9 @@ var DashboardPowerups = (function () {
                 crit: crit,
                 url: url
             }
-            let val = pub.findLinkedVal(link);
+            let val;
+            if(link != undefined)
+                val = pub.findLinkedVal(link,PU_SVG);
 
             //swap in the svg
             var imgURL = pub.SVGLib() + encodeURI(`${icon}.svg`);
@@ -1848,7 +1850,7 @@ var DashboardPowerups = (function () {
                 let args = $svg.attr("data-args") || "{}";
                 args = JSON.parse(args);
 
-                let val = pub.findLinkedVal(args.link);
+                let val = pub.findLinkedVal(args.link,"updateSVGPowerUp");
 
                 $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
                 $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
@@ -1876,7 +1878,7 @@ var DashboardPowerups = (function () {
         });
     }
 
-    pub.findLinkedVal = function (link) {
+    pub.findLinkedVal = function (link,from="") {
         //find val
         let link_text = `!PU\\(link\\):` + link;
         let re = new RegExp(link_text + '(?!\\w)');
@@ -1902,7 +1904,7 @@ var DashboardPowerups = (function () {
                 }
             });
         if (typeof val == "undefined") {
-            let error = "Powerup: ERROR - unable to match link: " + link_text;
+            let error = `Powerup: ERROR - ${from} - unable to match link: ${link_text}`;
             console.log(error);
             errorBeacon(error);
             return undefined;
@@ -1934,7 +1936,7 @@ var DashboardPowerups = (function () {
         }
     }
 
-    pub.findLinkedTile = function (link) {
+    pub.findLinkedTile = function (link,from="") {
         //find val
         let link_text = `!PU\\(link\\):` + link;
         let re = new RegExp(link_text + '(?!\\w)');
@@ -1948,7 +1950,7 @@ var DashboardPowerups = (function () {
             }
         });
         if (typeof $tile == "undefined") {
-            let error = "Powerup: WARN - unable to match link: " + link_text;
+            let error = `Powerup: WARN - ${from} - unable to match link: ${link_text}`;
             console.log(error);
             errorBeacon(error);
             return undefined;
@@ -1957,7 +1959,7 @@ var DashboardPowerups = (function () {
         }
     }
 
-    pub.findLinkedMarkdown = function (link) {
+    pub.findLinkedMarkdown = function (link,from="") {
         //find val
         let link_text = PU_LINK + link;
         let tile;
@@ -1967,7 +1969,7 @@ var DashboardPowerups = (function () {
             }
         });
         if (typeof tile == "undefined") {
-            let error = "Powerup: ERROR - unable to match markdown with link: " + link_text;
+            let error = `Powerup: ERROR - ${from} - unable to match markdown with link: ${link_text}`;
             console.log(error);
             errorBeacon(error);
             return undefined;
@@ -3612,7 +3614,7 @@ var DashboardPowerups = (function () {
                 let big = Number((args.find(x => x[0] == "big") || [])[1]);
                 let links = (args.find(x => x[0] == "links") || [])[1];
 
-                let $linkstile = $(pub.findLinkedMarkdown(links));
+                let $linkstile = $(pub.findLinkedMarkdown(links,PU_FUNNEL));
                 let mdtext = $linkstile.text();
                 $linkstile.hide();
                 const linkRE = /^(?:\d+=)(.*)/gm;
@@ -3827,7 +3829,7 @@ var DashboardPowerups = (function () {
                     )
 
                 scope.forEach(s => {
-                    s.val = pub.findLinkedVal(s.link);
+                    s.val = pub.findLinkedVal(s.link,PU_MATH);
                     if (dates) {
                         let tmpdate = new Date(s.val);
                         let tmptime = tmpdate.getTime();
@@ -3951,7 +3953,7 @@ var DashboardPowerups = (function () {
             let gt = (args.find(x => x[0] == "gt") || [])[1] || "red";
             let eq = (args.find(x => x[0] == "eq") || [])[1] || "yellow";
 
-            let linkval = pub.findLinkedVal(link);
+            let linkval = pub.findLinkedVal(link,PU_COMPARE);
             let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g, ''));
 
             //let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
@@ -3997,7 +3999,7 @@ var DashboardPowerups = (function () {
 
             let linkvals = [];
             links.forEach(link => {
-                let num = pub.findLinkedVal(link);
+                let num = pub.findLinkedVal(link,PU_MCOMPARE);
                 if (!isNaN(num)) linkvals.push(num);
             });
             let min = Math.min.apply(Math, linkvals);
@@ -4325,7 +4327,7 @@ var DashboardPowerups = (function () {
                 let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
 
                 //find the table
-                let tabletile = pub.findLinkedTile(link);
+                let tabletile = pub.findLinkedTile(link,PU_VLOOKUP);
                 if (typeof (tabletile) == "undefined") return false;
                 let $tabletile = $(tabletile)
                 let dataTable = readTableData($tabletile, false);
@@ -4365,7 +4367,7 @@ var DashboardPowerups = (function () {
                         let compareTable;
                         if (link === compareLink) compareTable = dataTable;
                         else {
-                            let comparetabletile = pub.findLinkedTile(compareLink);
+                            let comparetabletile = pub.findLinkedTile(compareLink,PU_VLOOKUP+"-compareLink");
                             if (typeof (comparetabletile) == "undefined") return false;
                             let $comparetabletile = $(comparetabletile);
                             compareTable = readTableData($comparetabletile);
@@ -4657,7 +4659,7 @@ var DashboardPowerups = (function () {
                 let dataTable = readTableData($tile, true, true);
                 if(Array.isArray(links) && links.length){
                     links.forEach(link=>{
-                        let linkedTile = pub.findLinkedTile(link);
+                        let linkedTile = pub.findLinkedTile(link,PU_HONEYCOMB);
                         if(linkedTile == undefined) return false;
                         let linkedTable = readTableData($tile, true, true);
                         if (!linkedTable) return false;
