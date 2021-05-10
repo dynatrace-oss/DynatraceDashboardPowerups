@@ -4661,7 +4661,12 @@ var DashboardPowerups = (function () {
                         if(linkedTile == undefined) return false;
                         let linkedTable = readTableData($tile, true, true);
                         if (!linkedTable) return false;
-                        dataTable = dataTable.concat(linkedTable);
+                        if(JSON.stringify(dataTable.keys) !== JSON.stringify(linkedTable.keys)){
+                            let error = `POWERUP: ERROR - Honeycomb - tried to merge dissimilar tables.`;
+                            console.warn(error);
+                            errorBeacon(error);
+                        }
+                        dataTable.normalTable = dataTable.normalTable.concat(linkedTable.normalTable);
                     })
                     
                 }
