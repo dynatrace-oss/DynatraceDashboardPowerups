@@ -587,6 +587,7 @@ Syntax:
 
 Explanation:
 - `!PU(honeycomb):` - denotes this powerup
+- `links=link1,link2` - merge data from other Explorer table tiles. NOTE: columns must match.
 
 Example:
 ![honeycomb](Assets/honeycomb.png)
