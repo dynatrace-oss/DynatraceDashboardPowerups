@@ -4657,7 +4657,7 @@ var DashboardPowerups = (function () {
                 let dataTable = readTableData($tile, true, true);
                 if(Array.isArray(links) && links.length){
                     links.forEach(link=>{
-                        let linkedTile = findLinkedTile(link);
+                        let linkedTile = pub.findLinkedTile(link);
                         if(linkedTile == undefined) return false;
                         let linkedTable = readTableData($tile, true, true);
                         if (!linkedTable) return false;
