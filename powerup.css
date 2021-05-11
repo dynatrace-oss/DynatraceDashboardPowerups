@@ -516,5 +516,5 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
 }
 
 .powerupHide {
-  display: none;
+  display: none !important;
 }
