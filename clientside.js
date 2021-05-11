@@ -5097,6 +5097,7 @@ var DashboardPowerups = (function () {
             }
 
             if(title.includes(PU_AUTOHIDE)){
+                $tilecontent.hide();
                 $tilenocontent.hide();    
             }
             $menuicon.on("click", addHideShow);
