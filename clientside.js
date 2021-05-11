@@ -4341,6 +4341,12 @@ var DashboardPowerups = (function () {
                 let dataTable = readTableData($tabletile, false);
 
                 //lookup val in table
+                if(!dataTable || dataTable.keys == undefined || !dataTable.keys.length){
+                    let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in table.`;
+                    console.log(error);
+                    errorBeacon(error);
+                    return false;
+                }
                 let firstColName = dataTable.keys[0];
                 let rowIdx;
                 if (row > 0) {
