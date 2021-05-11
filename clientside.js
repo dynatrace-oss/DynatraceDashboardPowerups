@@ -35,6 +35,7 @@ var DashboardPowerups = (function () {
     const TOPLIST_BAR_SELECTOR = 'div[data-dynamic-color]';
     const NO_DATA_SELECTOR = 'div.grid-tileContent > div > div:nth-of-type(3) > div:nth-of-type(1), [uitestid="gwt-debug-renderedCustomError"] > div > div:nth-of-type(1)';
     const TILE_CONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:first-of-type';
+    const TILE_NOCONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:nth-of-type(3)';
 
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
@@ -5040,6 +5041,7 @@ var DashboardPowerups = (function () {
             let $menuicon = $(el);
             let $tile = $menuicon.parents(TILE_SELECTOR);
             let $tilecontent = $tile.find(TILE_CONTENT_SELECTOR);
+            let $tilenocontent = $tile.find(TILE_NOCONTENT_SELECTOR);
 
             function toggle() {
                 let $popup = $(MENU_POPUP_SELECTOR);
@@ -5047,6 +5049,7 @@ var DashboardPowerups = (function () {
                 let name = $tilecontent.is(":visible") ? "Hide" : "Show";
 
                 $tilecontent.toggle();
+                $tilenocontent.toggle();
 
                 $popup.children("a").each((child_idx, child) => {
                     let newname;
