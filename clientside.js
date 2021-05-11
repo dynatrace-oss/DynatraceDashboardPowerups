@@ -5099,6 +5099,7 @@ var DashboardPowerups = (function () {
             if(title.includes(PU_AUTOHIDE) && $tilenocontent.is(":visible")){
                 $tilecontent.addClass("powerupHide");
                 $tilenocontent.addClass("powerupHide");
+                powerupsFired['PU_AUTOHIDE'] ? powerupsFired['PU_AUTOHIDE']++ : powerupsFired['PU_AUTOHIDE'] = 1;
             }
             $menuicon.on("click", addHideShow);
         });
