@@ -40,6 +40,8 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [TileCSS](#Tilecss)
     - [Menu](#Menu)
     - [Topcolor](#Topcolor)
+    - [Honeycomb](#Honeycomb)
+    - [Autohide](#Autohide)
 
 ## Installation
 1. Install the extension from the
@@ -591,3 +593,16 @@ Explanation:
 
 Example:
 ![honeycomb](Assets/honeycomb.png)
+
+### Autohide
+Automatically hide a tile's content if there's no data.
+
+Syntax:
+- `Out of memory containers !PU(autohide):`
+
+Explanation:
+- `!PU(autohide):` - denotes this powerup
+
+Example:
+![autohide_before](Assets/autohide_before.png)
+![autohide_after](Assets/autohide_after.png)
