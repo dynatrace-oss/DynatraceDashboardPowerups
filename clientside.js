@@ -5052,11 +5052,7 @@ var DashboardPowerups = (function () {
                 let name = $tilecontent.is(":visible") ? "Hide" : "Show";
 
                 $tilecontent.toggle();
-                if(title.includes(PU_AUTOHIDE)){
-                    $tilenocontent.hide();    
-                } else {
-                    $tilenocontent.toggle();
-                }
+                $tilenocontent.toggle();
                 
 
                 $popup.children("a").each((child_idx, child) => {
@@ -5100,6 +5096,9 @@ var DashboardPowerups = (function () {
                 }, 50);
             }
 
+            if(title.includes(PU_AUTOHIDE)){
+                $tilenocontent.hide();    
+            }
             $menuicon.on("click", addHideShow);
         });
     }
