@@ -514,3 +514,7 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
 .powerupSankeyDetailPopup th {
   text-align: left;
 }
+
+.powerupHide {
+  display: none;
+}
