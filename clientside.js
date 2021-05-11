@@ -66,12 +66,13 @@ var DashboardPowerups = (function () {
     const PU_MENU = '!PU(menu):';
     const PU_TOPCOLOR = '!PU(topcolor):';
     const PU_HONEYCOMB = '!PU(honeycomb):';
+    const PU_AUTOHIDE = '!PU(autohide):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE
     ];
     const CHART_OPTS = {
         //plotBackgroundColor: '#454646',
@@ -5040,6 +5041,8 @@ var DashboardPowerups = (function () {
         $(MENU_ICON_SELECTOR).each((i, el) => {
             let $menuicon = $(el);
             let $tile = $menuicon.parents(TILE_SELECTOR);
+            let $title = $tile.find(TITLE_SELECTOR);
+            let title = $title.text();
             let $tilecontent = $tile.find(TILE_CONTENT_SELECTOR);
             let $tilenocontent = $tile.find(TILE_NOCONTENT_SELECTOR);
 
@@ -5049,7 +5052,12 @@ var DashboardPowerups = (function () {
                 let name = $tilecontent.is(":visible") ? "Hide" : "Show";
 
                 $tilecontent.toggle();
-                $tilenocontent.toggle();
+                if(title.includes(PU_AUTOHIDE)){
+                    $tilenocontent.hide();    
+                } else {
+                    $tilenocontent.toggle();
+                }
+                
 
                 $popup.children("a").each((child_idx, child) => {
                     let newname;
