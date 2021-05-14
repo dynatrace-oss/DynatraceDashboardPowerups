@@ -4723,7 +4723,8 @@ var DashboardPowerups = (function () {
                         y: yt,
                         events: {
                             click: () => {
-                                window.location.assign(point.link);
+                                if(point.link != undefined)
+                                    window.location.assign(point.link);
                             }
                         }
                     }
