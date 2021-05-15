@@ -4669,7 +4669,7 @@ var DashboardPowerups = (function () {
 
             if (title.includes(PU_HONEYCOMB)) {
                 let args = argsplit(title, PU_HONEYCOMB);
-                let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',');
+                let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',').filter(x=>x!="");
                 let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
                 if (drill) drill = drill.trim();
 
