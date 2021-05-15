@@ -4679,7 +4679,7 @@ var DashboardPowerups = (function () {
                     links.forEach(link => {
                         let linkedTile = pub.findLinkedTile(link, PU_HONEYCOMB);
                         if (linkedTile == undefined) return false;
-                        let linkedTable = readTableData($tile, true, true);
+                        let linkedTable = readTableData(linkedTile, true, true);
                         if (!linkedTable) return false;
                         if (JSON.stringify(dataTable.keys) !== JSON.stringify(linkedTable.keys)) {
                             let error = `POWERUP: ERROR - Honeycomb - tried to merge dissimilar tables.`;
