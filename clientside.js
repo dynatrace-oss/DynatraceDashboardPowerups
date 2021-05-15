@@ -4670,6 +4670,7 @@ var DashboardPowerups = (function () {
             if (title.includes(PU_HONEYCOMB)) {
                 let args = argsplit(title, PU_HONEYCOMB);
                 let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',');
+                let drill = (args.find(x => x[0] == "drill") || [])[1];
 
                 //find the table
                 let dataTable = readTableData($tile, true, true);
@@ -4723,8 +4724,16 @@ var DashboardPowerups = (function () {
                         y: yt,
                         events: {
                             click: () => {
-                                if(point.link != undefined)
+                                if(drill != undefined){
+                                    let url = drill
+                                        .replace(/\$colname/g,name)
+                                        .replace(/\$name/g,point[name])
+                                        .replace(/\$value/g,point[value]);
+                                    window.location.assign(url);    
+                                } else if(point.link != undefined) {
                                     window.location.assign(point.link);
+                                }
+                                    
                             }
                         }
                     }
