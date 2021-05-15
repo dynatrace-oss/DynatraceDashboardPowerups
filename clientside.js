@@ -4744,7 +4744,7 @@ var DashboardPowerups = (function () {
                 }
                 let x = 0, y = 0, j = 0;
                 add(j++, x, y); // add the first cell
-                for (let N = 1; j < 64; ++N) {
+                for (let N = 1; j < rows; ++N) {
                     for (let i = 0; i < N; ++i) add(j++, ++x, y);  // move right
                     for (let i = 0; i < N - 1; ++i) add(j++, x, ++y); // move down right. Note N-1
                     for (let i = 0; i < N; ++i) add(j++, --x, ++y); // move down left
