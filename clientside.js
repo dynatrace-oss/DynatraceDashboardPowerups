@@ -4670,7 +4670,8 @@ var DashboardPowerups = (function () {
             if (title.includes(PU_HONEYCOMB)) {
                 let args = argsplit(title, PU_HONEYCOMB);
                 let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',');
-                let drill = (args.find(x => x[0] == "drill") || [])[1];
+                let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
+                if (drill) drill = drill.trim();
 
                 //find the table
                 let dataTable = readTableData($tile, true, true);
