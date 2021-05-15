@@ -590,6 +590,7 @@ Syntax:
 Explanation:
 - `!PU(honeycomb):` - denotes this powerup
 - `links=link1,link2` - merge data from other Explorer table tiles. NOTE: columns must match.
+- `drill=#uemapplications/performanceanalysis;uemapplicationId=...filtr3sProp0-=$colname%20s$name` - override drilldown url. `$colname` is replaced by the column name, `$name` by the name in the first column, and `$value` by the value of the row.
 
 Example:
 ![honeycomb](Assets/honeycomb.png)
