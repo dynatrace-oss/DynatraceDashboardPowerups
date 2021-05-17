@@ -4319,11 +4319,6 @@ var DashboardPowerups = (function () {
             let $tile = $markdown.parents(TILE_SELECTOR);
 
             if (markdown.includes(PU_VLOOKUP)) {
-                /*let argstring = $markdown.text()
-                    .split(PU_VLOOKUP)[1]
-                    .split(/[!\n]/)[0]
-                    .trim();
-                let args = argstring.split(";").map(x => x.split("="));*/
                 let args = argsplit(markdown, PU_VLOOKUP);
                 let color = (args.find(x => x[0] == "color") || ["white"])[1];
                 let link = (args.find(x => x[0] == "link") || [])[1];
@@ -4387,6 +4382,12 @@ var DashboardPowerups = (function () {
                             if (typeof (comparetabletile) == "undefined") return false;
                             let $comparetabletile = $(comparetabletile);
                             compareTable = readTableData($comparetabletile);
+                        }
+                        if(!compareTable || compareTable.keys == undefined || !compareTable.keys.length){
+                            let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in compareTable.`;
+                            console.log(error);
+                            errorBeacon(error);
+                            return false;
                         }
                         let compareFirstColName = compareTable.keys[0];
                         let compareRowIdx = compareTable.normalTable.findIndex(x => x[compareFirstColName] === compareVal);
