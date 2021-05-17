@@ -1303,8 +1303,12 @@ var DashboardPowerups = (function () {
             || !Array.isArray(chart.series[0].data)
             || chart.series[0].data[0] == undefined
             || chart.series[0].data[0].name == undefined
-            || !chart.series[0].data[0].name.includes(','))
+            || !chart.series[0].data[0].name.includes(',')) {
+            let error = "Powerup: WARN - USQLStack did not find a splitting, aborting.";
+            console.log(error);
+            errorBeacon(error);
             return false; //if there's no splitting, quit
+        }
         let splittings = [];
         let newSeries = [];
         let newCategories = [... new Set(chart.series[0].data.map(x => x.category.split(',')[0]))];
