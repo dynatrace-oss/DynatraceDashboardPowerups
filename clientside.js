@@ -1117,7 +1117,7 @@ var DashboardPowerups = (function () {
         function linearProjection(linear) {
             if (!p) return;
             let newLine = projection(linear);
-            if(newLine == undefined) return false;
+            if (newLine == undefined) return false;
             chart.addSeries({
                 name: "Projection",
                 id: "Projection",
@@ -3427,9 +3427,13 @@ var DashboardPowerups = (function () {
         if (ms && fmt) {
             oldCategories.forEach(x => {
                 if (!categoryMap.has(x)) {
-                    let newCategory = dateFns.format(
-                        parseInt(x / ms) * ms,
-                        fmt);
+                    let newCategory;
+                    if (dateFns != undefined)
+                        newCategory = dateFns.format(
+                            parseInt(x / ms) * ms,
+                            fmt);
+                    else
+                        newCategory = x;
                     categoryMap.set(x, newCategory);
                 }
             });
