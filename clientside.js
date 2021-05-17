@@ -3810,7 +3810,7 @@ var DashboardPowerups = (function () {
 
                 let args = argsplit(paratxt, PU_MATH);
 
-                let exp = args.find(x => x[0] == "exp")[1].replace(/ /g, '');
+                let exp = (args.find(x => x[0] == "exp") || [])[1].replace(/ /g, '');
                 let scopeStr = args.find(x => x[0] == "scope")[1];
                 let color = (args.find(x => x[0] == "color") || [])[1] || "white";
                 let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
