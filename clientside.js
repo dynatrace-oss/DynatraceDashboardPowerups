@@ -2212,6 +2212,7 @@ var DashboardPowerups = (function () {
                 function buildTouples(filteredTable) {
                     let touples = [];
                     filteredTable.forEach(row => {
+                        if(!Array.isArray(row.filtered)) return false;
                         for (let k = 0; k < row.filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                             let touple = {
                                 from: row.filtered[k],
@@ -2243,6 +2244,7 @@ var DashboardPowerups = (function () {
                     let goals = [];
                     filteredTable.forEach(row => {
                         let arr = row["useraction.matchingConversionGoals"];
+                        if(!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //matchingConversion goals
                             if (arr[k] != "") {
                                 let actionName = row["useraction.name"][k];
@@ -2266,6 +2268,7 @@ var DashboardPowerups = (function () {
                     let apdexList = [];
                     filteredTable.forEach(row => {
                         let arr = row["useraction.apdexCategory"];
+                        if(!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //apdex
                             let val = arr[k];
                             if (val !== "") {
@@ -2306,6 +2309,7 @@ var DashboardPowerups = (function () {
                 function addEntryActionsToList(apdexList, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.isEntryAction"];
+                        if(!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //entry actions
                             let val = arr[k];
                             if (val === "true" || val === true) {
@@ -2326,6 +2330,7 @@ var DashboardPowerups = (function () {
                 function addExitActionsToList(apdexList, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.isExitAction"];
+                        if(!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //exit actions
                             let val = arr[k];
                             if (val === "true" || val === true) {
@@ -2345,6 +2350,7 @@ var DashboardPowerups = (function () {
                 function addUAPStringToList(UAPs, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.stringProperties"];
+                        if(!Array.isArray(arr)) return false;
                         arr.forEach((uapCol, uapColIdx) => {
                             uapCol.forEach((uapVal, uapValIdx) => {
                                 let actionName = row["useraction.name"][uapColIdx];
@@ -2369,6 +2375,7 @@ var DashboardPowerups = (function () {
                 function addUAPDoubleToList(UAPs, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.doubleProperties"];
+                        if(!Array.isArray(arr)) return false;
                         arr.forEach((uapCol, uapColIdx) => {
                             uapCol.forEach((uapVal, uapValIdx) => {
                                 let actionName = row["useraction.name"][uapColIdx];
@@ -2394,6 +2401,7 @@ var DashboardPowerups = (function () {
                 function addUAPLongToList(UAPs, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.longProperties"];
+                        if(!Array.isArray(arr)) return false;
                         arr.forEach((uapCol, uapColIdx) => {
                             uapCol.forEach((uapVal, uapValIdx) => {
                                 let actionName = row["useraction.name"][uapColIdx];
@@ -2420,6 +2428,7 @@ var DashboardPowerups = (function () {
                 function addUAPDateToList(UAPs, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.dateProperties"];
+                        if(!Array.isArray(arr)) return false;
                         arr.forEach((uapCol, uapColIdx) => {
                             uapCol.forEach((uapVal, uapValIdx) => {
                                 let actionName = row["useraction.name"][uapColIdx];
@@ -2445,6 +2454,7 @@ var DashboardPowerups = (function () {
                 function addDurationToList(apdexList, filteredTable) {
                     filteredTable.forEach((row, rowIdx) => {
                         let arr = row["useraction.duration"];
+                        if(!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //duration
                             let val = arr[k];
                             if (val !== "") {
@@ -2464,6 +2474,7 @@ var DashboardPowerups = (function () {
                 function addErrorsToList(apdexList, filteredTable) {
                     filteredTable.forEach((row, rowIdx) => {
                         let arr = row["useraction.errorCount"];
+                        if(!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //errors
                             let val = arr[k];
                             if (val !== "") {
