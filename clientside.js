@@ -1297,7 +1297,14 @@ var DashboardPowerups = (function () {
                 return p;
             } else return false;
         }
-        if (!chart.series[0].data[0].name.includes(',')) return false; //if there's no splitting, quit
+        if (chart == undefined
+            || !Array.isArray(chart.series)
+            || chart.series[0] == undefined
+            || !Array.isArray(chart.series[0].data)
+            || chart.series[0].data[0] == undefined
+            || chart.series[0].data[0].name == undefined
+            || !chart.series[0].data[0].name.includes(','))
+            return false; //if there's no splitting, quit
         let splittings = [];
         let newSeries = [];
         let newCategories = [... new Set(chart.series[0].data.map(x => x.category.split(',')[0]))];
@@ -2212,7 +2219,7 @@ var DashboardPowerups = (function () {
                 function buildTouples(filteredTable) {
                     let touples = [];
                     filteredTable.forEach(row => {
-                        if(!Array.isArray(row.filtered)) return false;
+                        if (!Array.isArray(row.filtered)) return false;
                         for (let k = 0; k < row.filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                             let touple = {
                                 from: row.filtered[k],
@@ -2244,7 +2251,7 @@ var DashboardPowerups = (function () {
                     let goals = [];
                     filteredTable.forEach(row => {
                         let arr = row["useraction.matchingConversionGoals"];
-                        if(!Array.isArray(arr)) return false;
+                        if (!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //matchingConversion goals
                             if (arr[k] != "") {
                                 let actionName = row["useraction.name"][k];
@@ -2268,7 +2275,7 @@ var DashboardPowerups = (function () {
                     let apdexList = [];
                     filteredTable.forEach(row => {
                         let arr = row["useraction.apdexCategory"];
-                        if(!Array.isArray(arr)) return false;
+                        if (!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //apdex
                             let val = arr[k];
                             if (val !== "") {
@@ -2309,7 +2316,7 @@ var DashboardPowerups = (function () {
                 function addEntryActionsToList(apdexList, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.isEntryAction"];
-                        if(!Array.isArray(arr)) return false;
+                        if (!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //entry actions
                             let val = arr[k];
                             if (val === "true" || val === true) {
@@ -2330,7 +2337,7 @@ var DashboardPowerups = (function () {
                 function addExitActionsToList(apdexList, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.isExitAction"];
-                        if(!Array.isArray(arr)) return false;
+                        if (!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //exit actions
                             let val = arr[k];
                             if (val === "true" || val === true) {
@@ -2350,7 +2357,7 @@ var DashboardPowerups = (function () {
                 function addUAPStringToList(UAPs, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.stringProperties"];
-                        if(!Array.isArray(arr)) return false;
+                        if (!Array.isArray(arr)) return false;
                         arr.forEach((uapCol, uapColIdx) => {
                             uapCol.forEach((uapVal, uapValIdx) => {
                                 let actionName = row["useraction.name"][uapColIdx];
@@ -2375,7 +2382,7 @@ var DashboardPowerups = (function () {
                 function addUAPDoubleToList(UAPs, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.doubleProperties"];
-                        if(!Array.isArray(arr)) return false;
+                        if (!Array.isArray(arr)) return false;
                         arr.forEach((uapCol, uapColIdx) => {
                             uapCol.forEach((uapVal, uapValIdx) => {
                                 let actionName = row["useraction.name"][uapColIdx];
@@ -2401,7 +2408,7 @@ var DashboardPowerups = (function () {
                 function addUAPLongToList(UAPs, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.longProperties"];
-                        if(!Array.isArray(arr)) return false;
+                        if (!Array.isArray(arr)) return false;
                         arr.forEach((uapCol, uapColIdx) => {
                             uapCol.forEach((uapVal, uapValIdx) => {
                                 let actionName = row["useraction.name"][uapColIdx];
@@ -2428,7 +2435,7 @@ var DashboardPowerups = (function () {
                 function addUAPDateToList(UAPs, filteredTable) {
                     filteredTable.forEach(row => {
                         let arr = row["useraction.dateProperties"];
-                        if(!Array.isArray(arr)) return false;
+                        if (!Array.isArray(arr)) return false;
                         arr.forEach((uapCol, uapColIdx) => {
                             uapCol.forEach((uapVal, uapValIdx) => {
                                 let actionName = row["useraction.name"][uapColIdx];
@@ -2454,7 +2461,7 @@ var DashboardPowerups = (function () {
                 function addDurationToList(apdexList, filteredTable) {
                     filteredTable.forEach((row, rowIdx) => {
                         let arr = row["useraction.duration"];
-                        if(!Array.isArray(arr)) return false;
+                        if (!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //duration
                             let val = arr[k];
                             if (val !== "") {
@@ -2474,7 +2481,7 @@ var DashboardPowerups = (function () {
                 function addErrorsToList(apdexList, filteredTable) {
                     filteredTable.forEach((row, rowIdx) => {
                         let arr = row["useraction.errorCount"];
-                        if(!Array.isArray(arr)) return false;
+                        if (!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //errors
                             let val = arr[k];
                             if (val !== "") {
@@ -3488,24 +3495,24 @@ var DashboardPowerups = (function () {
         //Highcharts expects data to be sorted
         newData = newData
             .sort((a, b) => {
-            if (a[0] === b[0]) {
-                return a[1] - b[1];
-            } else {
-                return a[0] - b[0];
-            }
+                if (a[0] === b[0]) {
+                    return a[1] - b[1];
+                } else {
+                    return a[0] - b[0];
+                }
             })
-            .filter(x => 
+            .filter(x =>
                 x != undefined
                 && x.length == 3
                 && x[0] != undefined
                 && x[1] != undefined
                 && x[2] != undefined
             );
-        if(!Array.isArray(newData) || !newData.length){
+        if (!Array.isArray(newData) || !newData.length) {
             let error = `Powerup: WARN - ${PU_HEATMAP} - newData was empty!`;
-                console.log(error);
-                errorBeacon(error);
-                return false;
+            console.log(error);
+            errorBeacon(error);
+            return false;
         }
         let newSeries = {
             type: 'heatmap',
@@ -4363,7 +4370,7 @@ var DashboardPowerups = (function () {
                 let dataTable = readTableData($tabletile, false);
 
                 //lookup val in table
-                if(!dataTable || dataTable.keys == undefined || !dataTable.keys.length){
+                if (!dataTable || dataTable.keys == undefined || !dataTable.keys.length) {
                     let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in table.`;
                     console.log(error);
                     errorBeacon(error);
@@ -4408,7 +4415,7 @@ var DashboardPowerups = (function () {
                             let $comparetabletile = $(comparetabletile);
                             compareTable = readTableData($comparetabletile);
                         }
-                        if(!compareTable || compareTable.keys == undefined || !compareTable.keys.length){
+                        if (!compareTable || compareTable.keys == undefined || !compareTable.keys.length) {
                             let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in compareTable.`;
                             console.log(error);
                             errorBeacon(error);
@@ -4695,7 +4702,7 @@ var DashboardPowerups = (function () {
 
             if (title.includes(PU_HONEYCOMB)) {
                 let args = argsplit(title, PU_HONEYCOMB);
-                let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',').filter(x=>x!="");
+                let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',').filter(x => x != "");
                 let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
                 if (drill) drill = drill.trim();
 
@@ -4751,16 +4758,16 @@ var DashboardPowerups = (function () {
                         y: yt,
                         events: {
                             click: () => {
-                                if(drill != undefined){
+                                if (drill != undefined) {
                                     let url = drill
-                                        .replace(/\$colname/g,name)
-                                        .replace(/\$name/g,point[name])
-                                        .replace(/\$value/g,point[value]);
-                                    window.location.assign(url);    
-                                } else if(point.link != undefined) {
+                                        .replace(/\$colname/g, name)
+                                        .replace(/\$name/g, point[name])
+                                        .replace(/\$value/g, point[value]);
+                                    window.location.assign(url);
+                                } else if (point.link != undefined) {
                                     window.location.assign(point.link);
                                 }
-                                    
+
                             }
                         }
                     }
@@ -5090,7 +5097,7 @@ var DashboardPowerups = (function () {
 
                 $tilecontent.toggleClass("powerupHide");
                 $tilenocontent.toggleClass("powerupHide");
-                
+
 
                 $popup.children("a").each((child_idx, child) => {
                     let newname;
@@ -5133,7 +5140,7 @@ var DashboardPowerups = (function () {
                 }, 50);
             }
 
-            if(title.includes(PU_AUTOHIDE) && $tilenocontent.is(":visible")){
+            if (title.includes(PU_AUTOHIDE) && $tilenocontent.is(":visible")) {
                 $tilecontent.addClass("powerupHide");
                 $tilenocontent.addClass("powerupHide");
                 powerupsFired['PU_AUTOHIDE'] ? powerupsFired['PU_AUTOHIDE']++ : powerupsFired['PU_AUTOHIDE'] = 1;
