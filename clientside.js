@@ -1117,6 +1117,7 @@ var DashboardPowerups = (function () {
         function linearProjection(linear) {
             if (!p) return;
             let newLine = projection(linear);
+            if(newLine == undefined) return false;
             chart.addSeries({
                 name: "Projection",
                 id: "Projection",
