@@ -3486,13 +3486,27 @@ var DashboardPowerups = (function () {
             });
         });
         //Highcharts expects data to be sorted
-        newData = newData.sort((a, b) => {
+        newData = newData
+            .sort((a, b) => {
             if (a[0] === b[0]) {
                 return a[1] - b[1];
             } else {
                 return a[0] - b[0];
             }
-        });
+            })
+            .filter(x => 
+                x != undefined
+                && x.length == 3
+                && x[0] != undefined
+                && x[1] != undefined
+                && x[2] != undefined
+            );
+        if(!Array.isArray(newData) || !newData.length){
+            let error = `Powerup: WARN - ${PU_HEATMAP} - newData was empty!`;
+                console.log(error);
+                errorBeacon(error);
+                return false;
+        }
         let newSeries = {
             type: 'heatmap',
             data: newData,
