@@ -520,6 +520,6 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
 }
 
 .powerupSankeyNodeTextLabel span {
-  left: 8px;
+  left: 8px !important;
   transform: rotate(-90deg);
 }
