@@ -2659,6 +2659,7 @@ var DashboardPowerups = (function () {
                         display: "Start...",
                         color: "#b7b7b7",
                         dataLabels: {
+                            rotation: 270,
                             className: "powerupSankeyNodeTextLabel"
                         }
                         
@@ -2670,6 +2671,7 @@ var DashboardPowerups = (function () {
                         display: "...End",
                         color: "#b7b7b7",
                         dataLabels: {
+                            rotation: 270,
                             className: "powerupSankeyNodeTextLabel"
                         }
                     }
@@ -2681,6 +2683,7 @@ var DashboardPowerups = (function () {
                             display: "CRASH!",
                             color: COLOR_RED,
                             dataLabels: {
+                                rotation: 270,
                                 className: "powerupSankeyNodeTextLabel"
                             }
                         }

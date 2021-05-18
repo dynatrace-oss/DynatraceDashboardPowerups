@@ -519,7 +519,7 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
   display: none !important;
 }
 
-.powerupSankeyNodeTextLabel span {
+/*.powerupSankeyNodeTextLabel span {
   left: 8px !important;
   transform: rotate(-90deg);
-}
+}*/
