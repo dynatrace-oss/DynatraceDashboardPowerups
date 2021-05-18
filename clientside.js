@@ -2184,7 +2184,10 @@ var DashboardPowerups = (function () {
                         }
                         if (params.convHack == "2") {
                             filtered.unshift({ name: "START", app: "" });
-                            filtered.push({ name: "END", app: "" });
+                            if (row["hasCrash"] == "true")
+                                filtered.push({ name: "CRASH", app: "" });
+                            else
+                                filtered.push({ name: "END", app: "" });
                         }
                         if (Array.isArray(params.filter)) {
                             params.filter.forEach(f => {
@@ -2722,9 +2725,6 @@ var DashboardPowerups = (function () {
                 options.series[0].nodes.forEach(node => {
                     switch (params.colors) {
                         case "crashes":
-                            //if (node.crashes > 1)
-                            //    node.color = "#ffee7c";
-                            //else
                             node.color = "#6d6d6d";
 
                             //END node
@@ -2746,6 +2746,8 @@ var DashboardPowerups = (function () {
                             break;
                         case "apdex":
                         default:
+                            if(node.apdex == undefined)
+                                node.color = "#6d6d6d";
                             if (node.apdex.name == "satisfied")
                                 node.color = "#6bcb8b";
                             else if (node.apdex.name == "tolerating")
