@@ -2092,7 +2092,8 @@ var DashboardPowerups = (function () {
                     apdexList: actionDetailList,
                     UAPs: UAPs,
                     rows: filteredTable.length,
-                    filteredTable: filteredTable
+                    filteredTable: filteredTable,
+                    crashes: filteredTable.filter(x => x.hasCrash=="true").length
                 };
                 return (data);
 
@@ -2843,9 +2844,14 @@ var DashboardPowerups = (function () {
                         .add();
                     chart.renderer.text(`Showing <a href="javascript:" class="powerupFilterProp">${data.rows}</a> sessions`,
                         //chart.chartWidth - 160, chart.chartHeight - 25)
-                        200, 25)
+                        180, 25)
                         .add()
                         .on("click", sessionPopup);
+                    chart.renderer.text(`with <a href="javascript:" class="powerupFilterProp">${data.crashes}</a> crashes`,
+                        //chart.chartWidth - 160, chart.chartHeight - 25)
+                        325, 25)
+                        .add()
+                        .on("click", crashPopup);
                     //display filter text
                     if (Array.isArray(params.filter)) {
                         let y = 55, inc = 20;
@@ -3147,6 +3153,16 @@ var DashboardPowerups = (function () {
                         .click(() => { $popup.remove(); })
                         .appendTo(container);
                 }
+
+                function crashPopup(e) {
+                    let html = `<h3>Crash List</h3><p>${data.crashes} crashes. Details comings soon...`;
+                    let $popup = $("<div>")
+                        .addClass("powerupSankeyDetailPopup")
+                        .html(html)
+                        .click(() => { $popup.remove(); })
+                        .appendTo(container);
+                }
+
                 return chart;
             }
 
