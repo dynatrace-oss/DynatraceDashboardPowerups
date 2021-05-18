@@ -2536,21 +2536,62 @@ var DashboardPowerups = (function () {
                 function addApdexStylesToList(apdexList) {
                     apdexList.forEach((apdex) => {
                         if (apdex.satisfied >= Math.max(apdex.tolerating, apdex.frustrated)) {
-                            apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
+                            //apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
                             apdex.name = "satisfied";
-                            apdex.color = "#6bcb8b";
+                            //apdex.color = "#6bcb8b";
                         } else if (apdex.tolerating >= Math.max(apdex.satisfied, apdex.frustrated)) {
                             apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
                             apdex.name = "tolerating";
-                            apdex.color = "#ffee7c";
+                            //apdex.color = "#ffee7c";
                         } else if (apdex.frustrated >= Math.max(apdex.tolerating, apdex.satisfied)) {
                             apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
                             apdex.name = "frustrated";
-                            apdex.color = "#c41425";
+                            //apdex.color = "#c41425";
                         } else {
                             apdex.svg = "";
-                            apdex.color = "#6d6d6d";
+                            //apdex.color = "#6d6d6d";
                         }
+                        switch (params.colors) {
+                            case "crashes":
+                                if (apdex.crashes > 1) {
+                                    apdex.color = "#ffee7c";
+                                } else {
+                                    apdex.color = "#6d6d6d";
+                                }
+                                break;
+                            case "errors":
+                                if (apdex.errors > 10) {
+                                    apdex.color = "#c41425";
+                                } else if (apdex.errors > 1) {
+                                    apdex.color = "#ffee7c";
+                                } else {
+                                    apdex.color = "#6bcb8b";
+                                }
+                                break;
+                            case "false":
+                                apdex.color = null;
+                                break;
+                            case "apdex":
+                            default:
+                                if (apdex.satisfied >= Math.max(apdex.tolerating, apdex.frustrated)) {
+                                    //apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
+                                    //apdex.name = "satisfied";
+                                    apdex.color = "#6bcb8b";
+                                } else if (apdex.tolerating >= Math.max(apdex.satisfied, apdex.frustrated)) {
+                                    //apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
+                                    //apdex.name = "tolerating";
+                                    apdex.color = "#ffee7c";
+                                } else if (apdex.frustrated >= Math.max(apdex.tolerating, apdex.satisfied)) {
+                                    //apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
+                                    //apdex.name = "frustrated";
+                                    apdex.color = "#c41425";
+                                } else {
+                                    //apdex.svg = "";
+                                    apdex.color = "#6d6d6d";
+                                }
+                                break;
+                        }
+
                     });
                 }
 
@@ -2681,7 +2722,8 @@ var DashboardPowerups = (function () {
                     }
 
                     //Color handling
-                    if (params.colors == "apdex") {
+                    //if (params.colors == "apdex") {
+                    if (apdex.color != null) {
                         node.color = apdex.color;
                     }
 
