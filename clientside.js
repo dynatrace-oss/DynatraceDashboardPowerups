@@ -2658,7 +2658,10 @@ var DashboardPowerups = (function () {
                         //column: 0,
                         display: "Start...",
                         color: "#b7b7b7",
-                        className: "powerupSankeyNodeTextLabel"
+                        dataLabels: {
+                            className: "powerupSankeyNodeTextLabel"
+                        }
+                        
                     }
                     options.series[0].nodes.push(node);
                     node = {
@@ -2666,7 +2669,9 @@ var DashboardPowerups = (function () {
                         //column: 1,
                         display: "...End",
                         color: "#b7b7b7",
-                        className: "powerupSankeyNodeTextLabel"
+                        dataLabels: {
+                            className: "powerupSankeyNodeTextLabel"
+                        }
                     }
                     options.series[0].nodes.push(node);
                     if(data.touples.filter(x => x.crashes).length){
@@ -2675,7 +2680,9 @@ var DashboardPowerups = (function () {
                             //column: 1,
                             display: "CRASH!",
                             color: COLOR_RED,
-                            className: "powerupSankeyNodeTextLabel"
+                            dataLabels: {
+                                className: "powerupSankeyNodeTextLabel"
+                            }
                         }
                         options.series[0].nodes.push(node);
                     }
