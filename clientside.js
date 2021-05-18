@@ -2551,47 +2551,6 @@ var DashboardPowerups = (function () {
                             apdex.svg = "";
                             //apdex.color = "#6d6d6d";
                         }
-                        switch (params.colors) {
-                            case "crashes":
-                                if (apdex.crashes > 1) {
-                                    apdex.color = "#ffee7c";
-                                } else {
-                                    apdex.color = "#6d6d6d";
-                                }
-                                break;
-                            case "errors":
-                                if (apdex.errors > 10) {
-                                    apdex.color = "#c41425";
-                                } else if (apdex.errors > 1) {
-                                    apdex.color = "#ffee7c";
-                                } else {
-                                    apdex.color = "#6bcb8b";
-                                }
-                                break;
-                            case "false":
-                                apdex.color = null;
-                                break;
-                            case "apdex":
-                            default:
-                                if (apdex.satisfied >= Math.max(apdex.tolerating, apdex.frustrated)) {
-                                    //apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
-                                    //apdex.name = "satisfied";
-                                    apdex.color = "#6bcb8b";
-                                } else if (apdex.tolerating >= Math.max(apdex.satisfied, apdex.frustrated)) {
-                                    //apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
-                                    //apdex.name = "tolerating";
-                                    apdex.color = "#ffee7c";
-                                } else if (apdex.frustrated >= Math.max(apdex.tolerating, apdex.satisfied)) {
-                                    //apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
-                                    //apdex.name = "frustrated";
-                                    apdex.color = "#c41425";
-                                } else {
-                                    //apdex.svg = "";
-                                    apdex.color = "#6d6d6d";
-                                }
-                                break;
-                        }
-
                     });
                 }
 
@@ -2721,12 +2680,6 @@ var DashboardPowerups = (function () {
                         node.avgDuration = fmt(avg);
                     }
 
-                    //Color handling
-                    //if (params.colors == "apdex") {
-                    if (apdex.color != null) {
-                        node.color = apdex.color;
-                    }
-
                     //Conversion goal handling
                     let goal = data.goals.find(x => x.actionName == apdex.actionName);
                     if (typeof (goal) != "undefined") {
@@ -2758,6 +2711,46 @@ var DashboardPowerups = (function () {
                         (apdex.exitActionSVG ? `<br>${apdex.exitActionSVG}` : '');
 
                     options.series[0].nodes.push(node);
+                });
+
+                //Color handling
+                options.series[0].nodes.forEach(node => {
+                    switch (params.colors) {
+                        case "crashes":
+                            if (node.crashes > 1)
+                                node.color = "#ffee7c";
+                            else
+                                node.color = "#6d6d6d";
+
+                            //END node
+                            if (node.id == "END") {
+                                let anyCrashes = options.series[0].nodes.filter(x => x.crashes).length > 0
+                                if (anyCrashes) node.color = "#c41425";
+                            }
+                            break;
+                        case "errors":
+                            if (node.errors > 10)
+                                node.color = "#c41425";
+                            else if (apdex.errors > 1)
+                                node.color = "#ffee7c";
+                            else
+                                node.color = "#6bcb8b";
+                            break;
+                        case "false":
+                            node.color = null;
+                            break;
+                        case "apdex":
+                        default:
+                            if (node.apdex.name == "satisfied")
+                                node.color = "#6bcb8b";
+                            else if (node.apdex.name == "tolerating")
+                                node.color = "#ffee7c";
+                            else if (node.apdex.name == "frustrated")
+                                node.color = "#c41425";
+                            else //gray
+                                node.color = "#6d6d6d";
+                            break;
+                    }
                 });
 
                 let chart = H.chart(container, options, (chart) => {
