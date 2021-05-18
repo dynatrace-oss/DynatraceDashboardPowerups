@@ -2076,7 +2076,7 @@ var DashboardPowerups = (function () {
                 addUAPDateToList(UAPs, filteredTable);
                 addDurationToList(actionDetailList, filteredTable);
                 addErrorsToList(actionDetailList, filteredTable);
-                addCrashesInApdexList(apdexList, filteredTable)
+                addCrashesInApdexList(actionDetailList, filteredTable);
                 addApdexStylesToList(actionDetailList);
                 touples = sortTouples(touples);
 
@@ -2524,7 +2524,7 @@ var DashboardPowerups = (function () {
                             if (apdexIdx > -1) {
                                 if (typeof (apdexList[apdexIdx].crashes) == "undefined")
                                     apdexList[apdexIdx].crashes = 0;
-                                    
+
                                 if (crash === true) {
                                     apdexList[apdexIdx].crashes++;
                                 }
