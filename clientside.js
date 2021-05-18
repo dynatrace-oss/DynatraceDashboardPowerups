@@ -2243,11 +2243,15 @@ var DashboardPowerups = (function () {
                                     && t.fromApp === touple.fromApp
                                     && t.toApp === touple.toApp);
                             if (l < 0) {
-                                touple.weight = 1;
+                                touple.weight = 0;
+                                touple.crashes = 0;
                                 touples.push(touple);
                             } else {
-                                touples[l].weight++;
+                                touple = touples[l];
                             }
+
+                            touple.weight++;
+                            if(row.hasCrash == "true") touple.crashes++;
                         }
                     });
                     return touples;
@@ -2607,6 +2611,7 @@ var DashboardPowerups = (function () {
                         `.trim(),
                             pointFormat: `<div class="powerup-sankey-tooltip">
                         {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>
+                        Crashes: {point.crashes}<br/>
                         </div>
                         `.trim(),
                             headerFormat: ''
