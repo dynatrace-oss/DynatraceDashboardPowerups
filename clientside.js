@@ -2833,9 +2833,18 @@ var DashboardPowerups = (function () {
 
                     //recolor links based on to node instead of from
                     chart.series[0].points.forEach(p => {
-                        p.update({
-                            color: p.toNode.color
-                        }, false, false);
+                        if (params.colors == "crashes"
+                            && p.toNode.id == "END") {
+                            let color = p.fromNode.crashes ? "#c41425" : "#6d6d6d";
+                            p.update({
+                                color: color
+                            }, false, false);
+                        } else {
+                            p.update({
+                                color: p.toNode.color
+                            }, false, false);
+                        }
+
                     })
 
                     //redraw to help convHack use case
