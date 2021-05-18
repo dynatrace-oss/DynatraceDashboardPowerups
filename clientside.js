@@ -2525,7 +2525,7 @@ var DashboardPowerups = (function () {
                                 if (typeof (apdexList[apdexIdx].crashes) == "undefined")
                                     apdexList[apdexIdx].crashes = 0;
 
-                                if (crash === true) {
+                                if (crash === "true") {
                                     apdexList[apdexIdx].crashes++;
                                 }
                             }
