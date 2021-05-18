@@ -74,6 +74,12 @@ var DashboardPowerups = (function () {
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
         PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE
     ];
+
+    const COLOR_RED = "#c41425";
+    const COLOR_GRAY = "#6d6d6d";
+    const COLOR_YELLOW = "#ffee7c";
+    const COLOR_GREEN = "#6bcb8b";
+
     const CHART_OPTS = {
         //plotBackgroundColor: '#454646',
     }
@@ -2545,18 +2551,18 @@ var DashboardPowerups = (function () {
                         if (apdex.satisfied >= Math.max(apdex.tolerating, apdex.frustrated)) {
                             //apdex.svg = `<img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></div>`;
                             apdex.name = "satisfied";
-                            //apdex.color = "#6bcb8b";
+                            //apdex.color = COLOR_GREEN;
                         } else if (apdex.tolerating >= Math.max(apdex.satisfied, apdex.frustrated)) {
                             apdex.svg = `<img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></div>`;
                             apdex.name = "tolerating";
-                            //apdex.color = "#ffee7c";
+                            //apdex.color = COLOR_YELLOW;
                         } else if (apdex.frustrated >= Math.max(apdex.tolerating, apdex.satisfied)) {
                             apdex.svg = `<img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></div>`;
                             apdex.name = "frustrated";
-                            //apdex.color = "#c41425";
+                            //apdex.color = COLOR_RED;
                         } else {
                             apdex.svg = "";
-                            //apdex.color = "#6d6d6d";
+                            //apdex.color = COLOR_GRAY;
                         }
                     });
                 }
@@ -2661,6 +2667,15 @@ var DashboardPowerups = (function () {
                         color: "#b7b7b7"
                     }
                     options.series[0].nodes.push(node);
+                    if(data.touples.filter(x => x.crashes).length){
+                        node = {
+                            id: "CRASH",
+                            //column: 1,
+                            display: "CRASH!",
+                            color: COLOR_RED
+                        }
+                        options.series[0].nodes.push(node);
+                    }
                 }
 
                 data.apdexList.forEach(apdex => {
@@ -2725,21 +2740,21 @@ var DashboardPowerups = (function () {
                 options.series[0].nodes.forEach(node => {
                     switch (params.colors) {
                         case "crashes":
-                            node.color = "#6d6d6d";
+                            node.color = COLOR_GRAY;
 
                             //END node
                             if (node.id == "CRASH") {
                                 let anyCrashes = options.series[0].nodes.filter(x => x.crashes).length > 0
-                                if (anyCrashes) node.color = "#c41425";
+                                if (anyCrashes) node.color = COLOR_RED;
                             }
                             break;
                         case "errors":
                             if (node.errors > 10)
-                                node.color = "#c41425";
+                                node.color = COLOR_RED;
                             else if (apdex.errors > 1)
-                                node.color = "#ffee7c";
+                                node.color = COLOR_YELLOW;
                             else
-                                node.color = "#6bcb8b";
+                                node.color = COLOR_GREEN;
                             break;
                         case "false":
                             node.color = null;
@@ -2747,18 +2762,18 @@ var DashboardPowerups = (function () {
                         case "apdex":
                         default:
                             if(node.apdex == undefined){
-                                node.color = "#6d6d6d";
+                                node.color = COLOR_GRAY;
                                 return;
                             }
                                 
                             if (node.apdex.name == "satisfied")
-                                node.color = "#6bcb8b";
+                                node.color = COLOR_GREEN;
                             else if (node.apdex.name == "tolerating")
-                                node.color = "#ffee7c";
+                                node.color = COLOR_YELLOW;
                             else if (node.apdex.name == "frustrated")
-                                node.color = "#c41425";
+                                node.color = COLOR_RED;
                             else //gray
-                                node.color = "#6d6d6d";
+                                node.color = COLOR_GRAY;
                             break;
                     }
                 });
@@ -2846,9 +2861,9 @@ var DashboardPowerups = (function () {
                         if (params.colors == "crashes") {
                             let color;
                             if (p.toNode.id == "CRASH")
-                                color = p.crashes ? "#c41425" : "#6d6d6d";
+                                color = p.crashes ? COLOR_RED : COLOR_GRAY;
                             else
-                                color = p.crashes ? "#ffee7c" : "#6d6d6d";
+                                color = p.crashes ? COLOR_YELLOW : COLOR_GRAY;
                             p.update({
                                 color: color
                             }, false, false);
