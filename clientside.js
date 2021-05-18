@@ -2840,10 +2840,11 @@ var DashboardPowerups = (function () {
                     //recolor links based on to node instead of from
                     chart.series[0].points.forEach(p => {
                         if (params.colors == "crashes") {
+                            let color;
                             if (p.toNode.id == "END")
-                                let color = p.fromNode.crashes ? "#c41425" : "#6d6d6d";
+                                color = p.fromNode.crashes ? "#c41425" : "#6d6d6d";
                             else
-                                let color = p.fromNode.crashes ? "#ffee7c" : "#6d6d6d";
+                                color = p.fromNode.crashes ? "#ffee7c" : "#6d6d6d";
                             p.update({
                                 color: color
                             }, false, false);
