@@ -2661,7 +2661,7 @@ var DashboardPowerups = (function () {
                         dataLabels: {
                             rotation: 270,
                             style: {
-                                textShadow: false
+                                textOutline: false
                             },
                             className: "powerupSankeyNodeTextLabel"
                         }
@@ -2676,7 +2676,7 @@ var DashboardPowerups = (function () {
                         dataLabels: {
                             rotation: 270,
                             style: {
-                                textShadow: false
+                                textOutline: false
                             },
                             className: "powerupSankeyNodeTextLabel"
                         }
@@ -2691,7 +2691,7 @@ var DashboardPowerups = (function () {
                             dataLabels: {
                                 rotation: 270,
                                 style: {
-                                    textShadow: false
+                                    textOutline: false
                                 },
                                 className: "powerupSankeyNodeTextLabel"
                             }
