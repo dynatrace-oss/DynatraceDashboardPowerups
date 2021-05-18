@@ -2728,7 +2728,7 @@ var DashboardPowerups = (function () {
                             node.color = "#6d6d6d";
 
                             //END node
-                            if (node.id == "END") {
+                            if (node.id == "CRASH") {
                                 let anyCrashes = options.series[0].nodes.filter(x => x.crashes).length > 0
                                 if (anyCrashes) node.color = "#c41425";
                             }
@@ -2845,7 +2845,7 @@ var DashboardPowerups = (function () {
                     chart.series[0].points.forEach(p => {
                         if (params.colors == "crashes") {
                             let color;
-                            if (p.toNode.id == "END")
+                            if (p.toNode.id == "CRASH")
                                 color = p.crashes ? "#c41425" : "#6d6d6d";
                             else
                                 color = p.crashes ? "#ffee7c" : "#6d6d6d";
