@@ -2076,6 +2076,7 @@ var DashboardPowerups = (function () {
                 addUAPDateToList(UAPs, filteredTable);
                 addDurationToList(actionDetailList, filteredTable);
                 addErrorsToList(actionDetailList, filteredTable);
+                addCrashesInApdexList(apdexList, filteredTable)
                 addApdexStylesToList(actionDetailList);
                 touples = sortTouples(touples);
 
@@ -2483,6 +2484,7 @@ var DashboardPowerups = (function () {
                         }
                     });
                 }
+
                 function addErrorsToList(apdexList, filteredTable) {
                     filteredTable.forEach((row, rowIdx) => {
                         let arr = row["useraction.errorCount"];
@@ -2503,6 +2505,28 @@ var DashboardPowerups = (function () {
                                             apdexList[apdexIdx].errors += num;
                                         }
                                     }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                function addCrashesInApdexList(apdexList, filteredTable) {
+                    filteredTable.forEach((row, rowIdx) => {
+                        let arr = row["useraction.name"];
+                        let crash = row["hasCrash"];
+                        //let crashGroupId = row["crashGroupId"];
+                        if (!Array.isArray(arr)) return false;
+                        for (let k = 0; k < arr.length; k++) { //errors
+                            if (crash === true) {
+                                let actionName = arr[k];
+                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+
+                                if (apdexIdx > -1) {
+                                    if (typeof (apdexList[apdexIdx].crashes) == "undefined")
+                                        apdexList[apdexIdx].crashes = 0;
+
+                                    apdexList[apdexIdx].crashes++;
                                 }
                             }
                         }
@@ -2572,6 +2596,7 @@ var DashboardPowerups = (function () {
                             &nbsp;&nbsp; Tolerating: {point.apdexTolerating}<br>
                             &nbsp;&nbsp; Frustrated: {point.apdexFrustrated}<br>
                             Errors: {point.errors}<br>
+                            Sessions w/ crash: {point.crashes}<br>
                             Avg Duration: {point.avgDuration}ms<br>
                             Is entry action: {point.entryAction}<br>
                             Is exit action: {point.exitAction}<br>
@@ -2640,7 +2665,8 @@ var DashboardPowerups = (function () {
                         apdexFrustrated: apdex.frustrated.toString(),
                         entryAction: (apdex.entryAction ? 'true' : 'false'),
                         exitAction: (apdex.exitAction ? 'true' : 'false'),
-                        errors: apdex.errors
+                        errors: apdex.errors,
+                        crashes: apdex.crashes
                     }
 
                     //avg duration
@@ -2821,16 +2847,6 @@ var DashboardPowerups = (function () {
                     function filterProp(e) {
                         let el = e.target;
                         let $el = $(el);
-                        /*let type = $el.data("type");
-                        let key = $el.data("key");
-                        let val = $el.data("val");*/
-
-                        //e.stopPropagation(); //allow window to close via propogation
-                        /*let filter = {
-                            type: type,
-                            key: key,
-                            val: val
-                        }*/
                         let filter = $el.data();
                         if (!Array.isArray(params.filter)) params.filter = [];
                         params.filter.push(filter);
