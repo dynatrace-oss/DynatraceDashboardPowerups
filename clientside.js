@@ -2746,8 +2746,11 @@ var DashboardPowerups = (function () {
                             break;
                         case "apdex":
                         default:
-                            if(node.apdex == undefined)
+                            if(node.apdex == undefined){
                                 node.color = "#6d6d6d";
+                                return;
+                            }
+                                
                             if (node.apdex.name == "satisfied")
                                 node.color = "#6bcb8b";
                             else if (node.apdex.name == "tolerating")
