@@ -2657,14 +2657,16 @@ var DashboardPowerups = (function () {
                         id: "START",
                         //column: 0,
                         display: "Start...",
-                        color: "#b7b7b7"
+                        color: "#b7b7b7",
+                        className: "powerupSankeyNodeTextLabel"
                     }
                     options.series[0].nodes.push(node);
                     node = {
                         id: "END",
                         //column: 1,
                         display: "...End",
-                        color: "#b7b7b7"
+                        color: "#b7b7b7",
+                        className: "powerupSankeyNodeTextLabel"
                     }
                     options.series[0].nodes.push(node);
                     if(data.touples.filter(x => x.crashes).length){
@@ -2672,7 +2674,8 @@ var DashboardPowerups = (function () {
                             id: "CRASH",
                             //column: 1,
                             display: "CRASH!",
-                            color: COLOR_RED
+                            color: COLOR_RED,
+                            className: "powerupSankeyNodeTextLabel"
                         }
                         options.series[0].nodes.push(node);
                     }
