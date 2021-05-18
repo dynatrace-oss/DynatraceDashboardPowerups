@@ -2842,9 +2842,9 @@ var DashboardPowerups = (function () {
                         if (params.colors == "crashes") {
                             let color;
                             if (p.toNode.id == "END")
-                                color = p.fromNode.crashes ? "#c41425" : "#6d6d6d";
+                                color = p.crashes ? "#c41425" : "#6d6d6d";
                             else
-                                color = p.fromNode.crashes ? "#ffee7c" : "#6d6d6d";
+                                color = p.crashes ? "#ffee7c" : "#6d6d6d";
                             p.update({
                                 color: color
                             }, false, false);
