@@ -2518,14 +2518,14 @@ var DashboardPowerups = (function () {
                         //let crashGroupId = row["crashGroupId"];
                         if (!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //errors
-                            if (crash === true) {
-                                let actionName = arr[k];
-                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+                            let actionName = arr[k];
+                            let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                                if (apdexIdx > -1) {
-                                    if (typeof (apdexList[apdexIdx].crashes) == "undefined")
-                                        apdexList[apdexIdx].crashes = 0;
-
+                            if (apdexIdx > -1) {
+                                if (typeof (apdexList[apdexIdx].crashes) == "undefined")
+                                    apdexList[apdexIdx].crashes = 0;
+                                    
+                                if (crash === true) {
                                     apdexList[apdexIdx].crashes++;
                                 }
                             }
