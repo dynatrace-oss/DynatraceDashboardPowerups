@@ -3169,7 +3169,7 @@ var DashboardPowerups = (function () {
                         .forEach(x => {
                             let id = x.userId !== "null" ? x.userId : "anonymous";
                             html += `<tr><td>${x.hasSessionReplay}</td>`
-                                + `<td><a href="/ui/mrum/${x["useraction.internalApplicationId"]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}">${x.crashGroupId}</a></td>`
+                                + `<td><a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}">${x.crashGroupId}</a></td>`
                                 + `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${x.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`
                                 + `</tr>`;
                         });
