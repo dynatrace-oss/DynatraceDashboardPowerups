@@ -2786,7 +2786,10 @@ var DashboardPowerups = (function () {
                                 node.color = COLOR_GREEN;
                             break;
                         case "false":
-                            node.color = null;
+                            if (["START", "END", "CRASH"].includes(node.id))
+                                node.color = COLOR_GRAY;
+                            else 
+                                node.color = null;
                             break;
                         case "apdex":
                         default:
