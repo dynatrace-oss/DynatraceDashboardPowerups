@@ -1812,7 +1812,7 @@ var DashboardPowerups = (function () {
                         //Kill the tooltip if we click the link
                         if($a !== undefined && $tooltip !== undefined){
                             $a.on("mousedown", ()=>{
-                                $tooltip.remove();
+                                $(`.powerupTooltip`).remove();
                                 console.log("POWERUP: remove svg tooltip.");
                             })
                         }
