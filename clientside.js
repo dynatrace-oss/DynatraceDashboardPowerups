@@ -1818,13 +1818,16 @@ var DashboardPowerups = (function () {
                                 $(`.powerupTooltip`).remove();
                             });
                             //last resort, listen on window
-                            window.addEventListener('hashchange', () => {
-                                let tips = document.getElementsByClassName('powerupTooltip');
+                            window.addEventListener('hashchange', () => { //somehow the tooltip reappears after removing...
+                                setTimeout(()=>{
+                                    let tips = document.getElementsByClassName('powerupTooltip');
 
-                                while (tips[0]) {
-                                    tips[0].parentNode.removeChild(tips[0]);
-                                }
-                            }, {once: true})
+                                    while (tips[0]) {
+                                        tips[0].parentNode.removeChild(tips[0]);
+                                    }
+                                }, 500);
+                                
+                            }, {once: true});
                         }
                     }
                 });
