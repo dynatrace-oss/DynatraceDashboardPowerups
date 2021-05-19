@@ -2890,6 +2890,22 @@ var DashboardPowerups = (function () {
                             y += inc;
                         });
                     }
+                    //Create color mode dropdown
+                    {
+                        let left = Math.round($(chart.container).css("width") * 0.66);
+                        let $dropdown = $(`<div>`)
+                            .addClass('powerupSankeyDropdown')
+                            .css("left", left)
+                            .appendTo(chart.container);
+                        let $select = $(`<select>`)
+                            .addClass("sankeyColorPicker")
+                            .appendTo($dropdown);
+                        $(`<option>Apdex</option>`).appendTo($select);
+                        $(`<option>Errors</option>`).appendTo($select);
+                        $(`<option>Crashes</option>`).appendTo($select);
+                        $(`<option>Rainbow</option>`).appendTo($select);
+                        $select.on("change", setColorMode);
+                    }
 
                     //recolor links based on to node instead of from
                     chart.series[0].points.forEach(p => {
@@ -3182,6 +3198,12 @@ var DashboardPowerups = (function () {
                         .html(html)
                         .click(() => { $popup.remove(); })
                         .appendTo(container);
+                }
+
+                function setColorMode(e) {
+                    let el = e.target;
+                    let $el = $(el);
+                    alert($el.val());
                 }
 
                 return chart;

@@ -523,3 +523,7 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
   left: 8px !important;
   transform: rotate(-90deg);
 }*/
+
+.powerupSankeyDropdown {
+  position: absolute;
+}
