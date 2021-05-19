@@ -2776,7 +2776,9 @@ var DashboardPowerups = (function () {
                             }
                             break;
                         case "errors":
-                            if (node.errors > 10)
+                            if (["START", "END", "CRASH"].includes(node.id))
+                                node.color = COLOR_GRAY;
+                            else if (node.errors > 10)
                                 node.color = COLOR_RED;
                             else if (node.errors > 1)
                                 node.color = COLOR_YELLOW;
@@ -2892,12 +2894,12 @@ var DashboardPowerups = (function () {
                     }
                     //Create color mode dropdown
                     {
-                        let left = Math.round(Number($(chart.container).css("width").replace(/px/,'')) * 0.66);
+                        let left = Math.round(Number($(chart.container).css("width").replace(/px/, '')) * 0.66);
                         let $container = $(chart.container).parent();
                         let $dropdown = $(`<div>Color mode: </div>`)
                             .addClass('powerupSankeyDropdown')
                             .css("left", `${left}px`)
-                            .css("top","20px")
+                            .css("top", "20px")
                             .appendTo($container);
                         let $select = $(`<select>`)
                             .addClass("sankeyColorPicker")
