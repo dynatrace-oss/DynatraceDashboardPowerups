@@ -3158,7 +3158,15 @@ var DashboardPowerups = (function () {
                 }
 
                 function crashPopup(e) {
-                    let html = `<h3>Crash List</h3><p>${data.crashes} crashes. Details comings soon...`;
+                    let html = `<h3>${data.crashes} Crashes</h3><table>`;
+                    html += `<tr><th>SR</th><th>crashGroupId</th><th>UserId</th></tr>`;
+                    data.filteredTable
+                        .filter(x => x.hasCrash == "true")
+                        .sort((a,b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
+                        .forEach(x => {
+                            html += `<tr><td>${x.hasSessionReplay}</td><td>${x.crashGroupId}</td><td>${x.userId}</td></tr>`;
+                        });
+                    html += `</table>`;
                     let $popup = $("<div>")
                         .addClass("powerupSankeyDetailPopup")
                         .html(html)
