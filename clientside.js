@@ -2179,7 +2179,8 @@ var DashboardPowerups = (function () {
                         row["useraction.name"].forEach((action, aIdx) => {
                             actions.push({
                                 name: action,
-                                app: row["useraction.application"][aIdx]
+                                app: row["useraction.application"][aIdx],
+                                errors: Number(row["totalErrorCount"])
                             })
                         })
                         let filtered = actions.filter(x =>
@@ -2219,6 +2220,9 @@ var DashboardPowerups = (function () {
                                 } else if (f.app !== undefined) {
                                     fromIdx = filtered.findIndex((x, i, arr) =>
                                         x.app === f.app);
+                                } else if (f.errors == "true") {
+                                    fromIdx = filtered.findIndex((x, i, arr) =>
+                                        x.errors > 0)
                                 } else { }
 
                                 if (fromIdx < 0) filtered = []; //this row filtered out
@@ -3032,7 +3036,7 @@ var DashboardPowerups = (function () {
                             html += `</ul></li>`;
                         }
                         if (typeof (node.apdex.errors) != "undefined") {
-                            html += `<li>Errors: ${node.apdex.errors}</li>`;
+                            html += `<li>Errors: <a href="javascript:" class="powerupFilterProp" data-errors="true" >${node.apdex.errors}</a></li>`;
                         }
 
                         if (data.UAPs.doubles.length) {
