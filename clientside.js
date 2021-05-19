@@ -2578,6 +2578,9 @@ var DashboardPowerups = (function () {
             function newChart(data, container, params, limit = 21) {
                 if (!data) return false;
                 const HARDMAX = 100;
+                let mobile = false;
+                if (data.applicationTypes.includes('MOBILE_APPLICATION')
+                    || data.applicationTypes.includes('CUSTOM_APPLICATION')) mobile = true;
                 let options = {
                     type: 'sankey',
                     title: {
@@ -2620,10 +2623,10 @@ var DashboardPowerups = (function () {
                             </div>
                         `.trim(),
                             pointFormat: `<div class="powerup-sankey-tooltip">
-                        {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>
-                        Crashes: {point.crashes}<br/>
-                        </div>
-                        `.trim(),
+                        {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>`
+                                + (mobile ? `Crashes: {point.crashes}<br/>` : ``)
+                                + `</div>`
+                                    .trim(),
                             headerFormat: ''
                         }
                     }],
@@ -2847,7 +2850,7 @@ var DashboardPowerups = (function () {
                         180, 25)
                         .add()
                         .on("click", sessionPopup);
-                    //TODO: hide this if not mobile/custom
+                    //Only show crashes if mobile or custom
                     if (data.applicationTypes.includes('MOBILE_APPLICATION')
                         || data.applicationTypes.includes('CUSTOM_APPLICATION')) {
                         chart.renderer.text(`with <a href="javascript:" class="powerupFilterProp">${data.crashes}</a> crashes`,
@@ -3165,7 +3168,7 @@ var DashboardPowerups = (function () {
                     html += `<tr><th>SR</th><th>crashGroupId</th><th>UserId</th></tr>`;
                     data.filteredTable
                         .filter(x => x.hasCrash == "true")
-                        .sort((a,b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
+                        .sort((a, b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
                         .forEach(x => {
                             let id = x.userId !== "null" ? x.userId : "anonymous";
                             html += `<tr><td>${x.hasSessionReplay}</td>`
