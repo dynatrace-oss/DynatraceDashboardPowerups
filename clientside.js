@@ -1811,12 +1811,16 @@ var DashboardPowerups = (function () {
 
                         //Kill the tooltip if we click the link
                         if($a !== undefined && $tooltip !== undefined){
-                            $a.on("click", ()=>{
+                            $a.on("click", ()=>{ //don't know why this doesn't work 100% of the time...
                                 $(`.powerupTooltip`).remove();
                             });
                             $svg.on("click", ()=>{
                                 $(`.powerupTooltip`).remove();
                             });
+                            //last resort, listen on window
+                            $(window).one("hashchange unload", ()=>{
+                                $(`.powerupTooltip`).remove();
+                            })
                         }
                     }
                 });
