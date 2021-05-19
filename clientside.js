@@ -1739,6 +1739,7 @@ var DashboardPowerups = (function () {
             let text = $svgcontainer.text();
             let $tile = $svgcontainer.parents(".grid-tile");
             let $a;
+            let $tooltip;
 
             if (!text.includes(PU_SVG)) return;
             if (pub.config.Powerups.debug) console.log("Powerup: svg power-up found");
@@ -1807,6 +1808,13 @@ var DashboardPowerups = (function () {
                         if (url.startsWith('http'))
                             $a.attr('target', '_blank');
                         $svg.appendTo($a);
+
+                        //Kill the tooltip if we click the link
+                        if($a !== undefined && $tooltip !== undefined){
+                            $a.on("click", ()=>{
+                                $tooltip.remove();
+                            })
+                        }
                     }
                 });
 
@@ -1816,7 +1824,7 @@ var DashboardPowerups = (function () {
             //add custom tooltip
             if (tooltip) {
                 tooltip = tooltip.replace(/_/g, " ");
-                let $tooltip = $tile.find(`.powerupTooltip`);
+                $tooltip = $tile.find(`.powerupTooltip`);
                 if (!$tooltip.length) {
                     $tooltip = $("<div>")
                         .addClass("powerupTooltip")
@@ -1832,11 +1840,6 @@ var DashboardPowerups = (function () {
                         $tooltip.appendTo($tile)
                             .removeClass("powerupTooltipHover");
                     });
-                    if($a !== undefined){
-                        $a.on("click", ()=>{
-                            $tooltip.remove();
-                        })
-                    }
                 }
             }
 
