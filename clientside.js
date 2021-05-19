@@ -2848,8 +2848,8 @@ var DashboardPowerups = (function () {
                         .add()
                         .on("click", sessionPopup);
                     //TODO: hide this if not mobile/custom
-                    if (data.applicationTypes.contains('MOBILE_APPLICATION')
-                        || data.applicationTypes.contains('CUSTOM_APPLICATION')) {
+                    if (data.applicationTypes.includes('MOBILE_APPLICATION')
+                        || data.applicationTypes.includes('CUSTOM_APPLICATION')) {
                         chart.renderer.text(`with <a href="javascript:" class="powerupFilterProp">${data.crashes}</a> crashes`,
                             325, 25)
                             .add()
