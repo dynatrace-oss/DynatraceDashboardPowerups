@@ -1738,6 +1738,7 @@ var DashboardPowerups = (function () {
             let $svgcontainer = $(el);
             let text = $svgcontainer.text();
             let $tile = $svgcontainer.parents(".grid-tile");
+            let $a;
 
             if (!text.includes(PU_SVG)) return;
             if (pub.config.Powerups.debug) console.log("Powerup: svg power-up found");
@@ -1800,7 +1801,7 @@ var DashboardPowerups = (function () {
                         $svg.css("fill", color);
                     }
                     if (url) {
-                        let $a = $(`<a>`)
+                        $a = $(`<a>`)
                             .attr('href', url)
                             .insertBefore($svg);
                         if (url.startsWith('http'))
@@ -1830,7 +1831,12 @@ var DashboardPowerups = (function () {
                     $tile.on("mouseout", () => {
                         $tooltip.appendTo($tile)
                             .removeClass("powerupTooltipHover");
-                    })
+                    });
+                    if($a !== undefined){
+                        $a.on("click", ()=>{
+                            $tooltip.remove();
+                        })
+                    }
                 }
             }
 
