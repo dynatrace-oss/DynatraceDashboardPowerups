@@ -2093,7 +2093,8 @@ var DashboardPowerups = (function () {
                     UAPs: UAPs,
                     rows: filteredTable.length,
                     filteredTable: filteredTable,
-                    crashes: filteredTable.filter(x => x.hasCrash=="true").length
+                    crashes: filteredTable.filter(x => x.hasCrash == "true").length,
+                    applicationTypes: [...new Set(filteredTable.map(x => x.applicationType))]
                 };
                 return (data);
 
@@ -2666,7 +2667,7 @@ var DashboardPowerups = (function () {
                             },
                             className: "powerupSankeyNodeTextLabel"
                         }
-                        
+
                     }
                     options.series[0].nodes.push(node);
                     node = {
@@ -2683,7 +2684,7 @@ var DashboardPowerups = (function () {
                         }
                     }
                     options.series[0].nodes.push(node);
-                    if(data.touples.filter(x => x.crashes).length){
+                    if (data.touples.filter(x => x.crashes).length) {
                         node = {
                             id: "CRASH",
                             //column: 1,
@@ -2784,11 +2785,11 @@ var DashboardPowerups = (function () {
                             break;
                         case "apdex":
                         default:
-                            if(node.apdex == undefined){
+                            if (node.apdex == undefined) {
                                 node.color = COLOR_GRAY;
                                 return;
                             }
-                                
+
                             if (node.apdex.name == "satisfied")
                                 node.color = COLOR_GREEN;
                             else if (node.apdex.name == "tolerating")
@@ -2843,15 +2844,17 @@ var DashboardPowerups = (function () {
                     chart.renderer.text(`${limit - 1}/${data.touples.length - 1} actions`, 70, 25)
                         .add();
                     chart.renderer.text(`Showing <a href="javascript:" class="powerupFilterProp">${data.rows}</a> sessions`,
-                        //chart.chartWidth - 160, chart.chartHeight - 25)
                         180, 25)
                         .add()
                         .on("click", sessionPopup);
-                    chart.renderer.text(`with <a href="javascript:" class="powerupFilterProp">${data.crashes}</a> crashes`,
-                        //chart.chartWidth - 160, chart.chartHeight - 25)
-                        325, 25)
-                        .add()
-                        .on("click", crashPopup);
+                    //TODO: hide this if not mobile/custom
+                    if (data.applicationTypes.contains('MOBILE_APPLICATION')
+                        || data.applicationTypes.contains('CUSTOM_APPLICATION')) {
+                        chart.renderer.text(`with <a href="javascript:" class="powerupFilterProp">${data.crashes}</a> crashes`,
+                            325, 25)
+                            .add()
+                            .on("click", crashPopup);
+                    }
                     //display filter text
                     if (Array.isArray(params.filter)) {
                         let y = 55, inc = 20;
