@@ -1837,7 +1837,7 @@ var DashboardPowerups = (function () {
                             .offset(offset)
                             .addClass("powerupTooltipHover");
                     });
-                    $tile.on("mouseout", () => {
+                    $tile.on("mouseout click", () => {
                         $tooltip.appendTo($tile)
                             .removeClass("powerupTooltipHover");
                     });
