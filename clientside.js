@@ -2191,6 +2191,11 @@ var DashboardPowerups = (function () {
                                 filtered = filtered.filter(x => !x.name.includes(ex));
                             });
                         }
+                        if (Array.isArray(params.include) && params.include.length) {
+                            params.include.forEach(ex => {
+                                filtered = filtered.filter(x => x.name.includes(ex));
+                            });
+                        }
                         if (params.convHack == "2") {
                             filtered.unshift({ name: "START", app: "" });
                             if (row["hasCrash"] == "true")
@@ -3296,6 +3301,8 @@ var DashboardPowerups = (function () {
                     let colors = (args.find(x => x[0] == "colors") || [])[1] || "apdex";
                     let exclude = (args.find(x => x[0] == "exclude") || [])[1];
                     if (exclude) exclude = exclude.split(",");
+                    let include = (args.find(x => x[0] == "include") || [])[1];
+                    if (include) include = include.split(",");
 
                     let container = findContainer(link);
                     if (typeof (container) == "undefined") {
@@ -3316,6 +3323,7 @@ var DashboardPowerups = (function () {
                         convHack: convHack,
                         colors: colors,
                         exclude: exclude,
+                        include: include,
                         table: $table,
                         container: container
                     };

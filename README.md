@@ -267,8 +267,12 @@ Explanation:
 - `kpicurr=` - (optional) how to format the KPI if its a currency, e.g. USD, EUR, CNY. If omitted, will format with max 2 fractional digits
 - `convHack=true` - (optional) label first action with "Start: " and last action with "End: ".
 - `convHack=2` - (optional) new mode which injects an artificial "START" and "END" node to make it more clear where flows start and end. As of 1.44 this is now the default. If you prefer the old mode, set `convHack=false`.
-- `colors=apdex` - (optional) color nodes based on apdex. As of 1.44 this is now the default. If you prefer the old mode, set `colors=false`.
+- `colors=apdex` - (optional) color nodes based on apdex. As of 1.44 this is now the default. 
+    - `colors=false` - rainbow colors, which makes it easier to see links.
+    - `colors=errors` - highlight actions with errors, yellow > 1 error, red > 10
+    - `colors=crashes` - highlight actions leading to a crash (mobile/custom only)
 - `exclude=Search,recent` - (optional) comma seperated list of case-sensitive strings to exclude from useraction list.
+- `include=Search,recent` - (optional) comma seperated list of case-sensitive strings to only include from useraction list.
 
 Example:
 ![Sankey](Assets/sankey.png)
