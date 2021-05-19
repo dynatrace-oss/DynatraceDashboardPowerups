@@ -2220,7 +2220,7 @@ var DashboardPowerups = (function () {
                                 } else if (f.app !== undefined) {
                                     fromIdx = filtered.findIndex((x, i, arr) =>
                                         x.app === f.app);
-                                } else if (f.errors == "true") {
+                                } else if (f.errors === true) {
                                     fromIdx = filtered.findIndex((x, i, arr) =>
                                         x.errors > 0)
                                 } else { }
