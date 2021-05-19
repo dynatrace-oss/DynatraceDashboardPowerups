@@ -3188,7 +3188,8 @@ var DashboardPowerups = (function () {
                     let hash = window.location.hash.split(';').map(x => x.split('='));
                     let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
                     let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
-                    let html = `<h3>${data.crashes} Crashes</h3><table>`;
+                    let crashGroups = [... new Set(data.filteredTable.filter(x => x.hasCrash == "true").map(x => x.crashGroupId))].length;
+                    let html = `<h3>${data.crashes} Crashes across ${crashGroups} crash groups:</h3><table>`;
                     html += `<tr><th>SR</th><th>crashGroupId</th><th>UserId</th></tr>`;
                     data.filteredTable
                         .filter(x => x.hasCrash == "true")

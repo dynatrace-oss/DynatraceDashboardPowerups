@@ -515,6 +515,10 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
   text-align: left;
 }
 
+.powerupSankeyDetailPopup tr {
+  vertical-align: top;
+}
+
 .powerupHide {
   display: none !important;
 }
@@ -533,3 +537,4 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
   width: 180px;
   color: black;
 }
+
