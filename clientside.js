@@ -3158,13 +3158,19 @@ var DashboardPowerups = (function () {
                 }
 
                 function crashPopup(e) {
+                    let hash = window.location.hash.split(';').map(x => x.split('='));
+                    let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
+                    let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
                     let html = `<h3>${data.crashes} Crashes</h3><table>`;
                     html += `<tr><th>SR</th><th>crashGroupId</th><th>UserId</th></tr>`;
                     data.filteredTable
                         .filter(x => x.hasCrash == "true")
                         .sort((a,b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
                         .forEach(x => {
-                            html += `<tr><td>${x.hasSessionReplay}</td><td>${x.crashGroupId}</td><td>${x.userId}</td></tr>`;
+                            html += `<tr><td>${x.hasSessionReplay}</td>`
+                                + `<td><a href="/ui/mrum/${x["useraction.internalApplicationId"]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}">${x.crashGroupId}</a></td>`
+                                + `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${x.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`
+                                + `</tr>`;
                         });
                     html += `</table>`;
                     let $popup = $("<div>")
