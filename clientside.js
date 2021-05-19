@@ -2788,7 +2788,7 @@ var DashboardPowerups = (function () {
                         case "false":
                             if (["START", "END", "CRASH"].includes(node.id))
                                 node.color = COLOR_GRAY;
-                            else 
+                            else
                                 node.color = null;
                             break;
                         case "apdex":
@@ -3195,8 +3195,12 @@ var DashboardPowerups = (function () {
                         .sort((a, b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
                         .forEach(x => {
                             let id = x.userId !== "null" ? x.userId : "anonymous";
-                            html += `<tr><td>${x.hasSessionReplay}</td>`
-                                + `<td><a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}">${x.crashGroupId}</a></td>`
+                            //html += `<tr><td>${x.hasSessionReplay}</td>`
+                            if (session.hasSessionReplay === "true")
+                                html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
+                            else
+                                html += `<td></td>`;
+                            html += `<td><a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}">${x.crashGroupId}</a></td>`
                                 + `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${x.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`
                                 + `</tr>`;
                         });
