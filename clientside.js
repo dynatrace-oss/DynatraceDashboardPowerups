@@ -1813,8 +1813,10 @@ var DashboardPowerups = (function () {
                         if($a !== undefined && $tooltip !== undefined){
                             $a.on("click", ()=>{
                                 $(`.powerupTooltip`).remove();
-                                //console.log("POWERUP: remove svg tooltip.");
-                            })
+                            });
+                            $svg.on("click", ()=>{
+                                $(`.powerupTooltip`).remove();
+                            });
                         }
                     }
                 });
