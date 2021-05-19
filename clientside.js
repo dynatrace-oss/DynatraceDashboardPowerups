@@ -2778,7 +2778,7 @@ var DashboardPowerups = (function () {
                         case "errors":
                             if (node.errors > 10)
                                 node.color = COLOR_RED;
-                            else if (apdex.errors > 1)
+                            else if (node.errors > 1)
                                 node.color = COLOR_YELLOW;
                             else
                                 node.color = COLOR_GREEN;
@@ -2897,7 +2897,7 @@ var DashboardPowerups = (function () {
                         let $dropdown = $(`<div>Color mode: </div>`)
                             .addClass('powerupSankeyDropdown')
                             .css("left", `${left}px`)
-                            .css("top","10px")
+                            .css("top","20px")
                             .appendTo($container);
                         let $select = $(`<select>`)
                             .addClass("sankeyColorPicker")
@@ -2906,6 +2906,7 @@ var DashboardPowerups = (function () {
                         $(`<option value="errors">Errors</option>`).appendTo($select);
                         $(`<option value="crashes">Crashes</option>`).appendTo($select);
                         $(`<option value="false">Rainbow</option>`).appendTo($select);
+                        $select.val(params.colors);
                         $select.on("change", setColorMode);
                     }
 
