@@ -526,4 +526,5 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
 
 .powerupSankeyDropdown {
   position: absolute;
+  z-index: 1050;
 }

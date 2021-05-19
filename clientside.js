@@ -2892,7 +2892,7 @@ var DashboardPowerups = (function () {
                     }
                     //Create color mode dropdown
                     {
-                        let left = Math.round($(chart.container).css("width") * 0.66);
+                        let left = Math.round(Number($(chart.container).css("width").replace(/px/,'')) * 0.66);
                         let $container = $(chart.container).parent();
                         let $dropdown = $(`<div>Color mode: </div>`)
                             .addClass('powerupSankeyDropdown')
