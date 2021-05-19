@@ -3195,8 +3195,7 @@ var DashboardPowerups = (function () {
                         .sort((a, b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
                         .forEach(x => {
                             let id = x.userId !== "null" ? x.userId : "anonymous";
-                            //html += `<tr><td>${x.hasSessionReplay}</td>`
-                            if (session.hasSessionReplay === "true")
+                            if (x.hasSessionReplay === "true")
                                 html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
                             else
                                 html += `<td></td>`;
