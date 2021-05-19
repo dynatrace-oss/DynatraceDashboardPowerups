@@ -1810,17 +1810,21 @@ var DashboardPowerups = (function () {
                         $svg.appendTo($a);
 
                         //Kill the tooltip if we click the link
-                        if($a !== undefined && $tooltip !== undefined){
-                            $a.on("click", ()=>{ //don't know why this doesn't work 100% of the time...
+                        if ($a !== undefined && $tooltip !== undefined) {
+                            $a.on("click", () => { //don't know why this doesn't work 100% of the time...
                                 $(`.powerupTooltip`).remove();
                             });
-                            $svg.on("click", ()=>{
+                            $svg.on("click", () => {
                                 $(`.powerupTooltip`).remove();
                             });
                             //last resort, listen on window
-                            $(window).one("hashchange unload", ()=>{
-                                $(`.powerupTooltip`).remove();
-                            })
+                            window.addEventListener('hashchange', () => {
+                                let tips = document.getElementsByClassName('powerupTooltip');
+
+                                while (tips[0]) {
+                                    tips[0].parentNode.removeChild(tips[0]);
+                                }
+                            }, {once: true})
                         }
                     }
                 });
