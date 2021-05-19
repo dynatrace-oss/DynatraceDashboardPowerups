@@ -2902,10 +2902,10 @@ var DashboardPowerups = (function () {
                         let $select = $(`<select>`)
                             .addClass("sankeyColorPicker")
                             .appendTo($dropdown);
-                        $(`<option>Apdex</option>`).appendTo($select);
-                        $(`<option>Errors</option>`).appendTo($select);
-                        $(`<option>Crashes</option>`).appendTo($select);
-                        $(`<option>Rainbow</option>`).appendTo($select);
+                        $(`<option value="apdex">Apdex</option>`).appendTo($select);
+                        $(`<option value="errors">Errors</option>`).appendTo($select);
+                        $(`<option value="crashes">Crashes</option>`).appendTo($select);
+                        $(`<option value="false">Rainbow</option>`).appendTo($select);
                         $select.on("change", setColorMode);
                     }
 
@@ -3205,7 +3205,9 @@ var DashboardPowerups = (function () {
                 function setColorMode(e) {
                     let el = e.target;
                     let $el = $(el);
-                    alert($el.val());
+                    //alert($el.val());
+                    params.colors = $el.val();
+                    newChart(data, container, params, chart.limit);
                 }
 
                 return chart;

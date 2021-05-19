@@ -527,4 +527,9 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
 .powerupSankeyDropdown {
   position: absolute;
   z-index: 1050;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  height: 40px;
+  width: 180px;
+  color: black;
 }
