@@ -2251,6 +2251,10 @@ var DashboardPowerups = (function () {
                                 } else if (f.errors === true) {
                                     fromIdx = filtered.findIndex((x, i, arr) =>
                                         x.errors > 0)
+                                } else if (f.crashgroupid !== undefined) {
+                                    fromIdx = row["crashGroupId"].findIndex((x,i,arr)=>
+                                        x.crashGroupId === f.crashgroupid
+                                    )
                                 } else { }
 
                                 if (fromIdx < 0) filtered = []; //this row filtered out
@@ -2562,7 +2566,6 @@ var DashboardPowerups = (function () {
                     filteredTable.forEach((row, rowIdx) => {
                         let arr = row["useraction.name"];
                         let crash = row["hasCrash"];
-                        //let crashGroupId = row["crashGroupId"];
                         if (!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) { //errors
                             let actionName = arr[k];
@@ -3228,12 +3231,18 @@ var DashboardPowerups = (function () {
                         .sort((a, b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
                         .forEach(x => {
                             let id = x.userId !== "null" ? x.userId : "anonymous";
+                            //session replay column
                             if (x.hasSessionReplay === "true")
                                 html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
                             else
                                 html += `<td></td>`;
-                            html += `<td><a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}">${x.crashGroupId}</a></td>`
-                                + `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${x.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`
+                            //crash group column
+                            html += `<td>`
+                                + `<a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></a>`
+                                + `<a href="javascript:" data-crashgroupid="${x.crashGroupId}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a>`
+                                + `</td>`;
+                            //user column
+                            html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${x.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`
                                 + `</tr>`;
                         });
                     html += `</table>`;
