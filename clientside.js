@@ -3015,10 +3015,10 @@ var DashboardPowerups = (function () {
                     function filterProp(e) {
                         let el = e.target;
                         let $el = $(el);
-                        if(! $el.is("a"))
+                        if (!$el.is("a"))
                             $el = $el.parents("a");
                         let filter = $el.data();
-                        if(! Object.keys(filter).length) return false; //fail quicky if we didn't find any data attributes
+                        if (!Object.keys(filter).length) return false; //fail quicky if we didn't find any data attributes
                         if (!Array.isArray(params.filter)) params.filter = [];
                         params.filter.push(filter);
                         if (chart && typeof (chart.destroy) != "undefined") {
@@ -3226,29 +3226,33 @@ var DashboardPowerups = (function () {
                         let hash = window.location.hash.split(';').map(x => x.split('='));
                         let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
-                        let crashGroups = [... new Set(data.filteredTable.filter(x => x.hasCrash == "true").map(x => x.crashGroupId))].length;
-                        let html = `<h3>${data.crashes} Crashes across ${crashGroups} crash groups:</h3><table>`;
-                        html += `<tr><th>SR</th><th>Crash/th><th>UserId</th></tr>`;
-                        data.filteredTable
-                            .filter(x => x.hasCrash == "true")
-                            .sort((a, b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
-                            .forEach(x => {
-                                let id = x.userId !== "null" ? x.userId : "anonymous";
-                                //session replay column
-                                if (x.hasSessionReplay === "true")
-                                    html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
-                                else
-                                    html += `<td></td>`;
-                                //crash group column
-                                html += `<td>`
-                                    + `<a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></a>`
-                                    + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${x.crashGroupId}"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a>`
-                                    + `</td>`;
-                                //user column
-                                html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${x.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`
-                                    + `</tr>`;
-                            });
-                        html += `</table>`;
+                        let crashGroups = [... new Set(data.filteredTable.filter(x => x.hasCrash == "true").map(x => x.crashGroupId))];
+                        let html = `<h3>${data.crashes} Crashes across ${crashGroups.length} crash groups:</h3><br><ul>`;
+                        crashGroups.forEach(cg => {
+                            html += `<li>Crash Group ${cg}: `;
+                            html += `<a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></a>`
+                                + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${x.crashGroupId}"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a><br>`;
+
+                            html += `<table><tr><th>SR</th><th>UserId</th></tr>`;
+                            data.filteredTable
+                                //.filter(x => x.hasCrash == "true")
+                                //.sort((a, b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
+                                .filter(x => x.crashGroupId === cg)
+                                .forEach(x => {
+                                    html += `<tr>`;
+                                    let id = x.userId !== "null" ? x.userId : "anonymous";
+                                    //session replay column
+                                    if (x.hasSessionReplay === "true")
+                                        html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
+                                    else
+                                        html += `<td></td>`;
+                                    //user column
+                                    html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${x.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`
+                                        + `</tr>`;
+                                });
+                            html += `</table></li>`;
+                        });
+                        html += `</ul>`
                         let $popup = $("<div>")
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
