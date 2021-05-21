@@ -2907,7 +2907,11 @@ var DashboardPowerups = (function () {
                                 txt = `X - (${f.type}) ${f.key}=${f.val}`;
                             else if (f.app !== undefined)
                                 txt = `X - app: ${f.app}`;
-                            else txt = "X - ERROR";
+                            else if (f.errors === true)
+                                txt = `X - errors`;
+                            else if (f.crashgroupid !== undefined)
+                                txt = `X - crashGroupId=${f.crashgroupid}`;
+                            else txt = "X - " + JSON.stringify(f);
                             chart.renderer.text(txt, 10, y)
                                 .attr({ zIndex: 1100 })
                                 .addClass("powerupRemoveFilter")
