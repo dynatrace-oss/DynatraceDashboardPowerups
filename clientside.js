@@ -3175,93 +3175,93 @@ var DashboardPowerups = (function () {
                         $popup.find(`.powerupFilterProp`)
                             .on("click", filterProp);
                     }
-                });
 
-
-                function sessionPopup(e) {
-                    let hash = window.location.hash.split(';').map(x => x.split('='));
-                    let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
-                    let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
-                    let html = `<h3>Session List</h3><table>`;
-                    html += `<tr><th>SR</th><th>UX</th><th>Goal</th><th>UserId</th></tr>`;
-                    data.filteredTable.forEach(session => {
-                        html += `<tr>`;
-                        if (session.hasSessionReplay === "true")
-                            html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
-                        else
-                            html += `<td></td>`;
-                        switch (session.userExperienceScore) {
-                            case "SATISFIED":
-                                html += `<td><img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></td>`;
-                                break;
-                            case "TOLERATED":
-                                html += `<td><img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></td>`;
-                                break;
-                            case "FRUSTRATED":
-                                html += `<td><img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></td>`;
-                                break;
-                            default:
-                                html += `<td></td>`;
-                        }
-                        if (session["useraction.matchingConversionGoals"].filter(x => x != "").length)
-                            html += `<td><img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`;
-                        else
-                            html += `<td></td>`;
-                        let id = session.userId !== "null" ? session.userId : "anonymous";
-                        html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`;
-                        html += `</tr>`
-                    })
-                    html += `</table>`;
-                    let $popup = $("<div>")
-                        .addClass("powerupSankeyDetailPopup")
-                        .html(html)
-                        .click(() => { $popup.remove(); })
-                        .appendTo(container);
-                }
-
-                function crashPopup(e) {
-                    let hash = window.location.hash.split(';').map(x => x.split('='));
-                    let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
-                    let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
-                    let crashGroups = [... new Set(data.filteredTable.filter(x => x.hasCrash == "true").map(x => x.crashGroupId))].length;
-                    let html = `<h3>${data.crashes} Crashes across ${crashGroups} crash groups:</h3><table>`;
-                    html += `<tr><th>SR</th><th>crashGroupId</th><th>UserId</th></tr>`;
-                    data.filteredTable
-                        .filter(x => x.hasCrash == "true")
-                        .sort((a, b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
-                        .forEach(x => {
-                            let id = x.userId !== "null" ? x.userId : "anonymous";
-                            //session replay column
-                            if (x.hasSessionReplay === "true")
+                    function sessionPopup(e) {
+                        let hash = window.location.hash.split(';').map(x => x.split('='));
+                        let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
+                        let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
+                        let html = `<h3>Session List</h3><table>`;
+                        html += `<tr><th>SR</th><th>UX</th><th>Goal</th><th>UserId</th></tr>`;
+                        data.filteredTable.forEach(session => {
+                            html += `<tr>`;
+                            if (session.hasSessionReplay === "true")
                                 html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
                             else
                                 html += `<td></td>`;
-                            //crash group column
-                            html += `<td>`
-                                + `<a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></a>`
-                                + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${x.crashGroupId}"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a>`
-                                + `</td>`;
-                            //user column
-                            html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${x.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`
-                                + `</tr>`;
-                        });
-                    html += `</table>`;
-                    let $popup = $("<div>")
-                        .addClass("powerupSankeyDetailPopup")
-                        .html(html)
-                        .click(() => { $popup.remove(); })
-                        .appendTo(container);
-                    $popup.find(`.powerupFilterProp`)
-                        .on("click", filterProp);
-                }
+                            switch (session.userExperienceScore) {
+                                case "SATISFIED":
+                                    html += `<td><img src="${pub.SVGLib() + 'smiley-happy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-green'></td>`;
+                                    break;
+                                case "TOLERATED":
+                                    html += `<td><img src="${pub.SVGLib() + 'smiley-neutral-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-yellow'></td>`;
+                                    break;
+                                case "FRUSTRATED":
+                                    html += `<td><img src="${pub.SVGLib() + 'smiley-unhappy-2.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-red'></td>`;
+                                    break;
+                                default:
+                                    html += `<td></td>`;
+                            }
+                            if (session["useraction.matchingConversionGoals"].filter(x => x != "").length)
+                                html += `<td><img src='${pub.SVGLib() + 'finishflag.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`;
+                            else
+                                html += `<td></td>`;
+                            let id = session.userId !== "null" ? session.userId : "anonymous";
+                            html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`;
+                            html += `</tr>`
+                        })
+                        html += `</table>`;
+                        let $popup = $("<div>")
+                            .addClass("powerupSankeyDetailPopup")
+                            .html(html)
+                            .click(() => { $popup.remove(); })
+                            .appendTo(container);
+                    }
 
-                function setColorMode(e) {
-                    let el = e.target;
-                    let $el = $(el);
-                    //alert($el.val());
-                    params.colors = $el.val();
-                    newChart(data, container, params, chart.limit);
-                }
+                    function crashPopup(e) {
+                        let hash = window.location.hash.split(';').map(x => x.split('='));
+                        let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
+                        let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
+                        let crashGroups = [... new Set(data.filteredTable.filter(x => x.hasCrash == "true").map(x => x.crashGroupId))].length;
+                        let html = `<h3>${data.crashes} Crashes across ${crashGroups} crash groups:</h3><table>`;
+                        html += `<tr><th>SR</th><th>crashGroupId</th><th>UserId</th></tr>`;
+                        data.filteredTable
+                            .filter(x => x.hasCrash == "true")
+                            .sort((a, b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
+                            .forEach(x => {
+                                let id = x.userId !== "null" ? x.userId : "anonymous";
+                                //session replay column
+                                if (x.hasSessionReplay === "true")
+                                    html += `<td><img src="${pub.SVGLib() + 'replay.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></td>`;
+                                else
+                                    html += `<td></td>`;
+                                //crash group column
+                                html += `<td>`
+                                    + `<a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></a>`
+                                    + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${x.crashGroupId}"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a>`
+                                    + `</td>`;
+                                //user column
+                                html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${x.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`
+                                    + `</tr>`;
+                            });
+                        html += `</table>`;
+                        let $popup = $("<div>")
+                            .addClass("powerupSankeyDetailPopup")
+                            .html(html)
+                            .click(() => { $popup.remove(); })
+                            .appendTo(container);
+                        $popup.find(`.powerupFilterProp`)
+                            .on("click", filterProp);
+                    }
+
+                    function setColorMode(e) {
+                        let el = e.target;
+                        let $el = $(el);
+                        //alert($el.val());
+                        params.colors = $el.val();
+                        newChart(data, container, params, chart.limit);
+                    }
+
+                });
 
                 return chart;
             }
