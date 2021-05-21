@@ -3228,7 +3228,7 @@ var DashboardPowerups = (function () {
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
                         let crashGroups = [... new Set(data.filteredTable.filter(x => x.hasCrash == "true").map(x => x.crashGroupId))].length;
                         let html = `<h3>${data.crashes} Crashes across ${crashGroups} crash groups:</h3><table>`;
-                        html += `<tr><th>SR</th><th>crashGroupId</th><th>UserId</th></tr>`;
+                        html += `<tr><th>SR</th><th>Crash/th><th>UserId</th></tr>`;
                         data.filteredTable
                             .filter(x => x.hasCrash == "true")
                             .sort((a, b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
