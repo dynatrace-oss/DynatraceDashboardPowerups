@@ -2252,9 +2252,7 @@ var DashboardPowerups = (function () {
                                     fromIdx = filtered.findIndex((x, i, arr) =>
                                         x.errors > 0)
                                 } else if (f.crashgroupid !== undefined) {
-                                    fromIdx = row["crashGroupId"].findIndex((x, i, arr) =>
-                                        x.crashGroupId === f.crashgroupid
-                                    )
+                                    fromIdx = (row["crashGroupId"] === f.crashgroupid ? 0 : -1);
                                 } else { }
 
                                 if (fromIdx < 0) filtered = []; //this row filtered out
@@ -3016,6 +3014,7 @@ var DashboardPowerups = (function () {
                         if(! $el.is("a"))
                             $el = $el.parents("a");
                         let filter = $el.data();
+                        if(! Object.keys(filter).length) return false; //fail quicky if we didn't find any data attributes
                         if (!Array.isArray(params.filter)) params.filter = [];
                         params.filter.push(filter);
                         if (chart && typeof (chart.destroy) != "undefined") {
