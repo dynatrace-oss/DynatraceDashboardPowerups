@@ -1819,15 +1819,15 @@ var DashboardPowerups = (function () {
                             });
                             //last resort, listen on window
                             window.addEventListener('hashchange', () => { //somehow the tooltip reappears after removing...
-                                setTimeout(()=>{
+                                setTimeout(() => {
                                     let tips = document.getElementsByClassName('powerupTooltip');
 
                                     while (tips[0]) {
                                         tips[0].parentNode.removeChild(tips[0]);
                                     }
                                 }, 500);
-                                
-                            }, {once: true});
+
+                            }, { once: true });
                         }
                     }
                 });
@@ -2252,7 +2252,7 @@ var DashboardPowerups = (function () {
                                     fromIdx = filtered.findIndex((x, i, arr) =>
                                         x.errors > 0)
                                 } else if (f.crashgroupid !== undefined) {
-                                    fromIdx = row["crashGroupId"].findIndex((x,i,arr)=>
+                                    fromIdx = row["crashGroupId"].findIndex((x, i, arr) =>
                                         x.crashGroupId === f.crashgroupid
                                     )
                                 } else { }
@@ -3239,7 +3239,7 @@ var DashboardPowerups = (function () {
                             //crash group column
                             html += `<td>`
                                 + `<a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></a>`
-                                + `<a href="javascript:" data-crashgroupid="${x.crashGroupId}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a>`
+                                + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${x.crashGroupId}"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a>`
                                 + `</td>`;
                             //user column
                             html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${x.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`
@@ -3251,6 +3251,8 @@ var DashboardPowerups = (function () {
                         .html(html)
                         .click(() => { $popup.remove(); })
                         .appendTo(container);
+                    $popup.find(`.powerupFilterProp`)
+                        .on("click", filterProp);
                 }
 
                 function setColorMode(e) {
