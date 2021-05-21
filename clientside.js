@@ -3013,6 +3013,8 @@ var DashboardPowerups = (function () {
                     function filterProp(e) {
                         let el = e.target;
                         let $el = $(el);
+                        if(! $el.is("a"))
+                            $el = $el.parents("a");
                         let filter = $el.data();
                         if (!Array.isArray(params.filter)) params.filter = [];
                         params.filter.push(filter);
