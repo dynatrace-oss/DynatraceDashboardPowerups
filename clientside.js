@@ -3227,17 +3227,22 @@ var DashboardPowerups = (function () {
                         let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
                         let crashGroups = [... new Set(data.filteredTable.filter(x => x.hasCrash == "true").map(x => x.crashGroupId))];
+
+
                         let html = `<h3>${data.crashes} Crashes across ${crashGroups.length} crash groups:</h3><br><ul>`;
                         crashGroups.forEach(cg => {
+                            let filtered = data.filteredTable
+                                .filter(x => x.crashGroupId === cg);
+                            let appid;
+                            if (filtered && filtered[0] && filtered[0]["useraction.internalApplicationId"])
+                                appid = filtered[0]["useraction.internalApplicationId"][0];
                             html += `<li>Crash Group ${cg}: `;
-                            html += `<a href="/ui/mrum/${x["useraction.internalApplicationId"][0]}/analyze-crashes-noes/${x.crashGroupId}?gtf=${gtf}&gf=${gf}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></a>`
-                                + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${x.crashGroupId}"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a><br>`;
+                            html += `<a href="/ui/mrum/${appid}/analyze-crashes-noes/${cg}?gtf=${gtf}&gf=${gf}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></a>`
+                                + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${cg}"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a><br>`;
 
                             html += `<table><tr><th>SR</th><th>UserId</th></tr>`;
-                            data.filteredTable
-                                //.filter(x => x.hasCrash == "true")
-                                //.sort((a, b) => a.crashGroupId < b.crashGroupId ? -1 : 1)
-                                .filter(x => x.crashGroupId === cg)
+                            filtered
+                                .sort((a, b) => a.userId < b.userId ? -1 : 1)
                                 .forEach(x => {
                                     html += `<tr>`;
                                     let id = x.userId !== "null" ? x.userId : "anonymous";
