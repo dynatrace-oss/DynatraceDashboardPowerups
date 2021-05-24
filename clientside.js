@@ -4126,6 +4126,8 @@ var DashboardPowerups = (function () {
                         let tmptime = tmpdate.getTime();
                         if (!isNaN(tmptime)) s.val = tmptime;
                     }
+                    if(isNaN(Number(s.val)))
+                        console.log(`Powerup: WARN - ${PU_MATH} - NaN: \n\n${JSON.stringify({exp:exp,tokens:tokens,pairs:pairs})}`);
                 });
 
 
@@ -4152,7 +4154,7 @@ var DashboardPowerups = (function () {
                     errorBeacon(error);
                 }
                 //if (pub.config.Powerups.debug) 
-                    console.log(`Powerup: DEBUG - ${PU_MATH} - \n\n${JSON.stringify({exp:exp,tokens:tokens,pairs:pairs})}`);
+                    
                 if(val == undefined) return false;
 
                 //handle units
