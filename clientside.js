@@ -3236,8 +3236,8 @@ var DashboardPowerups = (function () {
                             let appid;
                             if (filtered && filtered[0] && filtered[0]["useraction.internalApplicationId"])
                                 appid = filtered[0]["useraction.internalApplicationId"][0];
-                            html += `<li>Crash Group ${cg}: `;
-                            html += `<a href="/ui/mrum/${appid}/analyze-crashes-noes/${cg}?gtf=${gtf}&gf=${gf}"></a>`
+                            html += `<li>Crash Group: `;
+                            html += `<a href="/ui/mrum/${appid}/analyze-crashes-noes/${cg}?gtf=${gtf}&gf=${gf}">${cg}</a>`
                                 + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${cg}"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a><br>`;
 
                             html += `<table><tr><th>SR</th><th>UserId</th></tr>`;
