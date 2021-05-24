@@ -3229,7 +3229,7 @@ var DashboardPowerups = (function () {
                         let crashGroups = [... new Set(data.filteredTable.filter(x => x.hasCrash == "true").map(x => x.crashGroupId))];
 
 
-                        let html = `<h3>${data.crashes} Crashes across ${crashGroups.length} crash groups:</h3><br><ul>`;
+                        let html = `<h3>${data.crashes} Crashes across ${crashGroups.length} crash groups:</h3><ul>`;
                         crashGroups.forEach(cg => {
                             let filtered = data.filteredTable
                                 .filter(x => x.crashGroupId === cg);
@@ -3237,7 +3237,7 @@ var DashboardPowerups = (function () {
                             if (filtered && filtered[0] && filtered[0]["useraction.internalApplicationId"])
                                 appid = filtered[0]["useraction.internalApplicationId"][0];
                             html += `<li>Crash Group ${cg}: `;
-                            html += `<a href="/ui/mrum/${appid}/analyze-crashes-noes/${cg}?gtf=${gtf}&gf=${gf}"><img src="${pub.SVGLib() + 'criticalevent.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'></a>`
+                            html += `<a href="/ui/mrum/${appid}/analyze-crashes-noes/${cg}?gtf=${gtf}&gf=${gf}"></a>`
                                 + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${cg}"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a><br>`;
 
                             html += `<table><tr><th>SR</th><th>UserId</th></tr>`;
