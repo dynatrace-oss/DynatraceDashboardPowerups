@@ -4151,6 +4151,7 @@ var DashboardPowerups = (function () {
                     console.log(error);
                     errorBeacon(error);
                 }
+                if (pub.config.Powerups.debug) console.log(`Powerup: DEBUG - ${PU_MATH} - \n\n${JSON.stringify({exp:exp,tokens:tokens,pairs:pairs})}`);
                 if(val == undefined) return false;
 
                 //handle units
