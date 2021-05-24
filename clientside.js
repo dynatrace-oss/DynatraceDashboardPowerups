@@ -4143,7 +4143,15 @@ var DashboardPowerups = (function () {
                 });
 
                 //calculate
-                let val = mexp.eval(exp, tokens, pairs);
+                let val;
+                try {
+                    val = mexp.eval(exp, tokens, pairs);
+                } catch (e) {
+                    let error = `Powerup: CRITICAL - ${PU_MATH} - ${e.name}: ${e.message}.\n\n${JSON.stringify({exp:exp,tokens:tokens,pairs:pairs})}`;
+                    console.log(error);
+                    errorBeacon(error);
+                }
+                if(val == undefined) return false;
 
                 //handle units
                 if (dates) {
