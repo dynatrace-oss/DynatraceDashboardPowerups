@@ -2636,7 +2636,7 @@ var DashboardPowerups = (function () {
                             useHTML: true,
                             nodeFormat: '{point.display}',
                             padding: 0,
-                            color: 'black'
+                            color: 'white'
                         },
                         nodes: [],
                         tooltip: {
