@@ -2641,12 +2641,8 @@ var DashboardPowerups = (function () {
                         },
                         nodes: [],
                         tooltip: {
-                            nodeFormat: `{point.nodeTTtext}`,
-                            pointFormat: `<div class="powerup-sankey-tooltip">
-                            {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>`
-                                + (mobile ? `Crashes: {point.crashes}<br/>` : ``)
-                                + `</div>`
-                                    .trim(),
+                            nodeFormatter: tooltipNodeFormatter,
+                            pointFormatter: tooltipPointFormatter,
                             headerFormat: ''
                         }
                     }],
@@ -2761,9 +2757,6 @@ var DashboardPowerups = (function () {
                     node.apdexSum = data.touples
                         .filter(t => t.to === node.id)
                         .reduce((agg, cv) => agg + cv.weight, 0);
-                    node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${node.id}</b><br>`
-                        + `<br><small><i>Artificial node to group Entry actions</i></small>`
-                        + `</div>`;
                     options.series[0].nodes.push(node);
 
                     node = {
@@ -2782,10 +2775,6 @@ var DashboardPowerups = (function () {
                     node.apdexSum = data.touples
                         .filter(t => t.to === node.id)
                         .reduce((agg, cv) => agg + cv.weight, 0);
-                    node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${node.id}</b><br>`
-                        + `UserActions in sample: ${node.apdexSum}<br>`
-                        + `<br><small><i>Artificial node to group Exit actions</i></small>`
-                        + `</div>`;
                     options.series[0].nodes.push(node);
 
                     if (data.touples.filter(x => x.crashes).length) {
@@ -2804,12 +2793,7 @@ var DashboardPowerups = (function () {
                         }
                         node.apdexSum = data.touples
                             .filter(t => t.to === node.id)
-                            .reduce((agg, cv) => agg + cv.weight, 0);
-                        //Node tooltip
-                        node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${node.id}</b><br>`
-                            + `UserActions in sample: ${node.apdexSum}<br>`
-                            + `<br><small><i>Artificial node to group Crash actions</i></small>`
-                            + `</div>`;
+                            .reduce((agg, cv) => agg + cv.weight, 0);    
                         options.series[0].nodes.push(node);
                     }
                 }
@@ -2875,27 +2859,6 @@ var DashboardPowerups = (function () {
                         (goal ? `<br>${goal.svg}` : "") +
                         (apdex.entryActionSVG ? `<br>${apdex.entryActionSVG}` : '') +
                         (apdex.exitActionSVG ? `<br>${apdex.exitActionSVG}` : '');
-
-                    //Node tooltip
-                    node.nodeTTtext = `<div class="powerup-sankey-tooltip">
-                    <b>${node.id}</b><br>
-                    App: ${node.app}<br>
-                    UserActions in sample: ${node.apdexSum} `
-                        + (node.selfActions ? `<sup>*</sup>` : '')
-                        + `<br>
-                    <u>Apdex</u><br>
-                    &nbsp;&nbsp; Satisfied: ${node.apdexSatisfied}<br>
-                    &nbsp;&nbsp; Tolerating: ${node.apdexTolerating}<br>
-                    &nbsp;&nbsp; Frustrated: ${node.apdexFrustrated}<br>
-                    Errors: ${node.errors}<br>
-                    Avg Duration: ${node.avgDuration}ms<br>
-                    Is entry action: ${node.entryAction}<br>
-                    Is exit action: ${node.exitAction}<br>
-                    Goal: ${node.conversionGoal}<br>
-                    ${uc(params.kpi)}: ${node[params.kpi]}<br>`
-                        + (node.selfActions ? `<br>
-                    <sup>*</sup> <small><i>includes ${node.selfActions} repeated actions</i></small>` : '')
-                        + `</div>`;
 
                     options.series[0].nodes.push(node);
                 });
@@ -3077,6 +3040,12 @@ var DashboardPowerups = (function () {
 
                     //redraw to help convHack use case
                     chart.setSize(undefined, undefined, false);
+
+                    //HACK: disable faulty mousemove events over node dataLabels
+                    chart.series[0].nodes.forEach(node=>{
+                        if(node.dataLabel && node.dataLabel.element)
+                            $(node.dataLabel.element).on("mousemove",(e)=> e.stopPropagation());
+                    })
 
                     $container.find(".highcharts-plot-background")
                         .addClass("powerupPlotBackground");
