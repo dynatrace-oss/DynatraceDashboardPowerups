@@ -246,6 +246,7 @@ h1.powerup-color-normal {
   opacity: 0.8;
   border: 1px solid #7c38a1;
   border-radius: 3px;
+  padding: 5px;
 }
 
 .powerupFunnelContainer {

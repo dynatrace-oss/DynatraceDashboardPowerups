@@ -2660,8 +2660,7 @@ var DashboardPowerups = (function () {
                                 + (mobile ? `Crashes: {point.crashes}<br/>` : ``)
                                 + `</div>`
                                     .trim(),
-                            headerFormat: '',
-                            padding: '3px'
+                            headerFormat: ''
                         }
                     }],
                     tooltip: {
