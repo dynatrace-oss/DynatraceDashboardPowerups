@@ -2797,14 +2797,15 @@ var DashboardPowerups = (function () {
                         node = {
                             id: "CRASH",
                             //column: 1,
-                            display: "CRASH !",
+                            display: "CRASH",
                             color: COLOR_RED,
                             dataLabels: {
                                 rotation: 270,
                                 style: {
                                     textOutline: false
                                 },
-                                className: "powerupSankeyNodeTextLabel"
+                                className: "powerupSankeyNodeTextLabel",
+                                format: `CRASH !`
                             }
                         }
                         node.apdexSum = data.touples
