@@ -2620,9 +2620,9 @@ var DashboardPowerups = (function () {
                         text: params.title
                     },
                     chart: {
-                        marginLeft: 100,
+                        marginLeft: 50,
                         marginBottom: 200,
-                        marginRight: 100,
+                        marginRight: 50,
                         marginTop: 100
                     },
                     series: [{
@@ -2636,7 +2636,8 @@ var DashboardPowerups = (function () {
                             useHTML: true,
                             nodeFormat: '{point.display}',
                             padding: 0,
-                            color: 'white'
+                            color: 'white',
+
                         },
                         nodes: [],
                         tooltip: {
