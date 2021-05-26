@@ -3054,7 +3054,7 @@ var DashboardPowerups = (function () {
                             currFmt = Intl.NumberFormat(locale, style).format;
                         }
                         let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name.replace(/"/g, `""`)}"`);
-                        let html = `<p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
+                        let html = `<div><p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
 
                         //app
                         html += `<li>App: <a href="javascript:" class="powerupFilterProp" data-app="${node.app}" >${node.app}</a></li>`;
@@ -3170,13 +3170,13 @@ var DashboardPowerups = (function () {
                             html += list;
                             html += `</ul></li>` //end date
                         }
+                        html += `</ul></div>`
+                            + `<div>&nbsp;</div>`;
 
                         html += `<div class="powerupSankeyDisclaimer">`
-                            + `<div>&nbsp;</div>`
-                            + `<div><sup>*</sup> Note: stats and counts are based on the filtered sample. `
+                            + `<sup>*</sup> Note: stats and counts are based on the filtered sample. `
                             + `Values may vary materially from total session population. <br>If you require deep analytics, please contact `
-                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`
-                            + `</div>`;
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
 
                         let $popup = $("<div>")
                             .addClass("powerupSankeyDetailPopup")
@@ -3192,7 +3192,7 @@ var DashboardPowerups = (function () {
                         let hash = window.location.hash.split(';').map(x => x.split('='));
                         let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
-                        let html = `<h3>Session List <sup>*</sup></h3><table>`;
+                        let html = `<div><h3>Session List <sup>*</sup></h3><table>`;
                         html += `<tr><th>SR</th><th>UX</th><th>Goal</th><th>UserId</th></tr>`;
                         data.filteredTable.forEach(session => {
                             html += `<tr>`;
@@ -3221,13 +3221,14 @@ var DashboardPowerups = (function () {
                             html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`;
                             html += `</tr>`;
                         })
-                        html += `</table>`;
+                        html += `</table></div>`
+                            + `<div>&nbsp;</div>`;
+
                         html += `<div class="powerupSankeyDisclaimer">`
-                            + `<div>&nbsp;</div>`
-                            + `<div><sup>*</sup> Note: session list is based on a filtered sample. `
+                            + `<sup>*</sup> Note: session list is based on a filtered sample. `
                             + `This may not include all matching sessions in total session population. <br>If you require deep analytics, please contact `
-                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`
-                            + `</div>`;
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
+
                         let $popup = $("<div>")
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
@@ -3242,7 +3243,7 @@ var DashboardPowerups = (function () {
                         let crashGroups = [... new Set(data.filteredTable.filter(x => x.hasCrash == "true").map(x => x.crashGroupId))];
 
 
-                        let html = `<h3>${data.crashes} Crashes across ${crashGroups.length} crash groups:</h3><ul>`;
+                        let html = `<div><h3>${data.crashes} Crashes across ${crashGroups.length} crash groups:</h3><ul>`;
                         crashGroups.forEach(cg => {
                             let filtered = data.filteredTable
                                 .filter(x => x.crashGroupId === cg);
@@ -3270,14 +3271,14 @@ var DashboardPowerups = (function () {
                                 });
                             html += `</table></li>`;
                         });
-                        html += `</ul>`;
+                        html += `</ul></div>`
+                            + `<div>&nbsp;</div>`;
+
                         html += `<div class="powerupSankeyDisclaimer">`
-                            + `<div>&nbsp;</div>`
-                            + `<div><sup>*</sup> Note: crash list is based on a filtered sample. `
+                            + `<sup>*</sup> Note: crash list is based on a filtered sample. `
                             + `This may not include all matching crashes in total session population. <br>If you require deep analytics, please contact `
-                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`
-                            + `</div>`;
-                            
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
+
                         let $popup = $("<div>")
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)

@@ -314,6 +314,12 @@ h1.powerup-color-normal {
   overflow: auto !important;
   padding: 10px;
   font-family: BerninaSansWeb, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.powerupSankeyDetailPopup > div:not(.powerupSankeyDisclaimer) {
+  flex: 1;
 }
 
 .powerupSankeyDetailPopup a {
@@ -557,8 +563,7 @@ tspan.powerupFilterProp:hover,
   position: sticky;
   right: 50px;
   width: 100%;*/
-  display: flex;
-  flex-direction: column;
+  
   margin-top: 40px;
   font-size: smaller;
   text-align: right;
