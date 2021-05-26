@@ -2659,7 +2659,7 @@ var DashboardPowerups = (function () {
                             <sup>*</sup> <small><i>includes {point.selfActions} self-actions not shown</i></small>
                             </div>
                         `.trim(),*/
-                        nodeFormatter: tooltipNodeFormatter,
+                            nodeFormatter: tooltipNodeFormatter,
                             pointFormat: `<div class="powerup-sankey-tooltip">
                         {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>`
                                 + (mobile ? `Crashes: {point.crashes}<br/>` : ``)
@@ -2691,26 +2691,26 @@ var DashboardPowerups = (function () {
                 }
 
                 function tooltipNodeFormatter() {
-                    let p = this;
+                    let point = this;
                     let tt = `<div class="powerup-sankey-tooltip">
-                    <b>{point.name}</b><br>
-                    App: {point.app}<br>
-                    UserActions in sample: {point.apdexSum} `
-                    + (p.selfActions?`<sup>*</sup>`:'')
-                    + `<br>
+                    <b>${point.name}</b><br>
+                    App: ${point.app}<br>
+                    UserActions in sample: ${point.apdexSum} `
+                        + (point.selfActions ? `<sup>*</sup>` : '')
+                        + `<br>
                     <u>Apdex</u><br>
-                    &nbsp;&nbsp; Satisfied: {point.apdexSatisfied}<br>
-                    &nbsp;&nbsp; Tolerating: {point.apdexTolerating}<br>
-                    &nbsp;&nbsp; Frustrated: {point.apdexFrustrated}<br>
-                    Errors: {point.errors}<br>
-                    Avg Duration: {point.avgDuration}ms<br>
-                    Is entry action: {point.entryAction}<br>
-                    Is exit action: {point.exitAction}<br>
-                    Goal: {point.conversionGoal}<br>
-                    ${uc(params.kpi)}: {point.${params.kpi}}<br>`
-                    + (p.selfActions?`<br>
-                    <sup>*</sup> <small><i>includes {point.selfActions} self-actions not shown</i></small>`:'')
-                    + `</div>
+                    &nbsp;&nbsp; Satisfied: ${point.apdexSatisfied}<br>
+                    &nbsp;&nbsp; Tolerating: ${point.apdexTolerating}<br>
+                    &nbsp;&nbsp; Frustrated: ${point.apdexFrustrated}<br>
+                    Errors: ${point.errors}<br>
+                    Avg Duration: ${point.avgDuration}ms<br>
+                    Is entry action: ${point.entryAction}<br>
+                    Is exit action: ${point.exitAction}<br>
+                    Goal: ${point.conversionGoal}<br>
+                    ${uc(params.kpi)}: ${point[params.kpi]}<br>`
+                        + (point.selfActions ? `<br>
+                    <sup>*</sup> <small><i>includes {point.selfActions} self-actions not shown</i></small>`: '')
+                        + `</div>
                 `.trim();
                     return tt;
                 }
@@ -2772,8 +2772,8 @@ var DashboardPowerups = (function () {
                             }
                         }
                         node.apdexSum = data.touples
-                        .filter(t => t.to === node.id)
-                        .reduce((agg, cv) => agg + cv.weight, 0);
+                            .filter(t => t.to === node.id)
+                            .reduce((agg, cv) => agg + cv.weight, 0);
                         options.series[0].nodes.push(node);
                     }
                 }
