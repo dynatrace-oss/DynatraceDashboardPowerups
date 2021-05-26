@@ -3171,8 +3171,8 @@ var DashboardPowerups = (function () {
                             html += `</ul></li>` //end date
                         }
 
-                        html += `<div class="powerupSankeyDisclaimer"><sup>*</sup> Note: stats and counts are only based on the filtered sample. `
-                            + `Values may vary materially from total session population. If you require deep analytics, please contact `
+                        html += `<div class="powerupSankeyDisclaimer"><sup>*</sup> Note: stats and counts are based on the filtered sample. `
+                            + `Values may vary materially from total session population. <br>If you require deep analytics, please contact `
                             + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
 
                         let $popup = $("<div>")

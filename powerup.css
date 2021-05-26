@@ -306,6 +306,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
   margin: 50px 20px;
   overflow: auto !important;
   padding: 10px;
+  font-family: BerninaSansWeb, sans-serif;
 }
 
 .powerupSankeyDetailPopup a {
@@ -540,8 +541,10 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
 
 .powerupSankeyDisclaimer {
   width: 100%;
+  margin-top: 40px;
   font-size: smaller;
   text-align: right;
   color: white;
   font-style: italic;
+  font-family: sans-serif;
 }
