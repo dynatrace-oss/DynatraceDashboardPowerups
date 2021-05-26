@@ -538,3 +538,10 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
   color: black;
 }
 
+.powerupSankeyDisclaimer {
+  width: 100%;
+  font-size: smaller;
+  text-align: right;
+  color: white;
+  font-style: italic;
+}

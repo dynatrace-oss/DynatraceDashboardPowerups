@@ -3065,7 +3065,7 @@ var DashboardPowerups = (function () {
                             let max = durations.reduce((acc, curr) => Math.max(acc, curr));
                             let sum = durations.reduce((acc, curr) => acc + curr, 0);
                             let avg = sum / durations.length;
-                            html += `<li>Action Duration (ms): <ul>`;
+                            html += `<li>Action Duration (ms) <sup>*</sup>: <ul>`;
                             html += `<li>min: ${fmt(min)}</li>`;
                             html += `<li>max: ${fmt(max)}</li>`;
                             html += `<li>avg: ${fmt(avg)}</li>`;
@@ -3087,7 +3087,7 @@ var DashboardPowerups = (function () {
                                 .forEach(x => {
                                     let fmter = (x.key === params.kpi ? currFmt : fmt);
                                     let sublink = link + encodeURIComponent(` AND useraction.doubleProperties.${x.key} IS NOT NULL`);
-                                    html += `<li><a href="${sublink}">${x.key}</a>: <ul>`
+                                    html += `<li><a href="${sublink}">${x.key}</a> <sup>*</sup>: <ul>`
                                         + `<li>sum: ${fmter(x.sum)}</li>`
                                         + `<li>count: ${fmt(x.count)}</li>`
                                         + `<li>avg: ${fmter(x.sum / x.count)}</li>`
@@ -3107,7 +3107,7 @@ var DashboardPowerups = (function () {
                                 })
                                 .forEach(x => {
                                     let sublink = link + encodeURIComponent(` AND useraction.longProperties.${x.key} IS NOT NULL`);
-                                    html += `<li><a href="${sublink}">${x.key}</a>: <ul>`
+                                    html += `<li><a href="${sublink}">${x.key}</a> <sup>*</sup>: <ul>`
                                         + `<li>sum: ${fmt(x.sum)}</li>`
                                         + `<li>count: ${fmt(x.count)}</li>`
                                         + `<li>avg: ${fmt(x.sum / x.count)}</li>`
@@ -3117,7 +3117,7 @@ var DashboardPowerups = (function () {
                         }
 
                         if (data.UAPs.strings.length) {
-                            html += `<li>String Properties:<ul>`;
+                            html += `<li>String Properties <sup>*</sup>:<ul>`;
                             let lastKey, list = "";
                             data.UAPs.strings
                                 .filter(x => x.actionName === name)
@@ -3146,7 +3146,7 @@ var DashboardPowerups = (function () {
                         }
 
                         if (data.UAPs.dates.length) {
-                            html += `<li>Date Properties:<ul>`;
+                            html += `<li>Date Properties <sup>*</sup>:<ul>`;
                             lastKey = ""; list = "";
                             data.UAPs.dates
                                 .filter(x => x.actionName === name)
@@ -3170,6 +3170,10 @@ var DashboardPowerups = (function () {
                             html += list;
                             html += `</ul></li>` //end date
                         }
+
+                        html += `<div class="powerupSankeyDisclaimer"><sup>*</sup> Note: stats and counts are only based on the filtered sample. `
+                            + `Values may vary materially from total session population. If you require deep analytics, please contact `
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
 
                         let $popup = $("<div>")
                             .addClass("powerupSankeyDetailPopup")
