@@ -2697,7 +2697,7 @@ var DashboardPowerups = (function () {
                     let node = {
                         id: "START",
                         //column: 0,
-                        display: "Start...",
+                        display: "Start ...",
                         color: "#b7b7b7",
                         dataLabels: {
                             rotation: 270,
@@ -2712,7 +2712,7 @@ var DashboardPowerups = (function () {
                     node = {
                         id: "END",
                         //column: 1,
-                        display: "...End",
+                        display: "... End",
                         color: "#b7b7b7",
                         dataLabels: {
                             rotation: 270,
@@ -2727,7 +2727,7 @@ var DashboardPowerups = (function () {
                         node = {
                             id: "CRASH",
                             //column: 1,
-                            display: "CRASH!",
+                            display: "CRASH !",
                             color: COLOR_RED,
                             dataLabels: {
                                 rotation: 270,
