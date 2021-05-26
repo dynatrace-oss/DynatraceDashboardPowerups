@@ -2723,7 +2723,8 @@ var DashboardPowerups = (function () {
                     let point = this;
                     if (!$(point.graphic.element).is(`:hover`)) { //try to avoid weird Highcharts hover bug
                         console.log("POWERUP: ERROR - Sankey - pointFormatter run on non-hover object");
-                        return false;
+                        point.series.chart.tooltip.hide();
+                        return;
                     }
                     let tt = `<div class="powerup-sankey-tooltip">
                         ${point.fromNode.name} → ${point.toNode.name}: <b>${point.weight}</b><br/>`
