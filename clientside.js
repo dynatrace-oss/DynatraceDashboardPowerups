@@ -2781,10 +2781,11 @@ var DashboardPowerups = (function () {
                     node.apdexSum = data.touples
                         .filter(t => t.to === node.id)
                         .reduce((agg, cv) => agg + cv.weight, 0);
-                    node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
+                    node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${node.id}</b><br>`
                         + `<br><small><i>Artificial node to group Entry actions</i></small>`
                         + `</div>`;
                     options.series[0].nodes.push(node);
+
                     node = {
                         id: "END",
                         //column: 1,
@@ -2801,11 +2802,12 @@ var DashboardPowerups = (function () {
                     node.apdexSum = data.touples
                         .filter(t => t.to === node.id)
                         .reduce((agg, cv) => agg + cv.weight, 0);
-                    node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
-                        + `UserActions in sample: ${point.apdexSum}<br>`
+                    node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${node.id}</b><br>`
+                        + `UserActions in sample: ${node.apdexSum}<br>`
                         + `<br><small><i>Artificial node to group Exit actions</i></small>`
                         + `</div>`;
                     options.series[0].nodes.push(node);
+
                     if (data.touples.filter(x => x.crashes).length) {
                         node = {
                             id: "CRASH",
@@ -2824,8 +2826,8 @@ var DashboardPowerups = (function () {
                             .filter(t => t.to === node.id)
                             .reduce((agg, cv) => agg + cv.weight, 0);
                         //Node tooltip
-                        node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
-                            + `UserActions in sample: ${point.apdexSum}<br>`
+                        node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${node.id}</b><br>`
+                            + `UserActions in sample: ${node.apdexSum}<br>`
                             + `<br><small><i>Artificial node to group Crash actions</i></small>`
                             + `</div>`;
                         options.series[0].nodes.push(node);
