@@ -2659,8 +2659,14 @@ var DashboardPowerups = (function () {
                             <sup>*</sup> <small><i>includes {point.selfActions} self-actions not shown</i></small>
                             </div>
                         `.trim(),*/
-                            nodeFormatter: tooltipNodeFormatter,
-                            pointFormatter: tooltipPointFormatter,
+                            /*nodeFormatter: tooltipNodeFormatter,
+                            pointFormatter: tooltipPointFormatter,*/
+                            nodeFormat: `{point.nodeTTtext}`,
+                            pointFormat: `<div class="powerup-sankey-tooltip">
+                            {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>`
+                                + (mobile ? `Crashes: {point.crashes}<br/>` : ``)
+                                + `</div>`
+                                    .trim(),
                             headerFormat: ''
                         }
                     }],
@@ -2689,7 +2695,7 @@ var DashboardPowerups = (function () {
                 function tooltipNodeFormatter() {
                     let point = this;
                     let tt = "";
-                    if(! $(point.graphic.element).is(`:hover`)){ //try to avoid weird Highcharts hover bug
+                    if (!$(point.graphic.element).is(`:hover`)) { //try to avoid weird Highcharts hover bug
                         console.log("POWERUP: ERROR - Sankey - nodeFormatter run on non-hover object");
                         return false;
                     }
@@ -2739,7 +2745,7 @@ var DashboardPowerups = (function () {
 
                 function tooltipPointFormatter() {
                     let point = this;
-                    if(! $(point.graphic.element).is(`:hover`)){ //try to avoid weird Highcharts hover bug
+                    if (!$(point.graphic.element).is(`:hover`)) { //try to avoid weird Highcharts hover bug
                         console.log("POWERUP: ERROR - Sankey - pointFormatter run on non-hover object");
                         return false;
                     }
@@ -2775,6 +2781,9 @@ var DashboardPowerups = (function () {
                     node.apdexSum = data.touples
                         .filter(t => t.to === node.id)
                         .reduce((agg, cv) => agg + cv.weight, 0);
+                    node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
+                        + `<br><small><i>Artificial node to group Entry actions</i></small>`
+                        + `</div>`;
                     options.series[0].nodes.push(node);
                     node = {
                         id: "END",
@@ -2792,6 +2801,10 @@ var DashboardPowerups = (function () {
                     node.apdexSum = data.touples
                         .filter(t => t.to === node.id)
                         .reduce((agg, cv) => agg + cv.weight, 0);
+                    node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
+                        + `UserActions in sample: ${point.apdexSum}<br>`
+                        + `<br><small><i>Artificial node to group Exit actions</i></small>`
+                        + `</div>`;
                     options.series[0].nodes.push(node);
                     if (data.touples.filter(x => x.crashes).length) {
                         node = {
@@ -2804,13 +2817,17 @@ var DashboardPowerups = (function () {
                                 style: {
                                     textOutline: false
                                 },
-                                className: "powerupSankeyNodeTextLabel",
-                                format: `CRASH !`
+                                className: "powerupSankeyNodeTextLabel"
                             }
                         }
                         node.apdexSum = data.touples
                             .filter(t => t.to === node.id)
                             .reduce((agg, cv) => agg + cv.weight, 0);
+                        //Node tooltip
+                        node.nodeTTtext = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
+                            + `UserActions in sample: ${point.apdexSum}<br>`
+                            + `<br><small><i>Artificial node to group Crash actions</i></small>`
+                            + `</div>`;
                         options.series[0].nodes.push(node);
                     }
                 }
@@ -2876,6 +2893,27 @@ var DashboardPowerups = (function () {
                         (goal ? `<br>${goal.svg}` : "") +
                         (apdex.entryActionSVG ? `<br>${apdex.entryActionSVG}` : '') +
                         (apdex.exitActionSVG ? `<br>${apdex.exitActionSVG}` : '');
+
+                    //Node tooltip
+                    node.nodeTTtext = `<div class="powerup-sankey-tooltip">
+                    <b>${node.name}</b><br>
+                    App: ${node.app}<br>
+                    UserActions in sample: ${node.apdexSum} `
+                        + (node.selfActions ? `<sup>*</sup>` : '')
+                        + `<br>
+                    <u>Apdex</u><br>
+                    &nbsp;&nbsp; Satisfied: ${node.apdexSatisfied}<br>
+                    &nbsp;&nbsp; Tolerating: ${node.apdexTolerating}<br>
+                    &nbsp;&nbsp; Frustrated: ${node.apdexFrustrated}<br>
+                    Errors: ${node.errors}<br>
+                    Avg Duration: ${node.avgDuration}ms<br>
+                    Is entry action: ${node.entryAction}<br>
+                    Is exit action: ${node.exitAction}<br>
+                    Goal: ${node.conversionGoal}<br>
+                    ${uc(params.kpi)}: ${node[params.kpi]}<br>`
+                        + (node.selfActions ? `<br>
+                    <sup>*</sup> <small><i>includes ${node.selfActions} repeated actions</i></small>` : '')
+                        + `</div>`;
 
                     options.series[0].nodes.push(node);
                 });
