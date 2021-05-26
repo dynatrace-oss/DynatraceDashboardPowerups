@@ -554,7 +554,7 @@ tspan.powerupFilterProp:hover,
 
 .powerupSankeyDisclaimer {
   bottom: 10px;
-  position: absolute;
+  position: sticky;
   right: 50px;
   width: 100%;
   margin-top: 40px;
