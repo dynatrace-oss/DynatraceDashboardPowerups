@@ -553,14 +553,24 @@ tspan.powerupFilterProp:hover,
 }
 
 .powerupSankeyDisclaimer {
-  bottom: 10px;
+  /*bottom: 10px;
   position: sticky;
   right: 50px;
-  width: 100%;
+  width: 100%;*/
+  display: flex;
+  flex-direction: column;
   margin-top: 40px;
   font-size: smaller;
   text-align: right;
   color: white;
   font-style: italic;
   font-family: sans-serif;
+}
+
+.powerupSankeyDisclaimer > div:first-of-type {
+  flex-grow: 1;
+}
+
+.powerupSankeyDisclaimer > div:last-of-type {
+  flex-grow: 0;
 }

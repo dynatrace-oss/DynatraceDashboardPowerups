@@ -3171,9 +3171,12 @@ var DashboardPowerups = (function () {
                             html += `</ul></li>` //end date
                         }
 
-                        html += `<div class="powerupSankeyDisclaimer"><sup>*</sup> Note: stats and counts are based on the filtered sample. `
+                        html += `<div class="powerupSankeyDisclaimer">`
+                            + `<div>&nbsp;</div>`
+                            + `<div><sup>*</sup> Note: stats and counts are based on the filtered sample. `
                             + `Values may vary materially from total session population. <br>If you require deep analytics, please contact `
-                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`
+                            + `</div>`;
 
                         let $popup = $("<div>")
                             .addClass("powerupSankeyDetailPopup")
@@ -3219,9 +3222,12 @@ var DashboardPowerups = (function () {
                             html += `</tr>`;
                         })
                         html += `</table>`;
-                        html += `<div class="powerupSankeyDisclaimer"><sup>*</sup> Note: session list is based on a filtered sample. `
+                        html += `<div class="powerupSankeyDisclaimer">`
+                            + `<div>&nbsp;</div>`
+                            + `<div><sup>*</sup> Note: session list is based on a filtered sample. `
                             + `This may not include all matching sessions in total session population. <br>If you require deep analytics, please contact `
-                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`
+                            + `</div>`;
                         let $popup = $("<div>")
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
@@ -3265,10 +3271,13 @@ var DashboardPowerups = (function () {
                             html += `</table></li>`;
                         });
                         html += `</ul>`;
-                        html += `<div class="powerupSankeyDisclaimer"><sup>*</sup> Note: crash list is based on a filtered sample. `
+                        html += `<div class="powerupSankeyDisclaimer">`
+                            + `<div>&nbsp;</div>`
+                            + `<div><sup>*</sup> Note: crash list is based on a filtered sample. `
                             + `This may not include all matching crashes in total session population. <br>If you require deep analytics, please contact `
-                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
-
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`
+                            + `</div>`;
+                            
                         let $popup = $("<div>")
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
