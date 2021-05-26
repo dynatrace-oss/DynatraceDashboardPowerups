@@ -2633,7 +2633,7 @@ var DashboardPowerups = (function () {
                         clip: false,
                         dataLabels: {
                             enabled: true,
-                            //useHTML: true,
+                            useHTML: true,
                             nodeFormat: '{point.display}',
                             padding: 0,
                             color: 'white',
