@@ -2692,27 +2692,49 @@ var DashboardPowerups = (function () {
 
                 function tooltipNodeFormatter() {
                     let point = this;
-                    let tt = `<div class="powerup-sankey-tooltip">
-                    <b>${point.name}</b><br>
-                    App: ${point.app}<br>
-                    UserActions in sample: ${point.apdexSum} `
-                        + (point.selfActions ? `<sup>*</sup>` : '')
-                        + `<br>
-                    <u>Apdex</u><br>
-                    &nbsp;&nbsp; Satisfied: ${point.apdexSatisfied}<br>
-                    &nbsp;&nbsp; Tolerating: ${point.apdexTolerating}<br>
-                    &nbsp;&nbsp; Frustrated: ${point.apdexFrustrated}<br>
-                    Errors: ${point.errors}<br>
-                    Avg Duration: ${point.avgDuration}ms<br>
-                    Is entry action: ${point.entryAction}<br>
-                    Is exit action: ${point.exitAction}<br>
-                    Goal: ${point.conversionGoal}<br>
-                    ${uc(params.kpi)}: ${point[params.kpi]}<br>`
-                        + (point.selfActions ? `<br>
-                    <sup>*</sup> <small><i>includes ${point.selfActions} self-actions not shown</i></small>` : '')
-                        + `</div>`
-                            .trim();
-                    return tt;
+                    let tt = "";
+                    switch(point.id){
+                        case "START":
+                            tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
+                                + `<br><small><i>Artificial node to group Entry actions</i></small>`
+                                + `</div>`;
+                            break;
+                        case "END":
+                            tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
+                                + `UserActions in sample: ${point.apdexSum}<br>`
+                                + `<br><small><i>Artificial node to group Exit actions</i></small>`
+                                + `</div>`;
+                            break;
+                        case "CRASH":
+                            tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
+                                + `UserActions in sample: ${point.apdexSum}<br>`
+                                + `<br><small><i>Artificial node to group Crash actions</i></small>`
+                                + `</div>`;
+                            break;
+                        default:
+                            tt = `<div class="powerup-sankey-tooltip">
+                            <b>${point.name}</b><br>
+                            App: ${point.app}<br>
+                            UserActions in sample: ${point.apdexSum} `
+                                + (point.selfActions ? `<sup>*</sup>` : '')
+                                + `<br>
+                            <u>Apdex</u><br>
+                            &nbsp;&nbsp; Satisfied: ${point.apdexSatisfied}<br>
+                            &nbsp;&nbsp; Tolerating: ${point.apdexTolerating}<br>
+                            &nbsp;&nbsp; Frustrated: ${point.apdexFrustrated}<br>
+                            Errors: ${point.errors}<br>
+                            Avg Duration: ${point.avgDuration}ms<br>
+                            Is entry action: ${point.entryAction}<br>
+                            Is exit action: ${point.exitAction}<br>
+                            Goal: ${point.conversionGoal}<br>
+                            ${uc(params.kpi)}: ${point[params.kpi]}<br>`
+                                + (point.selfActions ? `<br>
+                            <sup>*</sup> <small><i>includes ${point.selfActions} repeated actions</i></small>` : '')
+                                + `</div>`;
+                            break;
+                    }
+                    
+                    return tt.trim();
                 }
 
                 function uc(str) {
