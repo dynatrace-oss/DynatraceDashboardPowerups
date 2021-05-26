@@ -2622,7 +2622,7 @@ var DashboardPowerups = (function () {
                     chart: {
                         marginLeft: 50,
                         marginBottom: 200,
-                        marginRight: 50,
+                        marginRight: 150,
                         marginTop: 100
                     },
                     series: [{
