@@ -2660,11 +2660,7 @@ var DashboardPowerups = (function () {
                             </div>
                         `.trim(),*/
                             nodeFormatter: tooltipNodeFormatter,
-                            pointFormat: `<div class="powerup-sankey-tooltip">
-                        {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>`
-                                + (mobile ? `Crashes: {point.crashes}<br/>` : ``)
-                                + `</div>`
-                                    .trim(),
+                            pointFormatter: tooltipPointFormatter,
                             headerFormat: ''
                         }
                     }],
@@ -2693,7 +2689,7 @@ var DashboardPowerups = (function () {
                 function tooltipNodeFormatter() {
                     let point = this;
                     let tt = "";
-                    switch(point.id){
+                    switch (point.id) {
                         case "START":
                             tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
                                 + `<br><small><i>Artificial node to group Entry actions</i></small>`
@@ -2733,8 +2729,18 @@ var DashboardPowerups = (function () {
                                 + `</div>`;
                             break;
                     }
-                    
+
                     return tt.trim();
+                }
+
+                function tooltipPointFormatter() {
+                    let point = this;
+                    let tt = `<div class="powerup-sankey-tooltip">
+                        {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>`
+                        + (mobile ? `Crashes: {point.crashes}<br/>` : ``)
+                        + `</div>`
+                            .trim();
+                    return tt;
                 }
 
                 function uc(str) {
