@@ -2622,7 +2622,8 @@ var DashboardPowerups = (function () {
                     chart: {
                         marginLeft: 100,
                         marginBottom: 200,
-                        marginRight: 100
+                        marginRight: 100,
+                        marginTop: 100
                     },
                     series: [{
                         data: data.touples.slice(0, limit),
