@@ -2675,13 +2675,13 @@ var DashboardPowerups = (function () {
                     },
                     exporting: {
                         enabled: true,
-                        x: -10,
                         fallbackToExportServer: true,
                         libURL: pub.POWERUP_EXT_URL + '3rdParty/Highcharts/lib',
                         buttons: {
                             contextButton: {
                                 //    ["printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG", "separator", "downloadCSV", "downloadXLS", "viewData", "openInCloud"]
-                                menuItems: ["downloadSVG", "downloadPDF", "separator", "printChart"]
+                                menuItems: ["downloadSVG", "downloadPDF", "separator", "printChart"],
+                                x: -40
                             }
                         }
                     }
