@@ -2644,7 +2644,7 @@ var DashboardPowerups = (function () {
                             nodeFormat: `<div class="powerup-sankey-tooltip">
                             <b>{point.name}</b><br>
                             App: {point.app}<br>
-                            UserActions in sample: {point.sum}<br>
+                            UserActions in sample: {point.apdexSum} <sup>*</sup><br>
                             <u>Apdex</u><br>
                             &nbsp;&nbsp; Satisfied: {point.apdexSatisfied}<br>
                             &nbsp;&nbsp; Tolerating: {point.apdexTolerating}<br>
@@ -2654,7 +2654,9 @@ var DashboardPowerups = (function () {
                             Is entry action: {point.entryAction}<br>
                             Is exit action: {point.exitAction}<br>
                             Goal: {point.conversionGoal}<br>
-                            ${uc(params.kpi)}: {point.${params.kpi}}
+                            ${uc(params.kpi)}: {point.${params.kpi}}<br>
+                            <br>
+                            <sup>*</sup> <i>includes {point.selfActions} self-actions not shown</i>
                             </div>
                         `.trim(),
                             pointFormat: `<div class="powerup-sankey-tooltip">
@@ -2748,12 +2750,19 @@ var DashboardPowerups = (function () {
                         apdex: apdex,
                         apdexSatisfied: apdex.satisfied.toString(),
                         apdexTolerating: apdex.tolerating.toString(),
-                        apdexFrustrated: apdex.frustrated.toString(),
+                        apdexFrustrated: apdex.frustrated.toString(),                        
                         entryAction: (apdex.entryAction ? 'true' : 'false'),
                         exitAction: (apdex.exitAction ? 'true' : 'false'),
                         errors: apdex.errors,
                         crashes: apdex.crashes
                     }
+
+                    //add totals
+                    node.apdexSum = (apdex.satisfied + apdex.tolerating + apdex.frustrated);
+                    node.toupleTotal = data.touples
+                        .filter(t => t.from === node.id)
+                        .reduce((agg,cv)=>agg+cv,0);
+                    node.selfActions = apdexSum - toupleTotal;
 
                     //avg duration
                     if (Array.isArray(apdex.durations)) {
