@@ -2898,7 +2898,7 @@ var DashboardPowerups = (function () {
 
                     //Node tooltip
                     node.nodeTTtext = `<div class="powerup-sankey-tooltip">
-                    <b>${node.name}</b><br>
+                    <b>${node.id}</b><br>
                     App: ${node.app}<br>
                     UserActions in sample: ${node.apdexSum} `
                         + (node.selfActions ? `<sup>*</sup>` : '')
