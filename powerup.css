@@ -14,7 +14,8 @@ div.powerup-color-critical {
   background-color: red;
 }
 
-span.powerup-color-critical, h1.powerup-color-critical {
+span.powerup-color-critical,
+h1.powerup-color-critical {
   color: red;
 }
 
@@ -60,7 +61,8 @@ div.powerup-color-warning {
   background-color: yellow;
 }
 
-span.powerup-color-warning, h1.powerup-color-warning {
+span.powerup-color-warning,
+h1.powerup-color-warning {
   color: yellow;
 }
 
@@ -106,7 +108,8 @@ div.powerup-color-normal {
   background-color: green;
 }
 
-span.powerup-color-normal, h1.powerup-color-normal {
+span.powerup-color-normal,
+h1.powerup-color-normal {
   color: green;
 }
 
@@ -185,7 +188,8 @@ span.powerup-color-normal, h1.powerup-color-normal {
   text-align: right;
 }
 
-.geoText, .valueText {
+.geoText,
+.valueText {
   font-size: large;
 }
 
@@ -285,11 +289,13 @@ span.powerup-color-normal, h1.powerup-color-normal {
   cursor: pointer;
 }
 
-.powerupPlotBackground, .powerupHighchartsContainer {
+.powerupPlotBackground,
+.powerupHighchartsContainer {
   cursor: default;
 }
 
-.powerupHighchartsContainer .highcharts-sankey-series .highcharts-node, .powerupHighchartsContainer .highcharts-sankey-series .highcharts-data-label * {
+.powerupHighchartsContainer .highcharts-sankey-series .highcharts-node,
+.powerupHighchartsContainer .highcharts-sankey-series .highcharts-data-label * {
   cursor: context-menu;
 }
 
@@ -324,7 +330,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
 }
 
 .highcharts-menu {
-  overflow: visible!important;
+  overflow: visible !important;
 }
 
 .powerupVisible {
@@ -335,12 +341,14 @@ span.powerup-color-normal, h1.powerup-color-normal {
   font-family: BerninaSansWeb, sans-serif !important;
 }
 
-.powerupMath, .powerupVlookup {
+.powerupMath,
+.powerupVlookup {
   display: flex;
   padding-left: 20px;
 }
 
-.powerupMath, .powerupVlookup {
+.powerupMath,
+.powerupVlookup {
   align-items: center;
 }
 
@@ -367,7 +375,8 @@ span.powerup-color-normal, h1.powerup-color-normal {
   cursor: default;
 }
 
-.powerupTable a, .powerupTable a:hover {
+.powerupTable a,
+.powerupTable a:hover {
   color: #00b9cc !important;
   font-size: 1.1em !important;
   text-decoration: none;
@@ -420,7 +429,7 @@ span.powerup-color-normal, h1.powerup-color-normal {
   background-color: #454646;
 }
 
-.powerupTableMenu>div {
+.powerupTableMenu > div {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -442,14 +451,14 @@ span.powerup-color-normal, h1.powerup-color-normal {
 }
 
 .powerupTableButton:hover {
-  background-color: #6A6B6B;
+  background-color: #6a6b6b;
   color: white;
   text-decoration: none;
 }
 
 .powerupBackground {
   background-repeat: no-repeat;
-  /*background-attachment: fixed; */ 
+  /*background-attachment: fixed; */
   background-size: cover;
 }
 
@@ -485,12 +494,14 @@ span.powerup-color-normal, h1.powerup-color-normal {
   border-color: transparent;
 }
 
-.grid-tile:hover .powerupTooltip, .powerupTooltipHover {
+.grid-tile:hover .powerupTooltip,
+.powerupTooltipHover {
   /*visibility: visible;*/
   opacity: 0.8;
 }
 
-tspan.powerupFilterProp, .powerupSankeyDetailPopup a.powerupFilterProp {
+tspan.powerupFilterProp,
+.powerupSankeyDetailPopup a.powerupFilterProp {
   color: #a972cc;
   font-weight: bold;
   cursor: zoom-in;
@@ -504,7 +515,8 @@ tspan.powerupFilterProp {
   text-decoration: none;
 }
 
-tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hover {
+tspan.powerupFilterProp:hover,
+.powerupSankeyDetailPopup a.powerupFilterProp:hover {
   text-decoration: underline;
 }
 
@@ -540,6 +552,9 @@ tspan.powerupFilterProp:hover, .powerupSankeyDetailPopup a.powerupFilterProp:hov
 }
 
 .powerupSankeyDisclaimer {
+  bottom: 10px;
+  position: absolute;
+  right: 50px;
   width: 100%;
   margin-top: 40px;
   font-size: smaller;
