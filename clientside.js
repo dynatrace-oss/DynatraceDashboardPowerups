@@ -2671,10 +2671,10 @@ var DashboardPowerups = (function () {
                 function tooltipNodeFormatter() {
                     let point = this;
                     let tt = "";
-                    if (!$(point.graphic.element).is(`:hover`)) { //try to avoid weird Highcharts hover bug
+                    /*if (!$(point.graphic.element).is(`:hover`)) { //try to avoid weird Highcharts hover bug
                         console.log("POWERUP: ERROR - Sankey - nodeFormatter run on non-hover object");
                         return false;
-                    }
+                    }*/
                     switch (point.id) {
                         case "START":
                             tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
