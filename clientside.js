@@ -2215,9 +2215,12 @@ var DashboardPowerups = (function () {
                             });
                         }
                         if (Array.isArray(params.include) && params.include.length) {
-                            params.include.forEach(ex => {
-                                filtered = filtered.filter(x => x.name.includes(ex));
-                            });
+                            //params.include.forEach(ex => {
+                            //    filtered = filtered.filter(x => x.name.includes(ex));
+                            //});
+                            filtered = filtered.filter(x => 
+                                params.include.findIndex(inc => x.includes(inc)) > -1
+                            );
                         }
                         if (params.convHack == "2") {
                             filtered.unshift({ name: "START", app: "" });
