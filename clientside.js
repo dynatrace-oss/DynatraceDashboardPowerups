@@ -2762,7 +2762,7 @@ var DashboardPowerups = (function () {
                     node.toupleTotal = data.touples
                         .filter(t => t.from === node.id)
                         .reduce((agg,cv)=>agg+cv,0);
-                    node.selfActions = apdexSum - toupleTotal;
+                    node.selfActions = node.apdexSum - node.toupleTotal;
 
                     //avg duration
                     if (Array.isArray(apdex.durations)) {
