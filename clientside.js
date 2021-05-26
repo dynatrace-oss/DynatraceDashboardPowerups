@@ -2215,7 +2215,7 @@ var DashboardPowerups = (function () {
                             });
                         }
                         if (Array.isArray(params.include) && params.include.length) {
-                            filtered = filtered.filter(x => 
+                            filtered = filtered.filter(x =>
                                 params.include.findIndex(inc => x.name.includes(inc)) > -1
                             );
                         }
@@ -2710,6 +2710,9 @@ var DashboardPowerups = (function () {
                         }
 
                     }
+                    node.apdexSum = data.touples
+                        .filter(t => t.to === node.id)
+                        .reduce((agg, cv) => agg + cv.weight, 0);
                     options.series[0].nodes.push(node);
                     node = {
                         id: "END",
@@ -2724,6 +2727,9 @@ var DashboardPowerups = (function () {
                             className: "powerupSankeyNodeTextLabel"
                         }
                     }
+                    node.apdexSum = data.touples
+                        .filter(t => t.to === node.id)
+                        .reduce((agg, cv) => agg + cv.weight, 0);
                     options.series[0].nodes.push(node);
                     if (data.touples.filter(x => x.crashes).length) {
                         node = {
@@ -2739,6 +2745,9 @@ var DashboardPowerups = (function () {
                                 className: "powerupSankeyNodeTextLabel"
                             }
                         }
+                        node.apdexSum = data.touples
+                        .filter(t => t.to === node.id)
+                        .reduce((agg, cv) => agg + cv.weight, 0);
                         options.series[0].nodes.push(node);
                     }
                 }
@@ -2750,7 +2759,7 @@ var DashboardPowerups = (function () {
                         apdex: apdex,
                         apdexSatisfied: apdex.satisfied.toString(),
                         apdexTolerating: apdex.tolerating.toString(),
-                        apdexFrustrated: apdex.frustrated.toString(),                        
+                        apdexFrustrated: apdex.frustrated.toString(),
                         entryAction: (apdex.entryAction ? 'true' : 'false'),
                         exitAction: (apdex.exitAction ? 'true' : 'false'),
                         errors: apdex.errors,
@@ -2760,8 +2769,8 @@ var DashboardPowerups = (function () {
                     //add totals
                     node.apdexSum = (apdex.satisfied + apdex.tolerating + apdex.frustrated);
                     node.toupleTotal = data.touples
-                        .filter(t => t.from === node.id)
-                        .reduce((agg,cv)=>agg+cv,0);
+                        .filter(t => t.to === node.id)
+                        .reduce((agg, cv) => agg + cv.weight, 0);
                     node.selfActions = node.apdexSum - node.toupleTotal;
 
                     //avg duration
@@ -4159,8 +4168,8 @@ var DashboardPowerups = (function () {
                         let tmptime = tmpdate.getTime();
                         if (!isNaN(tmptime)) s.val = tmptime;
                     }
-                    if(isNaN(Number(s.val)))
-                        console.log(`Powerup: WARN - ${PU_MATH} - NaN: \n\n${JSON.stringify({exp:exp,tokens:tokens,pairs:pairs})}`);
+                    if (isNaN(Number(s.val)))
+                        console.log(`Powerup: WARN - ${PU_MATH} - NaN: \n\n${JSON.stringify({ exp: exp, tokens: tokens, pairs: pairs })}`);
                 });
 
 
@@ -4182,13 +4191,13 @@ var DashboardPowerups = (function () {
                 try {
                     val = mexp.eval(exp, tokens, pairs);
                 } catch (e) {
-                    let error = `Powerup: CRITICAL - ${PU_MATH} - ${e.name}: ${e.message}.\n\n${JSON.stringify({exp:exp,tokens:tokens,pairs:pairs})}`;
+                    let error = `Powerup: CRITICAL - ${PU_MATH} - ${e.name}: ${e.message}.\n\n${JSON.stringify({ exp: exp, tokens: tokens, pairs: pairs })}`;
                     console.log(error);
                     errorBeacon(error);
                 }
                 //if (pub.config.Powerups.debug) 
-                    
-                if(val == undefined) return false;
+
+                if (val == undefined) return false;
 
                 //handle units
                 if (dates) {
