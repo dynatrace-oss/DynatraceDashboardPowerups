@@ -3189,7 +3189,7 @@ var DashboardPowerups = (function () {
                         let hash = window.location.hash.split(';').map(x => x.split('='));
                         let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
-                        let html = `<h3>Session List</h3><table>`;
+                        let html = `<h3>Session List <sup>*</sup></h3><table>`;
                         html += `<tr><th>SR</th><th>UX</th><th>Goal</th><th>UserId</th></tr>`;
                         data.filteredTable.forEach(session => {
                             html += `<tr>`;
@@ -3216,9 +3216,12 @@ var DashboardPowerups = (function () {
                                 html += `<td></td>`;
                             let id = session.userId !== "null" ? session.userId : "anonymous";
                             html += `<td><a href='/ui/user-sessions/query?sessionquery=SELECT%20*%20FROM%20usersession%20WHERE%20userSessionId%20%3D%20"${session.userSessionId}"&gtf=${gtf}&gf=${gf}'>${id}</a></td>`;
-                            html += `</tr>`
+                            html += `</tr>`;
                         })
                         html += `</table>`;
+                        html += `<div class="powerupSankeyDisclaimer"><sup>*</sup> Note: session list is based on a filtered sample. `
+                            + `This may not include all matching sessions in total session population. <br>If you require deep analytics, please contact `
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
                         let $popup = $("<div>")
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
@@ -3261,7 +3264,11 @@ var DashboardPowerups = (function () {
                                 });
                             html += `</table></li>`;
                         });
-                        html += `</ul>`
+                        html += `</ul>`;
+                        html += `<div class="powerupSankeyDisclaimer"><sup>*</sup> Note: crash list is based on a filtered sample. `
+                            + `This may not include all matching crashes in total session population. <br>If you require deep analytics, please contact `
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
+
                         let $popup = $("<div>")
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
