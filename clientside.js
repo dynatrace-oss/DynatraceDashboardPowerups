@@ -2709,9 +2709,9 @@ var DashboardPowerups = (function () {
                     Goal: ${point.conversionGoal}<br>
                     ${uc(params.kpi)}: ${point[params.kpi]}<br>`
                         + (point.selfActions ? `<br>
-                    <sup>*</sup> <small><i>includes {point.selfActions} self-actions not shown</i></small>`: '')
-                        + `</div>
-                `.trim();
+                    <sup>*</sup> <small><i>includes ${point.selfActions} self-actions not shown</i></small>` : '')
+                        + `</div>`
+                            .trim();
                     return tt;
                 }
 
