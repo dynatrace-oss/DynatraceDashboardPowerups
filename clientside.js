@@ -2633,7 +2633,7 @@ var DashboardPowerups = (function () {
                         clip: false,
                         dataLabels: {
                             enabled: true,
-                            useHTML: true,
+                            //useHTML: true,
                             nodeFormat: '{point.display}',
                             padding: 0,
                             color: 'white',
@@ -2641,26 +2641,6 @@ var DashboardPowerups = (function () {
                         },
                         nodes: [],
                         tooltip: {
-                            /*nodeFormat: `<div class="powerup-sankey-tooltip">
-                            <b>{point.name}</b><br>
-                            App: {point.app}<br>
-                            UserActions in sample: {point.apdexSum} <sup>*</sup><br>
-                            <u>Apdex</u><br>
-                            &nbsp;&nbsp; Satisfied: {point.apdexSatisfied}<br>
-                            &nbsp;&nbsp; Tolerating: {point.apdexTolerating}<br>
-                            &nbsp;&nbsp; Frustrated: {point.apdexFrustrated}<br>
-                            Errors: {point.errors}<br>
-                            Avg Duration: {point.avgDuration}ms<br>
-                            Is entry action: {point.entryAction}<br>
-                            Is exit action: {point.exitAction}<br>
-                            Goal: {point.conversionGoal}<br>
-                            ${uc(params.kpi)}: {point.${params.kpi}}<br>
-                            <br>
-                            <sup>*</sup> <small><i>includes {point.selfActions} self-actions not shown</i></small>
-                            </div>
-                        `.trim(),*/
-                            /*nodeFormatter: tooltipNodeFormatter,
-                            pointFormatter: tooltipPointFormatter,*/
                             nodeFormat: `{point.nodeTTtext}`,
                             pointFormat: `<div class="powerup-sankey-tooltip">
                             {point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>`
