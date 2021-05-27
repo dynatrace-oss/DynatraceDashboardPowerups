@@ -1561,7 +1561,7 @@ var DashboardPowerups = (function () {
             let txt = $md.text();
 
             if (txt.includes(PU_BANNER)) {
-                let args = argsplit(text, PU_BANNER);
+                let args = argsplit(txt, PU_BANNER);
                 let color = args.find(x => x[0] == "color")[1];
 
                 $(BANNER_SELECTOR).css("background", color);
