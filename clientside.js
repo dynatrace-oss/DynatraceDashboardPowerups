@@ -1917,7 +1917,7 @@ var DashboardPowerups = (function () {
                 args = JSON.parse(args);
 
                 let val;
-                if(args.link != undefined)
+                if (args.link != undefined)
                     val = pub.findLinkedVal(args.link, "updateSVGPowerUp");
 
                 $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
@@ -2557,22 +2557,94 @@ var DashboardPowerups = (function () {
 
                 function addErrorsToList(apdexList, filteredTable) {
                     filteredTable.forEach((row, rowIdx) => {
-                        let arr = row["useraction.errorCount"];
-                        if (!Array.isArray(arr)) return false;
-                        for (let k = 0; k < arr.length; k++) { //errors
-                            let val = arr[k];
-                            if (val !== "") {
-                                let actionName = row["useraction.name"][k];
-                                let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+                        if (row.hasOwnProperty("useraction.errorCount")) {
+                            let arr = row["useraction.errorCount"];
+                            if (!Array.isArray(arr)) return false;
+                            for (let k = 0; k < arr.length; k++) { //errors
+                                let val = arr[k];
+                                if (val !== "") {
+                                    let actionName = row["useraction.name"][k];
+                                    let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                                if (apdexIdx > -1) {
-                                    if (typeof (apdexList[apdexIdx].errors) == "undefined")
-                                        apdexList[apdexIdx].errors = 0;
+                                    if (apdexIdx > -1) {
+                                        if (typeof (apdexList[apdexIdx].errors) == "undefined")
+                                            apdexList[apdexIdx].errors = 0;
 
-                                    let num = Number(val);
-                                    if (!isNaN(num)) {
-                                        if (num > 0) {
-                                            apdexList[apdexIdx].errors += num;
+                                        let num = Number(val);
+                                        if (!isNaN(num)) {
+                                            if (num > 0) {
+                                                apdexList[apdexIdx].errors += num;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            if (row.hasOwnProperty("useraction.requestErrorCount")) {
+                                let arr = row["useraction.requestErrorCount"];
+                                if (!Array.isArray(arr)) return false;
+                                for (let k = 0; k < arr.length; k++) { //errors
+                                    let val = arr[k];
+                                    if (val !== "") {
+                                        let actionName = row["useraction.name"][k];
+                                        let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+    
+                                        if (apdexIdx > -1) {
+                                            if (typeof (apdexList[apdexIdx].errors) == "undefined")
+                                                apdexList[apdexIdx].errors = 0;
+    
+                                            let num = Number(val);
+                                            if (!isNaN(num)) {
+                                                if (num > 0) {
+                                                    apdexList[apdexIdx].errors += num;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (row.hasOwnProperty("useraction.customErrorCount")) {
+                                let arr = row["useraction.customErrorCount"];
+                                if (!Array.isArray(arr)) return false;
+                                for (let k = 0; k < arr.length; k++) { //errors
+                                    let val = arr[k];
+                                    if (val !== "") {
+                                        let actionName = row["useraction.name"][k];
+                                        let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+    
+                                        if (apdexIdx > -1) {
+                                            if (typeof (apdexList[apdexIdx].errors) == "undefined")
+                                                apdexList[apdexIdx].errors = 0;
+    
+                                            let num = Number(val);
+                                            if (!isNaN(num)) {
+                                                if (num > 0) {
+                                                    apdexList[apdexIdx].errors += num;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (row.hasOwnProperty("useraction.javaScriptErrorCount")) {
+                                let arr = row["useraction.javaScriptErrorCount"];
+                                if (!Array.isArray(arr)) return false;
+                                for (let k = 0; k < arr.length; k++) { //errors
+                                    let val = arr[k];
+                                    if (val !== "") {
+                                        let actionName = row["useraction.name"][k];
+                                        let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
+    
+                                        if (apdexIdx > -1) {
+                                            if (typeof (apdexList[apdexIdx].errors) == "undefined")
+                                                apdexList[apdexIdx].errors = 0;
+    
+                                            let num = Number(val);
+                                            if (!isNaN(num)) {
+                                                if (num > 0) {
+                                                    apdexList[apdexIdx].errors += num;
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -2815,7 +2887,7 @@ var DashboardPowerups = (function () {
                         }
                         node.apdexSum = data.touples
                             .filter(t => t.to === node.id)
-                            .reduce((agg, cv) => agg + cv.weight, 0);    
+                            .reduce((agg, cv) => agg + cv.weight, 0);
                         options.series[0].nodes.push(node);
                     }
                 }
@@ -3064,9 +3136,9 @@ var DashboardPowerups = (function () {
                     chart.setSize(undefined, undefined, false);
 
                     //HACK: disable faulty mousemove events over node dataLabels
-                    chart.series[0].nodes.forEach(node=>{
-                        if(node.dataLabel && node.dataLabel.element)
-                            $(node.dataLabel.element).on("mousemove",(e)=> e.stopPropagation());
+                    chart.series[0].nodes.forEach(node => {
+                        if (node.dataLabel && node.dataLabel.element)
+                            $(node.dataLabel.element).on("mousemove", (e) => e.stopPropagation());
                     })
 
                     $container.find(".highcharts-plot-background")
