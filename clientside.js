@@ -1558,6 +1558,7 @@ var DashboardPowerups = (function () {
 
         $(MARKDOWN_SELECTOR).each((i, el) => {  //previously support only TAG, current both, future just MARKDOWN
             let $md = $(el);
+            let $tile = $md.parents(TILE_SELECTOR);
             let txt = $md.text();
 
             if (txt.includes(PU_BANNER)) {
@@ -1566,6 +1567,7 @@ var DashboardPowerups = (function () {
 
                 $(BANNER_SELECTOR).css("background", color);
                 $(BANNER_SELECTOR).css("color", contrast(color));
+                $tile.hide();
                 powerupFound = true;
                 powerupsFired['PU_BANNER'] ? powerupsFired['PU_BANNER']++ : powerupsFired['PU_BANNER'] = 1;
             }
