@@ -1522,7 +1522,7 @@ var DashboardPowerups = (function () {
             if (idx < title.length)
                 $title.html(newTitle);
         });
-        $(TAG_SELECTOR).each((i, el) => {
+        $(TAG_SELECTOR).each((i, el) => { //DEPRECATE
             let $tag = $(el);
             let title = $tag.attr("title");
 
@@ -1537,14 +1537,31 @@ var DashboardPowerups = (function () {
     pub.bannerPowerUp = function () {
         if (!pub.config.Powerups.bannerPU) return;
         let powerupFound = false;
-        $(TAG_SELECTOR).each((i, el) => {
+        $(TAG_SELECTOR).each((i, el) => {  //previously support only TAG, current both, future just MARKDOWN
             let $tag = $(el);
             let title = $tag.attr("title");
 
             if (title.includes(PU_BANNER)) {
-                //let argstring = title.split(PU_BANNER)[1].split('!')[0].trim();
-                //let args = argstring.split(";").map(x => x.split("="));
                 let args = argsplit(title, PU_BANNER);
+                let color = args.find(x => x[0] == "color")[1];
+
+                $(BANNER_SELECTOR).css("background", color);
+                $(BANNER_SELECTOR).css("color", contrast(color));
+                powerupFound = true;
+                powerupsFired['PU_BANNER'] ? powerupsFired['PU_BANNER']++ : powerupsFired['PU_BANNER'] = 1;
+
+                let error = `POWERUP: DEPRECATED - ${PU_BANNER} has moved to Markdown tiles instead of Tags`;
+                console.log(error);
+                errorBeacon(error);
+            }
+        });
+
+        $(MARKDOWN_SELECTOR).each((i, el) => {  //previously support only TAG, current both, future just MARKDOWN
+            let $md = $(el);
+            let txt = $md.text();
+
+            if (txt.includes(PU_BANNER)) {
+                let args = argsplit(text, PU_BANNER);
                 let color = args.find(x => x[0] == "color")[1];
 
                 $(BANNER_SELECTOR).css("background", color);
