@@ -163,7 +163,7 @@ Example:
 If you have multiple environment with dashboards up on screens and need an easy way of telling which is say Production and which one is say QA, you can color code the top of the dashboard. Use a ~~dashboard tag~~ markdown tile like this:
 `!PU(banner):color=purple`
 
-> ⚠️ :warning: DEPRECATION NOTICE: Using dashboard tags for the Banner PowerUp is deprecated and replaced by Markdown tiles. Please update your dashboards as of 1.49. Targeting 1.51 for removal.
+> ⚠️ DEPRECATION NOTICE: Using dashboard tags for the Banner PowerUp is deprecated and replaced by Markdown tiles. Please update your dashboards as of 1.49. Targeting 1.51 for removal.
 
 Explanation:
 - `!PU(banner):` indicates a banner powerup
