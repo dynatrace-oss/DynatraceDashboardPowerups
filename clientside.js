@@ -1916,7 +1916,9 @@ var DashboardPowerups = (function () {
                 let args = $svg.attr("data-args") || "{}";
                 args = JSON.parse(args);
 
-                let val = pub.findLinkedVal(args.link, "updateSVGPowerUp");
+                let val;
+                if(args.link != undefined)
+                    val = pub.findLinkedVal(args.link, "updateSVGPowerUp");
 
                 $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
                 $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
