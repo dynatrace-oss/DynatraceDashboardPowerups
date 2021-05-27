@@ -1567,7 +1567,7 @@ var DashboardPowerups = (function () {
 
                 $(BANNER_SELECTOR).css("background", color);
                 $(BANNER_SELECTOR).css("color", contrast(color));
-                $tile.hide();
+                $md.hide();
                 powerupFound = true;
                 powerupsFired['PU_BANNER'] ? powerupsFired['PU_BANNER']++ : powerupsFired['PU_BANNER'] = 1;
             }
