@@ -2141,7 +2141,7 @@ var DashboardPowerups = (function () {
                     filteredTable: filteredTable,
                     crashes: filteredTable.filter(x => x.hasCrash == "true").length,
                     applicationTypes: [...new Set(filteredTable.map(x => x.applicationType))],
-                    actionsShown: [... new Set(touples.map(x=>x.to).filter(x => x.name !== "END" && x.name !== "CRASH"))]
+                    actionsShown: [... new Set(touples.map(x => x.to).filter(x => x !== "END" && x !== "CRASH"))]
                 };
                 return (data);
 
@@ -3578,43 +3578,54 @@ var DashboardPowerups = (function () {
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
 
 
-                        let html = `<div><h3>Chart is showing ${data.actionsShown.length} Actions of ${data.apdexList.length} total actions:</h3>`
+                        let html = `<div><h3>Chart is showing ${data.actionsShown.length} of ${data.apdexList.length} total actions:</h3>`
                             + `<p>The Sankey PowerUp visualization limits the amount of useractions shown in order to make the chart more readable. `
                             + `This does not mean data is missing, only that certain useraction-to-useraction links are not visualized. `
-                            + `For example, if you typical user journey is A -> B -> C. If a few users actual journey was A -> B -> D -> C, `
-                            + `D may not show up the top Actions. Those user counts would still be present in the total for nodes A, B, and C; however `
+                            + `For example, if your typical user journey is A -> B -> C. If a few users actual journey was A -> B -> D -> C, `
+                            + `D may not be visualized by default. Those users' counts would still be present in the totals for nodes A, B, and C; however `
                             + `if you look at the link B -> C you'll notice both visually and numerically, that it is smaller than the total for C. `
-                            + `If you wish to dig deeper for less frequent journey paths, click the plus sign at the top left to include more actions. `
-                            + `You may also sometimes notice that even with all actions shown the sum of the links going into a node, does not equal the `
+                            + `If you wish to dig deeper into less frequent journey paths, click the plus sign at the top left to include more actions. `
+                            + `You may also sometimes notice that even with all links shown, the sum of the links going into a node, does not equal the `
                             + `total shown. This is due to "repeated actions", for example: A -> B -> B -> B -> C. In that example, you would see a disclaimer `
-                            + `at the bottom of the tooltip for B, which says "* includes 2 repeated actions."</p>`;
+                            + `at the bottom of the tooltip for B, which says "* includes 2 repeated actions." These are not visualized as they do not add informational value.</p>`;
 
                         html += `<h3>Full list of user actions:</h3><ul>`
+                        html += `<li>Actions currently filtered out: <ul>`
+                            + data.apdexList
+                                .filter(x => !data.actionsShown.includes(x.actionName))
+                                .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
+                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                                .join('')
+                            + `</ul></li>`;
                         html += `<li>Actions with Conversion Goals: <ul>`
                             + data.apdexList
                                 .filter(x => x.goal)
-                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? -1 : 1)
+                                .filter(x => data.actionsShown.includes(x.actionName))
+                                .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
                                 .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`;
                         html += `<li>Actions flagged as Entry Actions: <ul>`
                             + data.apdexList
                                 .filter(x => x.entryAction)
-                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? -1 : 1)
+                                .filter(x => data.actionsShown.includes(x.actionName))
+                                .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
                                 .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`
                         html += `<li>Actions flagged as Exit Actions: <ul>`
                             + data.apdexList
                                 .filter(x => x.exitAction)
-                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? -1 : 1)
+                                .filter(x => data.actionsShown.includes(x.actionName))
+                                .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
                                 .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`
                         html += `<li>All other Actions: <ul>`
                             + data.apdexList
                                 .filter(x => !x.goal && !x.entryAction && !x.exitAction)
-                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? -1 : 1)
+                                .filter(x => data.actionsShown.includes(x.actionName))
+                                .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
                                 .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`
