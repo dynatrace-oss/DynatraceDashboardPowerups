@@ -3615,11 +3615,16 @@ var DashboardPowerups = (function () {
                         kpicurr: kpicurr,
                         convHack: convHack,
                         colors: colors,
-                        exclude: exclude,
-                        include: include,
+                        //exclude: exclude,
+                        //include: include,
                         table: $table,
-                        container: container
+                        container: container,
+                        filter: []
                     };
+                    if(Array.isArray(exclude) && exclude.length)
+                        params.filter.push({filter: "exclude", exclude: exclude});
+                    if(Array.isArray(include) && include.length)
+                        params.filter.push({filter: "includeonly", include: include});
                     let data = readTableData($table.get(0), params);
                     let sankey = newChart(data, container, params);
                     $(".highcharts-exporting-group").addClass("powerupVisible");
