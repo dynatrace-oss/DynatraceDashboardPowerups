@@ -3589,28 +3589,28 @@ var DashboardPowerups = (function () {
                         html += `<li>Actions with Conversion Goals: <ul>`
                             + data.apdexList
                                 .filter(x => x.goal)
-                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? 1 : -1)
+                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? -1 : 1)
                                 .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`;
                         html += `<li>Actions flagged as Entry Actions: <ul>`
                             + data.apdexList
                                 .filter(x => x.entryAction)
-                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? 1 : -1)
+                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? -1 : 1)
                                 .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`
                         html += `<li>Actions flagged as Exit Actions: <ul>`
                             + data.apdexList
                                 .filter(x => x.exitAction)
-                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? 1 : -1)
+                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? -1 : 1)
                                 .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`
                         html += `<li>All other Actions: <ul>`
                             + data.apdexList
                                 .filter(x => !x.goal && !x.entryAction && !x.exitAction)
-                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? 1 : -1)
+                                .sort((a,b) => a.actionName.toLowerCase() < b.actionName.toLowerCase()? -1 : 1)
                                 .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`
