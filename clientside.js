@@ -2290,7 +2290,7 @@ var DashboardPowerups = (function () {
                                         }
                                         break;
                                     case "exclude":
-                                        if (Array.isArray(f.exclude) && f.exclude.length) { 
+                                        if (Array.isArray(f.exclude) && f.exclude.length) {
                                             f.exclude.forEach(ex => {
                                                 filtered = filtered.filter(x => !x.name.includes(ex));
                                             });
@@ -3079,10 +3079,12 @@ var DashboardPowerups = (function () {
                             .add();
                     }
                     //display limit text
-                    chart.renderer.text(`Showing top ${limit - 1} of ${data.touples.length - 1} actions`, 70, 25)
-                        .add();
+                    chart.renderer.text(`Showing top ${limit - 1} of <a href="javascript:" class="powerupFilterProp">${data.touples.length - 1}</a> actions`,
+                        70, 25)
+                        .add()
+                        .on("click", actionsPopup);
                     chart.renderer.text(`Showing <a href="javascript:" class="powerupFilterProp">${data.rows}</a> sessions`,
-                        250, 25)
+                        300, 25)
                         .add()
                         .on("click", sessionPopup);
                     //Only show crashes if mobile or custom
@@ -3510,6 +3512,46 @@ var DashboardPowerups = (function () {
                         });
                         html += `</ul></div>`
                             + `<div>&nbsp;</div>`;
+
+                        html += `<div class="powerupSankeyDisclaimer">`
+                            + `<sup>*</sup> Note: crash list is based on a filtered sample. `
+                            + `This may not include all matching crashes in total session population. <br>If you require deep analytics, please contact `
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
+
+                        let $popup = $("<div>")
+                            .addClass("powerupSankeyDetailPopup")
+                            .html(html)
+                            .click(() => { $popup.remove(); })
+                            .appendTo(container);
+                        $popup.find(`.powerupFilterProp`)
+                            .on("click", filterProp);
+                    }
+
+                    function actionsPopup(e) {
+                        let hash = window.location.hash.split(';').map(x => x.split('='));
+                        let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
+                        let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
+                        let ualink = `#uemapplications/uemuseractionmetrics;uemuserActionId=APPLICATION_METHOD-2612BA2D355E4638;uemapplicationId=APPLICATION-008569CDB300AE03;meid=APPLICATION_METHOD-2612BA2D355E4638;gtf=-72h%20to%20now;gf=all`;
+
+                        let html = `<div><h3>Chart is showing ${limit - 1} Actions of ${data.touples.length - 1} total actions:</h3>`
+                            + `<p>The Sankey PowerUp visualization limits the amount of useractions shown in order to make the chart more readable. `
+                            + `This does not mean data is missing, only that certain useraction-to-useraction links are not visualized. `
+                            + `For example, if you typical user journey is A -> B -> C. If a few users actual journey was A -> B -> D -> C, `
+                            + `D may not show up the top Actions. Those user counts would still be present in the total for nodes A, B, and C; however `
+                            + `if you look at the link B -> C you'll notice both visually and numerically, that it is smaller than the total for C. `
+                            + `If you wish to dig deeper for less frequent journey paths, click the plus sign at the top left to include more actions. `
+                            + `You may also sometimes notice that even with all actions shown the sum of the links going into a node, does not equal the `
+                            + `total shown. This is due to "repeated actions", for example: A -> B -> B -> B -> C. In that example, you would see a disclaimer `
+                            + `at the bottom of the tooltip for B, which says "* includes 2 repeated actions".</p>`;
+
+                        html += `<h3>Full list of user actions:</h3><ul>`
+                        html += `<li>Actions with Conversion Goals: <ul>`
+                            + data.goals.map(x => `<li><a href="${ualink}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                            + `</ul></li>`
+                        html += `<li>Actions flagged as Entry Actions: <ul></ul></li>`
+                        html += `<li>Actions flagged as Exit Actions: <ul></ul></li>`
+                        html += `<li>All other Actions: <ul></ul></li>`;
+                        html += `</ul>`;
 
                         html += `<div class="powerupSankeyDisclaimer">`
                             + `<sup>*</sup> Note: crash list is based on a filtered sample. `
