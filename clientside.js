@@ -3594,7 +3594,7 @@ var DashboardPowerups = (function () {
                             + data.apdexList
                                 .filter(x => !data.actionsShown.includes(x.actionName))
                                 .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                                .map(x => `<li class="powerupNoEye"><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`;
                         html += `<li>Actions with Conversion Goals: <ul>`
@@ -3602,7 +3602,7 @@ var DashboardPowerups = (function () {
                                 .filter(x => x.goal)
                                 .filter(x => data.actionsShown.includes(x.actionName))
                                 .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                                .map(x => `<li class="powerupEye"><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`;
                         html += `<li>Actions flagged as Entry Actions: <ul>`
@@ -3610,7 +3610,7 @@ var DashboardPowerups = (function () {
                                 .filter(x => x.entryAction)
                                 .filter(x => data.actionsShown.includes(x.actionName))
                                 .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                                .map(x => `<li class="powerupEye"><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`
                         html += `<li>Actions flagged as Exit Actions: <ul>`
@@ -3618,7 +3618,7 @@ var DashboardPowerups = (function () {
                                 .filter(x => x.exitAction)
                                 .filter(x => data.actionsShown.includes(x.actionName))
                                 .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                                .map(x => `<li class="powerupEye"><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`
                         html += `<li>All other Actions: <ul>`
@@ -3626,7 +3626,7 @@ var DashboardPowerups = (function () {
                                 .filter(x => !x.goal && !x.entryAction && !x.exitAction)
                                 .filter(x => data.actionsShown.includes(x.actionName))
                                 .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                                .map(x => `<li class="powerupEye"><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
                                 .join('')
                             + `</ul></li>`
                         html += `</ul>`;
