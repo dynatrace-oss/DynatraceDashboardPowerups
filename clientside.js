@@ -2128,7 +2128,7 @@ var DashboardPowerups = (function () {
                 addErrorsToList(actionDetailList, filteredTable);
                 addCrashesInApdexList(actionDetailList, filteredTable);
                 addApdexStylesToList(actionDetailList);
-                addGoalsToList(actionDetailList,goals);
+                addGoalsToList(actionDetailList, goals);
                 addDrillDownLinksToList(actionDetailList);
                 touples = sortTouples(touples);
 
@@ -2307,7 +2307,7 @@ var DashboardPowerups = (function () {
                                         }
                                         break;
                                     case "action":
-                                        if(f.action && f.action.length){
+                                        if (f.action && f.action.length) {
                                             fromIdx = filtered.findIndex((x, i, arr) =>
                                                 x.name === f.action);
                                         }
@@ -2740,26 +2740,26 @@ var DashboardPowerups = (function () {
                     });
                 }
 
-                function addGoalsToList(actionDetailList,goals){
+                function addGoalsToList(actionDetailList, goals) {
                     actionDetailList.forEach(a => {
-                        if(goals.findIndex(g => g.actionName === a.actionName) > -1)
+                        if (goals.findIndex(g => g.actionName === a.actionName) > -1)
                             a.goal = true;
                         else
                             a.goal = false;
                     })
                 }
 
-                function addDrillDownLinksToList(actionDetailList){
+                function addDrillDownLinksToList(actionDetailList) {
                     let hash = window.location.hash.split(';').map(x => x.split('='));
-                        let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
-                        let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
+                    let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
+                    let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
 
                     actionDetailList.forEach(a => {
                         let drilldown = ""
-                        if(a.appid && a.appid.length){
-                            if(a.kuaid && a.kuaid.length){ //best case go straight to action
+                        if (a.appid && a.appid.length) {
+                            if (a.kuaid && a.kuaid.length) { //best case go straight to action
                                 drilldown = `#uemapplications/uemuseractionmetrics;uemuserActionId=${a.kuaid};uemapplicationId=${a.appid};meid=${a.kuaid};gtf=${gtf};gf=${gf}`;
-                            }else { //no drilldown to action, goto app instead
+                            } else { //no drilldown to action, goto app instead
                                 drilldown = `#uemapplications/performanceanalysis;uemapplicationId=${a.appid};visiblepart=action;gtf=${gtf};gf=${gf}`;
                             }
                         } else { //I know nothing, just quit
@@ -3175,7 +3175,7 @@ var DashboardPowerups = (function () {
                                     }
                                     break;
                                 case "action":
-                                    if(f.action && f.action.length){
+                                    if (f.action && f.action.length) {
                                         txt = `X - Include action: ${f.action}`;
                                     }
                                     break;
@@ -3571,7 +3571,7 @@ var DashboardPowerups = (function () {
                         let hash = window.location.hash.split(';').map(x => x.split('='));
                         let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
-                        
+
 
                         let html = `<div><h3>Chart is showing ${limit - 1} Actions of ${data.touples.length - 1} total actions:</h3>`
                             + `<p>The Sankey PowerUp visualization limits the amount of useractions shown in order to make the chart more readable. `
@@ -3586,11 +3586,33 @@ var DashboardPowerups = (function () {
 
                         html += `<h3>Full list of user actions:</h3><ul>`
                         html += `<li>Actions with Conversion Goals: <ul>`
-                            + data.goals.map(x => `<li><a href="${ualink}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`).join()
+                            + data.apdexList
+                                .filter(x => x.goal)
+                                .sort((a,b) => a.toLowerCase() < b.toLowerCase()? 1 : -1)
+                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                                .join()
+                            + `</ul></li>`;
+                        html += `<li>Actions flagged as Entry Actions: <ul>`
+                            + data.apdexList
+                                .filter(x => x.entryAction)
+                                .sort((a,b) => a.toLowerCase() < b.toLowerCase()? 1 : -1)
+                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                                .join()
                             + `</ul></li>`
-                        html += `<li>Actions flagged as Entry Actions: <ul></ul></li>`
-                        html += `<li>Actions flagged as Exit Actions: <ul></ul></li>`
-                        html += `<li>All other Actions: <ul></ul></li>`;
+                        html += `<li>Actions flagged as Exit Actions: <ul>`
+                            + data.apdexList
+                                .filter(x => x.exitAction)
+                                .sort((a,b) => a.toLowerCase() < b.toLowerCase()? 1 : -1)
+                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                                .join()
+                            + `</ul></li>`
+                        html += `<li>All other Actions: <ul>`
+                            + data.apdexList
+                                .filter(x => !x.goal && !x.entryAction && !x.exitAction)
+                                .sort((a,b) => a.toLowerCase() < b.toLowerCase()? 1 : -1)
+                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                                .join()
+                            + `</ul></li>`
                         html += `</ul>`;
 
                         html += `<div class="powerupSankeyDisclaimer">`
