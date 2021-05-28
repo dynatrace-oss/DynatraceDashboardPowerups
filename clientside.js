@@ -3079,10 +3079,10 @@ var DashboardPowerups = (function () {
                             .add();
                     }
                     //display limit text
-                    chart.renderer.text(`${limit - 1}/${data.touples.length - 1} actions`, 70, 25)
+                    chart.renderer.text(`Showing top ${limit - 1} of ${data.touples.length - 1} actions`, 70, 25)
                         .add();
                     chart.renderer.text(`Showing <a href="javascript:" class="powerupFilterProp">${data.rows}</a> sessions`,
-                        180, 25)
+                        200, 25)
                         .add()
                         .on("click", sessionPopup);
                     //Only show crashes if mobile or custom
@@ -3131,7 +3131,7 @@ var DashboardPowerups = (function () {
                                     break;
                                 case "includeonly":
                                     if (Array.isArray(f.include) && f.include.length) {
-                                        txt = `X - Include Only actions containing: ${f.include.join(',')}`;
+                                        txt = `X - Include only actions containing: ${f.include.join(',')}`;
                                     }
                                     break;
                                 case "action":
