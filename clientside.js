@@ -3118,8 +3118,11 @@ var DashboardPowerups = (function () {
                             .add();
                     }
                     //display limit text
-                    chart.renderer.text(`Showing top ${limit - 1} of <a href="javascript:" class="powerupFilterProp">${data.touples.length - 1}</a> actions`,
+                    chart.renderer.text(`Showing top ${limit} of ${data.touples.length} links`,
                         70, 25)
+                        .add()
+                    chart.renderer.text(`between <a href="javascript:" class="powerupFilterProp">${data.apdexList.length}</a> actions`,
+                        70, 40)
                         .add()
                         .on("click", actionsPopup);
                     chart.renderer.text(`Showing <a href="javascript:" class="powerupFilterProp">${data.rows}</a> sessions`,
