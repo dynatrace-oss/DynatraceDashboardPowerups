@@ -2141,7 +2141,8 @@ var DashboardPowerups = (function () {
                     filteredTable: filteredTable,
                     crashes: filteredTable.filter(x => x.hasCrash == "true").length,
                     applicationTypes: [...new Set(filteredTable.map(x => x.applicationType))],
-                    actionsShown: [... new Set(touples.map(x => x.to).filter(x => x !== "END" && x !== "CRASH"))]
+                    actionsShown: [... new Set(touples.map(x => x.to).filter(x => x !== "END" && x !== "CRASH"))],
+                    totalSessions: normalTable.length
                 };
                 return (data);
 
@@ -3116,7 +3117,7 @@ var DashboardPowerups = (function () {
                         70, 40)
                         .add()
                         .on("click", actionsPopup);
-                    chart.renderer.text(`Showing <a href="javascript:" class="powerupFilterProp">${data.rows}</a> sessions`,
+                    chart.renderer.text(`Showing <a href="javascript:" class="powerupFilterProp">${data.rows}</a> of ${data.totalSessions} sessions in USQL sample`,
                         300, 25)
                         .add()
                         .on("click", sessionPopup);
@@ -3136,17 +3137,17 @@ var DashboardPowerups = (function () {
                             switch (f.filter) {
                                 case "touple":
                                     if (f.from !== undefined && f.to !== undefined) { //TODO: refactor ifelse branches with a switch on f.filter
-                                        txt = `X - ${f.from} -> ${f.to}`;
+                                        txt = `X - Sessions with ${f.from} -> ${f.to}`;
                                     }
                                     break;
                                 case "prop":
                                     if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
-                                        txt = `X - (${f.type}) ${f.key}=${f.val}`;
+                                        txt = `X - Sessions with (${f.type}) ${f.key}=${f.val}`;
                                     }
                                     break;
                                 case "app":
                                     if (f.app !== undefined) {
-                                        txt = `X - app: ${f.app}`;
+                                        txt = `X - Sessions with app: ${f.app}`;
                                     }
                                     break;
                                 case "errors":
@@ -3156,7 +3157,7 @@ var DashboardPowerups = (function () {
                                     break;
                                 case "crashgroup":
                                     if (f.crashgroupid !== undefined) {
-                                        txt = `X - crashGroupId=${f.crashgroupid}`;
+                                        txt = `X - Sessions with crashGroupId=${f.crashgroupid}`;
                                     }
                                     break;
                                 case "exclude":
@@ -3171,7 +3172,7 @@ var DashboardPowerups = (function () {
                                     break;
                                 case "action":
                                     if (f.action && f.action.length) {
-                                        txt = `X - Include action: ${f.action}`;
+                                        txt = `X - Sessions including action: ${f.action}`;
                                     }
                                     break;
                                 default:
@@ -3568,7 +3569,7 @@ var DashboardPowerups = (function () {
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
 
 
-                        let html = `<div><h3>Chart is showing ${data.actionsShown.length} of ${data.apdexList.length} total actions:</h3>`
+                        let html = `<div><h3>Chart is showing ${data.actionsShown.length} of ${data.apdexList.length} total actions within ${data.filteredTable.length} sessions:</h3>`
                             + `<p>The Sankey PowerUp visualization limits the amount of useractions shown in order to make the chart more readable. `
                             + `This does not mean data is missing, only that certain useraction-to-useraction links are not visualized. `
                             + `For example, if your typical user journey is A -> B -> C. If a few users actual journey was A -> B -> D -> C, `
