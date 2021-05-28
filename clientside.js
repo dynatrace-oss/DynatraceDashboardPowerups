@@ -2140,7 +2140,8 @@ var DashboardPowerups = (function () {
                     rows: filteredTable.length,
                     filteredTable: filteredTable,
                     crashes: filteredTable.filter(x => x.hasCrash == "true").length,
-                    applicationTypes: [...new Set(filteredTable.map(x => x.applicationType))]
+                    applicationTypes: [...new Set(filteredTable.map(x => x.applicationType))],
+                    actionsShown: [... new Set(touples.map(x=>x.to).filter(x => x.name !== "END" && x.name !== "CRASH"))]
                 };
                 return (data);
 
@@ -3120,8 +3121,8 @@ var DashboardPowerups = (function () {
                     //display limit text
                     chart.renderer.text(`Showing top ${limit} of ${data.touples.length} links`,
                         70, 25)
-                        .add()
-                    chart.renderer.text(`between <a href="javascript:" class="powerupFilterProp">${data.apdexList.length}</a> actions`,
+                        .add();
+                    chart.renderer.text(`between ${data.actionsShown.length} of <a href="javascript:" class="powerupFilterProp">${data.apdexList.length}</a> actions`,
                         70, 40)
                         .add()
                         .on("click", actionsPopup);
@@ -3577,7 +3578,7 @@ var DashboardPowerups = (function () {
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
 
 
-                        let html = `<div><h3>Chart is showing ${limit - 1} Actions of ${data.touples.length - 1} total actions:</h3>`
+                        let html = `<div><h3>Chart is showing ${data.actionsShown.length} Actions of ${data.apdexList.length} total actions:</h3>`
                             + `<p>The Sankey PowerUp visualization limits the amount of useractions shown in order to make the chart more readable. `
                             + `This does not mean data is missing, only that certain useraction-to-useraction links are not visualized. `
                             + `For example, if you typical user journey is A -> B -> C. If a few users actual journey was A -> B -> D -> C, `
