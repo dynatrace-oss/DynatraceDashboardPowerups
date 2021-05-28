@@ -2305,7 +2305,10 @@ var DashboardPowerups = (function () {
                                         }
                                         break;
                                     case "action":
-
+                                        if(f.action && f.action.length){
+                                            fromIdx = filtered.findIndex((x, i, arr) =>
+                                                x.name === f.action);
+                                        }
                                         break;
                                     default:
 
@@ -3137,7 +3140,9 @@ var DashboardPowerups = (function () {
                                     }
                                     break;
                                 case "action":
-
+                                    if(f.action && f.action.length){
+                                        txt = `X - Include action: ${f.action}`;
+                                    }
                                     break;
                                 default:
                                     txt = "X - " + JSON.stringify(f);
@@ -3542,11 +3547,11 @@ var DashboardPowerups = (function () {
                             + `If you wish to dig deeper for less frequent journey paths, click the plus sign at the top left to include more actions. `
                             + `You may also sometimes notice that even with all actions shown the sum of the links going into a node, does not equal the `
                             + `total shown. This is due to "repeated actions", for example: A -> B -> B -> B -> C. In that example, you would see a disclaimer `
-                            + `at the bottom of the tooltip for B, which says "* includes 2 repeated actions".</p>`;
+                            + `at the bottom of the tooltip for B, which says "* includes 2 repeated actions."</p>`;
 
                         html += `<h3>Full list of user actions:</h3><ul>`
                         html += `<li>Actions with Conversion Goals: <ul>`
-                            + data.goals.map(x => `<li><a href="${ualink}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`)
+                            + data.goals.map(x => `<li><a href="${ualink}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName}" data-filter="action">${x.count}</a>)</li>`).join()
                             + `</ul></li>`
                         html += `<li>Actions flagged as Entry Actions: <ul></ul></li>`
                         html += `<li>Actions flagged as Exit Actions: <ul></ul></li>`
