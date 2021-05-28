@@ -2230,12 +2230,12 @@ var DashboardPowerups = (function () {
                         let filtered = actions.filter(x =>
                             x.name !== "[]" &&
                             x.name !== "");
-                        if (Array.isArray(params.exclude) && params.exclude.length) {
+                        if (Array.isArray(params.exclude) && params.exclude.length) { //replace me with a filter
                             params.exclude.forEach(ex => {
                                 filtered = filtered.filter(x => !x.name.includes(ex));
                             });
                         }
-                        if (Array.isArray(params.include) && params.include.length) {
+                        if (Array.isArray(params.include) && params.include.length) { //replace me with a filter
                             filtered = filtered.filter(x =>
                                 params.include.findIndex(inc => x.name.includes(inc)) > -1
                             );
@@ -2250,31 +2250,58 @@ var DashboardPowerups = (function () {
                         if (Array.isArray(params.filter)) {
                             params.filter.forEach(f => {
                                 let fromIdx;
-                                if (f.from !== undefined && f.to !== undefined) {
-                                    fromIdx = filtered.findIndex((x, i, arr) =>
-                                        x.name === f.from
-                                        && arr.length > i + 1
-                                        && arr[i + 1].name === f.to);
-                                } else if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
-                                    switch (f.type) {
-                                        case "string":
-                                            fromIdx = row["useraction.stringProperties"]
-                                                .flat()
-                                                .findIndex((x, i, arr) =>
-                                                    x.key === f.key &&
-                                                    x.value === f.val);
-                                            break;
-                                    }
+                                switch (f.filter) {
+                                    case "touple":
+                                        if (f.from !== undefined && f.to !== undefined) { //TODO: refactor ifelse branches with a switch on f.filter
+                                            fromIdx = filtered.findIndex((x, i, arr) =>
+                                                x.name === f.from
+                                                && arr.length > i + 1
+                                                && arr[i + 1].name === f.to);
+                                        }
+                                        break;
+                                    case "prop":
+                                        if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
+                                            switch (f.type) {
+                                                case "string":
+                                                    fromIdx = row["useraction.stringProperties"]
+                                                        .flat()
+                                                        .findIndex((x, i, arr) =>
+                                                            x.key === f.key &&
+                                                            x.value === f.val);
+                                                    break;
+                                            }
+                                        }
+                                        break;
+                                    case "app":
+                                        if (f.app !== undefined) {
+                                            fromIdx = filtered.findIndex((x, i, arr) =>
+                                                x.app === f.app);
+                                        }
+                                        break;
+                                    case "errors":
+                                        if (f.errors === true) {
+                                            fromIdx = filtered.findIndex((x, i, arr) =>
+                                                x.errors > 0)
+                                        }
+                                        break;
+                                    case "crashgroup":
+                                        if (f.crashgroupid !== undefined) {
+                                            fromIdx = (row["crashGroupId"] === f.crashgroupid ? 0 : -1);
+                                        }
+                                        break;
+                                    case "exclude":
 
-                                } else if (f.app !== undefined) {
-                                    fromIdx = filtered.findIndex((x, i, arr) =>
-                                        x.app === f.app);
-                                } else if (f.errors === true) {
-                                    fromIdx = filtered.findIndex((x, i, arr) =>
-                                        x.errors > 0)
-                                } else if (f.crashgroupid !== undefined) {
-                                    fromIdx = (row["crashGroupId"] === f.crashgroupid ? 0 : -1);
-                                } else { }
+                                        break;
+                                    case "includeonly":
+
+                                        break;
+                                    case "action":
+
+                                        break;
+                                    default:
+
+                                        break;
+                                }
 
                                 if (fromIdx < 0) filtered = []; //this row filtered out
                             });
@@ -2588,11 +2615,11 @@ var DashboardPowerups = (function () {
                                     if (val !== "") {
                                         let actionName = row["useraction.name"][k];
                                         let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
-    
+
                                         if (apdexIdx > -1) {
                                             if (typeof (apdexList[apdexIdx].errors) == "undefined")
                                                 apdexList[apdexIdx].errors = 0;
-    
+
                                             let num = Number(val);
                                             if (!isNaN(num)) {
                                                 if (num > 0) {
@@ -2611,11 +2638,11 @@ var DashboardPowerups = (function () {
                                     if (val !== "") {
                                         let actionName = row["useraction.name"][k];
                                         let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
-    
+
                                         if (apdexIdx > -1) {
                                             if (typeof (apdexList[apdexIdx].errors) == "undefined")
                                                 apdexList[apdexIdx].errors = 0;
-    
+
                                             let num = Number(val);
                                             if (!isNaN(num)) {
                                                 if (num > 0) {
@@ -2634,11 +2661,11 @@ var DashboardPowerups = (function () {
                                     if (val !== "") {
                                         let actionName = row["useraction.name"][k];
                                         let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
-    
+
                                         if (apdexIdx > -1) {
                                             if (typeof (apdexList[apdexIdx].errors) == "undefined")
                                                 apdexList[apdexIdx].errors = 0;
-    
+
                                             let num = Number(val);
                                             if (!isNaN(num)) {
                                                 if (num > 0) {
@@ -3062,17 +3089,46 @@ var DashboardPowerups = (function () {
                         let y = 55, inc = 20;
                         params.filter.forEach((f, fidx) => {
                             let txt;
-                            if (f.from !== undefined && f.to !== undefined)
-                                txt = `X - ${f.from} -> ${f.to}`;
-                            else if (f.type !== undefined && f.key !== undefined && f.val !== undefined)
-                                txt = `X - (${f.type}) ${f.key}=${f.val}`;
-                            else if (f.app !== undefined)
-                                txt = `X - app: ${f.app}`;
-                            else if (f.errors === true)
-                                txt = `X - errors`;
-                            else if (f.crashgroupid !== undefined)
-                                txt = `X - crashGroupId=${f.crashgroupid}`;
-                            else txt = "X - " + JSON.stringify(f);
+                            switch (f.filter) {
+                                case "touple":
+                                    if (f.from !== undefined && f.to !== undefined) { //TODO: refactor ifelse branches with a switch on f.filter
+                                        txt = `X - ${f.from} -> ${f.to}`;
+                                    }
+                                    break;
+                                case "prop":
+                                    if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
+                                        txt = `X - (${f.type}) ${f.key}=${f.val}`;
+                                    }
+                                    break;
+                                case "app":
+                                    if (f.app !== undefined) {
+                                        txt = `X - app: ${f.app}`;
+                                    }
+                                    break;
+                                case "errors":
+                                    if (f.errors === true) {
+                                        txt = `X - errors`;
+                                    }
+                                    break;
+                                case "crashgroup":
+                                    if (f.crashgroupid !== undefined) {
+                                        txt = `X - crashGroupId=${f.crashgroupid}`;
+                                    }
+                                    break;
+                                case "exclude":
+
+                                    break;
+                                case "includeonly":
+
+                                    break;
+                                case "action":
+
+                                    break;
+                                default:
+                                    txt = "X - " + JSON.stringify(f);
+                                    break;
+                            }
+
                             chart.renderer.text(txt, 10, y)
                                 .attr({ zIndex: 1100 })
                                 .addClass("powerupRemoveFilter")
@@ -3163,6 +3219,7 @@ var DashboardPowerups = (function () {
 
                         e.stopPropagation();
                         let filter = {
+                            fitler: "touple",
                             from: link.from,
                             to: link.to
                         }
@@ -3224,7 +3281,7 @@ var DashboardPowerups = (function () {
                         let html = `<div><p><a href='${link}'><b>${name}</b></a>:</p><ul>`;
 
                         //app
-                        html += `<li>App: <a href="javascript:" class="powerupFilterProp" data-app="${node.app}" >${node.app}</a></li>`;
+                        html += `<li>App: <a href="javascript:" class="powerupFilterProp" data-app="${node.app}" data-filter="app">${node.app}</a></li>`;
 
                         if (Array.isArray(node.apdex.durations)) {
                             let durations = node.apdex.durations.map(x => Number(x.replace(/[,ms]*/g, '')));
@@ -3239,7 +3296,7 @@ var DashboardPowerups = (function () {
                             html += `</ul></li>`;
                         }
                         if (typeof (node.apdex.errors) != "undefined") {
-                            html += `<li>Errors: <a href="javascript:" class="powerupFilterProp" data-errors="true" >${node.apdex.errors}</a></li>`;
+                            html += `<li>Errors: <a href="javascript:" class="powerupFilterProp" data-errors="true" data-filter="errors">${node.apdex.errors}</a></li>`;
                         }
 
                         if (data.UAPs.doubles.length) {
@@ -3302,7 +3359,7 @@ var DashboardPowerups = (function () {
                                     }
                                     let sublink = link + encodeURIComponent(` AND useraction.stringProperties.${x.key} = "${x.val}"`);
                                     list += `<li><a href="${sublink}">${x.val}</a> 
-                                        (<a href="javascript:" class="powerupFilterProp" data-type="string" 
+                                        (<a href="javascript:" class="powerupFilterProp" data-type="string" data-filter="prop"
                                         data-key="${x.key}" data-val="${x.val}">${x.count}</a>)
                                         </li>`;
                                     lastKey = x.key;
@@ -3419,7 +3476,7 @@ var DashboardPowerups = (function () {
                                 appid = filtered[0]["useraction.internalApplicationId"][0];
                             html += `<li>Crash Group: `;
                             html += `<a href="/ui/mrum/${appid}/analyze-crashes-noes/${cg}?gtf=${gtf}&gf=${gf}">${cg}</a>`
-                                + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${cg}"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a><br>`;
+                                + `<a href="javascript:" class="powerupFilterProp" data-crashgroupid="${cg}" data-filter="crashgroup"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-purple'></a><br>`;
 
                             html += `<table><tr><th>SR</th><th>UserId</th></tr>`;
                             filtered
