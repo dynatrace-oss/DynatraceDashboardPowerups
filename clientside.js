@@ -3107,7 +3107,7 @@ var DashboardPowerups = (function () {
                                     break;
                                 case "errors":
                                     if (f.errors === true) {
-                                        txt = `X - errors`;
+                                        txt = `X - Sessions with errors`;
                                     }
                                     break;
                                 case "crashgroup":
@@ -3219,7 +3219,7 @@ var DashboardPowerups = (function () {
 
                         e.stopPropagation();
                         let filter = {
-                            fitler: "touple",
+                            filter: "touple",
                             from: link.from,
                             to: link.to
                         }
