@@ -3580,7 +3580,7 @@ var DashboardPowerups = (function () {
                             + `total shown. This is due to "repeated actions", for example: A -> B -> B -> B -> C. In that example, you would see a disclaimer `
                             + `at the bottom of the tooltip for B, which says "* includes 2 repeated actions." These are not visualized as they do not add informational value.</p>`;
 
-                        html += `<h3>Full list of user actions:</h3><ul>`
+                        html += `<h3>Full list of user actions within ${data.filteredTable.length} sessions:</h3><ul>`
                         html += `<li>Actions currently filtered out: <ul class="powerupNoEye">`
                             + data.apdexList
                                 .filter(x => !data.actionsShown.includes(x.actionName))
