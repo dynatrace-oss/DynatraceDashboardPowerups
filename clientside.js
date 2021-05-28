@@ -3082,7 +3082,7 @@ var DashboardPowerups = (function () {
                     chart.renderer.text(`Showing top ${limit - 1} of ${data.touples.length - 1} actions`, 70, 25)
                         .add();
                     chart.renderer.text(`Showing <a href="javascript:" class="powerupFilterProp">${data.rows}</a> sessions`,
-                        200, 25)
+                        250, 25)
                         .add()
                         .on("click", sessionPopup);
                     //Only show crashes if mobile or custom
