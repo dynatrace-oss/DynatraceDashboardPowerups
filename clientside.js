@@ -2128,6 +2128,8 @@ var DashboardPowerups = (function () {
                 addErrorsToList(actionDetailList, filteredTable);
                 addCrashesInApdexList(actionDetailList, filteredTable);
                 addApdexStylesToList(actionDetailList);
+                addGoalsToList(actionDetailList,goals);
+                addDrillDownLinksToList(actionDetailList);
                 touples = sortTouples(touples);
 
                 let data = {
@@ -2396,6 +2398,8 @@ var DashboardPowerups = (function () {
                             if (val !== "") {
                                 let actionName = row["useraction.name"][k];
                                 let app = row["useraction.application"][k];
+                                let appid = row["useraction.internalApplicationId"][k];
+                                let kuaid = row["useraction.internalKeyUserActionId"][k];
                                 let apdexIdx = apdexList.findIndex(x =>
                                     x.actionName == actionName
                                     && x.app == app);
@@ -2406,7 +2410,9 @@ var DashboardPowerups = (function () {
                                         satisfied: 0,
                                         tolerating: 0,
                                         frustrated: 0,
-                                        app: app
+                                        app: app,
+                                        appid: appid,
+                                        kuaid: kuaid
                                     };
                                     apdexIdx = apdexList.length;
                                     apdexList.push(apdexObj);
@@ -2732,6 +2738,35 @@ var DashboardPowerups = (function () {
                             //apdex.color = COLOR_GRAY;
                         }
                     });
+                }
+
+                function addGoalsToList(actionDetailList,goals){
+                    actionDetailList.forEach(a => {
+                        if(goals.findIndex(g => g.actionName === a.actionName) > -1)
+                            a.goal = true;
+                        else
+                            a.goal = false;
+                    })
+                }
+
+                function addDrillDownLinksToList(actionDetailList){
+                    let hash = window.location.hash.split(';').map(x => x.split('='));
+                        let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
+                        let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
+
+                    actionDetailList.forEach(a => {
+                        let drilldown = ""
+                        if(a.appid && a.appid.length){
+                            if(a.kuaid && a.kuaid.length){ //best case go straight to action
+                                drilldown = `#uemapplications/uemuseractionmetrics;uemuserActionId=${a.kuaid};uemapplicationId=${a.appid};meid=${a.kuaid};gtf=${gtf};gf=${gf}`;
+                            }else { //no drilldown to action, goto app instead
+                                drilldown = `#uemapplications/performanceanalysis;uemapplicationId=${a.appid};visiblepart=action;gtf=${gtf};gf=${gf}`;
+                            }
+                        } else { //I know nothing, just quit
+                            drilldown = "";
+                        }
+                        a.drilldown = drilldown;
+                    })
                 }
 
                 function sortTouples(touples) {
@@ -3536,7 +3571,7 @@ var DashboardPowerups = (function () {
                         let hash = window.location.hash.split(';').map(x => x.split('='));
                         let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
-                        let ualink = `#uemapplications/uemuseractionmetrics;uemuserActionId=APPLICATION_METHOD-2612BA2D355E4638;uemapplicationId=APPLICATION-008569CDB300AE03;meid=APPLICATION_METHOD-2612BA2D355E4638;gtf=-72h%20to%20now;gf=all`;
+                        
 
                         let html = `<div><h3>Chart is showing ${limit - 1} Actions of ${data.touples.length - 1} total actions:</h3>`
                             + `<p>The Sankey PowerUp visualization limits the amount of useractions shown in order to make the chart more readable. `
