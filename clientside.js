@@ -2233,16 +2233,6 @@ var DashboardPowerups = (function () {
                         let filtered = actions.filter(x =>
                             x.name !== "[]" &&
                             x.name !== "");
-                        /*if (Array.isArray(params.exclude) && params.exclude.length) { //replace me with a filter
-                            params.exclude.forEach(ex => {
-                                filtered = filtered.filter(x => !x.name.includes(ex));
-                            });
-                        }
-                        if (Array.isArray(params.include) && params.include.length) { //replace me with a filter
-                            filtered = filtered.filter(x =>
-                                params.include.findIndex(inc => x.name.includes(inc)) > -1
-                            );
-                        }*/
                         if (params.convHack == "2") {
                             filtered.unshift({ name: "START", app: "" });
                             if (row["hasCrash"] == "true")
@@ -2758,8 +2748,8 @@ var DashboardPowerups = (function () {
 
                     actionDetailList.forEach(a => {
                         let drilldown = ""
-                        if (a.appid && a.appid.length) {
-                            if (a.kuaid && a.kuaid.length) { //best case go straight to action
+                        if (a.appid && a.appid.length && a.appid !== "null") {
+                            if (a.kuaid && a.kuaid.length && a.kuaid !== "null") { //best case go straight to action
                                 drilldown = `#uemapplications/uemuseractionmetrics;uemuserActionId=${a.kuaid};uemapplicationId=${a.appid};meid=${a.kuaid};gtf=${gtf};gf=${gf}`;
                             } else { //no drilldown to action, goto app instead
                                 drilldown = `#uemapplications/performanceanalysis;uemapplicationId=${a.appid};visiblepart=action;gtf=${gtf};gf=${gf}`;
