@@ -2230,7 +2230,7 @@ var DashboardPowerups = (function () {
                         let filtered = actions.filter(x =>
                             x.name !== "[]" &&
                             x.name !== "");
-                        if (Array.isArray(params.exclude) && params.exclude.length) { //replace me with a filter
+                        /*if (Array.isArray(params.exclude) && params.exclude.length) { //replace me with a filter
                             params.exclude.forEach(ex => {
                                 filtered = filtered.filter(x => !x.name.includes(ex));
                             });
@@ -2239,7 +2239,7 @@ var DashboardPowerups = (function () {
                             filtered = filtered.filter(x =>
                                 params.include.findIndex(inc => x.name.includes(inc)) > -1
                             );
-                        }
+                        }*/
                         if (params.convHack == "2") {
                             filtered.unshift({ name: "START", app: "" });
                             if (row["hasCrash"] == "true")
@@ -2290,10 +2290,19 @@ var DashboardPowerups = (function () {
                                         }
                                         break;
                                     case "exclude":
-
+                                        if (Array.isArray(f.exclude) && f.exclude.length) { 
+                                            f.exclude.forEach(ex => {
+                                                filtered = filtered.filter(x => !x.name.includes(ex));
+                                            });
+                                        }
                                         break;
                                     case "includeonly":
-
+                                        if (Array.isArray(f.include) && f.include.length) {
+                                            filtered = filtered.filter(x =>
+                                                ["START", "END", "CRASH"].includes(x.name) //don't filter out artificial nodes
+                                                || f.include.findIndex(inc => x.name.includes(inc)) > -1
+                                            );
+                                        }
                                         break;
                                     case "action":
 
@@ -3116,10 +3125,14 @@ var DashboardPowerups = (function () {
                                     }
                                     break;
                                 case "exclude":
-
+                                    if (Array.isArray(f.exclude) && f.exclude.length) {
+                                        txt = `X - Exclude actions containing: ${f.exclude.join(',')}`;
+                                    }
                                     break;
                                 case "includeonly":
-
+                                    if (Array.isArray(f.include) && f.include.length) {
+                                        txt = `X - Include Only actions containing: ${f.include.join(',')}`;
+                                    }
                                     break;
                                 case "action":
 
@@ -3621,10 +3634,10 @@ var DashboardPowerups = (function () {
                         container: container,
                         filter: []
                     };
-                    if(Array.isArray(exclude) && exclude.length)
-                        params.filter.push({filter: "exclude", exclude: exclude});
-                    if(Array.isArray(include) && include.length)
-                        params.filter.push({filter: "includeonly", include: include});
+                    if (Array.isArray(exclude) && exclude.length)
+                        params.filter.push({ filter: "exclude", exclude: exclude });
+                    if (Array.isArray(include) && include.length)
+                        params.filter.push({ filter: "includeonly", include: include });
                     let data = readTableData($table.get(0), params);
                     let sankey = newChart(data, container, params);
                     $(".highcharts-exporting-group").addClass("powerupVisible");
