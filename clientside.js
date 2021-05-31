@@ -2774,7 +2774,7 @@ var DashboardPowerups = (function () {
                 if (data.applicationTypes.includes('MOBILE_APPLICATION')
                     || data.applicationTypes.includes('CUSTOM_APPLICATION')) mobile = true;
                 data.slicedTouples = data.touples.slice(0, limit);
-                data.actionsShown = [... new Set(
+                data.actionsShown = [... new Set( //TODO: someday make this "app-safe"
                     data.slicedTouples
                     .map(x => [x.from, x.to])
                     .flat()
