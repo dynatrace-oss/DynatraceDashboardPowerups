@@ -2141,7 +2141,6 @@ var DashboardPowerups = (function () {
                     filteredTable: filteredTable,
                     crashes: filteredTable.filter(x => x.hasCrash == "true").length,
                     applicationTypes: [...new Set(filteredTable.map(x => x.applicationType))],
-                    actionsShown: [... new Set(touples.map(x => x.to).filter(x => x !== "END" && x !== "CRASH"))],
                     totalSessions: normalTable.length
                 };
                 return (data);
@@ -2774,6 +2773,9 @@ var DashboardPowerups = (function () {
                 let mobile = false;
                 if (data.applicationTypes.includes('MOBILE_APPLICATION')
                     || data.applicationTypes.includes('CUSTOM_APPLICATION')) mobile = true;
+                let slicedTouples = data.touples.slice(0, limit);
+                let actionsShown = [... new Set(slicedTouples.map(x => x.to).filter(x => x !== "END" && x !== "CRASH"))];
+
                 let options = {
                     type: 'sankey',
                     title: {
@@ -2786,7 +2788,7 @@ var DashboardPowerups = (function () {
                         marginTop: 100
                     },
                     series: [{
-                        data: data.touples.slice(0, limit),
+                        data: slicedTouples,
                         type: 'sankey',
                         name: 'UserActions',
                         cursor: 'crosshair',
@@ -3113,7 +3115,7 @@ var DashboardPowerups = (function () {
                     chart.renderer.text(`Showing top ${limit} of ${data.touples.length} links`,
                         70, 25)
                         .add();
-                    chart.renderer.text(`between ${data.actionsShown.length} of <a href="javascript:" class="powerupFilterProp">${data.apdexList.length}</a> actions`,
+                    chart.renderer.text(`between ${actionsShown.length} of <a href="javascript:" class="powerupFilterProp">${data.apdexList.length}</a> actions`,
                         70, 40)
                         .add()
                         .on("click", actionsPopup);
@@ -3590,31 +3592,31 @@ var DashboardPowerups = (function () {
                         let $listoflists = $(`<ul>`).appendTo($popup);
 
                         let filtered = data.apdexList
-                            .filter(x => !data.actionsShown.includes(x.actionName))
+                            .filter(x => !actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
                         insertList(`Actions currently filtered out:`, "powerupNoEye", filtered, $listoflists);
 
                         let goals = data.apdexList
                             .filter(x => x.goal)
-                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .filter(x => actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
                         insertList(`Actions with Conversion Goals:`, "powerupEye", goals, $listoflists);
 
                         let entries = data.apdexList
                             .filter(x => x.entryAction)
-                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .filter(x => actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
                         insertList(`Actions flagged as Entry Actions:`, "powerupEye", entries, $listoflists);
 
                         let exits = data.apdexList
                             .filter(x => x.exitAction)
-                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .filter(x => actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
                         insertList(`Actions flagged as Exit Actions:`, "powerupEye", exits, $listoflists)
 
                         let other = data.apdexList
                             .filter(x => !x.goal && !x.entryAction && !x.exitAction)
-                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .filter(x => actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
                         insertList(`All other Actions:`, "powerupEye", other, $listoflists);
 
