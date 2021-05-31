@@ -2788,7 +2788,7 @@ var DashboardPowerups = (function () {
                         marginTop: 100
                     },
                     series: [{
-                        data: slicedTouples,
+                        data: data.slicedTouples,
                         type: 'sankey',
                         name: 'UserActions',
                         cursor: 'crosshair',
