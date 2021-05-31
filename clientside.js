@@ -2774,7 +2774,12 @@ var DashboardPowerups = (function () {
                 if (data.applicationTypes.includes('MOBILE_APPLICATION')
                     || data.applicationTypes.includes('CUSTOM_APPLICATION')) mobile = true;
                 data.slicedTouples = data.touples.slice(0, limit);
-                data.actionsShown = [... new Set(data.slicedTouples.map(x => x.to).filter(x => x !== "END" && x !== "CRASH"))];
+                data.actionsShown = [... new Set(
+                    data.slicedTouples
+                    .map(x => [x.from, x.to])
+                    .flat()
+                    .filter(x => x !== "START" && x !== "END" && x !== "CRASH")
+                    )];
 
                 let options = {
                     type: 'sankey',
