@@ -2775,11 +2775,12 @@ var DashboardPowerups = (function () {
                     || data.applicationTypes.includes('CUSTOM_APPLICATION')) mobile = true;
                 data.slicedTouples = data.touples.slice(0, limit);
                 data.actionsShown = [... new Set(
-                    data.slicedTouples
-                    .map(x => [x.from, x.to])
-                    .flat()
-                    .filter(x => x !== "START" && x !== "END" && x !== "CRASH")
-                    )];
+                    [data.slicedTouples.map(x => ({ name: x.from, app: x.fromApp })),
+                    data.slicedTouples.map(x => ({ name: x.to, app: x.toApp }))
+                    ]
+                        .flat()
+                        .filter(x => x.name !== "START" && x.name !== "END" && x.name !== "CRASH")
+                )];
 
                 let options = {
                     type: 'sankey',
@@ -3597,31 +3598,31 @@ var DashboardPowerups = (function () {
                         let $listoflists = $(`<ul>`).appendTo($popup);
 
                         let filtered = data.apdexList
-                            .filter(x => !data.actionsShown.includes(x.actionName))
+                            .filter(x => data.actionsShown.findIndex(a => a.name === x.actionName && a.app === x.app) < 0)
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
                         insertList(`Actions currently filtered out:`, "powerupNoEye", filtered, $listoflists);
 
                         let goals = data.apdexList
                             .filter(x => x.goal)
-                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .filter(x => data.actionsShown.findIndex(a => a.name === x.actionName && a.app === x.app) > -1)
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
                         insertList(`Actions with Conversion Goals:`, "powerupEye", goals, $listoflists);
 
                         let entries = data.apdexList
                             .filter(x => x.entryAction)
-                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .filter(x => data.actionsShown.findIndex(a => a.name === x.actionName && a.app === x.app) > -1)
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
                         insertList(`Actions flagged as Entry Actions:`, "powerupEye", entries, $listoflists);
 
                         let exits = data.apdexList
                             .filter(x => x.exitAction)
-                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .filter(x => data.actionsShown.findIndex(a => a.name === x.actionName && a.app === x.app) > -1)
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
                         insertList(`Actions flagged as Exit Actions:`, "powerupEye", exits, $listoflists)
 
                         let other = data.apdexList
                             .filter(x => !x.goal && !x.entryAction && !x.exitAction)
-                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .filter(x => data.actionsShown.findIndex(a => a.name === x.actionName && a.app === x.app) > -1)
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
                         insertList(`All other Actions:`, "powerupEye", other, $listoflists);
 
