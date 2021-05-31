@@ -3599,7 +3599,7 @@ var DashboardPowerups = (function () {
                         let filtered = data.apdexList
                             .filter(x => !data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                        insertList(`Actions currently filtered out:`, "powerupNoEye", filtered, $listoflists);
+                        insertList(`Actions not currently shown:`, "powerupNoEye", filtered, $listoflists);
 
                         let goals = data.apdexList
                             .filter(x => x.goal)
