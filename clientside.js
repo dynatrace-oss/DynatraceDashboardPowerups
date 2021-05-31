@@ -3580,58 +3580,71 @@ var DashboardPowerups = (function () {
                             + `total shown. This is due to "repeated actions", for example: A -> B -> B -> B -> C. In that example, you would see a disclaimer `
                             + `at the bottom of the tooltip for B, which says "* includes 2 repeated actions." These are not visualized as they do not add informational value.</p>`;
 
-                        html += `<h3>Full list of user actions within ${data.filteredTable.length} sessions:</h3><ul>`
-                        html += `<li>Actions currently filtered out: <ul class="powerupNoEye">`
-                            + data.apdexList
-                                .filter(x => !data.actionsShown.includes(x.actionName))
-                                .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName.replace(/"/g,'\\"')}" data-filter="action">${x.count}</a>)</li>`)
-                                .join('')
-                            + `</ul></li>`;
-                        html += `<li>Actions with Conversion Goals: <ul class="powerupEye">`
-                            + data.apdexList
-                                .filter(x => x.goal)
-                                .filter(x => data.actionsShown.includes(x.actionName))
-                                .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName.replace(/"/g,'\\"')}" data-filter="action">${x.count}</a>)</li>`)
-                                .join('')
-                            + `</ul></li>`;
-                        html += `<li>Actions flagged as Entry Actions: <ul class="powerupEye">`
-                            + data.apdexList
-                                .filter(x => x.entryAction)
-                                .filter(x => data.actionsShown.includes(x.actionName))
-                                .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName.replace(/"/g,'\\"')}" data-filter="action">${x.count}</a>)</li>`)
-                                .join('')
-                            + `</ul></li>`
-                        html += `<li>Actions flagged as Exit Actions: <ul class="powerupEye">`
-                            + data.apdexList
-                                .filter(x => x.exitAction)
-                                .filter(x => data.actionsShown.includes(x.actionName))
-                                .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName.replace(/"/g,'\\"')}" data-filter="action">${x.count}</a>)</li>`)
-                                .join('')
-                            + `</ul></li>`
-                        html += `<li>All other Actions: <ul class="powerupEye">`
-                            + data.apdexList
-                                .filter(x => !x.goal && !x.entryAction && !x.exitAction)
-                                .filter(x => data.actionsShown.includes(x.actionName))
-                                .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                                .map(x => `<li><a href="${x.drilldown}">${x.actionName}</a> (<a href="javascript:" class="powerupFilterProp" data-action="${x.actionName.replace(/"/g,'\\"')}" data-filter="action">${x.count}</a>)</li>`)
-                                .join('')
-                            + `</ul></li>`
-                        html += `</ul>`;
-
-                        html += `<div class="powerupSankeyDisclaimer">`
-                            + `<sup>*</sup> Note: crash list is based on a filtered sample. `
-                            + `This may not include all matching crashes in total session population. <br>If you require deep analytics, please contact `
-                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`;
-
-                        let $popup = $("<div>")
+                        html += `<h3>Full list of user actions within ${data.filteredTable.length} sessions:</h3></div>`;
+                        let $popup = $("<div>") //Do this first to ensure we don't introduce encoding errors later
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
                             .click(() => { $popup.remove(); })
                             .appendTo(container);
+
+                        let $listoflists = $(`<ul>`).appendTo($popup);
+
+                        let filtered = data.apdexList
+                            .filter(x => !data.actionsShown.includes(x.actionName))
+                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
+                        insertList(`Actions currently filtered out:`, filtered, $listoflists);
+
+                        let goals = data.apdexList
+                            .filter(x => x.goal)
+                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                        insertList(`Actions with Conversion Goals:`, goals, $listoflists);
+
+                        let entries = data.apdexList
+                            .filter(x => x.entryAction)
+                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                        insertList(`Actions flagged as Entry Actions:`, entries, $listoflists);
+
+                        let exits = data.apdexList
+                            .filter(x => x.exitAction)
+                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                        insertList(`Actions flagged as Exit Actions:`, exits, $listoflists)
+
+                        let other = data.apdexList
+                            .filter(x => !x.goal && !x.entryAction && !x.exitAction)
+                            .filter(x => data.actionsShown.includes(x.actionName))
+                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                        insertList(`All other Actions:`, other, $listoflists);
+
+                        function insertList(header, list, listoflists) {
+                            let $item = $(`<li>${header}</li>`)
+                            let $list = $(`<ul class="powerupNoEye"></ul>`).appendTo($item);
+                            list
+                                .forEach(x => {
+                                    let $li = $(`<li><a href="${x.drilldown}">${x.actionName}</a> </li>`);
+                                    let $link = $(`<a>${x.count}</a>`)
+                                        .attr('href', "javascript:")
+                                        .addClass("powerupFilterProp")
+                                        .data('action', x.actionName)
+                                        .data('filter', "action")
+                                        .appendTo($li);
+                                    $link.before(" (");
+                                    $link.after(")");
+                                    $li.appendTo($list);
+                                });
+                            $item.appendTo($(listoflists));
+                        }
+
+
+                        $(`<div class="powerupSankeyDisclaimer">`
+                            + `<sup>*</sup> Note: crash list is based on a filtered sample. `
+                            + `This may not include all matching crashes in total session population. <br>If you require deep analytics, please contact `
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`)
+                            .appendTo($popup);
+
+
                         $popup.find(`.powerupFilterProp`)
                             .on("click", filterProp);
                     }
