@@ -3592,35 +3592,35 @@ var DashboardPowerups = (function () {
                         let filtered = data.apdexList
                             .filter(x => !data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                        insertList(`Actions currently filtered out:`, filtered, $listoflists);
+                        insertList(`Actions currently filtered out:`, "powerupNoEye", filtered, $listoflists);
 
                         let goals = data.apdexList
                             .filter(x => x.goal)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertList(`Actions with Conversion Goals:`, goals, $listoflists);
+                        insertList(`Actions with Conversion Goals:`, "powerupEye", goals, $listoflists);
 
                         let entries = data.apdexList
                             .filter(x => x.entryAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertList(`Actions flagged as Entry Actions:`, entries, $listoflists);
+                        insertList(`Actions flagged as Entry Actions:`, "powerupEye", entries, $listoflists);
 
                         let exits = data.apdexList
                             .filter(x => x.exitAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertList(`Actions flagged as Exit Actions:`, exits, $listoflists)
+                        insertList(`Actions flagged as Exit Actions:`, "powerupEye", exits, $listoflists)
 
                         let other = data.apdexList
                             .filter(x => !x.goal && !x.entryAction && !x.exitAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertList(`All other Actions:`, other, $listoflists);
+                        insertList(`All other Actions:`, "powerupEye", other, $listoflists);
 
-                        function insertList(header, list, listoflists) {
+                        function insertList(header, ulclass, list, listoflists) {
                             let $item = $(`<li>${header}</li>`)
-                            let $list = $(`<ul class="powerupNoEye"></ul>`).appendTo($item);
+                            let $list = $(`<ul class="${ulclass}"></ul>`).appendTo($item);
                             list
                                 .forEach(x => {
                                     let $li = $(`<li><a href="${x.drilldown}">${x.actionName}</a> </li>`);
