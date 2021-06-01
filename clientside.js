@@ -3759,6 +3759,9 @@ var DashboardPowerups = (function () {
                         //    .on("click", filterProp);
 
                         function closePopup(e) {
+                            let el = e.target;
+                            let $el = $(el);
+                            if ($el.is("input")) return false;
                             $popup.remove();
                             if (filtersDirty) {
                                 let data = readTableData(params.table, params);
