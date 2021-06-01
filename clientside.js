@@ -3743,7 +3743,9 @@ var DashboardPowerups = (function () {
                                 else
                                     $el.prop('checked', false);
 
-                                $el.on("change", innerAddRemoveFilter)
+                                $el
+                                    .on("change", innerAddRemoveFilter)
+                                    .on("click", function(e){e.stopPropagation();});
                             }
                         }
 
