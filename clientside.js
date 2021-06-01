@@ -3246,10 +3246,11 @@ var DashboardPowerups = (function () {
                     {
                         let left = Math.round(Number($(chart.container).css("width").replace(/px/, '')) * 0.66);
                         let $container = $(chart.container).parent();
+                        $container.css("margin-top","15px"); //give some space for the menu icon
                         let $dropdown = $(`<div>Color mode: </div>`)
                             .addClass('powerupSankeyDropdown')
                             .css("left", `${left}px`)
-                            .css("top", "20px")
+                            .css("top", "35px")
                             .appendTo($container);
                         let $select = $(`<select>`)
                             .addClass("sankeyColorPicker")
@@ -3751,7 +3752,7 @@ var DashboardPowerups = (function () {
 
 
                         $(`<div class="powerupSankeyDisclaimer">`
-                            + `<sup>*</sup> Note: crash list is based on a filtered sample. `
+                            + `<sup>*</sup> Note: counts based on a filtered sample. `
                             + `This may not include all matching crashes in total session population. <br>If you require deep analytics, please contact `
                             + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`)
                             .appendTo($popup);
