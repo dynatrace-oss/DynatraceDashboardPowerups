@@ -2846,7 +2846,7 @@ var DashboardPowerups = (function () {
                         case "START":
                             let nonEntryActions = false;
                             point.linksFrom.forEach(l => {
-                                if(l.toNode.entryAction === "false")
+                                if(l.toNode.entryAction === "false" || l.toNode.entryAction === undefined)
                                 nonEntryActions = true;
                             });
                             tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
@@ -2858,7 +2858,7 @@ var DashboardPowerups = (function () {
                         case "END":
                             let nonExitActions = false;
                             point.linksTo.forEach(l => {
-                                if(l.fromNode.exitAction === "false")
+                                if(l.fromNode.exitAction === "false" || l.fromNode.exitAction === undefined)
                                 nonExitActions = true;
                             });
                             tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
