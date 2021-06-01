@@ -3641,7 +3641,7 @@ var DashboardPowerups = (function () {
                             <th>Ex</th>
                             <th>Inc</th>
                             </tr>
-                        `).appendTo($tale);
+                        `).appendTo($table);
                         let cols = $table.find(`tr:first-of-type th`).length;
 
                         let notShown = data.apdexList
