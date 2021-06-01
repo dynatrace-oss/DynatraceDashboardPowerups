@@ -3627,7 +3627,7 @@ var DashboardPowerups = (function () {
                         let $popup = $("<div>") //Do this first to ensure we don't introduce encoding errors later
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
-                            .click(closePopup)
+                            .on("click",":not(input)",closePopup)
                             .appendTo(container);
 
                         //let $listoflists = $(`<ul>`).appendTo($popup);
@@ -3761,7 +3761,7 @@ var DashboardPowerups = (function () {
                         function closePopup(e) {
                             let el = e.target;
                             let $el = $(el);
-                            if ($el.is("input")) return false;
+
                             $popup.remove();
                             if (filtersDirty) {
                                 let data = readTableData(params.table, params);
