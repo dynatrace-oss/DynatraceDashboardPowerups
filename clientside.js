@@ -2893,11 +2893,20 @@ var DashboardPowerups = (function () {
                         point.series.chart.tooltip.hide();
                         return;
                     }
-                    let tt = `<div class="powerup-sankey-tooltip">
+
+                    let tt = "";
+                    if(point.fromNode.name === "START" && point.toNode.name === "END"){
+                        tt = `<div class="powerup-sankey-tooltip">
+                        ${point.fromNode.name} → ${point.toNode.name}: <b>${point.weight}</b><br/>
+                        <i>INFO: consider updating your USQL where clause instead to get more meaningful user actions.</i>`
+                    } else {
+                        tt = `<div class="powerup-sankey-tooltip">
                         ${point.fromNode.name} → ${point.toNode.name}: <b>${point.weight}</b><br/>`
                         + (mobile ? `Crashes: ${point.crashes}<br/>` : ``)
                         + `</div>`
                             .trim();
+                    }
+                    
                     return tt;
                 }
 
