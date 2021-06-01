@@ -3110,6 +3110,8 @@ var DashboardPowerups = (function () {
 
                 let chart = H.chart(container, options, (chart) => {
                     let $container = $(container);
+                    $container.css("margin-top","15px"); //give some space for the menu icon
+                    $container.css("left","0px");
                     chart.limit = limit = Math.min(limit, data.touples.length);
                     if (chart.limit > 2) {
                         chart.renderer.button('-', 10, 5)
@@ -3246,7 +3248,6 @@ var DashboardPowerups = (function () {
                     {
                         let left = Math.round(Number($(chart.container).css("width").replace(/px/, '')) * 0.66);
                         let $container = $(chart.container).parent();
-                        $container.css("margin-top","15px"); //give some space for the menu icon
                         let $dropdown = $(`<div>Color mode: </div>`)
                             .addClass('powerupSankeyDropdown')
                             .css("left", `${left}px`)
