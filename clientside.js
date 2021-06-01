@@ -3673,9 +3673,9 @@ var DashboardPowerups = (function () {
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
                         insertRows(`All other Actions:`, "overview", other, $table);
 
-                        let filtered = data.filteredOutTable
+                        /*let filtered = data.filteredOutTable
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertRows(`Actions in sample but not in filtered sessions:`, "overview", other, $table);
+                        insertRows(`Actions in sample but not in filtered sessions:`, "overview", other, $table);*/
 
                         function insertRows(header, vis, list, table) {
                             let $table = $(table);
@@ -3705,7 +3705,7 @@ var DashboardPowerups = (function () {
                                         .data('filter', "action")
                                         .appendTo($col5);
 
-                                    $tr.find(`input[type="checkbox"]`).each((i,el)=>initCheck(el));
+                                    $tr.find(`input[type="checkbox"]`).each((i, el) => initCheck(el));
 
                                     $tr.appendTo($table);
                                 });
@@ -3759,7 +3759,11 @@ var DashboardPowerups = (function () {
                         //    .on("click", filterProp);
 
                         function closePopup(e) {
-
+                            $popup.remove();
+                            if (filtersDirty) {
+                                let data = readTableData(params.table, params);
+                                newChart(data, container, params, limit);
+                            }
                         }
                     }
 
