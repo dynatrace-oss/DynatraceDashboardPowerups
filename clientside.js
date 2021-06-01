@@ -3141,7 +3141,7 @@ var DashboardPowerups = (function () {
                     if (data.applicationTypes.includes('MOBILE_APPLICATION')
                         || data.applicationTypes.includes('CUSTOM_APPLICATION')) {
                         chart.renderer.text(`with <a href="javascript:" class="powerupFilterProp">${data.crashes}</a> crashes`,
-                            325, 25)
+                            300, 40)
                             .add()
                             .on("click", crashPopup);
                     }
