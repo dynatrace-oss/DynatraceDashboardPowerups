@@ -3823,7 +3823,7 @@ var DashboardPowerups = (function () {
                         let $popup = $("<div>") //Do this first to ensure we don't introduce encoding errors later
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
-                            .on("click", ":not(input)", closePopup)
+                            .on("click", ":not(input)", ()=>{$popup.remove();})
                             .appendTo(container);
 
                         let $table = $(`<table>`).appendTo($popup);
