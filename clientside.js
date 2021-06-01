@@ -3652,54 +3652,56 @@ var DashboardPowerups = (function () {
 
                         //let $listoflists = $(`<ul>`).appendTo($popup);
                         let $table = $(`<table>`).appendTo($popup);
-                        $(`<tr>
-                            <th>Vis</th>
+                        let $colHeaders = $(`<tr>
+                            <th>&nbsp;</th>
                             <!--<th>App</th>-->
                             <th>Action name</th>
                             <th>Count</th>
-                            <th>Hide</th>
-                            <th>Ex</th>
-                            <th>Inc</th>
+                            <th><img src='${pub.SVGLib() + 'dont-watch.svg'}' alt="Hide Action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></th>
+                            <th><img src='${pub.SVGLib() + 'and-not.svg'}' alt="Sessions not including action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></th>
+                            <th><img src='${pub.SVGLib() + 'and.svg'}' alt="Sessions including action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></th>
                             </tr>
-                        `).appendTo($table);
-                        let cols = $table.find(`tr:first-of-type th`).length;
+                        `);//.appendTo($table);
+                        let cols = $colHeaders.find(`th`).length;
 
-                        let notShown = data.apdexList
-                            .filter(x => !data.actionsShown.includes(x.actionName))
-                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                        insertRows(`Actions not currently shown:`, "dont-watch", notShown, $table);
+                        
 
                         let goals = data.apdexList
                             .filter(x => x.goal)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertRows(`Actions with Conversion Goals:`, "overview", goals, $table);
+                        insertRows(`Actions with Conversion Goals:`, "overview", goals);
 
                         let entries = data.apdexList
                             .filter(x => x.entryAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertRows(`Actions flagged as Entry Actions:`, "overview", entries, $table);
+                        insertRows(`Actions flagged as Entry Actions:`, "overview", entries);
 
                         let exits = data.apdexList
                             .filter(x => x.exitAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertRows(`Actions flagged as Exit Actions:`, "overview", exits, $table)
+                        insertRows(`Actions flagged as Exit Actions:`, "overview", exits)
 
                         let other = data.apdexList
                             .filter(x => !x.goal && !x.entryAction && !x.exitAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertRows(`All other Actions:`, "overview", other, $table);
+                        insertRows(`All other Actions:`, "overview", other);
+
+                        let notShown = data.apdexList
+                            .filter(x => !data.actionsShown.includes(x.actionName))
+                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
+                        insertRows(`Actions not currently shown:`, "dont-watch", notShown);
 
                         let filtered = data.filteredOut
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertRows(`Actions in sample but not in filtered sessions:`, "overview", filtered, $table);
+                        insertRows(`Actions in sample but not in filtered sessions:`, "dont-watch", filtered);
 
-                        function insertRows(header, vis, list, table) {
-                            let $table = $(table);
+                        function insertRows(header, vis, list) {
                             let $header = $(`<tr class="powerupSubHeader"><th colspan="${cols}">${header}</th></tr>`).appendTo($table);
+                            $colHeaders.appendTo($table);
                             
                             list
                                 .forEach(x => {
