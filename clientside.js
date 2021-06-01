@@ -2856,9 +2856,15 @@ var DashboardPowerups = (function () {
                                 + `</div>`;
                             break;
                         case "END":
+                            let nonExitActions = false;
+                            point.linksTo.forEach(l => {
+                                if(l.fromNode.exitAction === "false")
+                                nonExitActions = true;
+                            });
                             tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
                                 + `UserActions in sample: ${point.apdexSum}<br>`
                                 + `<br><small><i>Artificial node to group Exit actions</i></small>`
+                                + (nonExitActions?"<br><small><i>Note: due to filtering, not all linked actions are Exit actions.</i></small>":"")
                                 + `</div>`;
                             break;
                         case "CRASH":
