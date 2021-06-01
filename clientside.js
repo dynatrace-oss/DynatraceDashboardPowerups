@@ -3657,9 +3657,18 @@ var DashboardPowerups = (function () {
                             <!--<th>App</th>-->
                             <th>Action name</th>
                             <th>Count</th>
-                            <th><img src='${pub.SVGLib() + 'dont-watch.svg'}' alt="Hide Action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></th>
-                            <th><img src='${pub.SVGLib() + 'and-not.svg'}' alt="Sessions not including action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></th>
-                            <th><img src='${pub.SVGLib() + 'and.svg'}' alt="Sessions including action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></th>
+                            <th class="powerupSankeyPopupTooltip">
+                                <img src='${pub.SVGLib() + 'dont-watch.svg'}' alt="Hide Action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>
+                                <span class="powerupSankeyPopupTooltipText">Hide Action</span>
+                            </th>
+                            <th class="powerupSankeyPopupTooltip">
+                                <img src='${pub.SVGLib() + 'and-not.svg'}' alt="Sessions not including action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>
+                                <span class="powerupSankeyPopupTooltipText">Sessions not including action</span>
+                            </th>
+                            <th class="powerupSankeyPopupTooltip">
+                                <img src='${pub.SVGLib() + 'and.svg'}' alt="Sessions including action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>
+                                <span class="powerupSankeyPopupTooltipText">Sessions including action</span>
+                            </th>
                             </tr>
                         `);//.appendTo($table);
                         let cols = $colHeaders.find(`th`).length;
