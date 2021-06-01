@@ -2303,6 +2303,13 @@ var DashboardPowerups = (function () {
                                                 x.name === f.action);
                                         }
                                         break;
+                                    case "notaction":
+                                        if (f.action && f.action.length) {
+                                            let idx = filtered.findIndex((x, i, arr) =>
+                                                x.name === f.action);
+                                            if (idx > -1) filtered = []; //this row filtered out
+                                        }
+                                        break;
                                     default:
 
                                         break;
@@ -2776,10 +2783,10 @@ var DashboardPowerups = (function () {
                 data.slicedTouples = data.touples.slice(0, limit);
                 data.actionsShown = [... new Set( //TODO: someday make this "app-safe"
                     data.slicedTouples
-                    .map(x => [x.from, x.to])
-                    .flat()
-                    .filter(x => x !== "START" && x !== "END" && x !== "CRASH")
-                    )];
+                        .map(x => [x.from, x.to])
+                        .flat()
+                        .filter(x => x !== "START" && x !== "END" && x !== "CRASH")
+                )];
 
                 let options = {
                     type: 'sankey',
@@ -2846,25 +2853,25 @@ var DashboardPowerups = (function () {
                         case "START":
                             let nonEntryActions = false;
                             point.linksFrom.forEach(l => {
-                                if(l.toNode.entryAction === "false" || l.toNode.entryAction === undefined)
-                                nonEntryActions = true;
+                                if (l.toNode.entryAction === "false" || l.toNode.entryAction === undefined)
+                                    nonEntryActions = true;
                             });
                             tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
                                 + `UserActions in sample: ${point.sum}<br>`
                                 + `<br><small><i>Artificial node to group Entry actions</i></small>`
-                                + (nonEntryActions?"<br><small><i>Note: due to filtering, not all linked actions are Entry actions.</i></small>":"")
+                                + (nonEntryActions ? "<br><small><i>Note: due to filtering, not all linked actions are Entry actions.</i></small>" : "")
                                 + `</div>`;
                             break;
                         case "END":
                             let nonExitActions = false;
                             point.linksTo.forEach(l => {
-                                if(l.fromNode.exitAction === "false" || l.fromNode.exitAction === undefined)
-                                nonExitActions = true;
+                                if (l.fromNode.exitAction === "false" || l.fromNode.exitAction === undefined)
+                                    nonExitActions = true;
                             });
                             tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
                                 + `UserActions in sample: ${point.apdexSum}<br>`
                                 + `<br><small><i>Artificial node to group Exit actions</i></small>`
-                                + (nonExitActions?"<br><small><i>Note: due to filtering, not all linked actions are Exit actions.</i></small>":"")
+                                + (nonExitActions ? "<br><small><i>Note: due to filtering, not all linked actions are Exit actions.</i></small>" : "")
                                 + `</div>`;
                             break;
                         case "CRASH":
@@ -2908,7 +2915,7 @@ var DashboardPowerups = (function () {
                     }
 
                     let tt = "";
-                    if(point.fromNode.name === "START" && point.toNode.name === "END"){
+                    if (point.fromNode.name === "START" && point.toNode.name === "END") {
                         tt = `<div class="powerup-sankey-tooltip">
                         ${point.fromNode.name} → ${point.toNode.name}: <b>${point.weight}</b><br/>
                         <small><i>INFO: consider updating your USQL where clause instead<br/> to get more meaningful user actions.</i></small>
@@ -2916,11 +2923,11 @@ var DashboardPowerups = (function () {
                     } else {
                         tt = `<div class="powerup-sankey-tooltip">
                         ${point.fromNode.name} → ${point.toNode.name}: <b>${point.weight}</b><br/>`
-                        + (mobile ? `Crashes: ${point.crashes}<br/>` : ``)
-                        + `</div>`
-                            .trim();
+                            + (mobile ? `Crashes: ${point.crashes}<br/>` : ``)
+                            + `</div>`
+                                .trim();
                     }
-                    
+
                     return tt;
                 }
 
@@ -3203,6 +3210,11 @@ var DashboardPowerups = (function () {
                                 case "action":
                                     if (f.action && f.action.length) {
                                         txt = `X - Sessions including action: ${f.action}`;
+                                    }
+                                    break;
+                                case "notaction":
+                                    if (f.action && f.action.length) {
+                                        txt = `X - Sessions not including action: ${f.action}`;
                                     }
                                     break;
                                 default:
@@ -3597,6 +3609,7 @@ var DashboardPowerups = (function () {
                         let hash = window.location.hash.split(';').map(x => x.split('='));
                         let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
                         let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
+                        let filtersDirty = false;
 
 
                         let html = `<div><h3>Chart is showing ${data.actionsShown.length} of ${data.apdexList.length} total actions within ${data.filteredTable.length} sessions:</h3>`
@@ -3614,57 +3627,124 @@ var DashboardPowerups = (function () {
                         let $popup = $("<div>") //Do this first to ensure we don't introduce encoding errors later
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
-                            .click(() => { $popup.remove(); })
+                            .click(closePopup)
                             .appendTo(container);
 
-                        let $listoflists = $(`<ul>`).appendTo($popup);
+                        //let $listoflists = $(`<ul>`).appendTo($popup);
+                        let $table = $(`<table>`).appendTo($popup);
+                        $(`<tr>
+                            <th>Vis</th>
+                            <!--<th>App</th>-->
+                            <th>Action name</th>
+                            <th>Count</th>
+                            <th>Hide</th>
+                            <th>Ex</th>
+                            <th>Inc</th>
+                            </tr>
+                        `).appendTo($tale);
+                        let cols = $table.find(`tr:first-of-type th`).length;
 
-                        let filtered = data.apdexList
+                        let notShown = data.apdexList
                             .filter(x => !data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
-                        insertList(`Actions not currently shown:`, "powerupNoEye", filtered, $listoflists);
+                        insertRows(`Actions not currently shown:`, "dont-watch", notShown, $table);
 
                         let goals = data.apdexList
                             .filter(x => x.goal)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertList(`Actions with Conversion Goals:`, "powerupEye", goals, $listoflists);
+                        insertRows(`Actions with Conversion Goals:`, "overview", goals, $table);
 
                         let entries = data.apdexList
                             .filter(x => x.entryAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertList(`Actions flagged as Entry Actions:`, "powerupEye", entries, $listoflists);
+                        insertRows(`Actions flagged as Entry Actions:`, "overview", entries, $table);
 
                         let exits = data.apdexList
                             .filter(x => x.exitAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertList(`Actions flagged as Exit Actions:`, "powerupEye", exits, $listoflists)
+                        insertRows(`Actions flagged as Exit Actions:`, "overview", exits, $table)
 
                         let other = data.apdexList
                             .filter(x => !x.goal && !x.entryAction && !x.exitAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertList(`All other Actions:`, "powerupEye", other, $listoflists);
+                        insertRows(`All other Actions:`, "overview", other, $table);
 
-                        function insertList(header, ulclass, list, listoflists) {
-                            let $item = $(`<li>${header}</li>`)
-                            let $list = $(`<ul class="${ulclass}"></ul>`).appendTo($item);
+                        let filtered = data.filteredOutTable
+                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                        insertRows(`Actions in sample but not in filtered sessions:`, "overview", other, $table);
+
+                        function insertRows(header, vis, list, table) {
+                            let $table = $(table);
+                            let $header = $(`<tr><th colspan="${cols}">${header}</th></tr>`).appendTo($table);
+                            //let $row = $(`<ul class="${ulclass}"></ul>`).appendTo($item);
                             list
                                 .forEach(x => {
-                                    let $li = $(`<li><a href="${x.drilldown}">${x.actionName}</a> </li>`);
-                                    let $link = $(`<a>${x.count}</a>`)
-                                        .attr('href', "javascript:")
-                                        .addClass("powerupFilterProp")
+                                    let $tr = $(`<tr></tr>`);
+                                    let $col0 = $(`<td><img src='${pub.SVGLib() + vis + '.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`).appendTo($tr);
+                                    let $col1 = $(`<td><a href="${x.drilldown}">${x.actionName}</a></td>`).appendTo($tr);
+                                    let $col2 = $(`<td>${x.count}</td>`).appendTo($tr);
+                                    let $col3 = $(`<td></td>`).appendTo($tr);
+                                    let $hideCheck = $(`<input type="checkbox">`)
+                                        .data('exclude', [x.actionName])
+                                        .data('filter', "exclude")
+                                        .appendTo($col3);
+
+                                    let $col4 = $(`<td></td>`).appendTo($tr);
+                                    let $excludeCheck = $(`<input type="checkbox">`)
+                                        .data('action', x.actionName)
+                                        .data('filter', "notaction")
+                                        .appendTo($col4);
+
+                                    let $col5 = $(`<td></td>`).appendTo($tr);
+                                    let $includeCheck = $(`<input type="checkbox">`)
                                         .data('action', x.actionName)
                                         .data('filter', "action")
-                                        .appendTo($li);
-                                    $link.before(" (");
-                                    $link.after(")");
-                                    $li.appendTo($list);
+                                        .appendTo($col5);
+
+                                    $tr.find(`input[type="checkbox"]`).each((i,el)=>initCheck(el));
+
+                                    $tr.appendTo($table);
                                 });
-                            $item.appendTo($(listoflists));
+
+
+                            function innerAddRemoveFilter(e) {
+                                filtersDirty = true;
+
+                                let el = e.target;
+                                let $el = $(el);
+                                let checked = $el.is(":checked");
+                                let filter = $el.data();
+                                if (!Object.keys(filter).length) return false; //fail quicky if we didn't find any data attributes
+                                if (!Array.isArray(params.filter)) params.filter = [];
+
+                                if (checked) {
+                                    params.filter.push(filter);
+                                } else {
+                                    let idx = params.filter.findIndex(x => JSON.stringify(x) === JSON.stringify(filter));
+                                    if (idx > -1)
+                                        params.filter.splice(idx, 1);
+                                }
+                            }
+
+                            function initCheck(el) {
+                                let $el = $(el);
+
+                                let filter = $el.data();
+                                if (!Object.keys(filter).length) return false; //fail quicky if we didn't find any data attributes
+                                if (!Array.isArray(params.filter)) params.filter = [];
+
+                                let idx = params.filter.findIndex(x => JSON.stringify(x) === JSON.stringify(filter));
+                                if (idx > -1)
+                                    $el.prop('checked', true);
+                                else
+                                    $el.prop('checked', false);
+
+                                $el.on("change", innerAddRemoveFilter)
+                            }
                         }
 
 
@@ -3675,8 +3755,12 @@ var DashboardPowerups = (function () {
                             .appendTo($popup);
 
 
-                        $popup.find(`.powerupFilterProp`)
-                            .on("click", filterProp);
+                        //$popup.find(`.powerupFilterProp`)
+                        //    .on("click", filterProp);
+
+                        function closePopup(e) {
+
+                        }
                     }
 
                     function setColorMode(e) {
