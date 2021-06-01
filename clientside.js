@@ -3110,7 +3110,7 @@ var DashboardPowerups = (function () {
 
                 let chart = H.chart(container, options, (chart) => {
                     let $container = $(container);
-                    $container.child(`div:first-of-type`)
+                    $container.children(`div:first-of-type`)
                         .css("margin-top","15px") //give some space for the menu icon
                         .css("left","0px");
                     chart.limit = limit = Math.min(limit, data.touples.length);
