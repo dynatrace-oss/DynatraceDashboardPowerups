@@ -3808,7 +3808,7 @@ var DashboardPowerups = (function () {
                         let filtersDirty = false;
 
 
-                        let html = `<div><h3>Chart is showing ${data.actionsShown.length} of ${data.apdexList.length} total actions within ${data.filteredTable.length} sessions:</h3>`
+                        let html = `<div><h3>Chart is showing ${data.slicedTouples.length} of ${data.touples.length} total links between actions within ${data.filteredTable.length} sessions:</h3>`
                             + `<p>The Sankey PowerUp visualization limits the amount of useractions shown in order to make the chart more readable. `
                             + `This does not mean data is missing, only that certain useraction-to-useraction links are not visualized. `
                             + `For example, if your typical user journey is A -> B -> C. If a few users actual journey was A -> B -> D -> C, `
@@ -3839,7 +3839,7 @@ var DashboardPowerups = (function () {
                         let cols = $colHeaders.find(`th`).length;
 
                         let shownTouples = data.slicedTouples
-                            .sort((a, b) => a.weight - b.weight);
+                            .sort((a, b) => b.weight - a.weight);
                         insertRows(`Links shown:`, "overview", shownTouples);
 
                         let notShownTouples = data.touples
@@ -3849,7 +3849,7 @@ var DashboardPowerups = (function () {
                                 && st.to === x.to
                                 && st.toApp === x.toApp
                             ) < 0)
-                            .sort((a, b) => a.weight - b.weight);
+                            .sort((a, b) => b.weight - a.weight);
                         insertRows(`Links not shown:`, "dont-watch", notShownTouples);
 
                         function insertRows(header, vis, list) {
