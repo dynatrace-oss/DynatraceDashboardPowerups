@@ -2898,7 +2898,7 @@ var DashboardPowerups = (function () {
                     if(point.fromNode.name === "START" && point.toNode.name === "END"){
                         tt = `<div class="powerup-sankey-tooltip">
                         ${point.fromNode.name} → ${point.toNode.name}: <b>${point.weight}</b><br/>
-                        <i>INFO: consider updating your USQL where clause instead to get more meaningful user actions.</i>`
+                        <i>INFO: consider updating your USQL where clause instead<br/> to get more meaningful user actions.</i>`
                     } else {
                         tt = `<div class="powerup-sankey-tooltip">
                         ${point.fromNode.name} → ${point.toNode.name}: <b>${point.weight}</b><br/>`
