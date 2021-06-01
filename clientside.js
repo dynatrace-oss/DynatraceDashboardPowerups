@@ -2131,6 +2131,7 @@ var DashboardPowerups = (function () {
                 addGoalsToList(actionDetailList, goals);
                 addDrillDownLinksToList(actionDetailList);
                 touples = sortTouples(touples);
+                let filteredOut = findFilteredActions(normalTable,apdexList)
 
                 let data = {
                     touples: touples,
@@ -2141,7 +2142,8 @@ var DashboardPowerups = (function () {
                     filteredTable: filteredTable,
                     crashes: filteredTable.filter(x => x.hasCrash == "true").length,
                     applicationTypes: [...new Set(filteredTable.map(x => x.applicationType))],
-                    totalSessions: normalTable.length
+                    totalSessions: normalTable.length,
+                    filteredOut: filteredOut
                 };
                 return (data);
 
@@ -2772,6 +2774,21 @@ var DashboardPowerups = (function () {
                     return touples.sort((a, b) => b.weight - a.weight);
                 }
 
+                function findFilteredActions(normalTable,apdexList){
+                    let filteredOut = [];
+                    normalTable
+                        .map(x => x["useraction.name"])
+                        .flat()
+                        .filter(x => actionDetailList.findIndex(ad => ad.actionName === x) < 0)
+                        .forEach(x => {
+                            let idx = filteredOut.findIndex(fo => fo.actionName === x);
+                            if(idx < 0)
+                                filteredOut.push({actionName: x, count: 1});
+                            else
+                                filteredOut[idx].count += 1;
+                        })
+                    return filteredOut;
+                }
             }
 
             function newChart(data, container, params, limit = 21) {
@@ -3676,14 +3693,14 @@ var DashboardPowerups = (function () {
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
                         insertRows(`All other Actions:`, "overview", other, $table);
 
-                        /*let filtered = data.filteredOutTable
+                        let filtered = data.filteredOut
                             .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
-                        insertRows(`Actions in sample but not in filtered sessions:`, "overview", other, $table);*/
+                        insertRows(`Actions in sample but not in filtered sessions:`, "overview", filtered, $table);
 
                         function insertRows(header, vis, list, table) {
                             let $table = $(table);
                             let $header = $(`<tr><th colspan="${cols}">${header}</th></tr>`).appendTo($table);
-                            //let $row = $(`<ul class="${ulclass}"></ul>`).appendTo($item);
+                            
                             list
                                 .forEach(x => {
                                     let $tr = $(`<tr></tr>`);
