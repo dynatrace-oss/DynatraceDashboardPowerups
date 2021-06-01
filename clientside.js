@@ -3167,9 +3167,10 @@ var DashboardPowerups = (function () {
                             .add();
                     }
                     //display limit text
-                    chart.renderer.text(`Showing top ${limit} of ${data.touples.length} links`,
+                    chart.renderer.text(`Showing top ${limit} of <a href="javascript:" class="powerupFilterProp">${data.touples.length}</a> links`,
                         70, 25)
-                        .add();
+                        .add()
+                        .on("click", linksPopup);
                     chart.renderer.text(`between ${data.actionsShown.length} of <a href="javascript:" class="powerupFilterProp">${data.apdexList.length}</a> actions`,
                         70, 40)
                         .add()
@@ -3650,7 +3651,6 @@ var DashboardPowerups = (function () {
                             .on("click", ":not(input)", closePopup)
                             .appendTo(container);
 
-                        //let $listoflists = $(`<ul>`).appendTo($popup);
                         let $table = $(`<table>`).appendTo($popup);
                         let $colHeaders = $(`<tr>
                             <th>&nbsp;</th>
@@ -3789,10 +3789,6 @@ var DashboardPowerups = (function () {
                             + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`)
                             .appendTo($popup);
 
-
-                        //$popup.find(`.powerupFilterProp`)
-                        //    .on("click", filterProp);
-
                         function closePopup(e) {
                             let el = e.target;
                             let $el = $(el);
@@ -3802,6 +3798,78 @@ var DashboardPowerups = (function () {
                                 let data = readTableData(params.table, params);
                                 newChart(data, container, params, limit);
                             }
+                        }
+                    }
+
+                    function linksPopup(e) {
+                        let hash = window.location.hash.split(';').map(x => x.split('='));
+                        let gtf = (hash.find(x => x[0] === "gtf") || ['gtf', '-2h'])[1];
+                        let gf = (hash.find(x => x[0] === "gf") || ['gf', 'all'])[1];
+                        let filtersDirty = false;
+
+
+                        let html = `<div><h3>Chart is showing ${data.actionsShown.length} of ${data.apdexList.length} total actions within ${data.filteredTable.length} sessions:</h3>`
+                            + `<p>The Sankey PowerUp visualization limits the amount of useractions shown in order to make the chart more readable. `
+                            + `This does not mean data is missing, only that certain useraction-to-useraction links are not visualized. `
+                            + `For example, if your typical user journey is A -> B -> C. If a few users actual journey was A -> B -> D -> C, `
+                            + `D may not be visualized by default. Those users' counts would still be present in the totals for nodes A, B, and C; however `
+                            + `if you look at the link B -> C you'll notice both visually and numerically, that it is smaller than the total for C. `
+                            + `If you wish to dig deeper into less frequent journey paths, click the plus sign at the top left to include more actions. `
+                            + `You may also sometimes notice that even with all links shown, the sum of the links going into a node, does not equal the `
+                            + `total shown. This is due to "repeated actions", for example: A -> B -> B -> B -> C. In that example, you would see a disclaimer `
+                            + `at the bottom of the tooltip for B, which says "* includes 2 repeated actions." These are not visualized as they do not add informational value.</p>`;
+
+                        html += `<h3>Full list of links between user actions within ${data.filteredTable.length} sessions:</h3></div>`;
+                        let $popup = $("<div>") //Do this first to ensure we don't introduce encoding errors later
+                            .addClass("powerupSankeyDetailPopup")
+                            .html(html)
+                            .on("click", ":not(input)", closePopup)
+                            .appendTo(container);
+
+                        let $table = $(`<table>`).appendTo($popup);
+                        let $colHeaders = $(`<tr>
+                            <th>&nbsp;</th>
+                            <th>From App</th>
+                            <th>From Action</th>
+                            <th>To App</th>
+                            <th>To Action</th>
+                            <th>Count</th>
+                            </tr>
+                        `);//.appendTo($table);
+                        let cols = $colHeaders.find(`th`).length;
+
+                        let shownTouples = data.slicedTouples
+                            .sort((a, b) => a.weight - b.weight);
+                        insertRows(`Links shown:`, "overview", shownTouples);
+
+                        let notShownTouples = data.touples
+                            .filter(x => data.slicedTouples.findIndex(st =>
+                                st.from === x.from
+                                && st.fromApp === x.fromApp
+                                && st.to === x.to
+                                && st.toApp === x.toApp
+                            ) < 0)
+                            .sort((a, b) => a.weight - b.weight);
+                        insertRows(`Links not shown:`, "overview", notShownTouples);
+
+                        function insertRows(header, vis, list) {
+                            let $header = $(`<tr class="powerupSubHeader"><th colspan="${cols}">${header}</th></tr>`).appendTo($table);
+                            $colHeaders
+                                .clone()
+                                .appendTo($table);
+
+                            list
+                                .forEach(x => {
+                                    let $tr = $(`<tr></tr>`);
+                                    let $col0 = $(`<td><img src='${pub.SVGLib() + vis + '.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`).appendTo($tr);
+                                    let $col1 = $(`<td>${x.fromApp}</td>`).appendTo($tr);
+                                    let $col2 = $(`<td>${x.from}</td>`).appendTo($tr);
+                                    let $col3 = $(`<td>${x.toApp}</td>`).appendTo($tr);
+                                    let $col4 = $(`<td>${x.to}</td>`).appendTo($tr);
+                                    let $col5 = $(`<td>${x.count}</td>`).appendTo($tr);
+                                    
+                                    $tr.appendTo($table);
+                                });
                         }
                     }
 
