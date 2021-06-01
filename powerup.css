@@ -240,6 +240,10 @@ h1.powerup-color-normal {
   fill: #00a1b2;
 }
 
+.powerup-icon-lightpurple {
+  fill: #a972cc;
+}
+
 .powerup-sankey-tooltip {
   z-index: 1100;
   background: white;
