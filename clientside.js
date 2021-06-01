@@ -3850,7 +3850,7 @@ var DashboardPowerups = (function () {
                                 && st.toApp === x.toApp
                             ) < 0)
                             .sort((a, b) => a.weight - b.weight);
-                        insertRows(`Links not shown:`, "overview", notShownTouples);
+                        insertRows(`Links not shown:`, "dont-watch", notShownTouples);
 
                         function insertRows(header, vis, list) {
                             let $header = $(`<tr class="powerupSubHeader"><th colspan="${cols}">${header}</th></tr>`).appendTo($table);
@@ -3866,7 +3866,7 @@ var DashboardPowerups = (function () {
                                     let $col2 = $(`<td>${x.from}</td>`).appendTo($tr);
                                     let $col3 = $(`<td>${x.toApp}</td>`).appendTo($tr);
                                     let $col4 = $(`<td>${x.to}</td>`).appendTo($tr);
-                                    let $col5 = $(`<td>${x.count}</td>`).appendTo($tr);
+                                    let $col5 = $(`<td>${x.weight}</td>`).appendTo($tr);
                                     
                                     $tr.appendTo($table);
                                 });
