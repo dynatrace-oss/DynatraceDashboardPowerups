@@ -3699,7 +3699,7 @@ var DashboardPowerups = (function () {
 
                         function insertRows(header, vis, list, table) {
                             let $table = $(table);
-                            let $header = $(`<tr><th colspan="${cols}" class="powerupSubHeader">${header}</th></tr>`).appendTo($table);
+                            let $header = $(`<tr class="powerupSubHeader"><th colspan="${cols}">${header}</th></tr>`).appendTo($table);
                             
                             list
                                 .forEach(x => {
