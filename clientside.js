@@ -2131,7 +2131,7 @@ var DashboardPowerups = (function () {
                 addGoalsToList(actionDetailList, goals);
                 addDrillDownLinksToList(actionDetailList);
                 touples = sortTouples(touples);
-                let filteredOut = findFilteredActions(normalTable,apdexList)
+                let filteredOut = findFilteredActions(normalTable, apdexList)
 
                 let data = {
                     touples: touples,
@@ -2774,7 +2774,7 @@ var DashboardPowerups = (function () {
                     return touples.sort((a, b) => b.weight - a.weight);
                 }
 
-                function findFilteredActions(normalTable,apdexList){
+                function findFilteredActions(normalTable, apdexList) {
                     let filteredOut = [];
                     normalTable
                         .map(x => x["useraction.name"])
@@ -2782,8 +2782,8 @@ var DashboardPowerups = (function () {
                         .filter(x => actionDetailList.findIndex(ad => ad.actionName === x) < 0)
                         .forEach(x => {
                             let idx = filteredOut.findIndex(fo => fo.actionName === x);
-                            if(idx < 0)
-                                filteredOut.push({actionName: x, count: 1});
+                            if (idx < 0)
+                                filteredOut.push({ actionName: x, count: 1 });
                             else
                                 filteredOut[idx].count += 1;
                         })
@@ -3128,8 +3128,8 @@ var DashboardPowerups = (function () {
                 let chart = H.chart(container, options, (chart) => {
                     let $container = $(container);
                     $container.children(`div:first-of-type`)
-                        .css("margin-top","15px") //give some space for the menu icon
-                        .css("left","0px");
+                        .css("margin-top", "15px") //give some space for the menu icon
+                        .css("left", "0px");
                     chart.limit = limit = Math.min(limit, data.touples.length);
                     if (chart.limit > 2) {
                         chart.renderer.button('-', 10, 5)
@@ -3647,7 +3647,7 @@ var DashboardPowerups = (function () {
                         let $popup = $("<div>") //Do this first to ensure we don't introduce encoding errors later
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
-                            .on("click",":not(input)",closePopup)
+                            .on("click", ":not(input)", closePopup)
                             .appendTo(container);
 
                         //let $listoflists = $(`<ul>`).appendTo($popup);
@@ -3664,7 +3664,7 @@ var DashboardPowerups = (function () {
                         `);//.appendTo($table);
                         let cols = $colHeaders.find(`th`).length;
 
-                        
+
 
                         let goals = data.apdexList
                             .filter(x => x.goal)
@@ -3701,8 +3701,10 @@ var DashboardPowerups = (function () {
 
                         function insertRows(header, vis, list) {
                             let $header = $(`<tr class="powerupSubHeader"><th colspan="${cols}">${header}</th></tr>`).appendTo($table);
-                            $colHeaders.appendTo($table);
-                            
+                            $colHeaders
+                                .clone()
+                                .appendTo($table);
+
                             list
                                 .forEach(x => {
                                     let $tr = $(`<tr></tr>`);
@@ -3767,7 +3769,7 @@ var DashboardPowerups = (function () {
 
                                 $el
                                     .on("change", innerAddRemoveFilter)
-                                    .on("click", function(e){e.stopPropagation();});
+                                    .on("click", function (e) { e.stopPropagation(); });
                             }
                         }
 
