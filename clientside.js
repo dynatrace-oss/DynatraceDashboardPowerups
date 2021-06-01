@@ -2844,8 +2844,15 @@ var DashboardPowerups = (function () {
                     }*/
                     switch (point.id) {
                         case "START":
+                            let nonEntryActions = false;
+                            point.linksFrom.forEach(l => {
+                                if(l.toNode.entryAction === "false")
+                                nonEntryActions = true;
+                            });
                             tt = `<div class="powerup-sankey-tooltip"><b>${point.name}</b><br>`
+                                + `UserActions in sample: ${point.sum}<br>`
                                 + `<br><small><i>Artificial node to group Entry actions</i></small>`
+                                + (nonEntryActions?"<br><small><i>Note: due to filtering, not all linked actions are Entry actions.</i></small>":"")
                                 + `</div>`;
                             break;
                         case "END":
@@ -2898,7 +2905,8 @@ var DashboardPowerups = (function () {
                     if(point.fromNode.name === "START" && point.toNode.name === "END"){
                         tt = `<div class="powerup-sankey-tooltip">
                         ${point.fromNode.name} → ${point.toNode.name}: <b>${point.weight}</b><br/>
-                        <i>INFO: consider updating your USQL where clause instead<br/> to get more meaningful user actions.</i>`
+                        <small><i>INFO: consider updating your USQL where clause instead<br/> to get more meaningful user actions.</i></small>
+                        </div>`
                     } else {
                         tt = `<div class="powerup-sankey-tooltip">
                         ${point.fromNode.name} → ${point.toNode.name}: <b>${point.weight}</b><br/>`
