@@ -3860,12 +3860,14 @@ var DashboardPowerups = (function () {
 
                             list
                                 .forEach(x => {
+                                    let fromDrilldown = data.apdexList.find(a => a.app === x.fromApp && a.actionName === x.from) || `#uemapplication`;
+                                    let toDrilldown = data.apdexList.find(a => a.app === x.toApp && a.actionName === x.to) || `#uemapplication`;
                                     let $tr = $(`<tr></tr>`);
                                     let $col0 = $(`<td><img src='${pub.SVGLib() + vis + '.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`).appendTo($tr);
                                     let $col1 = $(`<td>${x.fromApp}</td>`).appendTo($tr);
-                                    let $col2 = $(`<td>${x.from}</td>`).appendTo($tr);
+                                    let $col2 = $(`<td><a href="${fromDrilldown}">${x.from}</a></td>`).appendTo($tr);
                                     let $col3 = $(`<td>${x.toApp}</td>`).appendTo($tr);
-                                    let $col4 = $(`<td>${x.to}</td>`).appendTo($tr);
+                                    let $col4 = $(`<td><a href="${toDrilldown}">${x.too}</a></td>`).appendTo($tr);
                                     let $col5 = $(`<td>${x.weight}</td>`).appendTo($tr);
                                     
                                     $tr.appendTo($table);
