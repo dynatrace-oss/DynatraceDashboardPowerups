@@ -3324,7 +3324,8 @@ var DashboardPowerups = (function () {
                     async function saveJSON(e) {
                         let json = JSON.stringify(params.filter).replace(/\\"/g, '\\\\"');
                         let alertTxt = `To save current filters:
-                        1. Click OK below. JSON has been copied to clipboard.
+                        1. Click OK below. 
+                        JSON has been copied to clipboard.
                         2. Edit dashboard.
                         3. Add Markdown tile with PU(link) syntax.
                         4. Paste JSON data on a seperate line.

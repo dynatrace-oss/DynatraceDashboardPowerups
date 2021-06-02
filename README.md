@@ -276,6 +276,7 @@ Explanation:
 - `exclude=Search,recent` - (optional) comma seperated list of case-sensitive strings to hide from useraction list. Note: where possible it is recommended to limit via the USQL where clause instead to provide more meaningful data.
 - `include=Search,recent` - (optional) comma seperated list of case-sensitive strings to only include from useraction list, all others will be hidden. Note: where possible it is recommended to limit via the USQL where clause instead to provide more meaningful data.
 - `limit=20` - (optional) default amount of action to action links to show in the chart, defaults to 20. Valid values are integers from 2 to 100.
+- `flink=` - (optional) points to a markdown tile via the link powerup. After the `!PU(link):something`, on a seperate line include the JSON-encoded filter list in the markdown. You can get this by clicking the down arrow to the right of color mode.
 
 Example:
 ![Sankey](Assets/sankey.png)
