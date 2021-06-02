@@ -2455,7 +2455,9 @@ var DashboardPowerups = (function () {
 
                                 if (apdexIdx > -1) {
                                     if (!apdexList[apdexIdx].entryAction)
-                                        apdexList[apdexIdx].entryAction = true;
+                                        apdexList[apdexIdx].entryAction = 1;
+                                    else
+                                        apdexList[apdexIdx].entryAction++;
                                     apdexList[apdexIdx].entryActionSVG = `<img src='${pub.SVGLib() + 'entry.svg'}'  onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
                                 }
                             }
@@ -2476,7 +2478,9 @@ var DashboardPowerups = (function () {
 
                                 if (apdexIdx > -1) {
                                     if (!apdexList[apdexIdx].exitAction)
-                                        apdexList[apdexIdx].exitAction = true;
+                                        apdexList[apdexIdx].exitAction = 1;
+                                    else
+                                        apdexList[apdexIdx].exitAction++;
                                     apdexList[apdexIdx].exitActionSVG = `<img src='${pub.SVGLib() + 'exit.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'>`;
                                 }
                             }
