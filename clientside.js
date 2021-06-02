@@ -2254,6 +2254,15 @@ var DashboardPowerups = (function () {
                                                 && arr[i + 1].name === f.to);
                                         }
                                         break;
+                                    case "nottouple":
+                                        if (f.from !== undefined && f.to !== undefined) { //TODO: refactor ifelse branches with a switch on f.filter
+                                            let idx = filtered.findIndex((x, i, arr) =>
+                                                x.name === f.from
+                                                && arr.length > i + 1
+                                                && arr[i + 1].name === f.to);
+                                            if (idx > -1) filtered = []; //this row filtered out
+                                        }
+                                        break;
                                     case "prop":
                                         if (f.type !== undefined && f.key !== undefined && f.val !== undefined) {
                                             switch (f.type) {
@@ -3194,8 +3203,13 @@ var DashboardPowerups = (function () {
                             let txt;
                             switch (f.filter) {
                                 case "touple":
-                                    if (f.from !== undefined && f.to !== undefined) { //TODO: refactor ifelse branches with a switch on f.filter
+                                    if (f.from !== undefined && f.to !== undefined) {
                                         txt = `X - Sessions with ${f.from} -> ${f.to}`;
+                                    }
+                                    break;
+                                case "nottouple":
+                                    if (f.from !== undefined && f.to !== undefined) {
+                                        txt = `X - Sessions without ${f.from} -> ${f.to}`;
                                     }
                                     break;
                                 case "prop":
@@ -3834,6 +3848,14 @@ var DashboardPowerups = (function () {
                             <th>To App</th>
                             <th>To Action</th>
                             <th>Count</th>
+                            <th class="powerupSankeyPopupTooltip">
+                                <img src='${pub.SVGLib() + 'and-not.svg'}' alt="Sessions not including link" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-lightpurple'>
+                                <span class="powerupSankeyPopupTooltipText">Sessions not including link</span>
+                            </th>
+                            <th class="powerupSankeyPopupTooltip">
+                                <img src='${pub.SVGLib() + 'and.svg'}' alt="Sessions including link" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-lightpurple'>
+                                <span class="powerupSankeyPopupTooltipText">Sessions including link</span>
+                            </th>
                             </tr>
                         `);//.appendTo($table);
                         let cols = $colHeaders.find(`th`).length;
@@ -3870,8 +3892,61 @@ var DashboardPowerups = (function () {
                                     let $col4 = $(`<td>` + (toDrilldown ? `<a href="${toDrilldown}">${x.to}</a>` : `${x.to}`) + `</td>`).appendTo($tr);
                                     let $col5 = $(`<td>${x.weight}</td>`).appendTo($tr);
 
+                                    let $col6 = $(`<td></td>`).appendTo($tr);
+                                    let $excludeCheck = $(`<input type="checkbox">`)
+                                        .data('filter', "nottouple")
+                                        .data('from', x.from)
+                                        .data('to', x.to)
+                                        .appendTo($col6);
+
+                                    let $col7 = $(`<td></td>`).appendTo($tr);
+                                    let $includeCheck = $(`<input type="checkbox">`)
+                                        .data('filter', "touple")
+                                        .data('from', x.from)
+                                        .data('to', x.to)
+                                        .appendTo($col7);
+
+                                    $tr.find(`input[type="checkbox"]`).each((i, el) => initCheck(el));
+
                                     $tr.appendTo($table);
                                 });
+
+                            function innerAddRemoveFilter(e) {
+                                filtersDirty = true;
+
+                                let el = e.target;
+                                let $el = $(el);
+                                let checked = $el.is(":checked");
+                                let filter = $el.data();
+                                if (!Object.keys(filter).length) return false; //fail quicky if we didn't find any data attributes
+                                if (!Array.isArray(params.filter)) params.filter = [];
+
+                                if (checked) {
+                                    params.filter.push(filter);
+                                } else {
+                                    let idx = params.filter.findIndex(x => JSON.stringify(x) === JSON.stringify(filter));
+                                    if (idx > -1)
+                                        params.filter.splice(idx, 1);
+                                }
+                            }
+
+                            function initCheck(el) {
+                                let $el = $(el);
+
+                                let filter = $el.data();
+                                if (!Object.keys(filter).length) return false; //fail quicky if we didn't find any data attributes
+                                if (!Array.isArray(params.filter)) params.filter = [];
+
+                                let idx = params.filter.findIndex(x => JSON.stringify(x) === JSON.stringify(filter));
+                                if (idx > -1)
+                                    $el.prop('checked', true);
+                                else
+                                    $el.prop('checked', false);
+
+                                $el
+                                    .on("change", innerAddRemoveFilter)
+                                    .on("click", function (e) { e.stopPropagation(); });
+                            }
                         }
                     }
 
