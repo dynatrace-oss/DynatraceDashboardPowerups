@@ -3838,7 +3838,7 @@ var DashboardPowerups = (function () {
                             .appendTo(container);
 
                         $popup.parents(TILE_SELECTOR)
-                            .on("click", ".powerupSankeyDetailPopup", closePopup);
+                            .on("click", ".powerupSankeyDetailPopup :not(input)", closePopup);
 
                         let $table = $(`<table>`).appendTo($popup);
                         let $colHeaders = $(`<tr>
