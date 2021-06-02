@@ -3321,8 +3321,6 @@ var DashboardPowerups = (function () {
 
                     function saveJSON(e){
                         let json = JSON.stringify(params.filter);
-                        $(`body`).focus();
-                        navigator.clipboard.writeText(json);
                         let confirmed = confirm(`To save current filters:
                         1. Click OK below to copy JSON to clipboard
                         2. Edit dashboard
@@ -3335,8 +3333,19 @@ var DashboardPowerups = (function () {
                         if(confirmed) {
                             //window.focus();
                             //if(document.activeElement) document.activeElement.blur();
-                            $(`body`).focus();
-                            navigator.clipboard.writeText(json);
+                            try {
+                                $(`body`).focus();
+                                navigator.clipboard.writeText(json).then(()=>{
+                                    console.log(`POWERUP: clipboard write success`);
+                                },()=>{
+                                    console.log(`POWERUP: clipboard write fail`);
+                                });
+                            } catch(err){
+                                console.log(`POWERUP: clipboard failure - ${err.message}`);
+                                console.log(document.activeElement);
+                            }
+
+                            
                         }
                             
                         e.stopPropagation();
