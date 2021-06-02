@@ -635,3 +635,8 @@ tr.powerupSubHeader th {
   border-style: solid;
   border-color: transparent transparent transparent #7c38a1;
 }
+
+.powerupSankeySaveButton {
+  background: white;
+  fill:#a972cc;
+}

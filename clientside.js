@@ -3314,8 +3314,8 @@ var DashboardPowerups = (function () {
                             .css("top", "35px")
                             .appendTo($container);
                         let $button = $(`<img src="${pub.SVGLib() + 'backup.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'>`)
-                            .on("click",saveJSON)
                             .appendTo($savebutton);
+                        $savebutton.on("click",saveJSON);
                     }
 
 
