@@ -3321,7 +3321,7 @@ var DashboardPowerups = (function () {
                     }
 
 
-                    function saveJSON(e) {
+                    async function saveJSON(e) {
                         let json = JSON.stringify(params.filter).replace(/\\"/g, '\\\\"');
                         let confirmed = confirm(`To save current filters:
                         1. Click OK below to copy JSON to clipboard
@@ -3332,50 +3332,50 @@ var DashboardPowerups = (function () {
 
                         if (confirmed) {
                             try {
-                                let $txtarea = $(`<textarea>`)
-                                    .text(json)
-                                    .css("position", "absolute")
-                                    .css("height", "100px")
-                                    .css("width", "100px")
-                                    .css("top", "110%")
-                                    .css("right", "0px")
-                                    .css("z-index", "10000")
-                                    .appendTo(`body`);
-                                let txtarea = $txtarea.get(0);
-                                txtarea.focus();
-                                txtarea.select();
-                                let res = document.execCommand('copy');
-                                if (!res) {
-                                    let err = `POWERUP: SANKEY - clipboard failure 1st attempt... retrying in 500ms`;
-                                    console.log(err);
+                                await navigator.clipboard.writeText(json);
+                                console.log('POWERUP: DEBUG - clipboard success');
+                            } catch (err) {
+                                console.error('POWERUP: ERROR - Failed to copy: ', err);
 
+                                //try it the hard way
+                                try {
+                                    let $txtarea = $(`<textarea>`)
+                                        .text(json)
+                                        .css("position", "absolute")
+                                        .css("height", "100px")
+                                        .css("width", "100px")
+                                        .css("top", "50%")
+                                        .css("right", "0px")
+                                        .css("z-index", "10000")
+                                        .appendTo(`body`);
+                                    let txtarea = $txtarea.get(0);
                                     txtarea.focus();
                                     txtarea.select();
-                                    setTimeout(() => {
+                                    let res = document.execCommand('copy');
+                                    if (!res) {
+                                        let err = `POWERUP: SANKEY - clipboard failure 1st attempt... retrying in 500ms`;
+                                        console.log(err);
+
                                         txtarea.focus();
                                         txtarea.select();
-                                        res = document.execCommand('copy');
-                                        if (!res) {
-                                            err = `POWERUP: SANKEY - clipboard failure 2nd attempt... Please manually copy-paste.`;
-                                            console.log(err);
-                                            errorBeacon(err);
-                                        }
-                                    }, 500);
-
-
-                                } else {
-                                    $txtarea.remove();
+                                        setTimeout(() => {
+                                            txtarea.focus();
+                                            txtarea.select();
+                                            res = document.execCommand('copy');
+                                            if (!res) {
+                                                err = `POWERUP: SANKEY - clipboard failure 2nd attempt... Please manually copy-paste.`;
+                                                console.log(err);
+                                                errorBeacon(err);
+                                            }
+                                        }, 500);
+                                    } else {
+                                        $txtarea.remove();
+                                    }
+                                } catch (err) {
+                                    console.log(`POWERUP: clipboard failure - ${err.message}`);
+                                    console.log(document.activeElement);
                                 }
-                                /*navigator.clipboard.writeText(json).then(()=>{
-                                    console.log(`POWERUP: clipboard write success`);
-                                },()=>{
-                                    console.log(`POWERUP: clipboard write fail`);
-                                });*/ //this gives a DOM exception for unknown reasons
-                            } catch (err) {
-                                console.log(`POWERUP: clipboard failure - ${err.message}`);
-                                console.log(document.activeElement);
                             }
-
 
                         }
 
