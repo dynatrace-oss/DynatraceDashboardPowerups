@@ -3834,8 +3834,11 @@ var DashboardPowerups = (function () {
                         let $popup = $("<div>") //Do this first to ensure we don't introduce encoding errors later
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
-                            .on("click", ":not(input)", closePopup)
+                            //.on("click", ":not(input)", closePopup)
                             .appendTo(container);
+
+                        $popup.parents(TILE_SELECTOR)
+                            .on("click", ".powerupSankeyDetailPopup", closePopup);
 
                         let $table = $(`<table>`).appendTo($popup);
                         let $colHeaders = $(`<tr>
@@ -3942,11 +3945,11 @@ var DashboardPowerups = (function () {
 
                                 $el
                                     .on("change", innerAddRemoveFilter)
-                                    .on("click", function (e) { 
-                                        e.stopPropagation(); 
-                                        setTimeout(()=>{
+                                    .on("click", function (e) {
+                                        e.stopPropagation();
+                                        /*setTimeout(()=>{
                                             $popup.on("click", ":not(input)", closePopup); //replace magically disappearing handler
-                                        },100);
+                                        },100);*/
                                     });
                             }
                         }
@@ -3956,18 +3959,18 @@ var DashboardPowerups = (function () {
                             + `This may not include all matching crashes in total session population. <br>If you require deep analytics, please contact `
                             + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`)
                             .appendTo($popup);
-                            
-                            function closePopup(e) {
-                                let el = e.target;
-                                let $el = $(el);
-    
-                                e.stopPropagation();
-                                $popup.remove();
-                                if (filtersDirty) {
-                                    let data = readTableData(params.table, params);
-                                    newChart(data, container, params, limit);
-                                }
+
+                        function closePopup(e) {
+                            let el = e.target;
+                            let $el = $(el);
+
+                            e.stopPropagation();
+                            $popup.remove();
+                            if (filtersDirty) {
+                                let data = readTableData(params.table, params);
+                                newChart(data, container, params, limit);
                             }
+                        }
                     }
 
                     function setColorMode(e) {
