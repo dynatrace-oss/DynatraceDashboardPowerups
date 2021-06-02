@@ -3323,14 +3323,14 @@ var DashboardPowerups = (function () {
 
                     async function saveJSON(e) {
                         let json = JSON.stringify(params.filter).replace(/\\"/g, '\\\\"');
-                        let confirmed = confirm(`To save current filters:
+                        /*let confirmed = confirm(`To save current filters:
                         1. Click OK below to copy JSON to clipboard
                         2. Edit dashboard
                         3. Add Markdown tile with PU(link) syntax
                         4. Paste JSON data on a seperate line
-                        5. Add 'flink' parameter to existing PU(sankey)`);
+                        5. Add 'flink' parameter to existing PU(sankey)`);*/
 
-                        if (confirmed) {
+                        if (true) {
                             try {
                                 await navigator.clipboard.writeText(json);
                                 console.log('POWERUP: DEBUG - clipboard success');
