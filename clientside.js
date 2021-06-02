@@ -3946,7 +3946,7 @@ var DashboardPowerups = (function () {
                                         e.stopPropagation(); 
                                         setTimeout(()=>{
                                             $popup.on("click", ":not(input)", closePopup); //replace magically disappearing handler
-                                        },50);
+                                        },100);
                                     });
                             }
                         }
