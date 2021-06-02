@@ -3942,7 +3942,7 @@ var DashboardPowerups = (function () {
 
                                 $el
                                     .on("change", innerAddRemoveFilter)
-                                    //.on("click", function (e) { e.stopPropagation(); });
+                                    .on("click", function (e) { e.stopPropagation(); });
                             }
                         }
 
@@ -3956,6 +3956,7 @@ var DashboardPowerups = (function () {
                                 let el = e.target;
                                 let $el = $(el);
     
+                                e.stopPropagation();
                                 $popup.remove();
                                 if (filtersDirty) {
                                     let data = readTableData(params.table, params);
