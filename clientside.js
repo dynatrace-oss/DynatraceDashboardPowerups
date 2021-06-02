@@ -3336,6 +3336,8 @@ var DashboardPowerups = (function () {
                                 .css("height","100px")
                                 .css("width","100px")
                                 .css("top","110%")
+                                .css("right","0px")
+                                .css("z-index","10000")
                                 .appendTo(`body`);
                                 let txtarea = $txtarea.get(0);
                                 txtarea.focus();
