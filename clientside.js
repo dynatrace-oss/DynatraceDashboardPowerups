@@ -3326,13 +3326,9 @@ var DashboardPowerups = (function () {
                         2. Edit dashboard
                         3. Add Markdown tile with PU(link) syntax
                         4. Paste JSON data
-                        5. Add 'flink' parameter to existing PU(sankey)
-                        JSON:
-                        ${json}`);
+                        5. Add 'flink' parameter to existing PU(sankey)`);
 
                         if(confirmed) {
-                            //window.focus();
-                            //if(document.activeElement) document.activeElement.blur();
                             try {
                                 let $txtarea = $(`<textarea>`)
                                 .text(json)
@@ -3344,8 +3340,13 @@ var DashboardPowerups = (function () {
                                 let txtarea = $txtarea.get(0);
                                 txtarea.focus();
                                 txtarea.select();
-                                document.execCommand('copy');
+                                let res = document.execCommand('copy');
                                 $txtarea.remove();
+                                if(!res){
+                                    let err = `POWERUP: SANKEY - clipboard failure`;
+                                    console.log(err);
+                                    errorBeacon(error);
+                                } 
                                 /*navigator.clipboard.writeText(json).then(()=>{
                                     console.log(`POWERUP: clipboard write success`);
                                 },()=>{
