@@ -3349,6 +3349,8 @@ var DashboardPowerups = (function () {
                                     let err = `POWERUP: SANKEY - clipboard failure 1st attempt... retrying in 500ms`;
                                     console.log(err);
 
+                                    txtarea.focus();
+                                    txtarea.select();
                                     setTimeout(() => {
                                         txtarea.focus();
                                         txtarea.select();
