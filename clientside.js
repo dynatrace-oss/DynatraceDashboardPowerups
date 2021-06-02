@@ -3323,17 +3323,18 @@ var DashboardPowerups = (function () {
 
                     async function saveJSON(e) {
                         let json = JSON.stringify(params.filter).replace(/\\"/g, '\\\\"');
-                        /*let confirmed = confirm(`To save current filters:
-                        1. Click OK below to copy JSON to clipboard
-                        2. Edit dashboard
-                        3. Add Markdown tile with PU(link) syntax
-                        4. Paste JSON data on a seperate line
-                        5. Add 'flink' parameter to existing PU(sankey)`);*/
+                        let alertTxt = `To save current filters:
+                        1. Click OK below. JSON has been copied to clipboard.
+                        2. Edit dashboard.
+                        3. Add Markdown tile with PU(link) syntax.
+                        4. Paste JSON data on a seperate line.
+                        5. Add 'flink' parameter to existing PU(sankey).`
 
                         if (true) {
                             try {
                                 await navigator.clipboard.writeText(json);
                                 console.log('POWERUP: DEBUG - clipboard success');
+                                alert(alertTxt);
                             } catch (err) {
                                 console.error('POWERUP: ERROR - Failed to copy: ', err);
 
@@ -3367,9 +3368,14 @@ var DashboardPowerups = (function () {
                                                 console.log(err);
                                                 errorBeacon(err);
                                             }
+                                            else {
+                                                $txtarea.remove();
+                                                alert(alertTxt);
+                                            }
                                         }, 500);
                                     } else {
                                         $txtarea.remove();
+                                        alert(alertTxt);
                                     }
                                 } catch (err) {
                                     console.log(`POWERUP: clipboard failure - ${err.message}`);
