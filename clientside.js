@@ -3860,8 +3860,8 @@ var DashboardPowerups = (function () {
 
                             list
                                 .forEach(x => {
-                                    let fromDrilldown = (data.apdexList.find(a => a.app === x.fromApp && a.actionName === x.from) || {drilldown:`#uemapplication`}).drilldown;
-                                    let toDrilldown = (data.apdexList.find(a => a.app === x.toApp && a.actionName === x.to) || {drilldown:`#uemapplication`}).drilldown;
+                                    let fromDrilldown = (data.apdexList.find(a => a.app === x.fromApp && a.actionName === x.from) || {drilldown:null}).drilldown;
+                                    let toDrilldown = (data.apdexList.find(a => a.app === x.toApp && a.actionName === x.to) || {drilldown:null}).drilldown;
                                     let $tr = $(`<tr></tr>`);
                                     let $col0 = $(`<td><img src='${pub.SVGLib() + vis + '.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`).appendTo($tr);
                                     let $col1 = $(`<td>${x.fromApp}</td>`).appendTo($tr);
