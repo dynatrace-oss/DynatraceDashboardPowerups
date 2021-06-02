@@ -265,16 +265,17 @@ and Markdown tile to get swapped out like this:
 Explanation:
 - `!PU(sankey):` - denotes the powerup source
 - `link=` - points to markdown tile via the link powerup
-- `kpi=` - the name of a User Action Property to be displayed in the main tooltip, usually something like revenue
+- `kpi=` - (optional) the name of a User Action Property to be displayed in the main tooltip, usually something like revenue
 - `kpicurr=` - (optional) how to format the KPI if its a currency, e.g. USD, EUR, CNY. If omitted, will format with max 2 fractional digits
-- `convHack=true` - (optional) label first action with "Start: " and last action with "End: ".
-- `convHack=2` - (optional) new mode which injects an artificial "START" and "END" node to make it more clear where flows start and end. As of 1.44 this is now the default. If you prefer the old mode, set `convHack=false`.
-- `colors=apdex` - (optional) color nodes based on apdex. As of 1.44 this is now the default. 
+<!--- `convHack=true` - (optional) label first action with "Start: " and last action with "End: ".
+- `convHack=2` - (optional) new mode which injects an artificial "START" and "END" node to make it more clear where flows start and end. As of 1.44 this is now the default. If you prefer the old mode, set `convHack=false`.-->
+- `colors=apdex` - (optional) set default color mode to apdex. As of 1.44 this is now the default. 
     - `colors=false` - rainbow colors, which makes it easier to see links.
     - `colors=errors` - highlight actions with errors, yellow > 1 error, red > 10
     - `colors=crashes` - highlight actions leading to a crash (mobile/custom only)
-- `exclude=Search,recent` - (optional) comma seperated list of case-sensitive strings to exclude from useraction list.
-- `include=Search,recent` - (optional) comma seperated list of case-sensitive strings to only include from useraction list.
+- `exclude=Search,recent` - (optional) comma seperated list of case-sensitive strings to hide from useraction list. Note: where possible it is recommended to limit via the USQL where clause instead to provide more meaningful data.
+- `include=Search,recent` - (optional) comma seperated list of case-sensitive strings to only include from useraction list, all others will be hidden. Note: where possible it is recommended to limit via the USQL where clause instead to provide more meaningful data.
+- `limit=20` - (optional) default amount of action to action links to show in the chart, defaults to 20. Valid values are integers from 2 to 100.
 
 Example:
 ![Sankey](Assets/sankey.png)
