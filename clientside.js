@@ -3325,7 +3325,7 @@ var DashboardPowerups = (function () {
                         1. Click OK below to copy JSON to clipboard
                         2. Edit dashboard
                         3. Add Markdown tile with PU(link) syntax
-                        4. Paste JSON data
+                        4. Paste JSON data on a seperate line
                         5. Add 'flink' parameter to existing PU(sankey)`);
 
                         if(confirmed) {
@@ -4153,7 +4153,11 @@ var DashboardPowerups = (function () {
                     if (flink) {
                         let filterMD = pub.findLinkedMarkdown(flink, PU_SANKEY);
                         if (filterMD) {
-                            let filtertxt = $(filterMD).text();
+                            let filtertxt = $(filterMD).text()
+                            .split('\n')
+                            .slice(1)
+                            .join('\n')
+                            .trim();
                             let filterJSON;
                             try {
                                 if (filtertxt){
