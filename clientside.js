@@ -2804,7 +2804,7 @@ var DashboardPowerups = (function () {
                 }
             }
 
-            function newChart(data, container, params, limit = 21) {
+            function newChart(data, container, params, limit = 20) {
                 if (!data) return false;
                 const HARDMAX = 100;
                 let mobile = false;
@@ -3235,12 +3235,12 @@ var DashboardPowerups = (function () {
                                     break;
                                 case "exclude":
                                     if (Array.isArray(f.exclude) && f.exclude.length) {
-                                        txt = `X - Exclude actions containing: ${f.exclude.join(',')}`;
+                                        txt = `X - Hide actions containing: ${f.exclude.join(',')}`;
                                     }
                                     break;
                                 case "includeonly":
                                     if (Array.isArray(f.include) && f.include.length) {
-                                        txt = `X - Include only actions containing: ${f.include.join(',')}`;
+                                        txt = `X - Hide all actions except containing: ${f.include.join(',')}`;
                                     }
                                     break;
                                 case "action":
@@ -3678,11 +3678,11 @@ var DashboardPowerups = (function () {
                             </th>
                             <th class="powerupSankeyPopupTooltip">
                                 <img src='${pub.SVGLib() + 'and-not.svg'}' alt="Sessions not including action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-lightpurple'>
-                                <span class="powerupSankeyPopupTooltipText">Sessions not including action</span>
+                                <span class="powerupSankeyPopupTooltipText">Filter sessions not including action</span>
                             </th>
                             <th class="powerupSankeyPopupTooltip">
                                 <img src='${pub.SVGLib() + 'and.svg'}' alt="Sessions including action" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-lightpurple'>
-                                <span class="powerupSankeyPopupTooltipText">Sessions including action</span>
+                                <span class="powerupSankeyPopupTooltipText">Filter sessions including action</span>
                             </th>
                             </tr>
                         `);//.appendTo($table);
