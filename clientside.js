@@ -3823,7 +3823,7 @@ var DashboardPowerups = (function () {
                         let $popup = $("<div>") //Do this first to ensure we don't introduce encoding errors later
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
-                            .on("click", ":not(input)", ()=>{$popup.remove();})
+                            .on("click", ":not(input)", () => { $popup.remove(); })
                             .appendTo(container);
 
                         let $table = $(`<table>`).appendTo($popup);
@@ -3860,16 +3860,16 @@ var DashboardPowerups = (function () {
 
                             list
                                 .forEach(x => {
-                                    let fromDrilldown = (data.apdexList.find(a => a.app === x.fromApp && a.actionName === x.from) || {drilldown:null}).drilldown;
-                                    let toDrilldown = (data.apdexList.find(a => a.app === x.toApp && a.actionName === x.to) || {drilldown:null}).drilldown;
+                                    let fromDrilldown = (data.apdexList.find(a => a.app === x.fromApp && a.actionName === x.from) || { drilldown: null }).drilldown;
+                                    let toDrilldown = (data.apdexList.find(a => a.app === x.toApp && a.actionName === x.to) || { drilldown: null }).drilldown;
                                     let $tr = $(`<tr></tr>`);
                                     let $col0 = $(`<td><img src='${pub.SVGLib() + vis + '.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`).appendTo($tr);
                                     let $col1 = $(`<td>${x.fromApp}</td>`).appendTo($tr);
-                                    let $col2 = $(`<td><a href="${fromDrilldown}">${x.from}</a></td>`).appendTo($tr);
+                                    let $col2 = $(`<td>` + (fromDrilldown ? `<a href="${fromDrilldown}">${x.from}</a>` : `${x.from}`) + `</td>`).appendTo($tr);
                                     let $col3 = $(`<td>${x.toApp}</td>`).appendTo($tr);
-                                    let $col4 = $(`<td><a href="${toDrilldown}">${x.to}</a></td>`).appendTo($tr);
+                                    let $col4 = $(`<td>` + (toDrilldown ? `<a href="${toDrilldown}">${x.to}</a>` : `${x.to}`) + `</td>`).appendTo($tr);
                                     let $col5 = $(`<td>${x.weight}</td>`).appendTo($tr);
-                                    
+
                                     $tr.appendTo($table);
                                 });
                         }
