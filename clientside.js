@@ -3867,7 +3867,7 @@ var DashboardPowerups = (function () {
                                     let $col1 = $(`<td>${x.fromApp}</td>`).appendTo($tr);
                                     let $col2 = $(`<td><a href="${fromDrilldown}">${x.from}</a></td>`).appendTo($tr);
                                     let $col3 = $(`<td>${x.toApp}</td>`).appendTo($tr);
-                                    let $col4 = $(`<td><a href="${toDrilldown}">${x.too}</a></td>`).appendTo($tr);
+                                    let $col4 = $(`<td><a href="${toDrilldown}">${x.to}</a></td>`).appendTo($tr);
                                     let $col5 = $(`<td>${x.weight}</td>`).appendTo($tr);
                                     
                                     $tr.appendTo($table);
