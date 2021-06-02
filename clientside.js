@@ -3428,6 +3428,12 @@ var DashboardPowerups = (function () {
                             html += `<li>Errors: <a href="javascript:" class="powerupFilterProp" data-errors="true" data-filter="errors">${node.apdex.errors}</a></li>`;
                         }
 
+                        if(data.UAPs.doubles.length 
+                            || data.UAPs.longs.length
+                            || data.UAPs.strings.length
+                            || data.UAPs.dates.length)
+                            html += `<li><u>User Action Properties</u></li>`;
+
                         if (data.UAPs.doubles.length) {
                             html += `<li>Double Properties:<ul>`;
                             data.UAPs.doubles
