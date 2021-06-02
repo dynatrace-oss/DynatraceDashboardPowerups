@@ -2049,6 +2049,7 @@ var DashboardPowerups = (function () {
     pub.sankeyPowerUp = function () {
         if (!pub.config.Powerups.sankeyPU) return;
         let re = /\/\d+(\/.*)?$/;
+        const HARDMAX = 100;
         (function (H) {
 
             //workaround from: https://github.com/highcharts/highcharts/issues/9300
@@ -2806,7 +2807,7 @@ var DashboardPowerups = (function () {
 
             function newChart(data, container, params, limit = 20) {
                 if (!data) return false;
-                const HARDMAX = 100;
+                
                 let mobile = false;
                 if (data.applicationTypes.includes('MOBILE_APPLICATION')
                     || data.applicationTypes.includes('CUSTOM_APPLICATION')) mobile = true;
@@ -4067,6 +4068,9 @@ var DashboardPowerups = (function () {
                     if (exclude) exclude = exclude.split(",");
                     let include = (args.find(x => x[0] == "include") || [])[1];
                     if (include) include = include.split(",");
+                    let limit = (args.find(x => x[0] == "limit") || [])[1] || 20;
+                    limit = Math.max(2,limit);
+                    limit = Math.min(limit,HARDMAX);
 
                     let container = findContainer(link);
                     if (typeof (container) == "undefined") {
@@ -4097,7 +4101,7 @@ var DashboardPowerups = (function () {
                     if (Array.isArray(include) && include.length)
                         params.filter.push({ filter: "includeonly", include: include });
                     let data = readTableData($table.get(0), params);
-                    let sankey = newChart(data, container, params);
+                    let sankey = newChart(data, container, params, limit);
                     $(".highcharts-exporting-group").addClass("powerupVisible");
                     powerupsFired['PU_SANKEY'] ? powerupsFired['PU_SANKEY']++ : powerupsFired['PU_SANKEY'] = 1;
                 });
