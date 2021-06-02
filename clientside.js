@@ -3031,8 +3031,8 @@ var DashboardPowerups = (function () {
                         apdexSatisfied: apdex.satisfied.toString(),
                         apdexTolerating: apdex.tolerating.toString(),
                         apdexFrustrated: apdex.frustrated.toString(),
-                        entryAction: (apdex.entryAction ? 'true' : 'false'),
-                        exitAction: (apdex.exitAction ? 'true' : 'false'),
+                        entryAction: apdex.entryAction, //(apdex.entryAction ? 'true' : 'false'),
+                        exitAction: apdex.exitAction, //(apdex.exitAction ? 'true' : 'false'),
                         errors: apdex.errors,
                         crashes: apdex.crashes
                     }
