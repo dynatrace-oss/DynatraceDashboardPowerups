@@ -213,7 +213,7 @@ h1.powerup-color-normal {
 .powerup-sankey-icon {
   width: 20px;
   height: 20px;
-  /*background-color: #242424;*/
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .powerup-icon-yellow {
@@ -637,7 +637,6 @@ tr.powerupSubHeader th {
 }
 
 .powerupSankeySaveButton svg {
-  /*background: white;
-  fill:#a972cc;*/
-  cursor: grab;
+  background: white;
+  cursor: context-menu;
 }
