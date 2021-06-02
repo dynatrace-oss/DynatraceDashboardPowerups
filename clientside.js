@@ -3279,7 +3279,7 @@ var DashboardPowerups = (function () {
                             y += inc;
                         });
                     }
-                    
+
                     let $dropdown;
                     //Create color mode dropdown
                     {
@@ -3312,17 +3312,17 @@ var DashboardPowerups = (function () {
                             .addClass('powerupSankeySaveButton')
                             .css("left", `${left}px`)
                             .css("top", "35px")
-                            .css("height","35px")
-                            .css("width","35px")
+                            .css("height", "35px")
+                            .css("width", "35px")
                             .appendTo($container);
                         let $button = $(`<img src="${pub.SVGLib() + 'backup.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'>`)
                             .appendTo($savebutton);
-                        $savebutton.on("click",saveJSON);
+                        $savebutton.on("click", saveJSON);
                     }
 
 
-                    function saveJSON(e){
-                        let json = JSON.stringify(params.filter).replace(/\\"/g,'\\\\"');
+                    function saveJSON(e) {
+                        let json = JSON.stringify(params.filter).replace(/\\"/g, '\\\\"');
                         let confirmed = confirm(`To save current filters:
                         1. Click OK below to copy JSON to clipboard
                         2. Edit dashboard
@@ -3330,25 +3330,37 @@ var DashboardPowerups = (function () {
                         4. Paste JSON data on a seperate line
                         5. Add 'flink' parameter to existing PU(sankey)`);
 
-                        if(confirmed) {
+                        if (confirmed) {
                             try {
                                 let $txtarea = $(`<textarea>`)
-                                .text(json)
-                                .css("position","absolute")
-                                .css("height","100px")
-                                .css("width","100px")
-                                .css("top","110%")
-                                .css("right","0px")
-                                .css("z-index","10000")
-                                .appendTo(`body`);
+                                    .text(json)
+                                    .css("position", "absolute")
+                                    .css("height", "100px")
+                                    .css("width", "100px")
+                                    .css("top", "110%")
+                                    .css("right", "0px")
+                                    .css("z-index", "10000")
+                                    .appendTo(`body`);
                                 let txtarea = $txtarea.get(0);
                                 txtarea.focus();
                                 txtarea.select();
                                 let res = document.execCommand('copy');
-                                if(!res){
-                                    let err = `POWERUP: SANKEY - clipboard failure`;
+                                if (!res) {
+                                    let err = `POWERUP: SANKEY - clipboard failure 1st attempt... retrying in 500ms`;
                                     console.log(err);
-                                    errorBeacon(err);
+
+                                    setTimeout(() => {
+                                        txtarea.focus();
+                                        txtarea.select();
+                                        res = document.execCommand('copy');
+                                        if (!res) {
+                                            err = `POWERUP: SANKEY - clipboard failure 2nd attempt... Please manually copy-paste.`;
+                                            console.log(err);
+                                            errorBeacon(err);
+                                        }
+                                    }, 500);
+
+
                                 } else {
                                     $txtarea.remove();
                                 }
@@ -3357,14 +3369,14 @@ var DashboardPowerups = (function () {
                                 },()=>{
                                     console.log(`POWERUP: clipboard write fail`);
                                 });*/ //this gives a DOM exception for unknown reasons
-                            } catch(err){
+                            } catch (err) {
                                 console.log(`POWERUP: clipboard failure - ${err.message}`);
                                 console.log(document.activeElement);
                             }
 
-                            
+
                         }
-                            
+
                         e.stopPropagation();
                     }
 
@@ -4159,15 +4171,15 @@ var DashboardPowerups = (function () {
                         let filterMD = pub.findLinkedMarkdown(flink, PU_SANKEY);
                         if (filterMD) {
                             let filtertxt = $(filterMD).text()
-                            .split('\n')
-                            .slice(1)
-                            .join('\n')
-                            .trim();
+                                .split('\n')
+                                .slice(1)
+                                .join('\n')
+                                .trim();
                             let filterJSON;
                             try {
-                                if (filtertxt){
+                                if (filtertxt) {
                                     filterJSON = JSON.parse(filtertxt);
-                                    if(filterJSON) filter = filterJSON;
+                                    if (filterJSON) filter = filterJSON;
                                 }
                             } catch (e) {
                                 let error = `Powerup: WARN - Sankey filter JSON is invalid: ${filtertxt}`;
