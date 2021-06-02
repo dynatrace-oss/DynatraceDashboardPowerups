@@ -3334,7 +3334,7 @@ var DashboardPowerups = (function () {
                             //window.focus();
                             //if(document.activeElement) document.activeElement.blur();
                             try {
-                                let $txtarea = $(`textarea`)
+                                let $txtarea = $(`<textarea>`)
                                 .val(json)
                                 .appendTo(`body`)
                                 .focus()
