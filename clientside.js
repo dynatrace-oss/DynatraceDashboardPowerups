@@ -3321,13 +3321,17 @@ var DashboardPowerups = (function () {
 
                     function saveJSON(e){
                         let json = JSON.stringify(params.filter);
-                        alert(`To save current filters:
-                        1. Copy below JSON text
+                        let confirmed = confirm(`To save current filters:
+                        1. Click OK below to copy JSON to clipboard
                         2. Edit dashboard
                         3. Add Markdown tile with PU(link) syntax
-                        4. Add 'flink' parameter to existing PU(sankey)
+                        4. Paste JSON data
+                        5. Add 'flink' parameter to existing PU(sankey)
                         JSON:
                         ${json}`);
+
+                        if(confirmed) 
+                            navigator.clipboard.writeText(json);
                         e.stopPropagation();
                     }
 
