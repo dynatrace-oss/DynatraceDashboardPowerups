@@ -2922,10 +2922,10 @@ var DashboardPowerups = (function () {
                             Avg Duration: ${point.avgDuration}ms<br>
                             Is entry action: ${point.entryAction}<br>
                             Is exit action: ${point.exitAction}<br>
-                            Goal: ${point.conversionGoal}<br>
-                            ${uc(params.kpi)}: ${point[params.kpi]}<br>`
-                                + (point.selfActions ? `<br>
-                            <sup>*</sup> <small><i>includes ${point.selfActions} repeated actions</i></small>` : '')
+                            Goal: ${point.conversionGoal}<br>`
+                                + (params.kpi ? `${uc(params.kpi)}: ${point[params.kpi]}<br>` : ``)
+                                + (point.selfActions ? `<br><sup>*</sup> <small><i>includes ${point.selfActions} repeated actions</i></small>` : '')
+
                                 + `</div>`;
                             break;
                     }
