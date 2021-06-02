@@ -3320,7 +3320,7 @@ var DashboardPowerups = (function () {
 
 
                     function saveJSON(e){
-                        let json = JSON.stringify(params.filter);
+                        let json = JSON.stringify(params.filter).replace(/\\"/g,'\\\\"');
                         let confirmed = confirm(`To save current filters:
                         1. Click OK below to copy JSON to clipboard
                         2. Edit dashboard
@@ -3341,12 +3341,13 @@ var DashboardPowerups = (function () {
                                 txtarea.focus();
                                 txtarea.select();
                                 let res = document.execCommand('copy');
-                                $txtarea.remove();
                                 if(!res){
                                     let err = `POWERUP: SANKEY - clipboard failure`;
                                     console.log(err);
                                     errorBeacon(error);
-                                } 
+                                } else {
+                                    $txtarea.remove();
+                                }
                                 /*navigator.clipboard.writeText(json).then(()=>{
                                     console.log(`POWERUP: clipboard write success`);
                                 },()=>{
