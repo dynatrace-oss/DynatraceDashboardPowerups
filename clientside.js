@@ -4068,7 +4068,8 @@ var DashboardPowerups = (function () {
                     if (exclude) exclude = exclude.split(",");
                     let include = (args.find(x => x[0] == "include") || [])[1];
                     if (include) include = include.split(",");
-                    let limit = (args.find(x => x[0] == "limit") || [])[1] || 20;
+                    let limit = Number((args.find(x => x[0] == "limit") || [])[1]);
+                    if(isNaN(limit)) limit = 20;
                     limit = Math.max(2,limit);
                     limit = Math.min(limit,HARDMAX);
 
