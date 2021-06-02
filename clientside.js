@@ -3334,12 +3334,17 @@ var DashboardPowerups = (function () {
                             //window.focus();
                             //if(document.activeElement) document.activeElement.blur();
                             try {
-                                $(`body`).focus();
-                                navigator.clipboard.writeText(json).then(()=>{
+                                let $txtarea = $(`textarea`)
+                                .value(json)
+                                .appendTo(`body`)
+                                .focus()
+                                .select();
+                                document.execCommand('copy');
+                                /*navigator.clipboard.writeText(json).then(()=>{
                                     console.log(`POWERUP: clipboard write success`);
                                 },()=>{
                                     console.log(`POWERUP: clipboard write fail`);
-                                });
+                                });*/ //this gives a DOM exception for unknown reasons
                             } catch(err){
                                 console.log(`POWERUP: clipboard failure - ${err.message}`);
                                 console.log(document.activeElement);
