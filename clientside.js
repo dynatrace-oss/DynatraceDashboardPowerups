@@ -3335,11 +3335,16 @@ var DashboardPowerups = (function () {
                             //if(document.activeElement) document.activeElement.blur();
                             try {
                                 let $txtarea = $(`<textarea>`)
-                                .val(json)
+                                .text(json)
+                                .css("position","absolute")
+                                .css("height","100px")
+                                .css("width","100px")
+                                .css("top","110%")
                                 .appendTo(`body`)
                                 .focus()
                                 .select();
                                 document.execCommand('copy');
+                                $txtarea.remove();
                                 /*navigator.clipboard.writeText(json).then(()=>{
                                     console.log(`POWERUP: clipboard write success`);
                                 },()=>{
