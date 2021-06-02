@@ -3340,9 +3340,10 @@ var DashboardPowerups = (function () {
                                 .css("height","100px")
                                 .css("width","100px")
                                 .css("top","110%")
-                                .appendTo(`body`)
-                                .focus()
-                                .select();
+                                .appendTo(`body`);
+                                let txtarea = $txtarea.get(0);
+                                txtarea.focus();
+                                txtarea.select();
                                 document.execCommand('copy');
                                 $txtarea.remove();
                                 /*navigator.clipboard.writeText(json).then(()=>{
