@@ -3346,7 +3346,7 @@ var DashboardPowerups = (function () {
                                 if(!res){
                                     let err = `POWERUP: SANKEY - clipboard failure`;
                                     console.log(err);
-                                    errorBeacon(error);
+                                    errorBeacon(err);
                                 } else {
                                     $txtarea.remove();
                                 }
