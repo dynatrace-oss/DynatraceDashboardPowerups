@@ -3330,8 +3330,12 @@ var DashboardPowerups = (function () {
                         JSON:
                         ${json}`);
 
-                        if(confirmed) 
+                        if(confirmed) {
+                            window.focus();
+                            if(document.activeElement) document.activeElement.blur();
                             navigator.clipboard.writeText(json);
+                        }
+                            
                         e.stopPropagation();
                     }
 
