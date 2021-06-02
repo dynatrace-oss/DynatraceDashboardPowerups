@@ -3321,6 +3321,7 @@ var DashboardPowerups = (function () {
 
                     function saveJSON(e){
                         let json = JSON.stringify(params.filter);
+                        navigator.clipboard.writeText(json);
                         let confirmed = confirm(`To save current filters:
                         1. Click OK below to copy JSON to clipboard
                         2. Edit dashboard
@@ -3331,8 +3332,8 @@ var DashboardPowerups = (function () {
                         ${json}`);
 
                         if(confirmed) {
-                            window.focus();
-                            if(document.activeElement) document.activeElement.blur();
+                            //window.focus();
+                            //if(document.activeElement) document.activeElement.blur();
                             navigator.clipboard.writeText(json);
                         }
                             
