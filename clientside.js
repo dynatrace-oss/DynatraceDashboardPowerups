@@ -2807,7 +2807,7 @@ var DashboardPowerups = (function () {
 
             function newChart(data, container, params, limit = 20) {
                 if (!data) return false;
-                
+
                 let mobile = false;
                 if (data.applicationTypes.includes('MOBILE_APPLICATION')
                     || data.applicationTypes.includes('CUSTOM_APPLICATION')) mobile = true;
@@ -3279,11 +3279,13 @@ var DashboardPowerups = (function () {
                             y += inc;
                         });
                     }
+                    
+                    let $dropdown;
                     //Create color mode dropdown
                     {
                         let left = Math.round(Number($(chart.container).css("width").replace(/px/, '')) * 0.66);
                         let $container = $(chart.container).parent();
-                        let $dropdown = $(`<div>Color mode: </div>`)
+                        $dropdown = $(`<div>Color mode: </div>`)
                             .addClass('powerupSankeyDropdown')
                             .css("left", `${left}px`)
                             .css("top", "35px")
@@ -3297,6 +3299,36 @@ var DashboardPowerups = (function () {
                         $(`<option value="false">Rainbow</option>`).appendTo($select);
                         $select.val(params.colors);
                         $select.on("change", setColorMode);
+                    }
+
+                    //button to dump filters to JSON
+                    if (Array.isArray(params.filter) && params.filter.length) {
+                        let space = 20;
+                        let dropdownRight = Math.round(Number($(chart.container).css("width").replace(/px/, '')) * 0.66); //if no dropdown, default to where it would have been
+                        dropdownRight = Number($dropdown.css("left").replace(/px/, '')) + Number($dropdown.css("width").replace(/px/, ''));
+                        let left = dropdownRight + space;
+                        let $container = $(chart.container).parent();
+                        let $savebutton = $(`<div></div>`)
+                            .addClass('powerupSankeySaveButton')
+                            .css("left", `${left}px`)
+                            .css("top", "35px")
+                            .appendTo($container);
+                        let $button = $(`<img src="${pub.SVGLib() + 'backup.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-teal'>`)
+                            .on("click",saveJSON)
+                            .appendTo($savebutton);
+                    }
+
+
+                    function saveJSON(e){
+                        let json = JSON.stringify(params.filter);
+                        alert(`To save current filters:
+                        1. Copy below JSON text
+                        2. Edit dashboard
+                        3. Add Markdown tile with PU(link) syntax
+                        4. Add 'flink' parameter to existing PU(sankey)
+                        JSON:
+                        ${json}`);
+                        e.stopPropagation();
                     }
 
                     //recolor links based on to node instead of from
@@ -3429,7 +3461,7 @@ var DashboardPowerups = (function () {
                             html += `<li>Errors: <a href="javascript:" class="powerupFilterProp" data-errors="true" data-filter="errors">${node.apdex.errors}</a></li>`;
                         }
 
-                        if(data.UAPs.doubles.length 
+                        if (data.UAPs.doubles.length
                             || data.UAPs.longs.length
                             || data.UAPs.strings.length
                             || data.UAPs.dates.length)
@@ -4060,6 +4092,7 @@ var DashboardPowerups = (function () {
                         return false;
                     }
                     let link = args.find(x => x[0] == "link")[1];
+                    let flink = (args.find(x => x[0] == "flink") || [])[1];
                     let kpi = (args.find(x => x[0] == "kpi") || [])[1];
                     let kpicurr = (args.find(x => x[0] == "kpicurr") || [])[1];
                     let convHack = (args.find(x => x[0] == "convHack") || [])[1] || "2";
@@ -4069,9 +4102,10 @@ var DashboardPowerups = (function () {
                     let include = (args.find(x => x[0] == "include") || [])[1];
                     if (include) include = include.split(",");
                     let limit = Number((args.find(x => x[0] == "limit") || [])[1]);
-                    if(isNaN(limit)) limit = 20;
-                    limit = Math.max(2,limit);
-                    limit = Math.min(limit,HARDMAX);
+                    if (isNaN(limit)) limit = 20;
+                    limit = Math.max(2, limit);
+                    limit = Math.min(limit, HARDMAX);
+                    let filter = [];
 
                     let container = findContainer(link);
                     if (typeof (container) == "undefined") {
@@ -4084,6 +4118,23 @@ var DashboardPowerups = (function () {
                         //destroyChartsAndContainers($tile.get(0));
                         return false;
                     }
+                    if (flink) {
+                        let filterMD = pub.findLinkedMarkdown(flink, PU_SANKEY);
+                        if (filterMD) {
+                            let filtertxt = $(filterMD).text();
+                            let filterJSON;
+                            try {
+                                if (filtertxt){
+                                    filterJSON = JSON.parse(filtertxt);
+                                    if(filterJSON) filter = filterJSON;
+                                }
+                            } catch (e) {
+                                let error = `Powerup: WARN - Sankey filter JSON is invalid: ${filtertxt}`;
+                                console.log(error);
+                                errorBeacon(error);
+                            }
+                        }
+                    }
 
                     let params = {
                         title: chartTitle,
@@ -4091,11 +4142,9 @@ var DashboardPowerups = (function () {
                         kpicurr: kpicurr,
                         convHack: convHack,
                         colors: colors,
-                        //exclude: exclude,
-                        //include: include,
                         table: $table,
                         container: container,
-                        filter: []
+                        filter: filter
                     };
                     if (Array.isArray(exclude) && exclude.length)
                         params.filter.push({ filter: "exclude", exclude: exclude });
