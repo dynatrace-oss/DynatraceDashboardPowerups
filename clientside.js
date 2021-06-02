@@ -3944,7 +3944,9 @@ var DashboardPowerups = (function () {
                                     .on("change", innerAddRemoveFilter)
                                     .on("click", function (e) { 
                                         e.stopPropagation(); 
-                                        $popup.on("click", ":not(input)", closePopup); //replace magically disappearing handler
+                                        setTimeout(()=>{
+                                            $popup.on("click", ":not(input)", closePopup); //replace magically disappearing handler
+                                        },50);
                                     });
                             }
                         }
