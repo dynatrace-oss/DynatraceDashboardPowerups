@@ -2871,10 +2871,7 @@ var DashboardPowerups = (function () {
                 function tooltipNodeFormatter() {
                     let point = this;
                     let tt = "";
-                    /*if (!$(point.graphic.element).is(`:hover`)) { //try to avoid weird Highcharts hover bug
-                        console.log("POWERUP: ERROR - Sankey - nodeFormatter run on non-hover object");
-                        return false;
-                    }*/
+
                     switch (point.id) {
                         case "START":
                             let nonEntryActions = false;
@@ -3837,7 +3834,7 @@ var DashboardPowerups = (function () {
                         let $popup = $("<div>") //Do this first to ensure we don't introduce encoding errors later
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
-                            .on("click", ":not(input)", () => { $popup.remove(); })
+                            .on("click", ":not(input)", closePopup)
                             .appendTo(container);
 
                         let $table = $(`<table>`).appendTo($popup);
@@ -3948,6 +3945,23 @@ var DashboardPowerups = (function () {
                                     .on("click", function (e) { e.stopPropagation(); });
                             }
                         }
+
+                        $(`<div class="powerupSankeyDisclaimer">`
+                            + `<sup>*</sup> Note: counts based on a filtered sample. `
+                            + `This may not include all matching crashes in total session population. <br>If you require deep analytics, please contact `
+                            + `<a href="mailto:insights@dynatrace.com">Business Insights</a>.</div>`)
+                            .appendTo($popup);
+                            
+                            function closePopup(e) {
+                                let el = e.target;
+                                let $el = $(el);
+    
+                                $popup.remove();
+                                if (filtersDirty) {
+                                    let data = readTableData(params.table, params);
+                                    newChart(data, container, params, limit);
+                                }
+                            }
                     }
 
                     function setColorMode(e) {
