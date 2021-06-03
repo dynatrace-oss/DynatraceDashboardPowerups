@@ -2814,8 +2814,8 @@ var DashboardPowerups = (function () {
                                     );
                                     if (foIdx < 0)
                                     filteredOut.push({ 
-                                        actionName: x.name, 
-                                        app: x.app,
+                                        actionName: row["useraction.name"][k], 
+                                        app: row["useraction.application"][k],
                                         count: 1 });
                                 else
                                     filteredOut[foIdx].count += 1;
