@@ -3767,7 +3767,7 @@ var DashboardPowerups = (function () {
                         let $popup = $("<div>") //Do this first to ensure we don't introduce encoding errors later
                             .addClass("powerupSankeyDetailPopup")
                             .html(html)
-                            .on("click", ":not(input)", closePopup)
+                            //.on("click", ":not(input)", closePopup)
                             .appendTo(container);
 
                         let $table = $(`<table>`).appendTo($popup);
@@ -3901,6 +3901,9 @@ var DashboardPowerups = (function () {
                             }
                         }
 
+                        $(`<div class="powerupSankeyButton">Filter</div>`)
+                            .appendTo($popup)
+                            .on("click", closePopup);
 
                         $(`<div class="powerupSankeyDisclaimer">`
                             + `<sup>*</sup> Note: counts based on a filtered sample. `

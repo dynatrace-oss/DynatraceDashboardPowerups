@@ -640,3 +640,18 @@ tr.powerupSubHeader th {
   background: white;
   cursor: context-menu;
 }
+
+.powerupSankeyButton {
+  width: 60px;
+  height: 25px;
+  position: absolute;
+  right: 15px;
+  color: #00a1b2;
+  font-size: 14px;
+  border-width: 1px;
+  border-color: #00a1b2;
+  white-space: nowrap;
+  text-align: center;
+  border-radius: 3px;
+  background-color: white;
+}
