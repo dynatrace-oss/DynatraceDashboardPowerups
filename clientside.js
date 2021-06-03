@@ -3554,7 +3554,8 @@ var DashboardPowerups = (function () {
                         }
                         let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name.replace(/"/g, `""`)}"`);
                         let html = `<div><p><a href='${link}'><b>${name}</b></a>`
-                        + `<a href="javascript:" class="powerupFilterProp" data-action="${name}" data-app="${node.app}" data-filter="action"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-lightpurple'></a>`
+                        + `<a href="javascript:" class="powerupFilterProp" data-filter="action"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-lightpurple'></a>`
+                        //HACK: add data elements later for quote handling
                         + `:</p><ul>`;
 
                         //app
@@ -3690,6 +3691,11 @@ var DashboardPowerups = (function () {
                             .html(html)
                             .click(() => { $popup.remove(); })
                             .appendTo(container);
+
+                        //fill in data elements
+                        $popup.find(`a.powerupFilterProp[data-filter="action"]`)
+                            .data("action",name)
+                            .data("app",node.app)
 
                         $popup.find(`.powerupFilterProp`)
                             .on("click", filterProp);
