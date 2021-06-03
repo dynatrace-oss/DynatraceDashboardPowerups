@@ -313,7 +313,7 @@ h1.powerup-color-normal {
   background: #242424;
   opacity: 0.95;
   height: 80%;
-  width: 80%;
+  width: 90%;
   margin: 50px 20px;
   overflow: auto !important;
   padding: 10px;
@@ -658,4 +658,22 @@ tr.powerupSubHeader th {
   white-space: nowrap;
   text-align: center;
   background-color: white;
+}
+
+.powerSankeyColSmall {
+  width: 20px;
+  text-align: center;
+  word-break: normal;
+}
+
+.powerSankeyColMedium {
+  width: 15%;
+  text-align: right;
+  word-break: normal;
+}
+
+.powerSankeyColLarge {
+  width: 30%;
+  text-align: left;
+  word-break: break-all;
 }
