@@ -3310,7 +3310,7 @@ var DashboardPowerups = (function () {
                             .length)
                             $(node.graphic.element)
                                 .css("stroke","#a972cc")
-                                .css("stroke-width","2px");
+                                .css("stroke-width","3px");
                     });
                     chart.series[0].data.forEach(link =>{
                         if(Array.isArray(params.filter))
@@ -3320,9 +3320,9 @@ var DashboardPowerups = (function () {
                             && f.to === link.to
                             && f.toApp === link.toApp
                             ).length)
-                            $(node.graphic.element)
+                            $(link.graphic.element)
                                 .css("stroke","#a972cc")
-                                .css("stroke-width","2px");
+                                .css("stroke-width","3px");
                     })
                     
 
