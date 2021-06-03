@@ -3301,6 +3301,18 @@ var DashboardPowerups = (function () {
                         });
                     }
 
+                    //filter highlighting
+                    chart.series[0].nodes.forEach(node =>{
+                        if(Array.isArray(params.filter))
+                        if(params.filter.filter(f => 
+                            f.action === node.id
+                            && f.app === node.app).length)
+                            $(node.graphic.element)
+                                .css("stroke","#a972cc")
+                                .css("stroke-width","2px");
+                    })
+                    
+
                     //close all popups
                     $container.find(`.highcharts-background`)
                         .on("click", (e) => {
