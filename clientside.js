@@ -2248,17 +2248,22 @@ var DashboardPowerups = (function () {
                                 let fromIdx;
                                 switch (f.filter) {
                                     case "touple":
-                                        if (f.from !== undefined && f.to !== undefined) { //TODO: refactor ifelse branches with a switch on f.filter
+                                        if (f.from !== undefined && f.to !== undefined) { 
+                                            
                                             fromIdx = filtered.findIndex((x, i, arr) =>
                                                 x.name === f.from
+                                                && (f.fromApp !== undefined? f.fromApp === x.fromApp : true)
+                                                && (f.toApp !== undefined? f.fromApp === x.toApp : true)
                                                 && arr.length > i + 1
                                                 && arr[i + 1].name === f.to);
                                         }
                                         break;
                                     case "nottouple":
-                                        if (f.from !== undefined && f.to !== undefined) { //TODO: refactor ifelse branches with a switch on f.filter
+                                        if (f.from !== undefined && f.to !== undefined) { 
                                             let idx = filtered.findIndex((x, i, arr) =>
                                                 x.name === f.from
+                                                && (f.fromApp !== undefined? f.fromApp === x.fromApp : true)
+                                                && (f.toApp !== undefined? f.fromApp === x.toApp : true)
                                                 && arr.length > i + 1
                                                 && arr[i + 1].name === f.to);
                                             if (idx > -1) filtered = []; //this row filtered out
@@ -4024,6 +4029,8 @@ var DashboardPowerups = (function () {
                                         .data('filter', "nottouple")
                                         .data('from', x.from)
                                         .data('to', x.to)
+                                        .data('fromApp', x.fromApp)
+                                        .data('toApp', x.toApp)
                                         .appendTo($col6);
 
                                     let $col7 = $(`<td></td>`).appendTo($tr);
@@ -4031,6 +4038,8 @@ var DashboardPowerups = (function () {
                                         .data('filter', "touple")
                                         .data('from', x.from)
                                         .data('to', x.to)
+                                        .data('fromApp', x.fromApp)
+                                        .data('toApp', x.toApp)
                                         .appendTo($col7);
 
                                     $tr.find(`input[type="checkbox"]`).each((i, el) => initCheck(el));
