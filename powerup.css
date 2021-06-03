@@ -665,7 +665,7 @@ table.powerupLinkPopup {
   width: 100%;
 }
 
-table.powerupLinkPopup th {
+table.powerupLinkPopup tr:not(.powerupSubHeader) th {
   position: sticky;
   top: -10px;
   background: #242424;
