@@ -2799,25 +2799,29 @@ var DashboardPowerups = (function () {
 
                 function findFilteredActions(normalTable, apdexList) {
                     let filteredOut = [];
-                    normalTable
-                        .map(x => ({name:x["useraction.name"], app:x["useraction.application"]}))
-                        .flat()
-                        .filter(x => actionDetailList.findIndex(ad => 
-                            ad.actionName === x.name
-                            && ad.app === x.app
-                            ) < 0)
-                        .forEach(x => {
-                            let idx = filteredOut.findIndex(fo => 
-                                fo.actionName === x.name
-                                && fo.app === x.app);
-                            if (idx < 0)
-                                filteredOut.push({ 
-                                    actionName: x.name, 
-                                    app: x.app,
-                                    count: 1 });
-                            else
-                                filteredOut[idx].count += 1;
-                        })
+                    normalTable.forEach(row => {
+                        let arr = row["useraction.name"];
+                        if (!Array.isArray(arr)) return false;
+                        for (let k = 0; k < arr.length; k++) {
+                            let idx = actionDetailList.findIndex(ad => 
+                                ad.actionName === row["useraction.name"][k]
+                                && ad.app === row["useraction.application"][k]
+                                );
+                            if(idx < 0){
+                                let foIdx = filteredOut.findIndex(fo => 
+                                    fo.actionName === row["useraction.name"][k]
+                                    && fo.app === row["useraction.application"][k]
+                                    );
+                                    if (foIdx < 0)
+                                    filteredOut.push({ 
+                                        actionName: x.name, 
+                                        app: x.app,
+                                        count: 1 });
+                                else
+                                    filteredOut[foIdx].count += 1;
+                            }
+                        }
+                    })
                     return filteredOut;
                 }
             }
