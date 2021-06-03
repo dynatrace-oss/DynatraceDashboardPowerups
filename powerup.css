@@ -665,7 +665,7 @@ table.powerupLinkPopup {
   width: 100%;
 }
 
-tr.powerupColHeaders {
+tr.powerupColHeaders th {
   position: sticky;
   top: -10px;
   background: #242424;
