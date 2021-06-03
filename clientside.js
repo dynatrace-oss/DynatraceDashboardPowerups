@@ -3280,6 +3280,13 @@ var DashboardPowerups = (function () {
                         });
                     }
 
+                    //close all popups
+                    $container.find(`.highcharts-background`)
+                        .on("click",(e)=>{
+                            $container.find(`.powerupSankeyDetailPopup`).remove();
+                            e.stopPropagation();
+                        });
+
                     let $dropdown;
                     //Create color mode dropdown
                     {
