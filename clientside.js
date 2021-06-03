@@ -3306,7 +3306,20 @@ var DashboardPowerups = (function () {
                         if(Array.isArray(params.filter))
                         if(params.filter.filter(f => 
                             f.action === node.id
-                            && f.app === node.app).length)
+                            && f.app === node.app)
+                            .length)
+                            $(node.graphic.element)
+                                .css("stroke","#a972cc")
+                                .css("stroke-width","2px");
+                    });
+                    chart.series[0].data.forEach(link =>{
+                        if(Array.isArray(params.filter))
+                        if(params.filter.filter(f => 
+                            f.from === link.from
+                            && f.fromApp === link.fromApp
+                            && f.to === link.to
+                            && f.toApp === link.toApp
+                            ).length)
                             $(node.graphic.element)
                                 .css("stroke","#a972cc")
                                 .css("stroke-width","2px");
