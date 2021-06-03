@@ -3453,7 +3453,9 @@ var DashboardPowerups = (function () {
                         let filter = {
                             filter: "touple",
                             from: link.from,
-                            to: link.to
+                            to: link.to,
+                            fromApp: link.fromApp,
+                            toApp: link.toApp
                         }
                         if (!Array.isArray(params.filter)) params.filter = [];
                         params.filter.push(filter);
