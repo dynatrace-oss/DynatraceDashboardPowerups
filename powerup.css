@@ -668,9 +668,15 @@ table.powerupLinkPopup {
 table.powerupLinkPopup th {
   position: sticky;
   top: 0px;
+  background: #242424;
 }
 
-table.powerupLinkPopup th:nth-of-type(1), table.powerupLinkPopup th:nth-of-type(7), table.powerupLinkPopup th:nth-of-type(8){
+table.powerupLinkPopup td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*table.powerupLinkPopup th:nth-of-type(1), table.powerupLinkPopup th:nth-of-type(7), table.powerupLinkPopup th:nth-of-type(8){
   width: 20px;
   text-align: center;
   word-break: normal;
@@ -692,4 +698,4 @@ table.powerupLinkPopup th:nth-of-type(6){
   width: 5%;
   text-align: right;
   word-break: normal;
-}
+}*/
