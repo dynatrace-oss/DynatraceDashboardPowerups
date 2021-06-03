@@ -642,22 +642,20 @@ tr.powerupSubHeader th {
 }
 
 .powerupSankeyButtonBar {
-  height: 30px;
   background: #242424;
-  opacity: 0.95;
   position: sticky;
-  bottom: 0px;
+  bottom: -10px;
 }
 
 .powerupSankeyButton {
-  width: 60px;
-  height: 25px;
-  margin-left: auto;
+  width: 70px;
+  margin: 5px 10px 5px auto;
+  padding: 2px 0px;
   color: #00a1b2;
   font-size: 14px;
   border: #00a1b2 1px solid;
+  border-radius: 3px;
   white-space: nowrap;
   text-align: center;
-  border-radius: 3px;
   background-color: white;
 }
