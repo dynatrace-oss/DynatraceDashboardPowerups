@@ -3772,7 +3772,7 @@ var DashboardPowerups = (function () {
 
                         let $table = $(`<table>`).appendTo($popup);
                         
-                        let $colHeaders = $(`<tr>
+                        let $colHeaders = $(`<tr class="powerupColHeaders">
                             <th>&nbsp;</th>
                             <!--<th>App</th>-->
                             <th>Action name</th>
@@ -3790,7 +3790,7 @@ var DashboardPowerups = (function () {
                                 <span class="powerupSankeyPopupTooltipText">Filter sessions including action</span>
                             </th>
                             </tr>
-                        `);//.appendTo($table);
+                        `).appendTo($table);
                         let cols = $colHeaders.find(`th`).length;
 
 
@@ -3830,9 +3830,9 @@ var DashboardPowerups = (function () {
 
                         function insertRows(header, vis, list) {
                             let $header = $(`<tr class="powerupSubHeader"><th colspan="${cols}">${header}</th></tr>`).appendTo($table);
-                            $colHeaders
+                            /*$colHeaders
                                 .clone()
-                                .appendTo($table);
+                                .appendTo($table);*/
 
                             list
                                 .forEach(x => {
@@ -3967,7 +3967,7 @@ var DashboardPowerups = (function () {
                         <col class="powerSankeyColIcon">
                         </colgroup>
                         `).appendTo($table);*/
-                        let $colHeaders = $(`<tr>
+                        let $colHeaders = $(`<tr class="powerupColHeaders">
                             <th>&nbsp;</th>
                             <th>From App</th>
                             <th>From Action</th>
