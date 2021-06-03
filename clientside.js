@@ -3771,7 +3771,7 @@ var DashboardPowerups = (function () {
                             .appendTo(container);
 
                         let $table = $(`<table class="powerupActionPopup">`).appendTo($popup);
-                        
+
                         let $colHeaders = $(`<tr class="powerupColHeaders">
                             <th>&nbsp;</th>
                             <!--<th>App</th>-->
@@ -3798,34 +3798,35 @@ var DashboardPowerups = (function () {
                         let goals = data.apdexList
                             .filter(x => x.goal)
                             .filter(x => data.actionsShown.includes(x.actionName))
-                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                            .sort((a, b) => b.count - a.count);
                         insertRows(`Actions with Conversion Goals:`, "overview", goals);
 
                         let entries = data.apdexList
                             .filter(x => x.entryAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
-                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                            //.sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                            .sort((a, b) => b.count - a.count);
                         insertRows(`Actions flagged as Entry Actions:`, "overview", entries);
 
                         let exits = data.apdexList
                             .filter(x => x.exitAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
-                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                            .sort((a, b) => b.count - a.count);
                         insertRows(`Actions flagged as Exit Actions:`, "overview", exits)
 
                         let other = data.apdexList
                             .filter(x => !x.goal && !x.entryAction && !x.exitAction)
                             .filter(x => data.actionsShown.includes(x.actionName))
-                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                            .sort((a, b) => b.count - a.count);
                         insertRows(`All other Actions:`, "overview", other);
 
                         let notShown = data.apdexList
                             .filter(x => !data.actionsShown.includes(x.actionName))
-                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1)
+                            .sort((a, b) => b.count - a.count);
                         insertRows(`Actions not currently shown:`, "dont-watch", notShown);
 
                         let filtered = data.filteredOut
-                            .sort((a, b) => a.actionName.toLowerCase() < b.actionName.toLowerCase() ? -1 : 1);
+                            .sort((a, b) => b.count - a.count);
                         insertRows(`Actions in sample but not in filtered sessions:`, "dont-watch", filtered);
 
                         function insertRows(header, vis, list) {
