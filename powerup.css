@@ -699,3 +699,7 @@ table.powerupLinkPopup tr > *:nth-of-type(6){
   text-align: right;
   word-break: normal;
 }
+
+table.powerupActionPopup tr > *:nth-of-type(3){
+  text-align: right;
+}

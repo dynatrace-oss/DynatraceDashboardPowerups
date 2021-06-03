@@ -3770,7 +3770,7 @@ var DashboardPowerups = (function () {
                             //.on("click", ":not(input)", closePopup)
                             .appendTo(container);
 
-                        let $table = $(`<table>`).appendTo($popup);
+                        let $table = $(`<table class="powerupActionPopup">`).appendTo($popup);
                         
                         let $colHeaders = $(`<tr class="powerupColHeaders">
                             <th>&nbsp;</th>
