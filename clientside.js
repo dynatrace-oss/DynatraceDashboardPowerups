@@ -2252,8 +2252,8 @@ var DashboardPowerups = (function () {
                                             
                                             fromIdx = filtered.findIndex((x, i, arr) =>
                                                 x.name === f.from
-                                                && (f.fromApp !== undefined? f.fromApp === x.fromApp : true)
-                                                && (f.toApp !== undefined? f.fromApp === x.toApp : true)
+                                                && (f.fromApp !== undefined? f.fromApp === x.app : true)
+                                                && (f.toApp !== undefined? f.fromApp === x.app : true)
                                                 && arr.length > i + 1
                                                 && arr[i + 1].name === f.to);
                                         }
@@ -2262,8 +2262,8 @@ var DashboardPowerups = (function () {
                                         if (f.from !== undefined && f.to !== undefined) { 
                                             let idx = filtered.findIndex((x, i, arr) =>
                                                 x.name === f.from
-                                                && (f.fromApp !== undefined? f.fromApp === x.fromApp : true)
-                                                && (f.toApp !== undefined? f.fromApp === x.toApp : true)
+                                                && (f.fromApp !== undefined? f.fromApp === x.app : true)
+                                                && (f.toApp !== undefined? f.fromApp === x.app : true)
                                                 && arr.length > i + 1
                                                 && arr[i + 1].name === f.to);
                                             if (idx > -1) filtered = []; //this row filtered out
