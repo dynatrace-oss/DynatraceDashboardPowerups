@@ -660,6 +660,11 @@ tr.powerupSubHeader th {
   background-color: white;
 }
 
+.powerupSankeyDetailPopup table {
+  table-layout: fixed;
+  width: 100%;
+}
+
 .powerSankeyColIcon {
   width: 20px;
   text-align: center;
