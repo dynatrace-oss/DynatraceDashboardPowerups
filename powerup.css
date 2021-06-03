@@ -644,12 +644,12 @@ tr.powerupSubHeader th {
 .powerupSankeyButton {
   width: 60px;
   height: 25px;
-  position: absolute;
-  right: 15px;
+  position: sticky;
+  bottom: 0px;
+  margin-left: auto;
   color: #00a1b2;
   font-size: 14px;
-  border-width: 1px;
-  border-color: #00a1b2;
+  border: #00a1b2 1px solid;
   white-space: nowrap;
   text-align: center;
   border-radius: 3px;
