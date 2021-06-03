@@ -2318,7 +2318,7 @@ var DashboardPowerups = (function () {
                                         if (f.action && f.action.length) {
                                             fromIdx = filtered.findIndex((x, i, arr) =>
                                                 x.name === f.action
-                                                && (f.aapp !== undefined? f.app === x.app : true)
+                                                && (f.app !== undefined? f.app === x.app : true)
                                                 );
                                         }
                                         break;
@@ -3554,7 +3554,7 @@ var DashboardPowerups = (function () {
                         }
                         let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name.replace(/"/g, `""`)}"`);
                         let html = `<div><p><a href='${link}'><b>${name}</b></a>`
-                        + `<a href="javascript:" class="powerupFilterProp" data-action="${name}" data-filter="action"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-lightpurple'></a>`
+                        + `<a href="javascript:" class="powerupFilterProp" data-action="${name}" data-app="${node.app}" data-filter="action"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-lightpurple'></a>`
                         + `:</p><ul>`;
 
                         //app
