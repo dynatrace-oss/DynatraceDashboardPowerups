@@ -3957,14 +3957,14 @@ var DashboardPowerups = (function () {
                         let $table = $(`<table>`).appendTo($popup);
                         let $cols = $(`
                         <colgroup>
-                        <col class="powerSankeyColSmall">
+                        <col class="powerSankeyColIcon">
                         <col class="powerSankeyColMedium">
                         <col class="powerSankeyColLarge">
                         <col class="powerSankeyColMedium">
                         <col class="powerSankeyColLarge">
-                        <col class="powerSankeyColMedium">
                         <col class="powerSankeyColSmall">
-                        <col class="powerSankeyColSmall">
+                        <col class="powerSankeyColIcon">
+                        <col class="powerSankeyColIcon">
                         </colgroup>
                         `).appendTo($table);
                         let $colHeaders = $(`<tr>

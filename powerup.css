@@ -660,20 +660,27 @@ tr.powerupSubHeader th {
   background-color: white;
 }
 
-.powerSankeyColSmall {
+.powerSankeyColIcon {
   width: 20px;
   text-align: center;
   word-break: normal;
 }
 
+.powerSankeyColSmall {
+  width: 5%;
+  text-align: right;
+  word-break: normal;
+}
+
 .powerSankeyColMedium {
-  width: 15%;
+  width: 10%;
   text-align: right;
   word-break: normal;
 }
 
 .powerSankeyColLarge {
-  width: 30%;
+  width: 35%;
   text-align: left;
   word-break: break-all;
+  text-overflow: ellipsis;
 }
