@@ -2317,13 +2317,17 @@ var DashboardPowerups = (function () {
                                     case "action":
                                         if (f.action && f.action.length) {
                                             fromIdx = filtered.findIndex((x, i, arr) =>
-                                                x.name === f.action);
+                                                x.name === f.action
+                                                && (f.aapp !== undefined? f.app === x.app : true)
+                                                );
                                         }
                                         break;
                                     case "notaction":
                                         if (f.action && f.action.length) {
                                             let idx = filtered.findIndex((x, i, arr) =>
-                                                x.name === f.action);
+                                                x.name === f.action)
+                                                && (f.aapp !== undefined? f.app === x.app : true)
+                                                ;
                                             if (idx > -1) filtered = []; //this row filtered out
                                         }
                                         break;
@@ -3781,7 +3785,7 @@ var DashboardPowerups = (function () {
 
                         let $colHeaders = $(`<tr class="powerupColHeaders">
                             <th>&nbsp;</th>
-                            <!--<th>App</th>-->
+                            <th>App</th>
                             <th>Action name</th>
                             <th>Count</th>
                             <th class="powerupSankeyPopupTooltip">
@@ -3846,6 +3850,7 @@ var DashboardPowerups = (function () {
                                 .forEach(x => {
                                     let $tr = $(`<tr></tr>`);
                                     let $col0 = $(`<td><img src='${pub.SVGLib() + vis + '.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-white'></td>`).appendTo($tr);
+                                    let $col05 = $(`<td>${x.app}</td>`).appendTo($tr);
                                     let $col1 = $(`<td><a href="${x.drilldown}">${x.actionName}</a></td>`).appendTo($tr);
                                     let $col2 = $(`<td>${x.count}</td>`).appendTo($tr);
                                     let $col3 = $(`<td></td>`).appendTo($tr);
@@ -3857,12 +3862,14 @@ var DashboardPowerups = (function () {
                                     let $col4 = $(`<td></td>`).appendTo($tr);
                                     let $excludeCheck = $(`<input type="checkbox">`)
                                         .data('action', x.actionName)
+                                        .data('app', x.app)
                                         .data('filter', "notaction")
                                         .appendTo($col4);
 
                                     let $col5 = $(`<td></td>`).appendTo($tr);
                                     let $includeCheck = $(`<input type="checkbox">`)
                                         .data('action', x.actionName)
+                                        .data('app', x.app)
                                         .data('filter', "action")
                                         .appendTo($col5);
 
