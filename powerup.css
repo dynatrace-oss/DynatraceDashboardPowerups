@@ -641,11 +641,17 @@ tr.powerupSubHeader th {
   cursor: context-menu;
 }
 
+.powerupSankeyButtonBar {
+  height: 30px;
+  background: #242424;
+  opacity: 0.95;
+  position: sticky;
+  bottom: 0px;
+}
+
 .powerupSankeyButton {
   width: 60px;
   height: 25px;
-  position: sticky;
-  bottom: 0px;
   margin-left: auto;
   color: #00a1b2;
   font-size: 14px;

@@ -3901,7 +3901,7 @@ var DashboardPowerups = (function () {
                             }
                         }
 
-                        $(`<div class="powerupSankeyButton">Filter</div>`)
+                        $(`<div class="powerupSankeyButtonBar"><div class="powerupSankeyButton">Filter</div></div>`)
                             .appendTo($popup)
                             .on("click", closePopup);
 
