@@ -3983,7 +3983,7 @@ var DashboardPowerups = (function () {
                                 <span class="powerupSankeyPopupTooltipText">Sessions including link</span>
                             </th>
                             </tr>
-                        `);//.appendTo($table);
+                        `).appendTo($table);
                         let cols = $colHeaders.find(`th`).length;
 
                         let shownTouples = data.slicedTouples
@@ -4002,9 +4002,9 @@ var DashboardPowerups = (function () {
 
                         function insertRows(header, vis, list) {
                             let $header = $(`<tr class="powerupSubHeader"><th colspan="${cols}">${header}</th></tr>`).appendTo($table);
-                            $colHeaders
+                            /*$colHeaders
                                 .clone()
-                                .appendTo($table);
+                                .appendTo($table);*/
 
                             list
                                 .forEach(x => {
