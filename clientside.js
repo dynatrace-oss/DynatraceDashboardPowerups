@@ -3954,8 +3954,8 @@ var DashboardPowerups = (function () {
                         $popup.parents(TILE_SELECTOR)
                             .on("click", ".powerupSankeyDetailPopup", closePopup);
 
-                        let $table = $(`<table>`).appendTo($popup);
-                        let $cols = $(`
+                        let $table = $(`<table class="powerupLinkPopup">`).appendTo($popup);
+                        /*let $cols = $(`
                         <colgroup>
                         <col class="powerSankeyColIcon">
                         <col class="powerSankeyColMedium">
@@ -3966,7 +3966,7 @@ var DashboardPowerups = (function () {
                         <col class="powerSankeyColIcon">
                         <col class="powerSankeyColIcon">
                         </colgroup>
-                        `).appendTo($table);
+                        `).appendTo($table);*/
                         let $colHeaders = $(`<tr>
                             <th>&nbsp;</th>
                             <th>From App</th>
