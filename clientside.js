@@ -3282,7 +3282,7 @@ var DashboardPowerups = (function () {
 
                     //close all popups
                     $container.find(`.highcharts-background`)
-                        .on("click",(e)=>{
+                        .on("click", (e) => {
                             $container.find(`.powerupSankeyDetailPopup`).remove();
                             e.stopPropagation();
                         });
@@ -3901,8 +3901,10 @@ var DashboardPowerups = (function () {
                             }
                         }
 
-                        $(`<div class="powerupSankeyButtonBar"><div class="powerupSankeyButton">Filter</div></div>`)
-                            .appendTo($popup)
+                        let $bar = $(`<div class="powerupSankeyButtonBar"></div>`)
+                            .appendTo($popup);
+                        $(`<div class="powerupSankeyButton">Filter</div>`)
+                            .appendTo($bar)
                             .on("click", closePopup);
 
                         $(`<div class="powerupSankeyDisclaimer">`
@@ -4058,12 +4060,15 @@ var DashboardPowerups = (function () {
                                     .on("change", innerAddRemoveFilter)
                                     .on("click", function (e) {
                                         e.stopPropagation();
-                                        /*setTimeout(()=>{
-                                            $popup.on("click", ":not(input)", closePopup); //replace magically disappearing handler
-                                        },100);*/
                                     });
                             }
                         }
+
+                        let $bar = $(`<div class="powerupSankeyButtonBar"></div>`)
+                            .appendTo($popup);
+                        $(`<div class="powerupSankeyButton">Filter</div>`)
+                            .appendTo($bar)
+                            .on("click", closePopup);
 
                         $(`<div class="powerupSankeyDisclaimer">`
                             + `<sup>*</sup> Note: counts based on a filtered sample. `
