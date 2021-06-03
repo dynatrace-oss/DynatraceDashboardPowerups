@@ -3951,8 +3951,8 @@ var DashboardPowerups = (function () {
                             //.on("click", ":not(input)", closePopup)
                             .appendTo(container);
 
-                        $popup.parents(TILE_SELECTOR)
-                            .on("click", ".powerupSankeyDetailPopup", closePopup);
+                        //$popup.parents(TILE_SELECTOR)
+                        //    .on("click", ".powerupSankeyDetailPopup", closePopup);
 
                         let $table = $(`<table class="powerupLinkPopup">`).appendTo($popup);
                         /*let $cols = $(`
