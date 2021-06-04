@@ -5066,7 +5066,7 @@ var DashboardPowerups = (function () {
                     token: x.name,
                     show: x.name,
                     value: x.name
-                }));
+                })) || [];
                 let pairs = {}
                 scope.forEach(x => {
                     let token = x.name;
