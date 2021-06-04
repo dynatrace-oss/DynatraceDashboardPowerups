@@ -698,15 +698,18 @@ table.powerupActionPopup tr > *:nth-of-type(4){
   display: none;
 }
 
-.powerup-svg-multi.powerup-svg-multi-0.powerup-svg-normal{
+.powerup-svg-multi.powerup-svg-multi-0.powerup-svg-normal,
+.powerup-svg-multi.powerup-svg-multi-0.powerup-svg-normal-blink{
   display: block;
 }
 
-.powerup-svg-multi.powerup-svg-multi-1.powerup-svg-warning{
+.powerup-svg-multi.powerup-svg-multi-1.powerup-svg-warning,
+.powerup-svg-multi.powerup-svg-multi-1.powerup-svg-warning-blink{
   display: block;
 }
 
-.powerup-svg-multi.powerup-svg-multi-2.powerup-svg-critical{
+.powerup-svg-multi.powerup-svg-multi-2.powerup-svg-critical,
+.powerup-svg-multi.powerup-svg-multi-2.powerup-svg-critical-blink{
   display: block;
 }
 
