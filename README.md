@@ -265,7 +265,7 @@ and Markdown tile to get swapped out like this:
 Explanation:
 - `!PU(sankey):` - denotes the powerup source
 - `link=` - points to markdown tile via the link powerup
-- `kpi=` - (optional) the name of a User Action Property to be displayed in the main tooltip, usually something like revenue
+- `kpi=` - (optional) the name of a User **Action** Property (**double**) to be displayed in the main tooltip, usually something like `revenue`, not `useraction.double.revenue`.
 - `kpicurr=` - (optional) how to format the KPI if its a currency, e.g. USD, EUR, CNY. If omitted, will format with max 2 fractional digits
 <!--- `convHack=true` - (optional) label first action with "Start: " and last action with "End: ".
 - `convHack=2` - (optional) new mode which injects an artificial "START" and "END" node to make it more clear where flows start and end. As of 1.44 this is now the default. If you prefer the old mode, set `convHack=false`.-->
