@@ -1766,7 +1766,9 @@ var DashboardPowerups = (function () {
             //let args = argstring.split(";").map(x => x.split("="));
 
             let args = argsplit(text, PU_SVG);
-            let icon = (args.find(x => x[0] == "icon") || ["icon", "abort"])[1];
+            let icons = (args.find(x => x[0] == "icon") || ["icon", "abort"])[1];
+            if (icons.includes(',')) icons = icons.split(',');
+            else icons = [icons];
             let link = (args.find(x => x[0] == "link") || [])[1];
             let color = (args.find(x => x[0] == "color") || [])[1];
             let base = (args.find(x => x[0] == "base") || [])[1];
@@ -1790,66 +1792,76 @@ var DashboardPowerups = (function () {
                 val = pub.findLinkedVal(link, PU_SVG);
 
             //swap in the svg
-            var imgURL = pub.SVGLib() + encodeURI(`${icon}.svg`);
-            fetch(imgURL)
-                .then((response) => response.text())
-                .then((svgtext) => {
-                    $svgcontainer.empty();
-                    let $svg = $(svgtext)
-                        .attr("data-args", JSON.stringify(argObj))
-                        .appendTo($svgcontainer);
+            let multiIcon = icons.length > 1;
+            icons.forEach((icon,iconIdx) => {
+                var imgURL = pub.SVGLib() + encodeURI(`${icon}.svg`);
+                fetch(imgURL)
+                    .then((response) => response.text())
+                    .then((svgtext) => {
+                        if(!multiIcon || multiIcon && iconIdx === 0)
+                            $svgcontainer.empty();
+                        let $svg = $(svgtext)
+                            .attr("data-args", JSON.stringify(argObj))
+                            .appendTo($svgcontainer);
 
-                    $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
-                    $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
-                    $svg.removeClass("powerup-svg-nan");
-                    if (isNaN(val)) {
-                        $svg.addClass("powerup-svg-nan");
-                    } else if (base == "low") {
-                        if (val < warn) $svg.addClass(class_norm);
-                        else if (val < crit) $svg.addClass(class_warn);
-                        else $svg.addClass(class_crit);
-                    } else if (base == "high") {
-                        if (val > warn) $svg.addClass(class_norm);
-                        else if (val > crit) $svg.addClass(class_warn);
-                        else $svg.addClass(class_crit);
-                    } else if (typeof (base) == "string" && base.startsWith("abs")) {
-                        let abs = Number((base.split(',') || ["abs", "0"])[1]);
-                        if (val >= abs + crit || val <= abs - crit) $target.addClass(class_crit);
-                        else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
-                        else $target.addClass(class_norm);
-                    } else if (color) {
-                        $svg.css("fill", color);
-                    }
-                    if (url) {
-                        $a = $(`<a>`)
-                            .attr('href', url)
-                            .insertBefore($svg);
-                        if (url.startsWith('http'))
-                            $a.attr('target', '_blank');
-                        $svg.appendTo($a);
-
-                        //Kill the tooltip if we click the link
-                        if ($a !== undefined && $tooltip !== undefined) {
-                            $a.on("click", () => { //don't know why this doesn't work 100% of the time...
-                                $(`.powerupTooltip`).remove();
-                            });
-                            $svg.on("click", () => {
-                                $(`.powerupTooltip`).remove();
-                            });
-                            //last resort, listen on window
-                            window.addEventListener('hashchange', () => { //somehow the tooltip reappears after removing...
-                                setTimeout(() => {
-                                    let tips = document.getElementsByClassName('powerupTooltip');
-
-                                    while (tips[0]) {
-                                        tips[0].parentNode.removeChild(tips[0]);
-                                    }
-                                }, 500);
-
-                            }, { once: true });
+                        if(multiIcon){
+                            $svg
+                            .addClass("powerup-svg-multi")
+                            .addClass(`powerup-svg-multi-${iconIdx}`);
                         }
-                    }
-                });
+
+                        $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
+                        $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
+                        $svg.removeClass("powerup-svg-nan");
+                        if (isNaN(val)) {
+                            $svg.addClass("powerup-svg-nan");
+                        } else if (base == "low") {
+                            if (val < warn) $svg.addClass(class_norm);
+                            else if (val < crit) $svg.addClass(class_warn);
+                            else $svg.addClass(class_crit);
+                        } else if (base == "high") {
+                            if (val > warn) $svg.addClass(class_norm);
+                            else if (val > crit) $svg.addClass(class_warn);
+                            else $svg.addClass(class_crit);
+                        } else if (typeof (base) == "string" && base.startsWith("abs")) {
+                            let abs = Number((base.split(',') || ["abs", "0"])[1]);
+                            if (val >= abs + crit || val <= abs - crit) $target.addClass(class_crit);
+                            else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
+                            else $target.addClass(class_norm);
+                        } else if (color) {
+                            $svg.css("fill", color);
+                        }
+                        if (url) {
+                            $a = $(`<a>`)
+                                .attr('href', url)
+                                .insertBefore($svg);
+                            if (url.startsWith('http'))
+                                $a.attr('target', '_blank');
+                            $svg.appendTo($a);
+
+                            //Kill the tooltip if we click the link
+                            if ($a !== undefined && $tooltip !== undefined) {
+                                $a.on("click", () => { //don't know why this doesn't work 100% of the time...
+                                    $(`.powerupTooltip`).remove();
+                                });
+                                $svg.on("click", () => {
+                                    $(`.powerupTooltip`).remove();
+                                });
+                                //last resort, listen on window
+                                window.addEventListener('hashchange', () => { //somehow the tooltip reappears after removing...
+                                    setTimeout(() => {
+                                        let tips = document.getElementsByClassName('powerupTooltip');
+
+                                        while (tips[0]) {
+                                            tips[0].parentNode.removeChild(tips[0]);
+                                        }
+                                    }, 500);
+
+                                }, { once: true });
+                            }
+                        }
+                    });
+            });
 
             //hide menu icon
             $tile.find(MENU_ICON_SELECTOR).hide();
@@ -2248,22 +2260,22 @@ var DashboardPowerups = (function () {
                                 let fromIdx;
                                 switch (f.filter) {
                                     case "touple":
-                                        if (f.from !== undefined && f.to !== undefined) { 
-                                            
+                                        if (f.from !== undefined && f.to !== undefined) {
+
                                             fromIdx = filtered.findIndex((x, i, arr) =>
                                                 x.name === f.from
-                                                && (f.fromApp !== undefined? f.fromApp === x.app : true)
-                                                && (f.toApp !== undefined? f.fromApp === x.app : true)
+                                                && (f.fromApp !== undefined ? f.fromApp === x.app : true)
+                                                && (f.toApp !== undefined ? f.fromApp === x.app : true)
                                                 && arr.length > i + 1
                                                 && arr[i + 1].name === f.to);
                                         }
                                         break;
                                     case "nottouple":
-                                        if (f.from !== undefined && f.to !== undefined) { 
+                                        if (f.from !== undefined && f.to !== undefined) {
                                             let idx = filtered.findIndex((x, i, arr) =>
                                                 x.name === f.from
-                                                && (f.fromApp !== undefined? f.fromApp === x.app : true)
-                                                && (f.toApp !== undefined? f.fromApp === x.app : true)
+                                                && (f.fromApp !== undefined ? f.fromApp === x.app : true)
+                                                && (f.toApp !== undefined ? f.fromApp === x.app : true)
                                                 && arr.length > i + 1
                                                 && arr[i + 1].name === f.to);
                                             if (idx > -1) filtered = []; //this row filtered out
@@ -2318,15 +2330,15 @@ var DashboardPowerups = (function () {
                                         if (f.action && f.action.length) {
                                             fromIdx = filtered.findIndex((x, i, arr) =>
                                                 x.name === f.action
-                                                && (f.app !== undefined? f.app === x.app : true)
-                                                );
+                                                && (f.app !== undefined ? f.app === x.app : true)
+                                            );
                                         }
                                         break;
                                     case "notaction":
                                         if (f.action && f.action.length) {
                                             let idx = filtered.findIndex((x, i, arr) =>
                                                 x.name === f.action)
-                                                && (f.aapp !== undefined? f.app === x.app : true)
+                                                && (f.aapp !== undefined ? f.app === x.app : true)
                                                 ;
                                             if (idx > -1) filtered = []; //this row filtered out
                                         }
@@ -2803,20 +2815,21 @@ var DashboardPowerups = (function () {
                         let arr = row["useraction.name"];
                         if (!Array.isArray(arr)) return false;
                         for (let k = 0; k < arr.length; k++) {
-                            let idx = actionDetailList.findIndex(ad => 
+                            let idx = actionDetailList.findIndex(ad =>
                                 ad.actionName === row["useraction.name"][k]
                                 && ad.app === row["useraction.application"][k]
-                                );
-                            if(idx < 0){
-                                let foIdx = filteredOut.findIndex(fo => 
+                            );
+                            if (idx < 0) {
+                                let foIdx = filteredOut.findIndex(fo =>
                                     fo.actionName === row["useraction.name"][k]
                                     && fo.app === row["useraction.application"][k]
-                                    );
-                                    if (foIdx < 0)
-                                    filteredOut.push({ 
-                                        actionName: row["useraction.name"][k], 
+                                );
+                                if (foIdx < 0)
+                                    filteredOut.push({
+                                        actionName: row["useraction.name"][k],
                                         app: row["useraction.application"][k],
-                                        count: 1 });
+                                        count: 1
+                                    });
                                 else
                                     filteredOut[foIdx].count += 1;
                             }
@@ -3302,29 +3315,29 @@ var DashboardPowerups = (function () {
                     }
 
                     //filter highlighting
-                    chart.series[0].nodes.forEach(node =>{
-                        if(Array.isArray(params.filter))
-                        if(params.filter.filter(f => 
-                            f.action === node.id
-                            && f.app === node.app)
-                            .length)
-                            $(node.graphic.element)
-                                .css("stroke","#a972cc")
-                                .css("stroke-width","3px");
+                    chart.series[0].nodes.forEach(node => {
+                        if (Array.isArray(params.filter))
+                            if (params.filter.filter(f =>
+                                f.action === node.id
+                                && f.app === node.app)
+                                .length)
+                                $(node.graphic.element)
+                                    .css("stroke", "#a972cc")
+                                    .css("stroke-width", "3px");
                     });
-                    chart.series[0].data.forEach(link =>{
-                        if(Array.isArray(params.filter))
-                        if(params.filter.filter(f => 
-                            f.from === link.from
-                            && f.fromApp === link.fromApp
-                            && f.to === link.to
-                            && f.toApp === link.toApp
+                    chart.series[0].data.forEach(link => {
+                        if (Array.isArray(params.filter))
+                            if (params.filter.filter(f =>
+                                f.from === link.from
+                                && f.fromApp === link.fromApp
+                                && f.to === link.to
+                                && f.toApp === link.toApp
                             ).length)
-                            $(link.graphic.element)
-                                .css("stroke","#a972cc")
-                                .css("stroke-width","3px");
+                                $(link.graphic.element)
+                                    .css("stroke", "#a972cc")
+                                    .css("stroke-width", "3px");
                     })
-                    
+
 
                     //close all popups
                     $container.find(`.highcharts-background`)
@@ -3554,9 +3567,9 @@ var DashboardPowerups = (function () {
                         }
                         let link = USQL_URL + encodeURIComponent(`SELECT * FROM usersession WHERE useraction.name LIKE "${name.replace(/"/g, `""`)}"`);
                         let html = `<div><p><a href='${link}'><b>${name}</b></a>`
-                        + `<a href="javascript:" class="powerupFilterProp" data-filter="action"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-lightpurple'></a>`
-                        //HACK: add data elements later for quote handling
-                        + `:</p><ul>`;
+                            + `<a href="javascript:" class="powerupFilterProp" data-filter="action"><img src="${pub.SVGLib() + 'filter.svg'}" onload="DashboardPowerups.SVGInject(this)" class='powerup-sankey-icon powerup-icon-lightpurple'></a>`
+                            //HACK: add data elements later for quote handling
+                            + `:</p><ul>`;
 
                         //app
                         html += `<li>App: <a href="javascript:" class="powerupFilterProp" data-app="${node.app}" data-filter="app">${node.app}</a></li>`;
@@ -3694,8 +3707,8 @@ var DashboardPowerups = (function () {
 
                         //fill in data elements
                         $popup.find(`a.powerupFilterProp[data-filter="action"]`)
-                            .data("action",name)
-                            .data("app",node.app)
+                            .data("action", name)
+                            .data("app", node.app)
 
                         $popup.find(`.powerupFilterProp`)
                             .on("click", filterProp);
