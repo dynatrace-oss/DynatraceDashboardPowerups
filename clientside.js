@@ -1780,7 +1780,7 @@ var DashboardPowerups = (function () {
             //let url = (args.find(x => x[0] == "url") || [])[1]; //this does not work due to ; in urls
             if (url) url = url.trim();
             let argObj = {
-                icon: icon,
+                icon: icons,
                 link: link,
                 base: base,
                 warn: warn,
