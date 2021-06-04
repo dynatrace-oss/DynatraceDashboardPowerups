@@ -134,7 +134,7 @@ This powerup renders icons in place of Markdown tiles. These icons change color 
 Explanation:
 - Link to extension: this lets users without the extension know to download it
 - `!PU(svg):` this starts the markup
-- `icon=` this refers to an SVG file in the 3rdParty/node_modules/@dynatrace/barista-icons folder
+- `icon=` this refers to an SVG file in the 3rdParty/node_modules/@dynatrace/barista-icons folder. (Optional) you can use a comma-seperated list of 3 icons if you want the icon shape to change based on the value, e.g. `icon=smiley-happy-1,smiley-ok-2,smiley-unhappy-2`
 - `link=` this is used to link to a Single Value Tile to get the comparison value
 - `base=` this is the base case for your metric, ie is it good to be low or high?
 - `warn=` this is the warning threshold, once breached color coding will be yellow
