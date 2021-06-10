@@ -12,11 +12,12 @@ var DashboardPowerups = (function () {
     const GRID_SELECTOR = '.grid-dashboard';
     const VIEWPORT_SELECTOR = '.grid-viewport';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
-    const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type, [uitestid="gwt-debug-dexp-visualization-single-value"] span:first-of-type, [uitestid="gwt-debug-visualization-single-value"] span:first-of-type';
+    const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type, [uitestid="gwt-debug-dexp-visualization-single-value"] span:first-of-type, [uitestid="gwt-debug-visualization-single-value"] span:first-of-type, .powerupVlookup h1';
     const TILE_SELECTOR = '.grid-tile';
     const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"]';
     const MARKDOWN_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
     const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, [uitestid="gwt-debug-kpiValue"] span, [uitestid="gwt-debug-dexp-visualization-single-value"] span';
+    const VLOOKUP_BIGNUM_SELECTOR = '.powerupVlookup h1';
     const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
     const MAPTITLE_SELECTOR = 'span[uitestid="gwt-debug-WorldMapTile"]';
@@ -5218,16 +5219,15 @@ var DashboardPowerups = (function () {
         let count = 0;
 
         //find compare PUs
-        $(TITLE_SELECTOR).each((i, el) => {
-            let $title = $(el);
+        $([TITLE_SELECTOR, MARKDOWN_SELECTOR].join(', '))
+        .each((i, el) => {
+            let $titleormd = $(el);
             let $tile = $title.parents(".grid-tile");
-            let text = $title.text();
-            let $bignum = $tile.find(BIGNUM_SELECTOR);
+            let text = $titleormd.text();
+            let $bignum = $tile.find([BIGNUM_SELECTOR, VLOOKUP_BIGNUM_SELECTOR].join(', '));
 
             if (!text.includes(PU_MCOMPARE)) return;
             if (pub.config.Powerups.debug) console.log("Powerup: mcompare power-up found");
-            //let argstring = text.split(PU_MCOMPARE)[1].split('!')[0];
-            //let args = argstring.split(";").map(x => x.split("="));
             let args = argsplit(text, PU_MCOMPARE);
 
             let links = args.find(x => x[0] == "links")[1].trim();
@@ -5251,8 +5251,6 @@ var DashboardPowerups = (function () {
             let max = Math.max.apply(Math, linkvals);
 
             let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g, ''));
-
-            //let $target = (pub.config.Powerups.colorPUTarget == "Border" ? $tile : $bignum);
 
             switch (mode) {
                 case "scale":
