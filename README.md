@@ -477,7 +477,7 @@ Explanation
 Note: you should limit usage to only trusted image sources and keep file size reasonable
 
 ### mCompare
-This powerup compares multiple SVTs. It has two modes: `outlier` and `scale`. Outlier mode highlights the low and high; whereas, scale uses color to show distance from extremes.
+This powerup compares multiple SVTs (or vlookups). It has two modes: `outlier` and `scale`. Outlier mode highlights the low and high; whereas, scale uses color to show distance from extremes.
 
 Syntax:
 - `!PU(mcompare):links=link1,link2,link3,link4,link5;low=green;high=red;other=gray !PU(link):link1`
@@ -486,7 +486,7 @@ Syntax:
 Explanation:
 - `!PU(mcompare):` - denotes this powerup
 - `mode=scale` - which mode, defaults to `outlier`
-- `links=` - list of links to SVTs
+- `links=` - list of links to SVTs (or vlookup)
 - `low=` - CSS color for lowest value
 - `high=` - CSS color for highest value
 - `other=` - CSS color for middle values in outlier mode
