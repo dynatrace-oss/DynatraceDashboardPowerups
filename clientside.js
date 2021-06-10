@@ -5222,7 +5222,7 @@ var DashboardPowerups = (function () {
         $([TITLE_SELECTOR, MARKDOWN_SELECTOR].join(', '))
         .each((i, el) => {
             let $titleormd = $(el);
-            let $tile = $title.parents(".grid-tile");
+            let $tile = $titleormd.parents(".grid-tile");
             let text = $titleormd.text();
             let $bignum = $tile.find([BIGNUM_SELECTOR, VLOOKUP_BIGNUM_SELECTOR].join(', '));
 
