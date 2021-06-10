@@ -5276,6 +5276,13 @@ var DashboardPowerups = (function () {
     pub.puDate = function () { //example: !PU(date):res=now-7d/d;fmt=yyyy-mm-dd;color=blue
         if (!pub.config.Powerups.datePU) return;
 
+        if (dateFns == undefined) {
+            let error = `Powerup: CRITICAL - ${PU_DATE} - dateFns module not loaded!`;
+            console.log(error);
+            errorBeacon(error);
+            return false;
+        }
+
         //find math PUs
         $(MARKDOWN_SELECTOR).each((i, el) => {
             let $container = $(el);
@@ -5295,12 +5302,7 @@ var DashboardPowerups = (function () {
             let to = dtDate[1];
             let dateMs = dtDate[2].start;
 
-            if (dateFns == undefined) {
-                let error = `Powerup: CRITICAL - ${PU_DATE} - dateFns module not loaded!`;
-                console.log(error);
-                errorBeacon(error);
-                return false;
-            }
+            
             let formattedDate = dateFns.format(dateMs, fmt);
 
             //swap markdown content
