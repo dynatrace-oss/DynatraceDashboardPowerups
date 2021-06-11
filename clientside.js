@@ -5250,7 +5250,10 @@ var DashboardPowerups = (function () {
             let min = Math.min.apply(Math, linkvals);
             let max = Math.max.apply(Math, linkvals);
 
-            let val = Number($tile.find(VAL_SELECTOR).text().replace(/,/g, ''));
+            let val = Number(
+                $tile.find(VAL_SELECTOR).text()
+                .replace(/[,a-zA-Z %]/g, '')
+                );
 
             switch (mode) {
                 case "scale":
@@ -5638,12 +5641,12 @@ var DashboardPowerups = (function () {
                             let a, b;
                             //a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
                             if (typeof (vlookupVal) == "string")
-                                a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
+                                a = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
                             if (typeof (vlookupVal) == "number")
                                 a = vlookupVal;
                             //b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
                             if (typeof (compareVlookupVal) == "string")
-                                a = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
+                                a = Number(compareVlookupVal.replace(/[,a-zA-Z %]/g, ""));
                             if (typeof (compareVlookupVal) == "number")
                                 a = compareVlookupVal;
                             if (Number.isNaN(a) || Number.isNaN(b)) {
