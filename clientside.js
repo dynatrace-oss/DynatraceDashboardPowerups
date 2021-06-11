@@ -1794,21 +1794,21 @@ var DashboardPowerups = (function () {
 
             //swap in the svg
             let multiIcon = icons.length > 1;
-            icons.forEach((icon,iconIdx) => {
+            icons.forEach((icon, iconIdx) => {
                 var imgURL = pub.SVGLib() + encodeURI(`${icon}.svg`);
                 fetch(imgURL)
                     .then((response) => response.text())
                     .then((svgtext) => {
-                        if(!multiIcon || multiIcon && iconIdx === 0)
+                        if (!multiIcon || multiIcon && iconIdx === 0)
                             $svgcontainer.empty();
                         let $svg = $(svgtext)
                             .attr("data-args", JSON.stringify(argObj))
                             .appendTo($svgcontainer);
 
-                        if(multiIcon){
+                        if (multiIcon) {
                             $svg
-                            .addClass("powerup-svg-multi")
-                            .addClass(`powerup-svg-multi-${iconIdx}`);
+                                .addClass("powerup-svg-multi")
+                                .addClass(`powerup-svg-multi-${iconIdx}`);
                         }
 
                         $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
@@ -1998,9 +1998,11 @@ var DashboardPowerups = (function () {
                 return num_val;
 
             //check for a date string
-            let date_val = new Date(val);
-            if (!isNaN(date_val.getTime()))
-                return date_val.getTime();
+            if (val.match(/(?:\/)|(?:-.*-)|(?::)/)) { //look for obvious date patterns, Date thinks things like "12,013" are valid dates...
+                let date_val = new Date(val);
+                if (!isNaN(date_val.getTime()))
+                    return date_val.getTime();
+            }
 
             //check for simple comma grouped number string
             let comma_val = Number(val.replace(/,/g, ''));
@@ -5220,57 +5222,57 @@ var DashboardPowerups = (function () {
 
         //find compare PUs
         $([TITLE_SELECTOR, MARKDOWN_SELECTOR].join(', '))
-        .each((i, el) => {
-            let $titleormd = $(el);
-            let $tile = $titleormd.parents(".grid-tile");
-            let text = $titleormd.text();
-            let $bignum = $tile.find([BIGNUM_SELECTOR, VLOOKUP_BIGNUM_SELECTOR].join(', '));
+            .each((i, el) => {
+                let $titleormd = $(el);
+                let $tile = $titleormd.parents(".grid-tile");
+                let text = $titleormd.text();
+                let $bignum = $tile.find([BIGNUM_SELECTOR, VLOOKUP_BIGNUM_SELECTOR].join(', '));
 
-            if (!text.includes(PU_MCOMPARE)) return;
-            if (pub.config.Powerups.debug) console.log("Powerup: mcompare power-up found");
-            let args = argsplit(text, PU_MCOMPARE);
+                if (!text.includes(PU_MCOMPARE)) return;
+                if (pub.config.Powerups.debug) console.log("Powerup: mcompare power-up found");
+                let args = argsplit(text, PU_MCOMPARE);
 
-            let links = args.find(x => x[0] == "links")[1].trim();
-            if (typeof (links) == "string" && links.length)
-                links = links.split(',');
-            let low = (args.find(x => x[0] == "low") || [])[1] || "green";
-            low = low.trim();
-            let high = (args.find(x => x[0] == "high") || [])[1] || "red";
-            high = high.trim();
-            let other = (args.find(x => x[0] == "other") || [])[1] || "gray";
-            other = other.trim();
-            let mode = (args.find(x => x[0] == "mode") || [])[1] || "outlier";
-            mode = mode.trim();
+                let links = args.find(x => x[0] == "links")[1].trim();
+                if (typeof (links) == "string" && links.length)
+                    links = links.split(',');
+                let low = (args.find(x => x[0] == "low") || [])[1] || "green";
+                low = low.trim();
+                let high = (args.find(x => x[0] == "high") || [])[1] || "red";
+                high = high.trim();
+                let other = (args.find(x => x[0] == "other") || [])[1] || "gray";
+                other = other.trim();
+                let mode = (args.find(x => x[0] == "mode") || [])[1] || "outlier";
+                mode = mode.trim();
 
-            let linkvals = [];
-            links.forEach(link => {
-                let num = pub.findLinkedVal(link, PU_MCOMPARE);
-                if (!isNaN(num)) linkvals.push(num);
-            });
-            let min = Math.min.apply(Math, linkvals);
-            let max = Math.max.apply(Math, linkvals);
+                let linkvals = [];
+                links.forEach(link => {
+                    let num = pub.findLinkedVal(link, PU_MCOMPARE);
+                    if (!isNaN(num)) linkvals.push(num);
+                });
+                let min = Math.min.apply(Math, linkvals);
+                let max = Math.max.apply(Math, linkvals);
 
-            let val = Number(
-                $tile.find(VAL_SELECTOR).text()
-                .replace(/[,a-zA-Z %]/g, '')
+                let val = Number(
+                    $tile.find(VAL_SELECTOR).text()
+                        .replace(/[,a-zA-Z %]/g, '')
                 );
 
-            switch (mode) {
-                case "scale":
-                    let percent = (val - min) / (max - min);
-                    let color = d3.interpolateHsl(low, high)(percent);
-                    $bignum.css("color", color);
-                    break;
-                case "outlier":
-                default:
-                    if (val === min) $bignum.css("color", low);
-                    else if (val === max) $bignum.css("color", high);
-                    else $bignum.css("color", other);
-            }
+                switch (mode) {
+                    case "scale":
+                        let percent = (val - min) / (max - min);
+                        let color = d3.interpolateHsl(low, high)(percent);
+                        $bignum.css("color", color);
+                        break;
+                    case "outlier":
+                    default:
+                        if (val === min) $bignum.css("color", low);
+                        else if (val === max) $bignum.css("color", high);
+                        else $bignum.css("color", other);
+                }
 
-            count++;
-            powerupsFired['PU_MCOMPARE'] ? powerupsFired['PU_MCOMPARE']++ : powerupsFired['PU_MCOMPARE'] = 1;
-        });
+                count++;
+                powerupsFired['PU_MCOMPARE'] ? powerupsFired['PU_MCOMPARE']++ : powerupsFired['PU_MCOMPARE'] = 1;
+            });
         return count;
     }
 
@@ -5303,7 +5305,7 @@ var DashboardPowerups = (function () {
             let to = dtDate[1];
             let dateMs = dtDate[2].start;
 
-            
+
             let formattedDate = dateFns.format(dateMs, fmt);
 
             //swap markdown content
