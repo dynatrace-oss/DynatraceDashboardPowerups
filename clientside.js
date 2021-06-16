@@ -5296,11 +5296,18 @@ var DashboardPowerups = (function () {
             if (pub.config.Powerups.debug) console.log("Powerup: date power-up found");
             let args = argsplit(text, PU_DATE);
 
-            let res = args.find(x => x[0] == "res")[1];
-            let fmt = args.find(x => x[0] == "fmt")[1];
-            let color = args.find(x => x[0] == "color")[1];
+            let res = (args.find(x => x[0] == "res") || [])[1];
+            let fmt = (args.find(x => x[0] == "fmt") || [])[1];
+            let color = (args.find(x => x[0] == "color") || [])[1];
 
             let dtDate = dtDateMath.resolve(res);
+            if(!Array.isArray(dtDate) || dtDate.length < 3)
+            {
+                let error = `Powerup: ERROR - ${PU_DATE} - dtDateMath did not return a valid result for: "${res}"`;
+                console.log(error);
+                errorBeacon(error);
+                return false;
+            }
             let from = dtDate[0];
             let to = dtDate[1];
             let dateMs = dtDate[2].start;
