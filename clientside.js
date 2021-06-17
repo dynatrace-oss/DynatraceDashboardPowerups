@@ -68,12 +68,13 @@ var DashboardPowerups = (function () {
     const PU_TOPCOLOR = '!PU(topcolor):';
     const PU_HONEYCOMB = '!PU(honeycomb):';
     const PU_AUTOHIDE = '!PU(autohide):';
+    const PU_TREEMAP = '!PU(treemap):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP
     ];
 
     const COLOR_RED = "#c41425";
@@ -5301,8 +5302,7 @@ var DashboardPowerups = (function () {
             let color = (args.find(x => x[0] == "color") || [])[1];
 
             let dtDate = dtDateMath.resolve(res);
-            if(!Array.isArray(dtDate) || dtDate.length < 3)
-            {
+            if (!Array.isArray(dtDate) || dtDate.length < 3) {
                 let error = `Powerup: ERROR - ${PU_DATE} - dtDateMath did not return a valid result for: "${res}"`;
                 console.log(error);
                 errorBeacon(error);
@@ -6081,6 +6081,124 @@ var DashboardPowerups = (function () {
         return true;
     }
 
+    pub.PUtreemap = function () {
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let title = $title.text();
+            let $tile = $title.parents(TILE_SELECTOR);
+
+            if (title.includes(PU_TREEMAP)) {
+                let args = argsplit(title, PU_TREEMAP);
+                let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',').filter(x => x != "");
+                let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
+                if (drill) drill = drill.trim();
+
+                //find the table
+                let dataTable = readTableData($tile, true, true);
+                if (Array.isArray(links) && links.length) {
+                    links.forEach(link => {
+                        let linkedTile = pub.findLinkedTile(link, PU_TREEMAP);
+                        if (linkedTile == undefined) return false;
+                        let linkedTable = readTableData(linkedTile, true, true);
+                        if (!linkedTable) return false;
+                        if (JSON.stringify(dataTable.keys) !== JSON.stringify(linkedTable.keys)) {
+                            let error = `POWERUP: ERROR - ${PU_TREEMAP} - tried to merge dissimilar tables.`;
+                            console.warn(error);
+                            errorBeacon(error);
+                        }
+                        dataTable.normalTable = dataTable.normalTable.concat(linkedTable.normalTable);
+                    })
+
+                }
+                if (!dataTable) return false;
+                console.log(dataTable);
+
+                //swap in a container for our new chart
+                let $table = $tile.find(TABLE_SELECTOR);
+                $table.hide();
+                $tile.find('.powerupTreemap').each((i, el) => {
+                    Highcharts.charts.filter(x => typeof (x) !== "undefined")
+                        .filter(x => x.container === el)
+                        .forEach(chart => { chart.destroy(); });
+                    $(el).remove();
+                });
+                let $container = $("<div>")
+                    .addClass('powerupTreemap')
+                    .insertAfter($table);
+
+                //prep the data
+                //expect data to be columns which slice and dice and number in last column
+                let data = [];
+                let levels = [];
+                let levels = Math.min(dataTable.keys.length - 1,3);
+                
+                dataTable.keys.forEach((key,i) =>{
+                    if(i>=levels)return;
+                    let vals = [... new Set(dataTable.normalTable[key])];
+                    levels.push({
+                        level: i,
+                        vals: vals
+                    })
+                });
+
+                console.log(levels);
+
+                //chart options
+                let options = {
+                    chart: {
+                        type: 'treemap',
+                        //inverted: true,
+                        height: '80%',
+                        backgroundColor: '#353535'
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    title: null,
+                    xAxis: {
+                        visible: false
+                    },
+                    yAxis: {
+                        visible: false
+                    },
+                    legend: {
+                        enabled: false
+                    },
+
+                    tooltip: {
+                        headerFormat: '',
+                        //pointFormat: 'The population of <b> {point.name}</b> is <b>{point.value}</b>'
+                        pointFormat: `<b>{point.name}</b>: {point.value}`
+                    },
+
+                    series: [{
+                        type: "treemap",
+                        layoutAlgorithm: 'stripes',
+                        alternateStartingDirection: true,
+                        levels: [{
+                            level: 1,
+                            layoutAlgorithm: 'sliceAndDice',
+                            dataLabels: {
+                                enabled: true,
+                                align: 'left',
+                                verticalAlign: 'top',
+                                style: {
+                                    fontSize: '15px',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        }],
+                        data: data
+                    }]
+                }
+                let chart = Highcharts.chart($container[0], options);
+
+                powerupsFired['PU_TREEMAP'] ? powerupsFired['PU_TREEMAP']++ : powerupsFired['PU_TREEMAP'] = 1;
+            }
+        });
+        return true;
+    }
+
     pub.hideEarlyAdopter = function () {
         $(`[uitestid="gwt-debug-dashboard-tile-filter-indicator-icon"]`).siblings()
             .each((i, el) => {
@@ -6482,6 +6600,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUTopListColor());
             waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
             promises.push(pub.PUhoneycomb());
+            promises.push(pub.PUtreemap());
 
             //misc visualizations
             promises.push(pub.PUbackground());
