@@ -56,6 +56,7 @@ function loadConfig(alreadyWritten = false) {
             comparePU: true,
             tablePU: true,
             honeycombPU: true,
+            treemapPU: true,
             debug: false,
             colorPUTarget: "Text",
             animateCritical: "3 Pulses",

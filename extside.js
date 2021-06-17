@@ -87,7 +87,7 @@ if (typeof (INJECTED) == "undefined") {
             if (config.Powerups.libLocation == "gh" //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
                 || HotFixMode) { //Or force all users to GitHub copy in case of emergency hotfix
                 console.log(`POWERUP: Loading libs from: GH...`);
-                fetch(GH_URL+'clientside.min.js')
+                fetch(GH_URL + 'clientside.min.js')
                     .then(response => response.text())
                     .then(text => { // read response body as text
                         var $s = $("<script>")
@@ -159,7 +159,7 @@ if (typeof (INJECTED) == "undefined") {
             if (config.Powerups.libLocation == "gh" //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
                 || HotFixMode) { //Or force all users to GitHub copy in case of emergency hotfix
                 console.log(`POWERUP: Loading css from: GH...`);
-                fetch(GH_URL+'powerup.css')
+                fetch(GH_URL + 'powerup.css')
                     .then(response => response.text())
                     .then(text => { // read response body as text
                         var $s = $("<style>")
@@ -215,6 +215,7 @@ if (typeof (INJECTED) == "undefined") {
                 comparePU: true,
                 tablePU: true,
                 honeycombPU: true,
+                treemapPU: true,
                 debug: false,
                 colorPUTarget: "Text",
                 animateCritical: "3 Pulses",
@@ -315,6 +316,8 @@ if (typeof (INJECTED) == "undefined") {
             injectHighchartsModule("solid-gauge");
         if (config.Powerups.honeycombPU)
             injectHighchartsModule("tilemap");
+        if (config.Powerups.treemapPU)
+            injectHighchartsModule("treemap");
     }
 
     function injectD3Modules(config) {
