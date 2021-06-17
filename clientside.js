@@ -6130,10 +6130,10 @@ var DashboardPowerups = (function () {
                 //expect data to be columns which slice and dice and number in last column
                 let data = [];
                 let levels = [];
-                let levels = Math.min(dataTable.keys.length - 1,3);
+                let numlevels = Math.min(dataTable.keys.length - 1,3);
                 
                 dataTable.keys.forEach((key,i) =>{
-                    if(i>=levels)return;
+                    if(i>=numlevels)return;
                     let vals = [... new Set(dataTable.normalTable[key])];
                     levels.push({
                         level: i,
