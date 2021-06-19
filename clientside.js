@@ -6176,7 +6176,6 @@ var DashboardPowerups = (function () {
                     point.name = prev;
                     v_ii = levels[numlevels - 1].vals.findIndex(x => x === prev);
                     point.parent = `l${numlevels - 1}_v${v_ii}`;
-                    point.name = levels
                     data.push(point);
                 })
 
