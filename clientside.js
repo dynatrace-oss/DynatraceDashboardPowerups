@@ -6149,9 +6149,9 @@ var DashboardPowerups = (function () {
                         if (i >= numlevels) return;
 
                         let s = row[key];
-                        if (!level[i].vals.includes(s)) { //create data point if not existing
-                            let v_i = level[i].vals.length;
-                            level[i].vals.push(s);
+                        if (!levels[i].vals.includes(s)) { //create data point if not existing
+                            let v_i = levels[i].vals.length;
+                            levels[i].vals.push(s);
                             let point = {
                                 id: `l${i}_v${v_i}`,
                                 name: s
@@ -6159,7 +6159,7 @@ var DashboardPowerups = (function () {
                             if (i) {
                                 let prevkey = dataTable.keys[i - 1];
                                 let prev = row[prevkey];
-                                v_ii = level[i - 1].vals.findIndex(x => x === prev);
+                                v_ii = levels[i - 1].vals.findIndex(x => x === prev);
                                 point.parent = `l${i - 1}_v${v_ii}`;
                             }
                             data.push(point);
