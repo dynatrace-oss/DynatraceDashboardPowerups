@@ -6173,8 +6173,10 @@ var DashboardPowerups = (function () {
                     }
                     let prevkey = dataTable.keys[numlevels - 1];
                     let prev = row[prevkey];
+                    point.name = prev;
                     v_ii = levels[numlevels - 1].vals.findIndex(x => x === prev);
                     point.parent = `l${numlevels - 1}_v${v_ii}`;
+                    point.name = levels
                     data.push(point);
                 })
 
@@ -6215,6 +6217,7 @@ var DashboardPowerups = (function () {
                         levels: [{
                             level: 1,
                             layoutAlgorithm: 'sliceAndDice',
+                            borderwidth: 3,
                             dataLabels: {
                                 enabled: true,
                                 align: 'left',
