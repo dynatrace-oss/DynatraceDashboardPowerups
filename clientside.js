@@ -6130,16 +6130,53 @@ var DashboardPowerups = (function () {
                 //expect data to be columns which slice and dice and number in last column
                 let data = [];
                 let levels = [];
-                let numlevels = Math.min(dataTable.keys.length - 1,3);
-                
-                dataTable.keys.forEach((key,i) =>{
-                    if(i>=numlevels)return;
-                    let vals = [... new Set(dataTable.normalTable[key])];
+                let numlevels = Math.min(dataTable.keys.length - 1, 3);
+
+                dataTable.keys.forEach((key, i) => {
+                    if (i >= numlevels) return;
+                    /*let vals = [... new Set(
+                        dataTable.normalTable.map(x => x[key])
+                        )];*/
+                    let vals = [];
                     levels.push({
                         level: i,
                         vals: vals
                     })
                 });
+
+                dataTable.normalTable.forEach((row,r_i) => {
+                    dataTable.keys.forEach((key, i) => {
+                        if (i >= numlevels) return;
+
+                        let s = row[key];
+                        if (!level[i].vals.includes(s)) { //create data point if not existing
+                            let v_i = level[i].vals.length;
+                            level[i].vals.push(s);
+                            let point = {
+                                id: `l${i}_v${v_i}`,
+                                name: s
+                            }
+                            if (i) {
+                                let prevkey = dataTable.keys[i - 1];
+                                let prev = row[prevkey];
+                                v_ii = level[i - 1].vals.findIndex(x => x === prev);
+                                point.parent = `l${i - 1}_v${v_ii}`;
+                            }
+                            data.push(point);
+                        }
+                    })
+                    
+                    let valkey = dataTable.keys[dataTable.keys.length - 1];
+                    let point = {
+                        id: `row${r_i}`,
+                        value: row[valkey]
+                    }
+                    let prevkey = dataTable.keys[numlevels - 1];
+                    let prev = row[prevkey];
+                    v_ii = level[numlevels - 1].vals.findIndex(x => x === prev);
+                    point.parent = `l${numlevels - 1}_v${v_ii}`;
+                    data.push(point);
+                })
 
                 console.log(levels);
 
