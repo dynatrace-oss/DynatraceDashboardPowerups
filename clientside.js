@@ -6215,8 +6215,8 @@ var DashboardPowerups = (function () {
                     series: [{
                         type: "treemap",
                         layoutAlgorithm: 'squarified',
-                        //alternateStartingDirection: true,
-                        //levelIsConstant: false,
+                        alternateStartingDirection: true,
+                        levelIsConstant: false,
                         allowDrillToNode: true,
                         interactByLeaf: false,
                         levels: [{
