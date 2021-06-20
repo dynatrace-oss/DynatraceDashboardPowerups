@@ -6165,7 +6165,7 @@ var DashboardPowerups = (function () {
                 function addSubsToData(root, parent = null, l = null, v = null) {
                     let point = {
                         id: l === null ? `root` : `l${l}_v${v}`,
-                        name: root.str ? root.str : ""
+                        name: root.str ? root.str : `""`
                     }
                     if (l === null) l = 0;
                     if (parent !== undefined) point.parent = parent;
@@ -6203,7 +6203,6 @@ var DashboardPowerups = (function () {
 
                     tooltip: {
                         headerFormat: '',
-                        //pointFormat: 'The population of <b> {point.name}</b> is <b>{point.value}</b>'
                         pointFormat: `<b>{point.name}</b>: {point.value}`
                     },
 
@@ -6213,7 +6212,7 @@ var DashboardPowerups = (function () {
                         //alternateStartingDirection: true,
                         //levelIsConstant: false,
                         allowDrillToNode: true,
-                        interactByLeaf: true,
+                        interactByLeaf: false,
                         levels: [{
                             level: 2,
                             borderWidth: 3,
