@@ -6218,7 +6218,7 @@ var DashboardPowerups = (function () {
                         interactByLeaf: false,
                         colors: colors,
                         levels: [{
-                            level: 2,
+                            level: 1,
                             borderWidth: 3,
                             borderColor: 'white',
                             colorByPoint: true,
@@ -6234,7 +6234,7 @@ var DashboardPowerups = (function () {
                             }
                         },
                         {
-                            level: 3,
+                            level: 2,
                             borderWidth: 1,
                             borderColor: 'gray',
                             layoutAlgorithm: 'squarified'
