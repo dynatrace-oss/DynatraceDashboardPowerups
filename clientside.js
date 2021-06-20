@@ -6171,7 +6171,10 @@ var DashboardPowerups = (function () {
                         name: root.str ? root.str : ` `
                     }
                     if (l === null) l = 0;
-                    if (parent !== undefined) point.parent = parent;
+                    if (parent !== undefined) {
+                        point.parent = parent;
+                        point.id = parent + point.id;
+                    }
                     if (root.value !== undefined) point.value = root.value;
                     if (!skip) data.push(point);
 
