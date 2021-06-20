@@ -6133,7 +6133,7 @@ var DashboardPowerups = (function () {
                 //expect data to be columns which slice and dice and number in last column
                 let data = [];
                 let levels = [];
-                let numlevels = Math.min(dataTable.keys.length - 1, 3);
+                let numlevels = Math.min(dataTable.keys.length - 1, 5);
 
                 let tree = {
                     sub =[]
