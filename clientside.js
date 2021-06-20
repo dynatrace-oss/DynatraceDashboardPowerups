@@ -6208,7 +6208,11 @@ var DashboardPowerups = (function () {
                         headerFormat: '',
                         pointFormat: `<b>{point.name}</b>: {point.value:.2f}`
                     },
-
+                    plotOptions: {
+                        treemap: {
+                            colors: ['#4fd5e0','#2ab6f4','#748cff','#a972cc'],    
+                        }
+                    },
                     series: [{
                         type: "treemap",
                         layoutAlgorithm: 'squarified',
