@@ -6159,25 +6159,25 @@ var DashboardPowerups = (function () {
                             if (i) {
                                 let prevkey = dataTable.keys[i - 1];
                                 let prev = row[prevkey];
-                                v_ii = levels[i - 1].vals.findIndex(x => x === prev);
+                                let v_ii = levels[i - 1].vals.findIndex(x => x === prev);
                                 point.parent = `l${i - 1}_v${v_ii}`;
                             }
                             data.push(point);
                         }
                     })
                     
-                    let valkey = dataTable.keys[dataTable.keys.length - 1];
-                    let point = {
+                    
+                    /*let point = {
                         id: `row${r_i}`,
                         value: row[valkey]
-                    }
+                    }*/
+                    let valkey = dataTable.keys[dataTable.keys.length - 1];
                     let prevkey = dataTable.keys[numlevels - 1];
                     let prev = row[prevkey];
-                    point.name = prev;
-                    //point.name = point.value;
-                    v_ii = levels[numlevels - 1].vals.findIndex(x => x === prev);
-                    point.parent = `l${numlevels - 1}_v${v_ii}`;
-                    data.push(point);
+                    let v_ii = levels[numlevels - 1].vals.findIndex(x => x === prev);
+                    let parentid = `l${numlevels - 1}_v${v_ii}`;
+                    let parent = data.find(x => x.id = parentid);
+                    parent.value = row[valkey];
                 })
 
                 console.log(levels);
