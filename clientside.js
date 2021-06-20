@@ -6171,13 +6171,13 @@ var DashboardPowerups = (function () {
                         id: `row${r_i}`,
                         value: row[valkey]
                     }*/
-                    let valkey = dataTable.keys[dataTable.keys.length - 1];
+                    /*let valkey = dataTable.keys[dataTable.keys.length - 1];
                     let prevkey = dataTable.keys[numlevels - 1];
                     let prev = row[prevkey];
                     let v_ii = levels[numlevels - 1].vals.findIndex(x => x === prev);
                     let parentid = `l${numlevels - 1}_v${v_ii}`;
                     let parentidx = data.findIndex(x => x.id = parentid);
-                    data[parentidx].value = row[valkey];
+                    data[parentidx].value = row[valkey];*/
                 })
                 data.sort((a,b)=> a.id < b.id ? -1 : 1);
                 console.log(data);
