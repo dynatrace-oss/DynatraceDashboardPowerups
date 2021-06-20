@@ -6093,7 +6093,7 @@ var DashboardPowerups = (function () {
                 let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
                 if (drill) drill = drill.trim();
                 let colors = (args.find(x => x[0] == "colors") 
-                    || ["colors","#4fd5e0,#2ab6f4,#748cff,#a972cc,#fd8232,#ffe11c,#6bcb8b,#b7b7b7"])[1];
+                    || ["colors","#7c38a1,#fff29a,#4fd5e0,#debbf3,#ef651f,#f5d30f,#4556d7,#ffa86c,#ffd0ab,#00a1b2,#c9a000,#aeebf0,#748cff"])[1];
                 if(typeof(colors)=="string") colors = colors.split(',');
 
                 //find the table
