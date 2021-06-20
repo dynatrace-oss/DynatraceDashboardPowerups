@@ -6162,17 +6162,18 @@ var DashboardPowerups = (function () {
                 })
                 console.log(tree);
 
-                function addSubsToData(root,l=0,v=0){
+                function addSubsToData(root,parent=null,l=0,v=0){
                     let point = {
                         id: `l${l}_v${v}`,
                         name: root.str ? root.str : ""
                     }
+                    if(parent != null) point.parent = parent;
                     if(root.value !== undefined) point.value = root.value;
                     data.push(point);
 
                     let sub_v = 0;
                     root.sub.forEach(s => {
-                        addSubsToData(s,l+1,sub_v++);
+                        addSubsToData(s,point.id,l+1,sub_v++);
                     })
                 }
                 addSubsToData(tree);
