@@ -6177,8 +6177,7 @@ var DashboardPowerups = (function () {
                     let v_ii = levels[numlevels - 1].vals.findIndex(x => x === prev);
                     let parentid = `l${numlevels - 1}_v${v_ii}`;
                     let parentidx = data.findIndex(x => x.id = parentid);
-                    let parent = data[parentidx];
-                    parent.value = row[valkey];
+                    data[parentidx].value = row[valkey];
                 })
                 data.sort((a,b)=> a.id < b.id ? -1 : 1);
                 console.log(data);
