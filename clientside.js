@@ -6206,7 +6206,7 @@ var DashboardPowerups = (function () {
 
                     tooltip: {
                         headerFormat: '',
-                        pointFormat: `<b>{point.name}</b>: {point.value:,.2f}`
+                        pointFormat: `<b>{point.name}</b>: {point.value:.2f}`
                     },
 
                     series: [{
@@ -6216,7 +6216,7 @@ var DashboardPowerups = (function () {
                         //levelIsConstant: false,
                         allowDrillToNode: true,
                         interactByLeaf: false,
-                        colors: colors,
+                        colors: ['#4fd5e0','#2ab6f4','#748cff','#a972cc'],
                         levels: [{
                             level: 1,
                             borderWidth: 3,
