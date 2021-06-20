@@ -6167,10 +6167,11 @@ var DashboardPowerups = (function () {
                     })
                     
                     
-                    /*let point = {
+                    let point = {
                         id: `row${r_i}`,
                         value: row[valkey]
-                    }*/
+                    }
+                    data.push(point);
                     /*let valkey = dataTable.keys[dataTable.keys.length - 1];
                     let prevkey = dataTable.keys[numlevels - 1];
                     let prev = row[prevkey];
