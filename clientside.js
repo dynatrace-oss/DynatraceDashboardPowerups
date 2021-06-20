@@ -6168,7 +6168,7 @@ var DashboardPowerups = (function () {
                 function addSubsToData(root, parent = null, l = null, v = null, skip = true) {
                     let point = {
                         id: l === null ? `root` : `l${l}_v${v}`,
-                        name: root.str ? root.str : `""`
+                        name: root.str ? root.str : ` `
                     }
                     if (l === null) l = 0;
                     if (parent !== undefined) point.parent = parent;
