@@ -6092,6 +6092,9 @@ var DashboardPowerups = (function () {
                 let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',').filter(x => x != "");
                 let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
                 if (drill) drill = drill.trim();
+                let colors = (args.find(x => x[0] == "colors") 
+                    || ["colors","#4fd5e0,#2ab6f4,#748cff,#a972cc,#fd8232,#ffe11c,#6bcb8b,#b7b7b7"])[1];
+                if(typeof(colors)=="string") colors = colors.split(',');
 
                 //find the table
                 let dataTable = readTableData($tile, true, true);
@@ -6162,7 +6165,7 @@ var DashboardPowerups = (function () {
                 })
                 console.log(tree);
 
-                function addSubsToData(root, parent = null, l = null, v = null) {
+                function addSubsToData(root, parent = null, l = null, v = null, skip = true) {
                     let point = {
                         id: l === null ? `root` : `l${l}_v${v}`,
                         name: root.str ? root.str : `""`
@@ -6170,11 +6173,11 @@ var DashboardPowerups = (function () {
                     if (l === null) l = 0;
                     if (parent !== undefined) point.parent = parent;
                     if (root.value !== undefined) point.value = root.value;
-                    data.push(point);
+                    if (!skip) data.push(point);
 
                     let sub_v = 0;
                     root.sub.forEach(s => {
-                        addSubsToData(s, point.id, l + 1, sub_v++);
+                        addSubsToData(s, point.id, l + 1, sub_v++, false);
                     })
                 }
                 addSubsToData(tree);
@@ -6213,6 +6216,7 @@ var DashboardPowerups = (function () {
                         //levelIsConstant: false,
                         allowDrillToNode: true,
                         interactByLeaf: false,
+                        colors: colors,
                         levels: [{
                             level: 2,
                             borderWidth: 3,
