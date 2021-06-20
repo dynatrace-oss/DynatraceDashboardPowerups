@@ -6210,10 +6210,12 @@ var DashboardPowerups = (function () {
                         type: "treemap",
                         layoutAlgorithm: 'squarified',
                         alternateStartingDirection: true,
+                        levelIsConstant: false,
                         levels: [{
                             level: 1,
                             borderwidth: 3,
-                            dataLabels: {
+                            colorByPoint: true
+                            /*dataLabels: {
                                 enabled: true,
                                 align: 'left',
                                 verticalAlign: 'top',
@@ -6221,7 +6223,7 @@ var DashboardPowerups = (function () {
                                     fontSize: '15px',
                                     fontWeight: 'bold'
                                 }
-                            }
+                            }*/
                         },
                         {
                             level: 2,
