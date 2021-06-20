@@ -6179,8 +6179,8 @@ var DashboardPowerups = (function () {
                     let parent = data.find(x => x.id = parentid);
                     parent.value = row[valkey];
                 })
-
-                console.log(levels);
+                data.sort((a,b)=> a.id < b.id ? -1 : 1);
+                console.log(data);
 
                 //chart options
                 let options = {
