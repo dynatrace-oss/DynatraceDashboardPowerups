@@ -6153,7 +6153,7 @@ var DashboardPowerups = (function () {
                             root.sub.push(subtree);
                         }
 
-                        root = sub[idx];
+                        root = root.sub[idx];
                     });
 
                     //assign value
