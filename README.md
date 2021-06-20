@@ -42,6 +42,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [Topcolor](#Topcolor)
     - [Honeycomb](#Honeycomb)
     - [Autohide](#Autohide)
+    - [Treemap](#Treemap)
 
 ## Installation
 1. Install the extension from the
@@ -615,3 +616,16 @@ Explanation:
 Example:
 ![autohide_before](Assets/autohide_before.png)
 ![autohide_after](Assets/autohide_after.png)
+
+### Treemap
+Convert an Explorer or USQL table into a tree map. Clicking on the chart drills down a level. Each level is a column in your table.
+
+Syntax:
+- `Users by Geo !PU(treemap):`
+
+Explanation:
+- `!PU(treemap):` - denotes the powerup
+- `colors=blue,yellow,#aabbcc` - (optional) give a list of colors the chart will randomly pull from
+
+Example:
+![treemap](Assets/treemap.png)
