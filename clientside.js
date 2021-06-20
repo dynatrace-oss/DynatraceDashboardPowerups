@@ -6133,7 +6133,7 @@ var DashboardPowerups = (function () {
                 let numlevels = Math.min(dataTable.keys.length - 1, 3);
 
                 let tree = {
-                    sub = []
+                    sub =[]
                 }
 
                 dataTable.normalTable.forEach(row => {
@@ -6144,7 +6144,7 @@ var DashboardPowerups = (function () {
 
                         let str = row[key];
                         let idx = root.sub.findIndex(x => x.str === str);
-                        if(idx < 0){
+                        if (idx < 0) {
                             idx = root.sub.length;
                             let subtree = {
                                 str: str,
@@ -6162,18 +6162,19 @@ var DashboardPowerups = (function () {
                 })
                 console.log(tree);
 
-                function addSubsToData(root,parent=null,l=0,v=0){
+                function addSubsToData(root, parent = null, l = null, v = null) {
                     let point = {
-                        id: `l${l}_v${v}`,
+                        id: l === null ? `root` : `l${l}_v${v}`,
                         name: root.str ? root.str : ""
                     }
-                    if(parent !== undefined) point.parent = parent;
-                    if(root.value !== undefined) point.value = root.value;
+                    if (l === null) l = 0;
+                    if (parent !== undefined) point.parent = parent;
+                    if (root.value !== undefined) point.value = root.value;
                     data.push(point);
 
                     let sub_v = 0;
                     root.sub.forEach(s => {
-                        addSubsToData(s,point.id,l+1,sub_v++);
+                        addSubsToData(s, point.id, l + 1, sub_v++);
                     })
                 }
                 addSubsToData(tree);
@@ -6212,7 +6213,7 @@ var DashboardPowerups = (function () {
                         alternateStartingDirection: true,
                         levelIsConstant: false,
                         levels: [{
-                            level: 1,
+                            level: 2,
                             borderwidth: 3,
                             colorByPoint: true
                             /*dataLabels: {
@@ -6226,7 +6227,7 @@ var DashboardPowerups = (function () {
                             }*/
                         },
                         {
-                            level: 2,
+                            level: 3,
                             layoutAlgorithm: 'stripes'
                         }
                         ],
