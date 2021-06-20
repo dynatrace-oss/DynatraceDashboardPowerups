@@ -6167,7 +6167,7 @@ var DashboardPowerups = (function () {
                         id: `l${l}_v${v}`,
                         name: root.str ? root.str : ""
                     }
-                    if(parent != null) point.parent = parent;
+                    if(parent !== undefined) point.parent = parent;
                     if(root.value !== undefined) point.value = root.value;
                     data.push(point);
 
