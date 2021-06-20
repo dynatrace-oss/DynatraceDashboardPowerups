@@ -6132,11 +6132,37 @@ var DashboardPowerups = (function () {
                 let levels = [];
                 let numlevels = Math.min(dataTable.keys.length - 1, 3);
 
-                dataTable.keys.forEach((key, i) => {
+                let tree = {
+                    sub = []
+                }
+
+                dataTable.normalTable.forEach(row => {
+                    let root = tree;
+                    dataTable.keys.forEach((key, i) => {
+                        if (i >= numlevels) return;
+
+                        let str = row[key];
+                        let idx = root.sub.findIndex(x => x.str === str);
+                        if(idx < 0){
+                            idx = root.sub.length;
+                            let subtree = {
+                                str: str,
+                                sub: []
+                            }
+                            root.sub.push(subtree);
+                        }
+
+                        root = sub[idx];
+                    })
+                })
+
+                console.log(tree);
+
+                /*dataTable.keys.forEach((key, i) => {
                     if (i >= numlevels) return;
-                    /*let vals = [... new Set(
+                    let vals = [... new Set(
                         dataTable.normalTable.map(x => x[key])
-                        )];*/
+                        )];
                     let vals = [];
                     levels.push({
                         level: i,
@@ -6178,10 +6204,10 @@ var DashboardPowerups = (function () {
                     let v_ii = levels[numlevels - 1].vals.findIndex(x => x === prev);
                     let parentid = `l${numlevels - 1}_v${v_ii}`;
                     let parentidx = data.findIndex(x => x.id = parentid);
-                    data[parentidx].value = row[valkey];*/
+                    data[parentidx].value = row[valkey];
                 })
                 data.sort((a,b)=> a.id < b.id ? -1 : 1);
-                console.log(data);
+                console.log(data);*/
 
                 //chart options
                 let options = {
