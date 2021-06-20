@@ -6215,8 +6215,9 @@ var DashboardPowerups = (function () {
                         levels: [{
                             level: 2,
                             borderwidth: 3,
-                            colorByPoint: true
-                            /*dataLabels: {
+                            colorByPoint: true,
+                            layoutAlgorithm: 'stripes',
+                            dataLabels: {
                                 enabled: true,
                                 align: 'left',
                                 verticalAlign: 'top',
@@ -6224,11 +6225,11 @@ var DashboardPowerups = (function () {
                                     fontSize: '15px',
                                     fontWeight: 'bold'
                                 }
-                            }*/
+                            }
                         },
                         {
                             level: 3,
-                            layoutAlgorithm: 'stripes'
+                            layoutAlgorithm: 'squarified'
                         }
                         ],
                         data: data
