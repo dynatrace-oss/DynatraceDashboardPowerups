@@ -6187,7 +6187,7 @@ var DashboardPowerups = (function () {
                     chart: {
                         type: 'treemap',
                         //inverted: true,
-                        height: '80%',
+                        //height: '80%',
                         backgroundColor: '#353535'
                     },
                     credits: {
@@ -6208,11 +6208,6 @@ var DashboardPowerups = (function () {
                         headerFormat: '',
                         pointFormat: `<b>{point.name}</b>: {point.value:.2f}`
                     },
-                    plotOptions: {
-                        treemap: {
-                            colors: ['#4fd5e0','#2ab6f4','#748cff','#a972cc'],    
-                        }
-                    },
                     series: [{
                         type: "treemap",
                         layoutAlgorithm: 'squarified',
@@ -6220,7 +6215,7 @@ var DashboardPowerups = (function () {
                         //levelIsConstant: false,
                         allowDrillToNode: true,
                         interactByLeaf: false,
-                        colors: ['#4fd5e0','#2ab6f4','#748cff','#a972cc'],
+                        //colors: ['#4fd5e0','#2ab6f4','#748cff','#a972cc'],
                         levels: [{
                             level: 1,
                             borderWidth: 3,
