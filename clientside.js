@@ -6190,7 +6190,7 @@ var DashboardPowerups = (function () {
                     chart: {
                         type: 'treemap',
                         //inverted: true,
-                        //height: '80%',
+                        height: '80%',
                         backgroundColor: '#353535'
                     },
                     colors: colors,
