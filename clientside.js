@@ -6212,9 +6212,12 @@ var DashboardPowerups = (function () {
                         layoutAlgorithm: 'squarified',
                         alternateStartingDirection: true,
                         levelIsConstant: false,
+                        allowDrillToNode: true,
+                        interactByLeaf: true,
                         levels: [{
                             level: 2,
-                            borderwidth: 3,
+                            borderWidth: 3,
+                            borderColor: 'white',
                             colorByPoint: true,
                             layoutAlgorithm: 'stripes',
                             dataLabels: {
@@ -6229,6 +6232,8 @@ var DashboardPowerups = (function () {
                         },
                         {
                             level: 3,
+                            borderWidth: 1,
+                            borderColor: 'gray',
                             layoutAlgorithm: 'squarified'
                         }
                         ],
