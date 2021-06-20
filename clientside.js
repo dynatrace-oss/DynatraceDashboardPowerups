@@ -6190,6 +6190,7 @@ var DashboardPowerups = (function () {
                         //height: '80%',
                         backgroundColor: '#353535'
                     },
+                    colors: colors,
                     credits: {
                         enabled: false
                     },
@@ -6215,7 +6216,6 @@ var DashboardPowerups = (function () {
                         //levelIsConstant: false,
                         allowDrillToNode: true,
                         interactByLeaf: false,
-                        //colors: ['#4fd5e0','#2ab6f4','#748cff','#a972cc'],
                         levels: [{
                             level: 1,
                             borderWidth: 3,
