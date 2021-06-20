@@ -6137,6 +6137,7 @@ var DashboardPowerups = (function () {
                 }
 
                 dataTable.normalTable.forEach(row => {
+                    //load tree
                     let root = tree;
                     dataTable.keys.forEach((key, i) => {
                         if (i >= numlevels) return;
@@ -6153,7 +6154,11 @@ var DashboardPowerups = (function () {
                         }
 
                         root = sub[idx];
-                    })
+                    });
+
+                    //assign value
+                    let valkey = dataTable.keys[dataTable.keys.length - 1];
+                    root.value = row[valkey];
                 })
 
                 console.log(tree);
