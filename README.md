@@ -618,7 +618,7 @@ Example:
 ![autohide_after](Assets/autohide_after.png)
 
 ### Treemap
-Convert an Explorer or USQL table into a tree map. Clicking on the chart drills down a level. Each level is a column in your table.
+Convert an Explorer or USQL table into a tree map. Clicking on the chart drills down a level. Each level is a column in your table. Note: requires version 1.51+.
 
 Syntax:
 - `Users by Geo !PU(treemap):`
