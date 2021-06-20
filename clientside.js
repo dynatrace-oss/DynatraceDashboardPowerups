@@ -6178,57 +6178,6 @@ var DashboardPowerups = (function () {
                 }
                 addSubsToData(tree);
 
-                /*dataTable.keys.forEach((key, i) => {
-                    if (i >= numlevels) return;
-                    let vals = [... new Set(
-                        dataTable.normalTable.map(x => x[key])
-                        )];
-                    let vals = [];
-                    levels.push({
-                        level: i,
-                        vals: vals
-                    })
-                });
-
-                dataTable.normalTable.forEach((row,r_i) => {
-                    dataTable.keys.forEach((key, i) => {
-                        if (i >= numlevels) return;
-
-                        let s = row[key];
-                        if (!levels[i].vals.includes(s)) { //create data point if not existing
-                            let v_i = levels[i].vals.length;
-                            levels[i].vals.push(s);
-                            let point = {
-                                id: `l${i}_v${v_i}`,
-                                name: s
-                            }
-                            if (i) {
-                                let prevkey = dataTable.keys[i - 1];
-                                let prev = row[prevkey];
-                                let v_ii = levels[i - 1].vals.findIndex(x => x === prev);
-                                point.parent = `l${i - 1}_v${v_ii}`;
-                            }
-                            data.push(point);
-                        }
-                    })
-                    
-                    let valkey = dataTable.keys[dataTable.keys.length - 1];
-                    let point = {
-                        id: `row${r_i}`,
-                        value: row[valkey]
-                    }
-                    data.push(point);
-                    /*
-                    let prevkey = dataTable.keys[numlevels - 1];
-                    let prev = row[prevkey];
-                    let v_ii = levels[numlevels - 1].vals.findIndex(x => x === prev);
-                    let parentid = `l${numlevels - 1}_v${v_ii}`;
-                    let parentidx = data.findIndex(x => x.id = parentid);
-                    data[parentidx].value = row[valkey];
-                })
-                data.sort((a,b)=> a.id < b.id ? -1 : 1);
-                console.log(data);*/
-
                 //chart options
                 let options = {
                     chart: {
@@ -6259,11 +6208,10 @@ var DashboardPowerups = (function () {
 
                     series: [{
                         type: "treemap",
-                        layoutAlgorithm: 'stripes',
+                        layoutAlgorithm: 'squarified',
                         alternateStartingDirection: true,
                         levels: [{
                             level: 1,
-                            layoutAlgorithm: 'sliceAndDice',
                             borderwidth: 3,
                             dataLabels: {
                                 enabled: true,
@@ -6274,7 +6222,12 @@ var DashboardPowerups = (function () {
                                     fontWeight: 'bold'
                                 }
                             }
-                        }],
+                        },
+                        {
+                            level: 2,
+                            layoutAlgorithm: 'stripes'
+                        }
+                        ],
                         data: data
                     }]
                 }
