@@ -5688,20 +5688,30 @@ var DashboardPowerups = (function () {
                 }
 
                 //display val
-                //$markdown.hide();
-                $markdown.find('p').each((p_i,p)=>{
-                    let $p = $(p);
-                    if($p.text().includes(PU_VLOOKUP)) $p.hide();
-                });
+                  //cleanup first
+                $markdown.hide();
                 $markdown.parent().children(".powerupVlookup").remove();
+
+                //create new container
                 let $newContainer = $("<div>")
                     .addClass("powerupVlookup")
                     .insertAfter($markdown);
+                
+                //copy everything over
+                $markdown.children().each((p_i,p)=>{
+                    let $p = $(p)
+                        .clone()
+                        .appendTo($newContainer);
+                    if(!$p.text().includes(PU_VLOOKUP)) 
+                        $p.addClass('powerupVlookupToBeSwapped');
+                });
+
+                //replace in the new val
                 let $h1 = $("<h1>")
                     .css("color", color)
                     .css("font-size", size)
                     .text(vlookupVal)
-                    .appendTo($newContainer);
+                    .replaceAll('.powerupVlookupToBeSwapped');
                 powerupsFired['PU_VLOOKUP'] ? powerupsFired['PU_VLOOKUP']++ : powerupsFired['PU_VLOOKUP'] = 1;
             }
         });
