@@ -5688,7 +5688,11 @@ var DashboardPowerups = (function () {
                 }
 
                 //display val
-                $markdown.hide();
+                //$markdown.hide();
+                $markdown.find('p').each((p_i,p)=>{
+                    let $p = $(p);
+                    if($p.text().includes(PU_VLOOKUP)) $p.hide();
+                });
                 $markdown.parent().children(".powerupVlookup").remove();
                 let $newContainer = $("<div>")
                     .addClass("powerupVlookup")
