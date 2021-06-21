@@ -5584,7 +5584,7 @@ var DashboardPowerups = (function () {
 
                 //find the table
                 let tabletile = pub.findLinkedTile(link, PU_VLOOKUP);
-                if (typeof (tabletile) == "undefined") return false;
+                if (typeof (tabletile) == "undefined") return true; //return non-false to continue
                 let $tabletile = $(tabletile)
                 let dataTable = readTableData($tabletile, false);
 
