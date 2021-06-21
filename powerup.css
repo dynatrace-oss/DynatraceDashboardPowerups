@@ -356,11 +356,8 @@ h1.powerup-color-normal {
 .powerupVlookup {
   display: flex;
   padding-left: 20px;
-}
-
-.powerupMath,
-.powerupVlookup {
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .powerupMathText {
