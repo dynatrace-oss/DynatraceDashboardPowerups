@@ -5702,7 +5702,7 @@ var DashboardPowerups = (function () {
                     let $p = $(p)
                         .clone()
                         .appendTo($newContainer);
-                    if(!$p.text().includes(PU_VLOOKUP)) 
+                    if($p.text().includes(PU_VLOOKUP)) //mark text to swap
                         $p.addClass('powerupVlookupToBeSwapped');
                 });
 
