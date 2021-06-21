@@ -5997,9 +5997,8 @@ var DashboardPowerups = (function () {
                             }
                         }
                     }
-                    if (point.color != undefined) {
-                        p.color = point.color
-                    } else if(base === "low"){
+                    
+                    if(base === "low"){
                         if(p.value < warn) p.color = COLOR_GREEN;
                         else if(p.value >= crit) p.color = COLOR_RED;
                         else p.color = COLOR_YELLOW;
@@ -6007,6 +6006,8 @@ var DashboardPowerups = (function () {
                         if(p.value > warn) p.color = COLOR_GREEN;
                         else if(p.value <= crit) p.color = COLOR_RED;
                         else p.color = COLOR_YELLOW;
+                    } else if (point.color != undefined) {
+                        p.color = point.color
                     } else {
                         p.color = '#cccccc';
                     }
