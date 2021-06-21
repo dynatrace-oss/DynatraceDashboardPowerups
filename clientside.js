@@ -1547,10 +1547,10 @@ var DashboardPowerups = (function () {
                 let args = argsplit(title, PU_BANNER);
                 let color = args.find(x => x[0] == "color")[1];
 
-                $(BANNER_SELECTOR).css("background", color);
+                /*$(BANNER_SELECTOR).css("background", color);
                 $(BANNER_SELECTOR).css("color", contrast(color));
                 powerupFound = true;
-                powerupsFired['PU_BANNER'] ? powerupsFired['PU_BANNER']++ : powerupsFired['PU_BANNER'] = 1;
+                powerupsFired['PU_BANNER'] ? powerupsFired['PU_BANNER']++ : powerupsFired['PU_BANNER'] = 1;*/
 
                 let error = `POWERUP: DEPRECATED - ${PU_BANNER} has moved to Markdown tiles instead of Tags`;
                 console.log(error);
