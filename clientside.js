@@ -5073,7 +5073,7 @@ var DashboardPowerups = (function () {
                         if (!isNaN(tmptime)) s.val = tmptime;
                     }
                     if (isNaN(Number(s.val)))
-                        console.log(`Powerup: WARN - ${PU_MATH} - NaN: \n\n${JSON.stringify({ exp: exp, tokens: tokens, pairs: pairs })}`);
+                        console.log(`Powerup: WARN - ${PU_MATH} - NaN: \n\n${JSON.stringify({ exp: exp, scope: scope, val: s.val })}`);
                 });
 
 
