@@ -5593,7 +5593,7 @@ var DashboardPowerups = (function () {
                     let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in table.`;
                     console.log(error);
                     errorBeacon(error);
-                    return false;
+                    return;
                 }
                 let firstColName = dataTable.keys[0];
                 let rowIdx;
