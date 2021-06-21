@@ -5999,13 +5999,13 @@ var DashboardPowerups = (function () {
                     }
                     
                     if(base === "low"){
-                        if(p.value < warn) p.color = COLOR_GREEN;
-                        else if(p.value >= crit) p.color = COLOR_RED;
-                        else p.color = COLOR_YELLOW;
+                        if(p.value < warn) p.color = 'green';
+                        else if(p.value >= crit) p.color = 'red';
+                        else p.color = 'yellow';
                     } else if(base === "high"){
-                        if(p.value > warn) p.color = COLOR_GREEN;
-                        else if(p.value <= crit) p.color = COLOR_RED;
-                        else p.color = COLOR_YELLOW;
+                        if(p.value > warn) p.color = 'green';
+                        else if(p.value <= crit) p.color = 'red';
+                        else p.color = 'yellow';
                     } else if (point.color != undefined) {
                         p.color = point.color
                     } else {
