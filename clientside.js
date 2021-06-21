@@ -5924,6 +5924,13 @@ var DashboardPowerups = (function () {
                 let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',').filter(x => x != "");
                 let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
                 if (drill) drill = drill.trim();
+                let base = (args.find(x => x[0] == "base") || [])[1] || "";
+                let warn = Number(
+                    (args.find(x => x[0] == "warn") || [])
+                    [1]);
+                let crit = Number(
+                    (args.find(x => x[0] == "crit") || [])
+                    [1]);
 
                 //find the table
                 let dataTable = readTableData($tile, true, true);
@@ -5990,8 +5997,19 @@ var DashboardPowerups = (function () {
                             }
                         }
                     }
-                    if (point.color != undefined) p.color = point.color
-                    else p.color = '#cccccc';
+                    if (point.color != undefined) {
+                        p.color = point.color
+                    } else if(base === "low"){
+                        if(p.value < warn) p.color = COLOR_GREEN;
+                        else if(p.value >= crit) p.color = COLOR_RED;
+                        else p.color = COLOR_YELLOW;
+                    } else if(base === "high"){
+                        if(p.value > warn) p.color = COLOR_GREEN;
+                        else if(p.value <= crit) p.color = COLOR_RED;
+                        else p.color = COLOR_YELLOW;
+                    } else {
+                        p.color = '#cccccc';
+                    }
                     data.push(p);
                 }
                 let x = 0, y = 0, j = 0;
