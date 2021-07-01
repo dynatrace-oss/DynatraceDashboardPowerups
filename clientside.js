@@ -5101,7 +5101,7 @@ var DashboardPowerups = (function () {
                 }
                 //if (pub.config.Powerups.debug) 
 
-                if (val == undefined) return false;
+                if (typeof(val) == "undefined") return false;
 
                 //handle units
                 if (dates) {
@@ -5280,7 +5280,7 @@ var DashboardPowerups = (function () {
     pub.puDate = function () { //example: !PU(date):res=now-7d/d;fmt=yyyy-mm-dd;color=blue
         if (!pub.config.Powerups.datePU) return;
 
-        if (dateFns == undefined) {
+        if (typeof(dateFns) == "undefined") {
             let error = `Powerup: CRITICAL - ${PU_DATE} - dateFns module not loaded!`;
             console.log(error);
             errorBeacon(error);
@@ -5589,7 +5589,7 @@ var DashboardPowerups = (function () {
                 let dataTable = readTableData($tabletile, false);
 
                 //lookup val in table
-                if (!dataTable || dataTable.keys == undefined || !dataTable.keys.length) {
+                if (!dataTable || typeof(dataTable.keys) == "undefined" || !dataTable.keys.length) {
                     let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in table.`;
                     console.log(error);
                     errorBeacon(error);
@@ -5634,7 +5634,7 @@ var DashboardPowerups = (function () {
                             let $comparetabletile = $(comparetabletile);
                             compareTable = readTableData($comparetabletile);
                         }
-                        if (!compareTable || compareTable.keys == undefined || !compareTable.keys.length) {
+                        if (!compareTable || typeof(compareTable.keys) == "undefined" || !compareTable.keys.length) {
                             let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in compareTable.`;
                             console.log(error);
                             errorBeacon(error);
