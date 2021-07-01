@@ -1701,7 +1701,7 @@ var DashboardPowerups = (function () {
                     let error = "Powerup: ERROR - toplist PU must have vals sorted ascending";
                     console.log(error);
                     errorBeacon(error);
-                    return false;
+                    return true; //return non-false to 'continue'
                 }
 
                 function getColor(val) {
@@ -4256,7 +4256,7 @@ var DashboardPowerups = (function () {
                         let error = "Powerup: ERROR - invalid argstring: " + args.argstring;
                         console.log(error);
                         errorBeacon(error);
-                        return false;
+                        return true; //return non-false to 'continue'
                     }
                     let link = args.find(x => x[0] == "link")[1];
                     let flink = (args.find(x => x[0] == "flink") || [])[1];
@@ -4279,11 +4279,11 @@ var DashboardPowerups = (function () {
                         let error = "Powerup: WARN - Sankey container is undefined.";
                         console.log(error);
                         errorBeacon(error);
-                        return false;
+                        return true; //return non-false to 'continue'
                     }
                     if (!$table.length) { //USQL error or no data
                         //destroyChartsAndContainers($tile.get(0));
-                        return false;
+                        return true; //return non-false to 'continue'
                     }
                     if (flink) {
                         let filterMD = pub.findLinkedMarkdown(flink, PU_SANKEY);
@@ -5306,7 +5306,7 @@ var DashboardPowerups = (function () {
                 let error = `Powerup: ERROR - ${PU_DATE} - dtDateMath did not return a valid result for: "${res}"`;
                 console.log(error);
                 errorBeacon(error);
-                return false;
+                return true; //return non-false to 'continue'
             }
             let from = dtDate[0];
             let to = dtDate[1];
@@ -5638,7 +5638,7 @@ var DashboardPowerups = (function () {
                             let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in compareTable.`;
                             console.log(error);
                             errorBeacon(error);
-                            return false;
+                            return true; //return non-false to 'continue'
                         }
                         let compareFirstColName = compareTable.keys[0];
                         let compareRowIdx = compareTable.normalTable.findIndex(x => x[compareFirstColName] === compareVal);
