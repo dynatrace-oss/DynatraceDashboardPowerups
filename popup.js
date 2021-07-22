@@ -18,6 +18,7 @@ $(document).ready(function () {
         updateControls(config);
         $('#save').on('click', saveAndClose);
         $('#prefs').on('click', togglePrefs);
+        $('#report').on('click', generateReport);
         togglePrefs();
         //endBeaconMessage();
     });
@@ -173,4 +174,17 @@ function togglePrefs() {
     let $closer = $("#prefCloser");
     $closer.parents("thead").siblings().toggle();
     $closer.toggleClass("open");
+}
+
+function generateReport() {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { Powerup: "GenerateReport" }, (response) => {
+            if(typeof(response) != "undefined" && response.Powerup == "LaunchedReportGeneration"){
+                console.log("Powerup: launched report generation");
+            } else {
+                console.log("Powerup: report generation failed");
+            }
+            window.close();
+        });
+    });
 }

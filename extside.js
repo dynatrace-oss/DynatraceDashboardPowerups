@@ -67,6 +67,7 @@ if (typeof (INJECTED) == "undefined") {
                     DashboardPowerups.config = ${JSON.stringify(config)};
                     DashboardPowerups.GridObserver.launchGridObserver();
                     `);
+                    injectReportLib();
 
                     console.log("Powerup: powerups complete.");
                 });
@@ -261,6 +262,15 @@ if (typeof (INJECTED) == "undefined") {
                         });
                         break;
                     }
+                    case "GenerateReport": {
+                        chrome.storage.local.get(['Powerups'], function (result) {
+                            let s = `if(typeof(openReportGenerator)=="function") openReportGenerator();
+                                else console.log("Powerup: generateReport called but lib not loaded");`;
+                            injectClientsideString(s);
+                            sendResponse({ Powerup: "LaunchedReportGeneration" });
+                        });
+                        break;
+                    }
                 }
                 switch (request.PowerUpResult) {
                     case "PU_BACKGROUND": //we asked background for an img, now we have it
@@ -440,6 +450,48 @@ if (typeof (INJECTED) == "undefined") {
                 context: "extside",
                 err: err
             });
+    }
+
+    function injectReportLib(config) {
+        let p = $.Deferred();
+        if (!$("#PowerupsReportingTag").length) {
+            if (config.Powerups.libLocation == "gh" //Allow user to opt-in to pull from GitHub instead of extension, due to slow Google approvals
+                || HotFixMode) { //Or force all users to GitHub copy in case of emergency hotfix
+                console.log(`POWERUP: Loading reporting lib from: GH...`);
+                fetch(GH_URL + 'reporting.min.js')
+                    .then(response => response.text())
+                    .then(text => { // read response body as text
+                        var $s = $("<script>")
+                            .attr("id", "PowerupsReportingTag")
+                            .text(text) //execute in webpage context, not extension
+                            .appendTo("body");
+                        p.resolve(true);
+                    })
+                    .catch(err => {
+                        console.log(`POWERUP: Loading reporting lib from: GH failed...`, err);
+                        //default back to local copy
+                        let lib = ext_url + (POWERUPDEBUG ? "reporting.js" : "reporting.min.js");
+                        console.log(`POWERUP: Loading libs from: ${lib}...`);
+                        var $s = $("<script>")
+                            .attr("id", "PowerupsReportingTag")
+                            .attr("src", lib) //execute in webpage context, not extension
+                            .appendTo("body");
+                        p.resolve(true);
+                    });
+            } else {
+                let lib = (config.Powerups.libLocation == "gh" ? GH_URL : ext_url)
+                    + (POWERUPDEBUG ? "reporting.js" : "reporting.min.js");
+                console.log(`POWERUP: Loading reporting libs from: ${lib}...`);
+                var $s = $("<script>")
+                    .attr("id", "PowerupsReportingTag")
+                    .attr("src", lib) //execute in webpage context, not extension
+                    .appendTo("body");
+                p.resolve(true);
+            }
+        } else {
+            p.resolve(false);
+        }
+        return p;
     }
 
     INJECTED = true;
