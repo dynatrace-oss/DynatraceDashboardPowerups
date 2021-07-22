@@ -38,6 +38,18 @@ var DashboardPowerups = (function () {
     const TILE_CONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:first-of-type';
     const TILE_NOCONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:nth-of-type(3)';
 
+    const SELECTORS = {
+        GRID_SELECTOR: GRID_SELECTOR, VIEWPORT_SELECTOR: VIEWPORT_SELECTOR, TITLE_SELECTOR: TITLE_SELECTOR, VAL_SELECTOR: VAL_SELECTOR,
+        TILE_SELECTOR: TILE_SELECTOR, LEGEND_SELECTOR: LEGEND_SELECTOR, MARKDOWN_SELECTOR: MARKDOWN_SELECTOR, BIGNUM_SELECTOR: BIGNUM_SELECTOR,
+        VLOOKUP_BIGNUM_SELECTOR: VLOOKUP_BIGNUM_SELECTOR, TREND_SELECTOR: TREND_SELECTOR, MAP_SELECTOR: MAP_SELECTOR,
+        MAPTITLE_SELECTOR: MAPTITLE_SELECTOR, TABLE_SELECTOR: TABLE_SELECTOR, TABLE_COL_SELECTOR: TABLE_COL_SELECTOR,
+        BANNER_SELECTOR: BANNER_SELECTOR, TAG_SELECTOR: TAG_SELECTOR, FUNNEL_SELECTOR: FUNNEL_SELECTOR, SVT_PANEL_SELECTOR: SVT_PANEL_SELECTOR,
+        SVT_METRIC_SELECTOR: SVT_METRIC_SELECTOR, SVT_UNITS_SELECTOR: SVT_UNITS_SELECTOR, COLUMN_SELECTOR: COLUMN_SELECTOR,
+        MENU_ICON_SELECTOR: MENU_ICON_SELECTOR, MENU_POPUP_SELECTOR: MENU_POPUP_SELECTOR, TOPLIST_SELECTOR: TOPLIST_SELECTOR,
+        TOPLIST_BAR_SELECTOR: TOPLIST_BAR_SELECTOR, NO_DATA_SELECTOR: NO_DATA_SELECTOR, TILE_CONTENT_SELECTOR: TILE_CONTENT_SELECTOR,
+        TILE_NOCONTENT_SELECTOR: TILE_NOCONTENT_SELECTOR
+    }
+
     const PU_COLOR = '!PU(color):';
     const PU_SVG = '!PU(svg):';
     const PU_MAP = '!PU(map):';
@@ -492,6 +504,8 @@ var DashboardPowerups = (function () {
     var pub = {};
 
     pub.POWERUP_EXT_URL = "";
+    pub.SELECTORS = SELECTORS;
+    pub.MARKERS = MARKERS;
     pub.SVGLib = () => { return pub.POWERUP_EXT_URL + encodeURI(`3rdParty/node_modules/@dynatrace/barista-icons/`); };
     pub.config = {};
     pub.PUHighchartsMutex = { blocking: false, blocked: 0 }; //must be obj to ensure passby ref
@@ -5101,7 +5115,7 @@ var DashboardPowerups = (function () {
                 }
                 //if (pub.config.Powerups.debug) 
 
-                if (typeof(val) == "undefined") return false;
+                if (typeof (val) == "undefined") return false;
 
                 //handle units
                 if (dates) {
@@ -5280,7 +5294,7 @@ var DashboardPowerups = (function () {
     pub.puDate = function () { //example: !PU(date):res=now-7d/d;fmt=yyyy-mm-dd;color=blue
         if (!pub.config.Powerups.datePU) return;
 
-        if (typeof(dateFns) == "undefined") {
+        if (typeof (dateFns) == "undefined") {
             let error = `Powerup: CRITICAL - ${PU_DATE} - dateFns module not loaded!`;
             console.log(error);
             errorBeacon(error);
@@ -5589,7 +5603,7 @@ var DashboardPowerups = (function () {
                 let dataTable = readTableData($tabletile, false);
 
                 //lookup val in table
-                if (!dataTable || typeof(dataTable.keys) == "undefined" || !dataTable.keys.length) {
+                if (!dataTable || typeof (dataTable.keys) == "undefined" || !dataTable.keys.length) {
                     let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in table.`;
                     console.log(error);
                     errorBeacon(error);
@@ -5634,7 +5648,7 @@ var DashboardPowerups = (function () {
                             let $comparetabletile = $(comparetabletile);
                             compareTable = readTableData($comparetabletile);
                         }
-                        if (!compareTable || typeof(compareTable.keys) == "undefined" || !compareTable.keys.length) {
+                        if (!compareTable || typeof (compareTable.keys) == "undefined" || !compareTable.keys.length) {
                             let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in compareTable.`;
                             console.log(error);
                             errorBeacon(error);
@@ -5688,7 +5702,7 @@ var DashboardPowerups = (function () {
                 }
 
                 //display val
-                  //cleanup first
+                //cleanup first
                 $markdown.hide();
                 $markdown.parent().children(".powerupVlookup").remove();
 
@@ -5696,13 +5710,13 @@ var DashboardPowerups = (function () {
                 let $newContainer = $("<div>")
                     .addClass("powerupVlookup")
                     .insertAfter($markdown);
-                
+
                 //copy everything over
-                $markdown.children().each((p_i,p)=>{
+                $markdown.children().each((p_i, p) => {
                     let $p = $(p)
                         .clone()
                         .appendTo($newContainer);
-                    if($p.text().includes(PU_VLOOKUP)) //mark text to swap
+                    if ($p.text().includes(PU_VLOOKUP)) //mark text to swap
                         $p.addClass('powerupVlookupToBeSwapped');
                 });
 
@@ -6011,14 +6025,14 @@ var DashboardPowerups = (function () {
                             }
                         }
                     }
-                    
-                    if(base === "low"){
-                        if(p.value < warn) p.color = 'green';
-                        else if(p.value >= crit) p.color = 'red';
+
+                    if (base === "low") {
+                        if (p.value < warn) p.color = 'green';
+                        else if (p.value >= crit) p.color = 'red';
                         else p.color = 'yellow';
-                    } else if(base === "high"){
-                        if(p.value > warn) p.color = 'green';
-                        else if(p.value <= crit) p.color = 'red';
+                    } else if (base === "high") {
+                        if (p.value > warn) p.color = 'green';
+                        else if (p.value <= crit) p.color = 'red';
                         else p.color = 'yellow';
                     } else if (point.color != undefined) {
                         p.color = point.color
@@ -6125,9 +6139,9 @@ var DashboardPowerups = (function () {
                 let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',').filter(x => x != "");
                 let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
                 if (drill) drill = drill.trim();
-                let colors = (args.find(x => x[0] == "colors") 
-                    || ["colors","#7c38a1,#fff29a,#4fd5e0,#debbf3,#ef651f,#f5d30f,#4556d7,#ffa86c,#ffd0ab,#00a1b2,#c9a000,#aeebf0,#748cff"])[1];
-                if(typeof(colors)=="string") colors = colors.split(',');
+                let colors = (args.find(x => x[0] == "colors")
+                    || ["colors", "#7c38a1,#fff29a,#4fd5e0,#debbf3,#ef651f,#f5d30f,#4556d7,#ffa86c,#ffd0ab,#00a1b2,#c9a000,#aeebf0,#748cff"])[1];
+                if (typeof (colors) == "string") colors = colors.split(',');
 
                 //find the table
                 let dataTable = readTableData($tile, true, true);
