@@ -27,6 +27,7 @@
         "powerup.css",
         "3rdParty/node_modules/@dynatrace/barista-icons/*",
         "clientside.*js*",
+        "reporting.*js*",
         "3rdParty/Highcharts/modules/6.2.0/*",
         "3rdParty/Highcharts/lib/*",
         "3rdParty/node_modules/@iconfu/svg-inject/dist/*",
