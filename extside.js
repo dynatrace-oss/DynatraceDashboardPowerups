@@ -67,7 +67,7 @@ if (typeof (INJECTED) == "undefined") {
                     DashboardPowerups.config = ${JSON.stringify(config)};
                     DashboardPowerups.GridObserver.launchGridObserver();
                     `);
-                    injectReportLib();
+                    injectReportLib(config);
 
                     console.log("Powerup: powerups complete.");
                 });
