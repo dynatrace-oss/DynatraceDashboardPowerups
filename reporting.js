@@ -87,7 +87,8 @@ function generateReport() {
         let charts = H.charts.filter(x => typeof(x) != "undefined");
         exportCharts(charts, 
             {
-                type: 'application/pdf'
+                type: 'application/pdf',
+                libURL: DashboardPowerups.POWERUP_EXT_URL + '3rdParty/Highcharts/lib'
             })
 
     }(Highcharts));
