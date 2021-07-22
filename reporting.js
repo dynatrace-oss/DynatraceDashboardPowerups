@@ -6,10 +6,14 @@ function openReportGenerator() {
 
     let $cancel = $(`<button type="button">`)
         .on('click', closeReportGenerator)
+        .text("Cancel")
+        .addClass("powerupButton")
         .appendTo($repgen);
 
     let $generate = $(`<button type="button">`)
         .on('click', generateReport)
+        .text("Generate")
+        .addClass("powerupButton")
         .appendTo($repgen);
 }
 

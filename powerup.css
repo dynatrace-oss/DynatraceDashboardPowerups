@@ -713,3 +713,28 @@ table.powerupActionPopup tr > *:nth-of-type(4){
 .powerup-svg-multi.powerup-svg-nan{
   display: block;
 }
+
+.PowerupReportGenerator {
+  position: fixed;
+  left: 10%;
+  top: 10%;
+  width: 80%;
+  height: 80%;
+  z-index: 20000;
+  background: white;
+  border-radius: 3px;
+  border: 1px #454646 solid;
+}
+
+.powerupButton {
+  width: 70px;
+  margin: 5px 10px 5px auto;
+  padding: 2px 0px;
+  color: #00a1b2;
+  font-size: 14px;
+  border: #00a1b2 1px solid;
+  border-radius: 3px;
+  white-space: nowrap;
+  text-align: center;
+  background-color: white;
+}
