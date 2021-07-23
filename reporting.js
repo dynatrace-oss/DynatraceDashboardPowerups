@@ -57,7 +57,10 @@ function generateReport() {
                     let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
                     let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
                     let title = $title.text();
-                    DashboardPowerups.MARKERS.forEach(m => title = title.replace(m,''));
+                    DashboardPowerups.MARKERS.forEach(m => {
+                        let r = new RegExp(m + '.*')
+                        title = title.replace(m,'')
+                    });
                     if(typeof(title) != "undefined" && title.length)
                         chartOptions.title = {
                             text: title,
