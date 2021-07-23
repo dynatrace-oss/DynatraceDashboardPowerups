@@ -741,6 +741,7 @@ table.powerupActionPopup tr > *:nth-of-type(4){
 
 .PowerupReportGenerator {
   display: flex;
+  flex-direction: column;
 }
 
 .PowerupReportGenerator > div {

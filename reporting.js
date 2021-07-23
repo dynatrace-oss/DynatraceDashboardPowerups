@@ -28,7 +28,7 @@ function closeReportGenerator() {
 
 function generateReport() {
     $(`#generateReportButton`).hide();
-    let $preview = $(`PowerupReportGeneratorPreview`);
+    let $preview = $(`#PowerupReportGeneratorPreview`);
     let $buttonBar = $(`#PowerupReportGeneratorButtonBar`);
 
     (function (H) {
