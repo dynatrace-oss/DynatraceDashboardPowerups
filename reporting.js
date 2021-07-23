@@ -60,13 +60,13 @@ function generateReport() {
                     let idx = title.length;
 
                     //remove markers from title using string manipulation instead of regex to avoid excessive escaping
-                    idx = MARKERS.reduce((acc, marker) =>
+                    idx = DashboardPowerups.MARKERS.reduce((acc, marker) =>
                     (title.includes(marker) ?
                         Math.min(title.indexOf(marker), acc) :
                         Math.min(acc, idx))
                         , idx);
                     title = title.substring(0, idx)
-                    
+
                     if (typeof (title) != "undefined" && title.length)
                         chartOptions.title = {
                             text: title,
