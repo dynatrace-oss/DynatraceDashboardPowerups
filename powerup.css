@@ -738,3 +738,17 @@ table.powerupActionPopup tr > *:nth-of-type(4){
   text-align: center;
   background-color: white;
 }
+
+.PowerupReportGenerator {
+  display: flex;
+}
+
+.PowerupReportGenerator > div {
+  flex: 1;
+  padding: 10px;
+}
+
+.PowerupReportGenerator > div:first-of-type, .PowerupReportGenerator > div:last-of-type {
+  flex: 0;
+  align-content: center;
+}

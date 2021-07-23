@@ -1,20 +1,25 @@
 function openReportGenerator() {
     let $repgen = $("<div>")
-        .html("<h3>Generate Report</h3>")
+        .html(`
+        <div id="PowerupReportGeneratorTitleBar"><h3>Generate Report</h3></div>
+        <div id="PowerupReportGeneratorPreview"></div>
+        <div id="PowerupReportGeneratorButtonBar"></div>
+        `)
         .addClass("PowerupReportGenerator")
         .appendTo("body");
+    let $buttonBar = $repgen.find(`#PowerupReportGeneratorButtonBar`);
 
     let $cancel = $(`<button type="button">`)
         .on('click', closeReportGenerator)
         .text("Cancel")
         .addClass("powerupButton")
-        .appendTo($repgen);
+        .appendTo($buttonBar);
 
-    let $generate = $(`<button type="button">`)
+    let $generate = $(`<button type="button" id="generateReportButton">`)
         .on('click', generateReport)
         .text("Generate")
         .addClass("powerupButton")
-        .appendTo($repgen);
+        .appendTo($buttonBar);
 }
 
 function closeReportGenerator() {
@@ -22,6 +27,9 @@ function closeReportGenerator() {
 }
 
 function generateReport() {
+    $(`#generateReportButton`).hide();
+    let $preview = $(`PowerupReportGeneratorPreview`);
+    let $buttonBar = $(`#PowerupReportGeneratorButtonBar`);
 
     (function (H) {
         // adapted from https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/
@@ -46,12 +54,30 @@ function generateReport() {
                     width = Math.max(width, svgWidth);
                     svgArr.push(svg);
                 },
+                previewSVG = function (svg) {
+                    let p = $.Deferred();
+                    $preview.html(svg);
+                    let $next = $(`<button type="button" id="generateReportNextButton">`)
+                        .on('click', () => {
+                            $preview.html();
+                            p.resolve();
+                        })
+                        .text("Next")
+                        .addClass("powerupButton")
+                        .appendTo($buttonBar);
+                    return(p);
+                },
                 exportChart = function (i) {
                     if (i === charts.length) {
                         return callback('<svg height="' + top + '" width="' + width +
                             '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>');
                     }
-                    let chartOptions = {};
+                    let chartOptions = {
+                        chart: {
+                            borderColor: "#e6e6e6",
+                            borderWidth: "1px"
+                        }
+                    };
                     //Dynatrace charts don't set the title, get it and set it
                     let $chart = $(charts[i].container);
                     let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
@@ -80,7 +106,8 @@ function generateReport() {
 
                     charts[i].getSVGForLocalExport(options, chartOptions, function () {
                         console.log("Failed to get SVG");
-                    }, function (svg) {
+                    }, async function (svg) {
+                        await previewSVG(svg);
                         addSVG(svg);
                         return exportChart(i + 1); // Export next only when this SVG is received
                     });
