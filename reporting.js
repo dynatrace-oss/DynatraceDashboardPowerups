@@ -27,6 +27,7 @@ function generateReport() {
         // adapted from https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/
 
         let getSVG = function (charts, options, callback) {
+            const space = 10;
             let svgArr = [],
                 top = 0,
                 width = 0,
@@ -41,7 +42,7 @@ function generateReport() {
                         // Offset the position of this chart in the final SVG
                         svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
                     svg = svg.replace('</svg>', '</g>');
-                    top += svgHeight;
+                    top += svgHeight + space;
                     width = Math.max(width, svgWidth);
                     svgArr.push(svg);
                 },
@@ -56,9 +57,15 @@ function generateReport() {
                     let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
                     let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
                     let title = $title.text();
+                    DashboardPowerups.MARKERS.forEach(m => title = title.replace(m,''));
                     if(typeof(title) != "undefined" && title.length)
                         chartOptions.title = {
-                            text: title
+                            text: title,
+                            align: "left",
+                            style: {
+                                color: "#454646",
+                                fontSize: "12px"
+                            }
                         }
 
 
