@@ -22,7 +22,7 @@ function closeReportGenerator() {
 }
 
 function generateReport() {
- 
+
     (function (H) {
         // adapted from https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/
 
@@ -57,11 +57,17 @@ function generateReport() {
                     let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
                     let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
                     let title = $title.text();
-                    DashboardPowerups.MARKERS.forEach(m => {
-                        let r = new RegExp(m + '.*')
-                        title = title.replace(m,'')
-                    });
-                    if(typeof(title) != "undefined" && title.length)
+                    let idx = title.length;
+
+                    //remove markers from title using string manipulation instead of regex to avoid excessive escaping
+                    idx = MARKERS.reduce((acc, marker) =>
+                    (title.includes(marker) ?
+                        Math.min(title.indexOf(marker), acc) :
+                        Math.min(acc, idx))
+                        , idx);
+                    title = title.substring(0, idx)
+                    
+                    if (typeof (title) != "undefined" && title.length)
                         chartOptions.title = {
                             text: title,
                             align: "left",
@@ -100,10 +106,10 @@ function generateReport() {
             }
         });
 
-        
+
         //get all the charts and export as PDF
-        let charts = H.charts.filter(x => typeof(x) != "undefined");
-        exportCharts(charts, 
+        let charts = H.charts.filter(x => typeof (x) != "undefined");
+        exportCharts(charts,
             {
                 type: 'application/pdf',
                 libURL: DashboardPowerups.POWERUP_EXT_URL + '3rdParty/Highcharts/lib'
