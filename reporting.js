@@ -22,11 +22,7 @@ function closeReportGenerator() {
 }
 
 function generateReport() {
-    //Step 1 - clone Highcharts global for safe keeping
-    // not sure how to do this, if its even possible...
-    //Step 2 - forEach chart, generate SVG
-    //Step 3 - build a PDF
-
+ 
     (function (H) {
         // adapted from https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/
 
@@ -54,7 +50,19 @@ function generateReport() {
                         return callback('<svg height="' + top + '" width="' + width +
                             '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>');
                     }
-                    charts[i].getSVGForLocalExport(options, {}, function () {
+                    let chartOptions = {};
+                    //Dynatrace charts don't set the title, get it and set it
+                    let $chart = $(charts[i].container);
+                    let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                    let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
+                    let title = $title.text();
+                    if(typeof(title) != "undefined" && title.length)
+                        chartOptions.title = {
+                            text: title
+                        }
+
+
+                    charts[i].getSVGForLocalExport(options, chartOptions, function () {
                         console.log("Failed to get SVG");
                     }, function (svg) {
                         addSVG(svg);
