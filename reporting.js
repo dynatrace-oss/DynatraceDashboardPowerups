@@ -83,10 +83,10 @@ function generateReport() {
                         return callback(combinedSVG);
                     }
                     let chartOptions = {
-                        chart: {
+                        /*chart: {
                             borderColor: "#e6e6e6",
                             borderWidth: "1px"
-                        }
+                        }*/
                     };
                     //Dynatrace charts don't set the title, get it and set it
                     let $chart = $(charts[i].container);
