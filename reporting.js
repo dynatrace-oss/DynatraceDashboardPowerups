@@ -2,7 +2,10 @@ function openReportGenerator() {
     let $repgen = $("<div>")
         .html(`
         <div id="PowerupReportGeneratorTitleBar"><h3>Generate Report</h3></div>
-        <div id="PowerupReportGeneratorPreview"></div>
+        <div id="PowerupReportGeneratorPreview">
+            <div id="PowerupReportGeneratorPreviewTitle"></div>
+            <div id="PowerupReportGeneratorPreviewContent"></div>
+        </div>
         <div id="PowerupReportGeneratorButtonBar"></div>
         `)
         .addClass("PowerupReportGenerator")
@@ -28,7 +31,8 @@ function closeReportGenerator() {
 
 function generateReport() {
     $(`#generateReportButton`).hide();
-    let $preview = $(`#PowerupReportGeneratorPreview`);
+    let $previewContent = $(`#PowerupReportGeneratorPreviewContent`);
+    let $previewTitle = $(`#PowerupReportGeneratorPreviewTitle`);
     let $buttonBar = $(`#PowerupReportGeneratorButtonBar`);
 
     (function (H) {
@@ -54,12 +58,14 @@ function generateReport() {
                     width = Math.max(width, svgWidth);
                     svgArr.push(svg);
                 },
-                previewSVG = function (svg) {
+                previewSVG = function (svg, i) {
                     let p = $.Deferred();
-                    $preview.html(svg);
+                    $previewTitle.text(`Chart ${i}:`);
+                    $previewContent.html(svg);
                     let $next = $(`<button type="button" id="generateReportNextButton">`)
                         .on('click', () => {
-                            $preview.html();
+                            $previewTitle.text(``);
+                            $previewContent.html();
                             p.resolve();
                         })
                         .text("Next")
@@ -103,11 +109,10 @@ function generateReport() {
                             }
                         }
 
-
                     charts[i].getSVGForLocalExport(options, chartOptions, function () {
                         console.log("Failed to get SVG");
                     }, async function (svg) {
-                        await previewSVG(svg);
+                        await previewSVG(svg, i);
                         addSVG(svg);
                         return exportChart(i + 1); // Export next only when this SVG is received
                     });
