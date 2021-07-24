@@ -63,9 +63,10 @@ function generateReport() {
                     $previewTitle.text(`Chart ${i}:`);
                     $previewContent.html(svg);
                     let $next = $(`<button type="button" id="generateReportNextButton">`)
-                        .on('click', () => {
+                        .on('click', (e) => {
                             $previewTitle.text(``);
                             $previewContent.html();
+                            $self = $(e.target).remove();
                             p.resolve();
                         })
                         .text("Next")
