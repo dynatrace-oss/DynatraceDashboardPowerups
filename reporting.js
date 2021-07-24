@@ -54,7 +54,7 @@ function generateReport() {
                         // Offset the position of this chart in the final SVG
                         svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
                     svg = svg.replace('</svg>', '</g>');
-                    top += svgHeight + (i === charts.length?0:space);
+                    top += svgHeight + (i + 1 === charts.length ? 0 : space);
                     width = Math.max(width, svgWidth);
                     svgArr.push(svg);
                 },
@@ -72,7 +72,7 @@ function generateReport() {
                         .text("Next")
                         .addClass("powerupButton")
                         .appendTo($buttonBar);
-                    return(p);
+                    return (p);
                 },
                 exportChart = function (i) {
                     if (i === charts.length) {
