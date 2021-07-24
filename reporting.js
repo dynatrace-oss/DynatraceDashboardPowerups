@@ -43,7 +43,7 @@ function generateReport() {
             let svgArr = [],
                 top = 0,
                 width = 0,
-                addSVG = function (svgres) {
+                addSVG = function (svgres, i) {
                     // Grab width/height from exported chart
                     let svgWidth = +svgres.match(
                         /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
@@ -54,7 +54,7 @@ function generateReport() {
                         // Offset the position of this chart in the final SVG
                         svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
                     svg = svg.replace('</svg>', '</g>');
-                    top += svgHeight + space;
+                    top += svgHeight + (i === charts.length?0:space);
                     width = Math.max(width, svgWidth);
                     svgArr.push(svg);
                 },
@@ -114,7 +114,7 @@ function generateReport() {
                         console.log("Failed to get SVG");
                     }, async function (svg) {
                         await previewSVG(svg, i);
-                        addSVG(svg);
+                        addSVG(svg, i);
                         return exportChart(i + 1); // Export next only when this SVG is received
                     });
                 };
