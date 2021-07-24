@@ -76,8 +76,11 @@ function generateReport() {
                 },
                 exportChart = function (i) {
                     if (i === charts.length) {
-                        return callback('<svg height="' + top + '" width="' + width +
-                            '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>');
+                        let combinedSVG = '<svg height="' + top + '" width="' + width +
+                        '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
+                        $previewTitle.text(`Combined:`);
+                        $previewContent.html(combinedSVG);
+                        return callback(combinedSVG);
                     }
                     let chartOptions = {
                         chart: {
