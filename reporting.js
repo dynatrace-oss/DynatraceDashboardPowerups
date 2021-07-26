@@ -73,21 +73,23 @@ function generateReport() {
                             chartOptions = $options.val();
                             $previewTitle.text(``);
                             $previewContent.html();
-                            $self = $(e.target).remove();
+                            $previewOptions.html();
+                            $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
                             p.resolve();
                         })
-                        .text("Next")
+                        .text("Refresh")
                         .addClass("powerupButton")
                         .appendTo($buttonBar);
                     let $next = $(`<button type="button" id="generateReportNextButton">`)
                         .on('click', (e) => {
                             $previewTitle.text(``);
                             $previewContent.html();
-                            $self = $(e.target).remove();
+                            $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
                             p.resolve();
                         })
                         .text("Next")
                         .addClass("powerupButton")
+                        .addClass("powerupButtonDefault")
                         .appendTo($buttonBar);
                     return (p);
                 },
@@ -127,6 +129,10 @@ function generateReport() {
                         return callback(combinedSVG);
                     }
 
+                    if(typeof(charts[i].userOptions) == "undefined") { //null chart, skip it
+                        return exportChart(i + 1);
+                    }
+
                     if(chartOptions == null)
                         chartOptions = JSON.stringify(
                             charts[i].userOptions,
@@ -140,7 +146,7 @@ function generateReport() {
                     charts[i].getSVGForLocalExport(options, chartOptions, function () {
                         console.log("Powerup: getSVGForLocalExport Failed to get SVG");
                     }, async function (svg) {
-                        let refresh = await previewSVG(svg, i);
+                        let refresh = await previewSVG(svg, i, chartOptions);
                         if (refresh) {
                             return exportChart(i, chartOptions);
                         } else {

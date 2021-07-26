@@ -754,3 +754,8 @@ table.powerupActionPopup tr > *:nth-of-type(4){
   flex: 0;
   align-content: center;
 }
+
+.powerupPreviewOptions {
+  width: 500px;
+  height: 150px;
+}
