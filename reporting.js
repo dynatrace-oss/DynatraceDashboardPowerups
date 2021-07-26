@@ -5,6 +5,7 @@ function openReportGenerator() {
         <div id="PowerupReportGeneratorPreview">
             <div id="PowerupReportGeneratorPreviewTitle"></div>
             <div id="PowerupReportGeneratorPreviewContent"></div>
+            <div id="PowerupReportGeneratorPreviewOptions"></div>
         </div>
         <div id="PowerupReportGeneratorButtonBar"></div>
         `)
@@ -33,6 +34,7 @@ function generateReport() {
     $(`#generateReportButton`).hide();
     let $previewContent = $(`#PowerupReportGeneratorPreviewContent`);
     let $previewTitle = $(`#PowerupReportGeneratorPreviewTitle`);
+    let $previewOptions = $(`#PowerupReportGeneratorPreviewOptions`);
     let $buttonBar = $(`#PowerupReportGeneratorButtonBar`);
 
     (function (H) {
@@ -58,10 +60,25 @@ function generateReport() {
                     width = Math.max(width, svgWidth);
                     svgArr.push(svg);
                 },
-                previewSVG = function (svg, i) {
+                previewSVG = function (svg, i, chartOptions) {
                     let p = $.Deferred();
                     $previewTitle.text(`Chart ${i}:`);
                     $previewContent.html(svg);
+                    let $options = $(`<textarea>`)
+                        .addClass("powerupPreviewOptions")
+                        .val(chartOptions)
+                        .appendTo($previewOptions);
+                    let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
+                        .on('click', (e) => {
+                            chartOptions = $options.val();
+                            $previewTitle.text(``);
+                            $previewContent.html();
+                            $self = $(e.target).remove();
+                            p.resolve();
+                        })
+                        .text("Next")
+                        .addClass("powerupButton")
+                        .appendTo($buttonBar);
                     let $next = $(`<button type="button" id="generateReportNextButton">`)
                         .on('click', (e) => {
                             $previewTitle.text(``);
@@ -74,20 +91,7 @@ function generateReport() {
                         .appendTo($buttonBar);
                     return (p);
                 },
-                exportChart = function (i) {
-                    if (i === charts.length) {
-                        let combinedSVG = '<svg height="' + top + '" width="' + width +
-                        '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
-                        $previewTitle.text(`Combined:`);
-                        $previewContent.html(combinedSVG);
-                        return callback(combinedSVG);
-                    }
-                    let chartOptions = {
-                        /*chart: {
-                            borderColor: "#e6e6e6",
-                            borderWidth: "1px"
-                        }*/
-                    };
+                getTitle = function (i, chartOptions = {}) {
                     //Dynatrace charts don't set the title, get it and set it
                     let $chart = $(charts[i].container);
                     let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
@@ -112,13 +116,37 @@ function generateReport() {
                                 fontSize: "12px"
                             }
                         }
+                    return title; //in case we need the actual title string, use chartOptions by ref
+                },
+                exportChart = function (i, chartOptions = null) {
+                    if (i === charts.length) { //when done, combine everything
+                        let combinedSVG = '<svg height="' + top + '" width="' + width +
+                            '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
+                        $previewTitle.text(`Combined:`);
+                        $previewContent.html(combinedSVG);
+                        return callback(combinedSVG);
+                    }
+
+                    if(chartOptions == null)
+                        chartOptions = JSON.stringify(
+                            charts[i].userOptions,
+                            null, 3
+                        )
+
+                    if (typeof (chartOptions.title) == "undefined"
+                        || chartOptions.title.text == null) 
+                        getTitle(i, chartOptions);
 
                     charts[i].getSVGForLocalExport(options, chartOptions, function () {
-                        console.log("Failed to get SVG");
+                        console.log("Powerup: getSVGForLocalExport Failed to get SVG");
                     }, async function (svg) {
-                        await previewSVG(svg, i);
-                        addSVG(svg, i);
-                        return exportChart(i + 1); // Export next only when this SVG is received
+                        let refresh = await previewSVG(svg, i);
+                        if (refresh) {
+                            return exportChart(i, chartOptions);
+                        } else {
+                            addSVG(svg, i);
+                            return exportChart(i + 1); // Export next only when this SVG is received
+                        }
                     });
                 };
             exportChart(0);
