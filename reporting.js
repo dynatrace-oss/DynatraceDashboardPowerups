@@ -89,7 +89,7 @@ function generateReport() {
                         .on('click', (e) => {
                             try {
                                 let obj = JSON.parse($options.val());
-                                chartOptions = obj;
+                                Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
                             } catch(err) {
                                 let $err = $previewOptions.find(`.powerupErrorBar`);
                                 if(!$err.length) 
@@ -97,6 +97,7 @@ function generateReport() {
                                     .addClass("powerupErrorBar")
                                     .appendTo($previewOptions);
                                 $err.text(err);
+                                return(false);
                             }
                             
                             $previewTitle.text(``);
