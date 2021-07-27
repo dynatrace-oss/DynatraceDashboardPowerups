@@ -75,7 +75,7 @@ function generateReport() {
                             $previewContent.html();
                             $previewOptions.html();
                             $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
-                            p.resolve();
+                            p.resolve(true);
                         })
                         .text("Refresh")
                         .addClass("powerupButton")
@@ -84,8 +84,9 @@ function generateReport() {
                         .on('click', (e) => {
                             $previewTitle.text(``);
                             $previewContent.html();
+                            $previewOptions.html();
                             $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
-                            p.resolve();
+                            p.resolve(false);
                         })
                         .text("Next")
                         .addClass("powerupButton")

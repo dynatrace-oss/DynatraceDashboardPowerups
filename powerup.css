@@ -727,7 +727,7 @@ table.powerupActionPopup tr > *:nth-of-type(4){
   overflow: auto;
 }
 
-.powerupButton {
+.powerupButton, .powerupButton:visited {
   width: 70px;
   margin: 5px 10px 5px auto;
   padding: 2px 0px;
@@ -738,6 +738,24 @@ table.powerupActionPopup tr > *:nth-of-type(4){
   white-space: nowrap;
   text-align: center;
   background-color: white;
+}
+
+.powerupButton:hover {
+  border-color: #006d75;
+  color: #006d75;
+}
+
+.powerupButton.powerupButtonDefault, .powerupButton.powerupButtonDefault:visited {
+  color: #fff;
+  --dt-button-default-color: #00a1b2;
+    --dt-button-hover-color: #00848e;
+    --dt-button-active-color: #006d75;
+    background: #00a1b2;
+    border-color: #00a1b2;
+}
+
+.powerupButton.powerupButtonDefault:hover {
+  background: #00848e;
 }
 
 .PowerupReportGenerator {
