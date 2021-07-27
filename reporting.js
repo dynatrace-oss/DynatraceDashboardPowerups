@@ -60,6 +60,22 @@ function generateReport() {
                     width = Math.max(width, svgWidth);
                     svgArr.push(svg);
                 },
+                validateJSON = function(e) {
+                    let $target = $(e.target);
+                    let valid = true;
+                    try {
+                        JSON.parse($target.val());
+                    } catch(err) {
+                        valid = false;
+                    }
+                    if(valid){
+                        $target.addClass("powerupValidJSON");
+                        $target.removeClass("powerupInvalidJSON");
+                    } else {
+                        $target.addClass("powerupInvalidJSON");
+                        $target.removeClass("powerupValidJSON");
+                    }
+                },
                 previewSVG = function (svg, i, chartOptions) {
                     let p = $.Deferred();
                     $previewTitle.text(`Chart ${i}:`);
@@ -67,13 +83,25 @@ function generateReport() {
                     let $options = $(`<textarea>`)
                         .addClass("powerupPreviewOptions")
                         .val(chartOptions)
-                        .appendTo($previewOptions);
+                        .appendTo($previewOptions)
+                        .on('change',validateJSON);
                     let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
                         .on('click', (e) => {
-                            chartOptions = $options.val();
+                            try {
+                                let obj = JSON.parse($options.val());
+                                chartOptions = obj;
+                            } catch(err) {
+                                let $err = $previewOptions.find(`.powerupErrorBar`);
+                                if(!$err.length) 
+                                    $err = $(`<span>`)
+                                    .addClass("powerupErrorBar")
+                                    .appendTo($previewOptions);
+                                $err.text(err);
+                            }
+                            
                             $previewTitle.text(``);
-                            $previewContent.html();
-                            $previewOptions.html();
+                            $previewContent.html(``);
+                            $previewOptions.html(``);
                             $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
                             p.resolve(true);
                         })
@@ -83,8 +111,8 @@ function generateReport() {
                     let $next = $(`<button type="button" id="generateReportNextButton">`)
                         .on('click', (e) => {
                             $previewTitle.text(``);
-                            $previewContent.html();
-                            $previewOptions.html();
+                            $previewContent.html(``);
+                            $previewOptions.html(``);
                             $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
                             p.resolve(false);
                         })
@@ -135,10 +163,7 @@ function generateReport() {
                     }
 
                     if(chartOptions == null)
-                        chartOptions = JSON.stringify(
-                            charts[i].userOptions,
-                            null, 3
-                        )
+                        chartOptions = charts[i].userOptions;
 
                     if (typeof (chartOptions.title) == "undefined"
                         || chartOptions.title.text == null) 
