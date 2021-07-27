@@ -82,7 +82,7 @@ function generateReport() {
                     $previewContent.html(svg);
                     let $options = $(`<textarea>`)
                         .addClass("powerupPreviewOptions")
-                        .val(chartOptions)
+                        .val(JSON.stringify(chartOptions),null,3)
                         .appendTo($previewOptions)
                         .on('change',validateJSON);
                     let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
