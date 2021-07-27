@@ -84,7 +84,7 @@ function generateReport() {
                         .addClass("powerupPreviewOptions")
                         .val(JSON.stringify(chartOptions,null,3))
                         .appendTo($previewOptions)
-                        .on('change',validateJSON);
+                        .on('keypress paste',validateJSON);
                     let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
                         .on('click', (e) => {
                             try {
