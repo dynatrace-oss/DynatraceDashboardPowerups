@@ -59,7 +59,7 @@ function generateReport() {
         },
         getTitleOpt = function (chart) {
             //Dynatrace charts don't set the title, get it and set it
-            let $chart = $(charts[i].container);
+            let $chart = $(chart.container);
             let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
             let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
             let title = $title.text();
