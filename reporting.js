@@ -7,6 +7,7 @@ function openReportGenerator() {
             <div id="PowerupReportGeneratorPreviewContent"></div>
             <div id="PowerupReportGeneratorPreviewOptions"></div>
         </div>
+        <div id="PowerupReportGeneratorHiddenCopy></div>
         <div id="PowerupReportGeneratorButtonBar"></div>
         `)
         .addClass("PowerupReportGenerator")
@@ -36,154 +37,169 @@ function generateReport() {
     let $previewTitle = $(`#PowerupReportGeneratorPreviewTitle`);
     let $previewOptions = $(`#PowerupReportGeneratorPreviewOptions`);
     let $buttonBar = $(`#PowerupReportGeneratorButtonBar`);
+    let $copies = $(`#PowerupReportGeneratorHiddenCopy`);
 
     (function (H) {
         // adapted from https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/
 
-        let getSVG = function (charts, options, callback) {
-            const space = 10;
-            let svgArr = [],
-                top = 0,
-                width = 0,
-                addSVG = function (svgres, i) {
-                    // Grab width/height from exported chart
-                    let svgWidth = +svgres.match(
-                        /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
-                    )[1],
-                        svgHeight = +svgres.match(
-                            /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
+        let copyCharts = function () {
+            //get all the charts and export as PDF
+            let charts = [];
+            //Copy all charts for safe keeping
+            H.charts.filter(x => typeof (x) != "undefined").forEach(chart => {
+                let opts = Highcharts.merge(chart.userOptions);
+                if (typeof (opts.series) == "undefined") opts.series = [];
+                chart.series.forEach(s => opts.series.push(Highcharts.merge(s.userOptions)));
+                let container = $(`<div>`).appendTo($copies)[0];
+                let newChart = Highcharts.chart(container,opts);
+                charts.push(newChart);
+            });
+            return charts;
+        },
+            getSVG = function (charts, options, callback) {
+                const space = 10;
+                let svgArr = [],
+                    top = 0,
+                    width = 0,
+                    addSVG = function (svgres, i) {
+                        // Grab width/height from exported chart
+                        let svgWidth = +svgres.match(
+                            /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
                         )[1],
-                        // Offset the position of this chart in the final SVG
-                        svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
-                    svg = svg.replace('</svg>', '</g>');
-                    top += svgHeight + (i + 1 === charts.length ? 0 : space);
-                    width = Math.max(width, svgWidth);
-                    svgArr.push(svg);
-                },
-                validateJSON = function(e) {
-                    let $target = $(e.target);
-                    let valid = true;
-                    try {
-                        JSON.parse($target.val());
-                    } catch(err) {
-                        valid = false;
-                    }
-                    if(valid){
-                        $target.addClass("powerupValidJSON");
-                        $target.removeClass("powerupInvalidJSON");
-                    } else {
-                        $target.addClass("powerupInvalidJSON");
-                        $target.removeClass("powerupValidJSON");
-                    }
-                },
-                previewSVG = function (svg, i, chartOptions) {
-                    let p = $.Deferred();
-                    $previewTitle.text(`Chart ${i}:`);
-                    $previewContent.html(svg);
-                    let $options = $(`<textarea>`)
-                        .addClass("powerupPreviewOptions")
-                        .val(JSON.stringify(chartOptions,null,3))
-                        .appendTo($previewOptions)
-                        .on('keypress paste',validateJSON);
-                    let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
-                        .on('click', (e) => {
-                            try {
-                                let obj = JSON.parse($options.val());
-                                Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
-                            } catch(err) {
-                                let $err = $previewOptions.find(`.powerupErrorBar`);
-                                if(!$err.length) 
-                                    $err = $(`<span>`)
-                                    .addClass("powerupErrorBar")
-                                    .appendTo($previewOptions);
-                                $err.text(err);
-                                return(false);
-                            }
-                            
-                            $previewTitle.text(``);
-                            $previewContent.html(``);
-                            $previewOptions.html(``);
-                            $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
-                            p.resolve(true);
-                        })
-                        .text("Refresh")
-                        .addClass("powerupButton")
-                        .appendTo($buttonBar);
-                    let $next = $(`<button type="button" id="generateReportNextButton">`)
-                        .on('click', (e) => {
-                            $previewTitle.text(``);
-                            $previewContent.html(``);
-                            $previewOptions.html(``);
-                            $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
-                            p.resolve(false);
-                        })
-                        .text("Next")
-                        .addClass("powerupButton")
-                        .addClass("powerupButtonDefault")
-                        .appendTo($buttonBar);
-                    return (p);
-                },
-                getTitle = function (i, chartOptions = {}) {
-                    //Dynatrace charts don't set the title, get it and set it
-                    let $chart = $(charts[i].container);
-                    let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
-                    let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
-                    let title = $title.text();
-                    let idx = title.length;
-
-                    //remove markers from title using string manipulation instead of regex to avoid excessive escaping
-                    idx = DashboardPowerups.MARKERS.reduce((acc, marker) =>
-                    (title.includes(marker) ?
-                        Math.min(title.indexOf(marker), acc) :
-                        Math.min(acc, idx))
-                        , idx);
-                    title = title.substring(0, idx)
-
-                    if (typeof (title) != "undefined" && title.length)
-                        chartOptions.title = {
-                            text: title,
-                            align: "left",
-                            style: {
-                                color: "#454646",
-                                fontSize: "12px"
-                            }
+                            svgHeight = +svgres.match(
+                                /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
+                            )[1],
+                            // Offset the position of this chart in the final SVG
+                            svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+                        svg = svg.replace('</svg>', '</g>');
+                        top += svgHeight + (i + 1 === charts.length ? 0 : space);
+                        width = Math.max(width, svgWidth);
+                        svgArr.push(svg);
+                    },
+                    validateJSON = function (e) {
+                        let $target = $(e.target);
+                        let valid = true;
+                        try {
+                            JSON.parse($target.val());
+                        } catch (err) {
+                            valid = false;
                         }
-                    return title; //in case we need the actual title string, use chartOptions by ref
-                },
-                exportChart = function (i, chartOptions = null) {
-                    if (i === charts.length) { //when done, combine everything
-                        let combinedSVG = '<svg height="' + top + '" width="' + width +
-                            '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
-                        $previewTitle.text(`Combined:`);
-                        $previewContent.html(combinedSVG);
-                        return callback(combinedSVG);
-                    }
-
-                    if(typeof(charts[i].userOptions) == "undefined") { //null chart, skip it
-                        return exportChart(i + 1);
-                    }
-
-                    if(chartOptions == null)
-                        chartOptions = charts[i].userOptions;
-
-                    if (typeof (chartOptions.title) == "undefined"
-                        || chartOptions.title.text == null) 
-                        getTitle(i, chartOptions);
-
-                    charts[i].getSVGForLocalExport(options, chartOptions, function () {
-                        console.log("Powerup: getSVGForLocalExport Failed to get SVG");
-                    }, async function (svg) {
-                        let refresh = await previewSVG(svg, i, chartOptions);
-                        if (refresh) {
-                            return exportChart(i, chartOptions);
+                        if (valid) {
+                            $target.addClass("powerupValidJSON");
+                            $target.removeClass("powerupInvalidJSON");
                         } else {
-                            addSVG(svg, i);
-                            return exportChart(i + 1); // Export next only when this SVG is received
+                            $target.addClass("powerupInvalidJSON");
+                            $target.removeClass("powerupValidJSON");
                         }
-                    });
-                };
-            exportChart(0);
-        };
+                    },
+                    previewSVG = function (svg, i, chartOptions) {
+                        let p = $.Deferred();
+                        $previewTitle.text(`Chart ${i}:`);
+                        $previewContent.html(svg);
+                        let $options = $(`<textarea>`)
+                            .addClass("powerupPreviewOptions")
+                            .val(JSON.stringify(chartOptions, null, 3))
+                            .appendTo($previewOptions)
+                            .on('keypress paste', validateJSON);
+                        let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
+                            .on('click', (e) => {
+                                try {
+                                    let obj = JSON.parse($options.val());
+                                    Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
+                                } catch (err) {
+                                    let $err = $previewOptions.find(`.powerupErrorBar`);
+                                    if (!$err.length)
+                                        $err = $(`<span>`)
+                                            .addClass("powerupErrorBar")
+                                            .appendTo($previewOptions);
+                                    $err.text(err);
+                                    return (false);
+                                }
+
+                                $previewTitle.text(``);
+                                $previewContent.html(``);
+                                $previewOptions.html(``);
+                                $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
+                                p.resolve(true);
+                            })
+                            .text("Refresh")
+                            .addClass("powerupButton")
+                            .appendTo($buttonBar);
+                        let $next = $(`<button type="button" id="generateReportNextButton">`)
+                            .on('click', (e) => {
+                                $previewTitle.text(``);
+                                $previewContent.html(``);
+                                $previewOptions.html(``);
+                                $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
+                                p.resolve(false);
+                            })
+                            .text("Next")
+                            .addClass("powerupButton")
+                            .addClass("powerupButtonDefault")
+                            .appendTo($buttonBar);
+                        return (p);
+                    },
+                    getTitle = function (i, chartOptions = {}) {
+                        //Dynatrace charts don't set the title, get it and set it
+                        let $chart = $(charts[i].container);
+                        let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                        let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
+                        let title = $title.text();
+                        let idx = title.length;
+
+                        //remove markers from title using string manipulation instead of regex to avoid excessive escaping
+                        idx = DashboardPowerups.MARKERS.reduce((acc, marker) =>
+                        (title.includes(marker) ?
+                            Math.min(title.indexOf(marker), acc) :
+                            Math.min(acc, idx))
+                            , idx);
+                        title = title.substring(0, idx)
+
+                        if (typeof (title) != "undefined" && title.length)
+                            chartOptions.title = {
+                                text: title,
+                                align: "left",
+                                style: {
+                                    color: "#454646",
+                                    fontSize: "12px"
+                                }
+                            }
+                        return title; //in case we need the actual title string, use chartOptions by ref
+                    },
+                    exportChart = function (i, chartOptions = null) {
+                        if (i === charts.length) { //when done, combine everything
+                            let combinedSVG = '<svg height="' + top + '" width="' + width +
+                                '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
+                            $previewTitle.text(`Combined:`);
+                            $previewContent.html(combinedSVG);
+                            return callback(combinedSVG);
+                        }
+
+                        if (typeof (charts[i].userOptions) == "undefined") { //null chart, skip it
+                            return exportChart(i + 1);
+                        }
+
+                        if (chartOptions == null)
+                            chartOptions = charts[i].userOptions;
+
+                        if (typeof (chartOptions.title) == "undefined"
+                            || chartOptions.title.text == null)
+                            getTitle(i, chartOptions);
+
+                        charts[i].getSVGForLocalExport(options, chartOptions, function () {
+                            console.log("Powerup: getSVGForLocalExport Failed to get SVG");
+                        }, async function (svg) {
+                            let refresh = await previewSVG(svg, i, chartOptions);
+                            if (refresh) {
+                                return exportChart(i, chartOptions);
+                            } else {
+                                addSVG(svg, i);
+                                return exportChart(i + 1); // Export next only when this SVG is received
+                            }
+                        });
+                    };
+                exportChart(0);
+            };
 
         let exportCharts = function (charts, options) {
             options = Highcharts.merge(Highcharts.getOptions().exporting, options);
@@ -204,8 +220,7 @@ function generateReport() {
         });
 
 
-        //get all the charts and export as PDF
-        let charts = H.charts.filter(x => typeof (x) != "undefined");
+        let charts = copyCharts();
         exportCharts(charts,
             {
                 type: 'application/pdf',

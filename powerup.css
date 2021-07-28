@@ -785,3 +785,7 @@ table.powerupActionPopup tr > *:nth-of-type(4){
 .powerupInvalidJSON {
   border-bottom: red 3px solid;
 }
+
+.PowerupReportGeneratorHiddenCopy {
+  display: none;
+}
