@@ -7,7 +7,7 @@ function openReportGenerator() {
             <div id="PowerupReportGeneratorPreviewContent"></div>
             <div id="PowerupReportGeneratorPreviewOptions"></div>
         </div>
-        <div id="PowerupReportGeneratorHiddenCopy></div>
+        <div id="PowerupReportGeneratorHiddenCopy"></div>
         <div id="PowerupReportGeneratorButtonBar"></div>
         `)
         .addClass("PowerupReportGenerator")
