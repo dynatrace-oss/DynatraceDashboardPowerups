@@ -780,7 +780,7 @@ table.powerupActionPopup tr > *:nth-of-type(4) {
   position: sticky;
   top: 0px;
   background: white;
-  border-top: 1px #e6e6e6 solid;
+  border-bottom: 1px #e6e6e6 solid;
 }
 
 .PowerupReportGenerator > div:last-of-type {
