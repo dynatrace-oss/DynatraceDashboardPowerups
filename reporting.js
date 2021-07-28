@@ -42,48 +42,168 @@ function generateReport() {
     (function (H) {
         // adapted from https://jsfiddle.net/gh/get/library/pure/H/H/tree/master/samples/H/exporting/multiple-charts-offline/
 
-        let copyCharts = function () {
-            //get all the charts and export as PDF
-            let charts = [];
-            //Copy all charts for safe keeping
-            H.charts.filter(x => typeof (x) != "undefined").forEach(chart => {
-                let opts = H.merge(chart.userOptions);
-                if (typeof (opts.series) == "undefined") opts.series = [];
-                chart.series.forEach(s => opts.series.push(H.merge(s.userOptions)));
-                let container = $(`<div>`).appendTo($copies)[0];
-                opts.title = getTitleOpt(chart);
-                let newChart = H.chart(container, opts);
-                charts.push(newChart);
+        let copyChart = function (chart, chartOptions, containerContainer) {
+            var chart = this,
+                chartCopy,
+                sandbox,
+                svg,
+                seriesOptions,
+                sourceWidth,
+                sourceHeight,
+                cssWidth,
+                cssHeight,
+                // Copy the options and add extra options
+                options = H.merge(chart.options, chartOptions);
+
+
+            // create a sandbox where a new chart will be generated
+            sandbox = H.createElement('div', null, {
+                position: 'absolute',
+                top: '-9999em',
+                width: chart.chartWidth + 'px',
+                height: chart.chartHeight + 'px'
+            }, containerContainer);
+
+            // get the source size
+            cssWidth = chart.renderTo.style.width;
+            cssHeight = chart.renderTo.style.height;
+            sourceWidth = options.exporting.sourceWidth ||
+                options.chart.width ||
+                (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
+                600;
+            sourceHeight = options.exporting.sourceHeight ||
+                options.chart.height ||
+                (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
+                400;
+
+            // override some options
+            H.extend(options.chart, {
+                animation: false,
+                renderTo: sandbox,
+                forExport: true,
+                renderer: 'SVGRenderer',
+                width: sourceWidth,
+                height: sourceHeight
             });
-            return charts;
-        },
-        getTitleOpt = function (chart) {
-            //Dynatrace charts don't set the title, get it and set it
-            let $chart = $(chart.container);
-            let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
-            let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
-            let title = $title.text();
-            let idx = title.length;
+            options.exporting.enabled = false; // hide buttons in print
+            delete options.data; // #3004
 
-            //remove markers from title using string manipulation instead of regex to avoid excessive escaping
-            idx = DashboardPowerups.MARKERS.reduce((acc, marker) =>
-            (title.includes(marker) ?
-                Math.min(title.indexOf(marker), acc) :
-                Math.min(acc, idx))
-                , idx);
-            title = title.substring(0, idx)
+            // prepare for replicating the chart
+            options.series = [];
+            H.each(chart.series, function (serie) {
+                seriesOptions = H.merge(serie.userOptions, { // #4912
+                    animation: false, // turn off animation
+                    enableMouseTracking: false,
+                    showCheckbox: false,
+                    visible: serie.visible
+                });
 
-            if (typeof (title) != "undefined" && title.length)
-                return {
-                    text: title,
-                    align: "left",
-                    style: {
-                        color: "#454646",
-                        fontSize: "12px"
-                    }
+                // Used for the navigator series that has its own option set
+                if (!seriesOptions.isInternal) {
+                    options.series.push(seriesOptions);
                 }
-            else return null;
+            });
+
+            // Assign an internal key to ensure a one-to-one mapping (#5924)
+            H.each(chart.axes, function (axis) {
+                if (!axis.userOptions.internalKey) { // #6444
+                    axis.userOptions.internalKey = H.uniqueKey();
+                }
+            });
+
+            // generate the chart copy
+            chartCopy = new H.Chart(options, chart.callback);
+
+            // Axis options and series options  (#2022, #3900, #5982)
+            if (chartOptions) {
+                H.each(['xAxis', 'yAxis', 'series'], function (coll) {
+                    var collOptions = {};
+                    if (chartOptions[coll]) {
+                        collOptions[coll] = chartOptions[coll];
+                        chartCopy.update(collOptions);
+                    }
+                });
+            }
+
+            // Reflect axis extremes in the export (#5924)
+            H.each(chart.axes, function (axis) {
+                var axisCopy = H.find(chartCopy.axes, function (copy) {
+                    return copy.options.internalKey ===
+                        axis.userOptions.internalKey;
+                }),
+                    extremes = axis.getExtremes(),
+                    userMin = extremes.userMin,
+                    userMax = extremes.userMax;
+
+                if (
+                    axisCopy &&
+                    (
+                        (userMin !== undefined && userMin !== axisCopy.min) ||
+                        (userMax !== undefined && userMax !== axisCopy.max)
+                    )
+                ) {
+                    axisCopy.setExtremes(userMin, userMax, true, false);
+                }
+            });
+
+            /*// Get the SVG from the container's innerHTML
+            svg = chartCopy.getChartHTML();
+            fireEvent(this, 'getSVG', { chartCopy: chartCopy });
+
+            svg = chart.sanitizeSVG(svg, options);
+
+            // free up memory
+            options = null;
+            chartCopy.destroy();
+            discardElement(sandbox);
+
+            return svg;*/
+            return chartCopy;
         },
+            copyCharts = function () {
+                //get all the charts and export as PDF
+                let charts = [];
+                //Copy all charts for safe keeping
+                H.charts.filter(x => typeof (x) != "undefined").forEach(chart => {
+                    /*let opts = H.merge(chart.userOptions);
+                    if (typeof (opts.series) == "undefined") opts.series = [];
+                    chart.series.forEach(s => opts.series.push(H.merge(s.userOptions)));
+                    let container = $(`<div>`).appendTo($copies)[0];*/
+                    let opts = {};
+                    opts.title = getTitleOpt(chart);
+                    //let newChart = H.chart(container, opts);
+                    let newChart = copyChart(chart, opts, $copies[0]);
+                    charts.push(newChart);
+                });
+                return charts;
+            },
+            getTitleOpt = function (chart) {
+                //Dynatrace charts don't set the title, get it and set it
+                let $chart = $(chart.container);
+                let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
+                let title = $title.text();
+                let idx = title.length;
+
+                //remove markers from title using string manipulation instead of regex to avoid excessive escaping
+                idx = DashboardPowerups.MARKERS.reduce((acc, marker) =>
+                (title.includes(marker) ?
+                    Math.min(title.indexOf(marker), acc) :
+                    Math.min(acc, idx))
+                    , idx);
+                title = title.substring(0, idx)
+
+                if (typeof (title) != "undefined" && title.length)
+                    return {
+                        text: title,
+                        align: "left",
+                        style: {
+                            color: "#454646",
+                            fontSize: "12px"
+                        }
+                    }
+                else return null;
+            },
             getSVG = function (charts, options, callback) {
                 const space = 10;
                 let svgArr = [],
