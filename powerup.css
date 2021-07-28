@@ -786,6 +786,6 @@ table.powerupActionPopup tr > *:nth-of-type(4){
   border-bottom: red 3px solid;
 }
 
-.PowerupReportGeneratorHiddenCopy {
+#PowerupReportGeneratorHiddenCopy {
   display: none;
 }

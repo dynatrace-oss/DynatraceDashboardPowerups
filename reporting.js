@@ -14,7 +14,7 @@ function openReportGenerator() {
         .appendTo("body");
     let $buttonBar = $repgen.find(`#PowerupReportGeneratorButtonBar`);
 
-    let $cancel = $(`<button type="button">`)
+    let $cancel = $(`<button type="button" id="cancelReportButton">`)
         .on('click', closeReportGenerator)
         .text("Cancel")
         .addClass("powerupButton")
@@ -40,18 +40,18 @@ function generateReport() {
     let $copies = $(`#PowerupReportGeneratorHiddenCopy`);
 
     (function (H) {
-        // adapted from https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/multiple-charts-offline/
+        // adapted from https://jsfiddle.net/gh/get/library/pure/H/H/tree/master/samples/H/exporting/multiple-charts-offline/
 
         let copyCharts = function () {
             //get all the charts and export as PDF
             let charts = [];
             //Copy all charts for safe keeping
             H.charts.filter(x => typeof (x) != "undefined").forEach(chart => {
-                let opts = Highcharts.merge(chart.userOptions);
+                let opts = H.merge(chart.userOptions);
                 if (typeof (opts.series) == "undefined") opts.series = [];
-                chart.series.forEach(s => opts.series.push(Highcharts.merge(s.userOptions)));
+                chart.series.forEach(s => opts.series.push(H.merge(s.userOptions)));
                 let container = $(`<div>`).appendTo($copies)[0];
-                let newChart = Highcharts.chart(container,opts);
+                let newChart = H.chart(container,opts);
                 charts.push(newChart);
             });
             return charts;
@@ -98,14 +98,14 @@ function generateReport() {
                         $previewContent.html(svg);
                         let $options = $(`<textarea>`)
                             .addClass("powerupPreviewOptions")
-                            .val(JSON.stringify(chartOptions, null, 3))
+                            .val(JSON.stringify(chartOptions, null, 2))
                             .appendTo($previewOptions)
                             .on('keypress paste', validateJSON);
                         let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
                             .on('click', (e) => {
                                 try {
                                     let obj = JSON.parse($options.val());
-                                    Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
+                                    H.merge(true, chartOptions, obj); //deep copy into chartOptions ref
                                 } catch (err) {
                                     let $err = $previewOptions.find(`.powerupErrorBar`);
                                     if (!$err.length)
@@ -198,22 +198,29 @@ function generateReport() {
                             }
                         });
                     };
+                    
                 exportChart(0);
             };
 
         let exportCharts = function (charts, options) {
-            options = Highcharts.merge(Highcharts.getOptions().exporting, options);
+            options = H.merge(H.getOptions().exporting, options);
 
             // Get SVG asynchronously and then download the resulting SVG
             getSVG(charts, options, function (svg) {
-                Highcharts.downloadSVGLocal(svg, options, function () {
+                H.downloadSVGLocal(svg, options, function () {
                     console.log("Failed to export on client side");
                 });
             });
-        };
+        },
+        cleanup = function(charts) {
+            charts.forEach(chart => {
+                chart.destroy();
+            });
+            $(`#cancelReportButton`).text('Close');
+        };;
 
         // Set global default options for all charts
-        Highcharts.setOptions({
+        H.setOptions({
             exporting: {
                 fallbackToExportServer: false // Ensure the export happens on the client side or not at all
             }
@@ -226,6 +233,7 @@ function generateReport() {
                 type: 'application/pdf',
                 libURL: DashboardPowerups.POWERUP_EXT_URL + '3rdParty/Highcharts/lib'
             })
+        cleanup(charts);
 
     }(Highcharts));
 }
