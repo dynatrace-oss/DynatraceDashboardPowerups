@@ -51,6 +51,7 @@ function generateReport() {
                 sourceHeight,
                 cssWidth,
                 cssHeight,
+                allOptions = H.merge(chart.options);
                 // Copy the options and add extra options
                 options = H.merge(chart.userOptions, chartOptions);
 
@@ -65,12 +66,12 @@ function generateReport() {
             // get the source size
             cssWidth = chart.renderTo.style.width;
             cssHeight = chart.renderTo.style.height;
-            sourceWidth = options.exporting.sourceWidth ||
-                options.chart.width ||
+            sourceWidth = allOptions.exporting.sourceWidth ||
+            allOptions.chart.width ||
                 (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
                 600;
-            sourceHeight = options.exporting.sourceHeight ||
-                options.chart.height ||
+            sourceHeight = allOptions.exporting.sourceHeight ||
+            allOptions.chart.height ||
                 (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
                 400;
 
