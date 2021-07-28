@@ -43,8 +43,7 @@ function generateReport() {
         // adapted from https://jsfiddle.net/gh/get/library/pure/H/H/tree/master/samples/H/exporting/multiple-charts-offline/
 
         let copyChart = function (chart, chartOptions, containerContainer) {
-            var chart = this,
-                chartCopy,
+            let chartCopy,
                 sandbox,
                 svg,
                 seriesOptions,
@@ -54,7 +53,6 @@ function generateReport() {
                 cssHeight,
                 // Copy the options and add extra options
                 options = H.merge(chart.options, chartOptions);
-
 
             // create a sandbox where a new chart will be generated
             sandbox = H.createElement('div', null, {
