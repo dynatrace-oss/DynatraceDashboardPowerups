@@ -52,7 +52,7 @@ function generateReport() {
                 cssWidth,
                 cssHeight,
                 // Copy the options and add extra options
-                options = H.merge(chart.options, chartOptions);
+                options = H.merge(chart.userOptions, chartOptions);
 
             // create a sandbox where a new chart will be generated
             sandbox = H.createElement('div', null, {
