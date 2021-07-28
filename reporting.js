@@ -51,10 +51,38 @@ function generateReport() {
                 if (typeof (opts.series) == "undefined") opts.series = [];
                 chart.series.forEach(s => opts.series.push(H.merge(s.userOptions)));
                 let container = $(`<div>`).appendTo($copies)[0];
+                opts.title = getTitleOpt(chart);
                 let newChart = H.chart(container, opts);
                 charts.push(newChart);
             });
             return charts;
+        },
+        getTitleOpt = function (chart) {
+            //Dynatrace charts don't set the title, get it and set it
+            let $chart = $(charts[i].container);
+            let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+            let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
+            let title = $title.text();
+            let idx = title.length;
+
+            //remove markers from title using string manipulation instead of regex to avoid excessive escaping
+            idx = DashboardPowerups.MARKERS.reduce((acc, marker) =>
+            (title.includes(marker) ?
+                Math.min(title.indexOf(marker), acc) :
+                Math.min(acc, idx))
+                , idx);
+            title = title.substring(0, idx)
+
+            if (typeof (title) != "undefined" && title.length)
+                return {
+                    text: title,
+                    align: "left",
+                    style: {
+                        color: "#454646",
+                        fontSize: "12px"
+                    }
+                }
+            else return null;
         },
             getSVG = function (charts, options, callback) {
                 const space = 10;
@@ -182,9 +210,9 @@ function generateReport() {
                         if (chartOptions == null)
                             chartOptions = charts[i].userOptions;
 
-                        if (typeof (chartOptions.title) == "undefined"
+                        /*if (typeof (chartOptions.title) == "undefined" //try doing this before we copy
                             || chartOptions.title.text == null)
-                            getTitle(i, chartOptions);
+                            getTitle(i, chartOptions);*/
 
                         charts[i].getSVGForLocalExport(options, chartOptions, function () {
                             console.log("Powerup: getSVGForLocalExport Failed to get SVG");
