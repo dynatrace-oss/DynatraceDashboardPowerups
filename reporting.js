@@ -51,7 +51,7 @@ function generateReport() {
                 if (typeof (opts.series) == "undefined") opts.series = [];
                 chart.series.forEach(s => opts.series.push(H.merge(s.userOptions)));
                 let container = $(`<div>`).appendTo($copies)[0];
-                let newChart = H.chart(container,opts);
+                let newChart = H.chart(container, opts);
                 charts.push(newChart);
             });
             return charts;
@@ -198,7 +198,7 @@ function generateReport() {
                             }
                         });
                     };
-                    
+
                 exportChart(0);
             };
 
@@ -206,18 +206,21 @@ function generateReport() {
             options = H.merge(H.getOptions().exporting, options);
 
             // Get SVG asynchronously and then download the resulting SVG
-            getSVG(charts, options, function (svg) {
-                H.downloadSVGLocal(svg, options, function () {
+            getSVG(charts, options, function (combinedsvg) {
+                H.downloadSVGLocal(combinedsvg, options, function () {
                     console.log("Failed to export on client side");
                 });
+                //moved to callback simplify async
+                cleanup(charts);
             });
+
         },
-        cleanup = function(charts) {
-            charts.forEach(chart => {
-                chart.destroy();
-            });
-            $(`#cancelReportButton`).text('Close');
-        };;
+            cleanup = function (charts) {
+                charts.forEach(chart => {
+                    chart.destroy();
+                });
+                $(`#cancelReportButton`).text('Close');
+            };;
 
         // Set global default options for all charts
         H.setOptions({
@@ -233,7 +236,6 @@ function generateReport() {
                 type: 'application/pdf',
                 libURL: DashboardPowerups.POWERUP_EXT_URL + '3rdParty/Highcharts/lib'
             })
-        cleanup(charts);
 
     }(Highcharts));
 }
