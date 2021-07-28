@@ -52,8 +52,8 @@ function generateReport() {
                 cssWidth,
                 cssHeight,
                 allOptions = H.merge(chart.options);
-                // Copy the options and add extra options
-                options = H.merge(chart.userOptions, chartOptions);
+            // Copy the options and add extra options
+            options = H.merge(chart.userOptions, chartOptions);
 
             // create a sandbox where a new chart will be generated
             sandbox = H.createElement('div', null, {
@@ -67,11 +67,11 @@ function generateReport() {
             cssWidth = chart.renderTo.style.width;
             cssHeight = chart.renderTo.style.height;
             sourceWidth = allOptions.exporting.sourceWidth ||
-            allOptions.chart.width ||
+                allOptions.chart.width ||
                 (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
                 600;
             sourceHeight = allOptions.exporting.sourceHeight ||
-            allOptions.chart.height ||
+                allOptions.chart.height ||
                 (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
                 400;
 
@@ -84,7 +84,7 @@ function generateReport() {
                 width: sourceWidth,
                 height: sourceHeight
             });
-            options.exporting.enabled = false; // hide buttons in print
+            options.exporting = { enabled: false }// hide buttons in print
             delete options.data; // #3004
 
             // prepare for replicating the chart
