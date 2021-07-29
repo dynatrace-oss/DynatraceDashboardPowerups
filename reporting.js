@@ -86,6 +86,9 @@ function generateReport() {
             });
             options.exporting = { enabled: false }// hide buttons in print
             delete options.data; // #3004
+            if(typeof(options.tooltip)=="undefined") options.tooltip = {};
+            options.tooltip.userOptions = null; //prevent crash
+            options.tooltip.enabled = false;
 
             // prepare for replicating the chart
             options.series = [];
