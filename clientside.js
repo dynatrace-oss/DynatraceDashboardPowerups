@@ -799,6 +799,7 @@ var DashboardPowerups = (function () {
                 powerupsFired['PU_100STACK'] ? powerupsFired['PU_100STACK']++ : powerupsFired['PU_100STACK'] = 1;
             } else if (chart.series[0] && chart.series[0].type == "pie") {
                 pieChartPU();
+                enableExporting();
             } else if (title.includes(PU_FORECAST)) {
                 let p = pub.PUforecast(chart, title);
                 promises.push(p);
