@@ -346,7 +346,7 @@ function generateReport() {
                             return callback(combinedSVG);
                         }
 
-                        if (typeof (charts[i]) == "undefined"
+                        if (charts[i] == null
                             || typeof (charts[i].userOptions) == "undefined") { //null chart, skip it
                             return exportChart(i + 1);
                         }
