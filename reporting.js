@@ -120,6 +120,7 @@ function generateReport() {
                 console.log(`Powerup: reporting - failed to copy chart`)
                 console.warn(err);
                 console.log(options);
+                return null;
             }
 
 
