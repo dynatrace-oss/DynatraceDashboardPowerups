@@ -86,7 +86,7 @@ function generateReport() {
             });
             options.exporting = { enabled: false }// hide buttons in print
             delete options.data; // #3004
-            if(typeof(options.tooltip)=="undefined") options.tooltip = {};
+            if (typeof (options.tooltip) == "undefined") options.tooltip = {};
             options.tooltip.userOptions = null; //prevent crash
             options.tooltip.enabled = false;
 
@@ -114,7 +114,14 @@ function generateReport() {
             });
 
             // generate the chart copy
-            chartCopy = new H.Chart(options, chart.callback);
+            try {
+                chartCopy = new H.Chart(options, chart.callback);
+            } catch (err) {
+                console.log(`Powerup: reporting - failed to copy chart`)
+                console.warn(err);
+                console.log(options);
+            }
+
 
             // Axis options and series options  (#2022, #3900, #5982)
             if (chartOptions) {
