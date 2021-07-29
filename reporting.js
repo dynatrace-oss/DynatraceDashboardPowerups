@@ -106,10 +106,17 @@ function generateReport() {
                 }
 
                 //troubleshooting crash from pies
-                if(options.series.filter(s => s.type == "pie").length){
+                /*if(options.series.filter(s => s.type == "pie").length){
                     console.log(`Powerup: DEBUG - reporting proactively disabling legend for pie chart.`);
                     options.legend.enabled = false;
-                }
+                }*/
+                H.merge(true, options, {
+                    legend: {
+                        itemStyle: {
+                            lineHeight: 12
+                        }
+                    }
+                })
             });
 
             // Assign an internal key to ensure a one-to-one mapping (#5924)
