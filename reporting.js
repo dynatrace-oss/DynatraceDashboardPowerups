@@ -104,6 +104,12 @@ function generateReport() {
                 if (!seriesOptions.isInternal) {
                     options.series.push(seriesOptions);
                 }
+
+                //troubleshooting crash from pies
+                if(options.series.filter(s => s.type == "pie").length){
+                    console.log(`Powerup: DEBUG - reporting proactively disabling legend for pie chart.`);
+                    options.legend.enabled = false;
+                }
             });
 
             // Assign an internal key to ensure a one-to-one mapping (#5924)
