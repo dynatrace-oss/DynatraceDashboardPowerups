@@ -124,6 +124,7 @@ function writeConfig() {
             comparePU: $('#comparePU').prop("checked"),
             tablePU: $('#tablePU').prop("checked"),
             honeycombPU: $('#honeycombPU').prop("checked"),
+            treemapPU: $('#treemapPU').prop("checked"),
             debug: $('#debug').prop("checked"),
             colorPUTarget: $('#colorPUTarget').val(),
             animateCritical: $('#animateCritical').val(),
