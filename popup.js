@@ -74,8 +74,8 @@ function saveAndClose() {
 function loadConfig(alreadyWritten = false) {
     let p = $.Deferred();
 
-    chrome.storage.local.get(['Powerups','hotfixMode'], function (result) {
-        HotFixMode = (result.hotfixMode?result.hotfixMode:0);
+    chrome.storage.local.get(['Powerups', 'hotfixMode'], function (result) {
+        HotFixMode = (result.hotfixMode ? result.hotfixMode : 0);
         console.log('Powerup: (popup) config from storage is: ' + JSON.stringify(result));
         if (result && result.Powerups
             && Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length
@@ -91,7 +91,7 @@ function loadConfig(alreadyWritten = false) {
             if (typeof (result) == "object" && typeof (result.Powerups) == "object") {
                 for (const [key, value] of Object.entries(result.Powerups)) { //merge existing preferences
                     if (typeof (newConfig[key]) != "undefined")
-                    newConfig[key] = value;
+                        newConfig[key] = value;
                 }
             }
             newConfig.ackedVersion = chrome.runtime.getManifest().version;
@@ -138,17 +138,17 @@ function writeConfig() {
     //prevent mismatch
     let keys = Object.keys(config.Powerups);
     let defaultKeys = Object.keys(defaultConfig.Powerups);
-    if(keys.length != defaultKeys.length){
+    if (keys.length != defaultKeys.length) {
         let missing = defaultKeys.filter(dk => !keys.includes(dk));
         let extra = keys.filter(k => !defaultKeys.includes(k));
         console.warn(`Powerup: WARN - Popup - Mismatch config key count on write.`
-            + (missing.length?` Missing: ${missing}.`:'')
-            + (extra.length?` Extra: ${extra}`:'')
-            );
-        missing.forEach(k => {
+            + (missing.length ? ` Missing: ${missing}.` : '')
+            + (extra.length ? ` Extra: ${extra}` : '')
+        );
+        if (missing && missing.length) missing.forEach(k => {
             config.Powerups[k] = defaultConfig.Powerups[k];
         });
-        extra.Powerups.forEach(k => {
+        if (extra && extra.length) extra.Powerups.forEach(k => {
             delete config.Powerups[k];
         })
     }
@@ -167,9 +167,9 @@ function updateDebugOutput(config_p) {
         $(`#version`).text(`version: ${config.Powerups.ackedVersion}`);
         if (HotFixMode) {
             $("<span>")
-            .addClass("hotfixMode")
-            .text(" (in HotFix Mode)")
-            .appendTo($(`#version`));
+                .addClass("hotfixMode")
+                .text(" (in HotFix Mode)")
+                .appendTo($(`#version`));
         }
     })
 }
@@ -201,7 +201,7 @@ function togglePrefs() {
 function generateReport() {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         chrome.tabs.sendMessage(tabs[0].id, { Powerup: "GenerateReport" }, (response) => {
-            if(typeof(response) != "undefined" && response.Powerup == "LaunchedReportGeneration"){
+            if (typeof (response) != "undefined" && response.Powerup == "LaunchedReportGeneration") {
                 console.log("Powerup: launched report generation");
             } else {
                 console.log("Powerup: report generation failed");
