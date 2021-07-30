@@ -138,13 +138,19 @@ function writeConfig() {
     //prevent mismatch
     let keys = Object.keys(config.Powerups);
     let defaultKeys = Object.keys(defaultConfig.Powerups);
-    if(keys.length < defaultKeys.length){
+    if(keys.length != defaultKeys.length){
         let missing = defaultKeys.filter(dk => !keys.includes(dk));
         let extra = keys.filter(k => !defaultKeys.includes(k));
-        console.warn(`Powerup: WARN - Popup - Mismatch config key count on write. Missing: ${missing}. Extra: ${extra}`);
+        console.warn(`Powerup: WARN - Popup - Mismatch config key count on write.`
+            + (missing.length?` Missing: ${missing}.`:'')
+            + (extra.length?` Extra: ${extra}`:'')
+            );
         missing.forEach(k => {
-            config.Powerups[k] = defaultKeys.Powerups[k];
+            config.Powerups[k] = defaultConfig.Powerups[k];
         });
+        extra.Powerups.forEach(k => {
+            delete config.Powerups[k];
+        })
     }
 
     chrome.storage.local.set(config, function () {
