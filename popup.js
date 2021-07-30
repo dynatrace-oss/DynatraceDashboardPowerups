@@ -76,7 +76,7 @@ function loadConfig(alreadyWritten = false) {
 
     chrome.storage.local.get(['Powerups', 'hotfixMode'], function (result) {
         HotFixMode = (result.hotfixMode ? result.hotfixMode : 0);
-        console.log('Powerup: (popup) config from storage is: ' + JSON.stringify(result));
+        console.log('Powerup: (popup) config from storage is: ', result);
         if (result && result.Powerups
             && Object.keys(defaultConfig.Powerups).length === Object.keys(result.Powerups).length
             && result.Powerups.ackedVersion === chrome.runtime.getManifest().version
