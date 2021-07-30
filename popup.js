@@ -6,6 +6,41 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 */
+
+const defaultConfig = {
+    Powerups: {
+        tooltipPU: true,
+        colorPU: true,
+        svgPU: true,
+        worldmapPU: true,
+        bannerPU: true,
+        usqlstackPU: true,
+        usqlcolorPU: true,
+        linePU: true,
+        heatmapPU: true,
+        sankeyPU: true,
+        funnelPU: true,
+        mathPU: true,
+        datePU: true,
+        gaugePU: true,
+        comparePU: true,
+        tablePU: true,
+        honeycombPU: true,
+        treemapPU: true,
+        debug: false,
+        colorPUTarget: "Text",
+        animateCritical: "3 Pulses",
+        animateWarning: "Never",
+        sunburnMode: false,
+        libLocation: "ext",
+        ackedVersion: "0.0",
+        BeaconOptOut: false,
+        uuid: (typeof (uuidv4) === "function" ? uuidv4() : "")
+    }
+};
+Object.freeze(defaultConfig);
+
+
 var HotFixMode = 0;
 console.log("Powerup: popup.js loaded.");
 window.jQuery || console.log("Powerup: No jQuery for popup.js...");
@@ -38,37 +73,6 @@ function saveAndClose() {
 
 function loadConfig(alreadyWritten = false) {
     let p = $.Deferred();
-    let defaultConfig = {
-        Powerups: {
-            tooltipPU: true,
-            colorPU: true,
-            svgPU: true,
-            worldmapPU: true,
-            bannerPU: true,
-            usqlstackPU: true,
-            usqlcolorPU: true,
-            linePU: true,
-            heatmapPU: true,
-            sankeyPU: true,
-            funnelPU: true,
-            mathPU: true,
-            datePU: true,
-            gaugePU: true,
-            comparePU: true,
-            tablePU: true,
-            honeycombPU: true,
-            treemapPU: true,
-            debug: false,
-            colorPUTarget: "Text",
-            animateCritical: "3 Pulses",
-            animateWarning: "Never",
-            sunburnMode: false,
-            libLocation: "ext",
-            ackedVersion: "0.0",
-            BeaconOptOut: false,
-            uuid: (typeof (uuidv4) === "function" ? uuidv4() : "")
-        }
-    };
 
     chrome.storage.local.get(['Powerups','hotfixMode'], function (result) {
         HotFixMode = (result.hotfixMode?result.hotfixMode:0);
@@ -83,16 +87,17 @@ function loadConfig(alreadyWritten = false) {
             p.resolve(defaultConfig);
         } else {
             console.log("Powerup: (popup) stored config format didn't match, defaulting...");
+            let newConfig = JSON.parse(JSON.stringify(defaultConfig));
             if (typeof (result) == "object" && typeof (result.Powerups) == "object") {
                 for (const [key, value] of Object.entries(result.Powerups)) { //merge existing preferences
-                    if (typeof (defaultConfig[key]) != "undefined")
-                        defaultConfig[key] = value;
+                    if (typeof (newConfig[key]) != "undefined")
+                    newConfig[key] = value;
                 }
             }
-            defaultConfig.ackedVersion = chrome.runtime.getManifest().version;
-            writeConfig(defaultConfig);
+            newConfig.ackedVersion = chrome.runtime.getManifest().version;
+            writeConfig(newConfig);
             updateIcon();
-            p.resolve(defaultConfig);
+            p.resolve(newConfig);
         }
     });
     return p;
@@ -129,6 +134,17 @@ function writeConfig() {
             BeaconOptOut: $('#BeaconOptOut').prop("checked"),
             uuid: $('#uuid').val() || (typeof (uuidv4) === "function" ? uuidv4() : "")
         }
+    }
+    //prevent mismatch
+    let keys = Object.keys(config.Powerups);
+    let defaultKeys = Object.keys(defaultConfig.Powerups);
+    if(keys.length < defaultKeys.length){
+        let missing = defaultKeys.filter(dk => !keys.includes(dk));
+        let extra = keys.filter(k => !defaultKeys.includes(k));
+        console.warn(`Powerup: WARN - Popup - Mismatch config key count on write. Missing: ${missing}. Extra: ${extra}`);
+        missing.forEach(k => {
+            config.Powerups[k] = defaultKeys.Powerups[k];
+        });
     }
 
     chrome.storage.local.set(config, function () {
