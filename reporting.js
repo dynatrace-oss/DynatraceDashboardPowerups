@@ -179,7 +179,7 @@ function generateReport() {
                     let $bar = $(bar);
                     let color = $bar.css('background-color');
                     let percent = $bar.attr('style').match(/width:([0-9.]+)%/);
-                    percent = (isArray(percent) && percent.length>1)?Number(percent[1]):0;
+                    percent = (Array.isArray(percent) && percent.length>1)?Number(percent[1]):0;
                     let name = $bar.next().text();
                     let val = $left.eq().text();
 
