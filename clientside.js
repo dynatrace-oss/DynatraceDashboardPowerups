@@ -1458,7 +1458,7 @@ var DashboardPowerups = (function () {
 
         const container = e.currentTarget;
         const charts = Highcharts.charts
-            .filter(x => typeof (x) != "undefined")
+            .filter(x => typeof (x) != "undefined" && typeof (x.options) != "undefined")  
             .filter(x => x.options.type != 'sankey' && x.options.type != 'heatmap');
         const chartIndex = charts.findIndex(chart => chart.container === container);
 
@@ -1504,7 +1504,8 @@ var DashboardPowerups = (function () {
     pub.removeHighlightPointsInOtherCharts = function (e) {
         const charts = Highcharts.charts.filter(x => typeof (x) != "undefined");
         for (let i = 0; i < charts.length; i++) {
-            charts[i].xAxis[0].hideCrosshair();
+            if(Array.isArray(charts[i].xAxis))
+                charts[i].xAxis[0].hideCrosshair();
         }
     }
 
