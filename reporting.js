@@ -178,14 +178,15 @@ function generateReport() {
                 $right.find(DashboardPowerups.SELECTORS.TOPLIST_BAR_SELECTOR).each((b_idx,bar) => {
                     let $bar = $(bar);
                     let color = $bar.css('background-color');
-                    let percent = $bar.css('width');
+                    let percent = $bar.attr('style').match(/width:([0-9.]+)%/);
+                    percent = (isArray(percent) && percent.length>1)?Number(percent[1]):0;
                     let name = $bar.next().text();
                     let val = $left.eq().text();
 
                     data.push({
                         longName: name,
                         color: color,
-                        y: Number(percent.replace(/%/g,''))
+                        y: percent
                     });
                     categories.push(val);
                 });
