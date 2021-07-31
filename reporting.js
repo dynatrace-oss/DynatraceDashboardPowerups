@@ -192,6 +192,9 @@ function generateReport() {
                     });
                     let $container = $("<div>").appendTo($copies);
                     let newChart = H.chart($container[0], {
+                        chart: {
+                            plotBackgroundColor: "#f2f2f2"
+                        },
                         series: [{
                             type: "bar",
                             data: data,
@@ -211,6 +214,11 @@ function generateReport() {
                         title: getTitleOpt(null, $tile[0]),
                         xAxis: {
                             categories: categories
+                        },
+                        yAxis: {
+                            title: {
+                                enabled: false
+                            }
                         }
                     });
                     charts.push(newChart);
