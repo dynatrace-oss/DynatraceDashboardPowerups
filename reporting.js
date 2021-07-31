@@ -195,6 +195,12 @@ function generateReport() {
                         chart: {
                             plotBackgroundColor: "#f2f2f2"
                         },
+                        credits: {
+                            enabled: false
+                        },
+                        legend: {
+                            enabled: false
+                        },
                         series: [{
                             type: "bar",
                             data: data,
