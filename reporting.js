@@ -43,6 +43,7 @@ function generateReport() {
         // adapted from https://jsfiddle.net/gh/get/library/pure/H/H/tree/master/samples/H/exporting/multiple-charts-offline/
 
         let copyChart = function (chart, chartOptions, containerContainer) {
+            if(!Object.keys(chart).length) return null;
             let chartCopy,
                 sandbox,
                 svg,
