@@ -32,7 +32,7 @@ var DashboardPowerups = (function () {
     const COLUMN_SELECTOR = '.powerupTable > div > div > div:nth-of-type(1) > span';
     const MENU_ICON_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-icon"]';
     const MENU_POPUP_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-popup"]';
-    const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] > div';
+    const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] > div, [uitestid="gwt-debug-visualization-top-list"]';
     const TOPLIST_BAR_SELECTOR = 'div[data-dynamic-color]';
     const NO_DATA_SELECTOR = 'div.grid-tileContent > div > div:nth-of-type(3) > div:nth-of-type(1), [uitestid="gwt-debug-renderedCustomError"] > div > div:nth-of-type(1)';
     const TILE_CONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:first-of-type';

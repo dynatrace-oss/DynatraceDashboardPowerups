@@ -166,19 +166,48 @@ function generateReport() {
                 }
             });
 
-            /*// Get the SVG from the container's innerHTML
-            svg = chartCopy.getChartHTML();
-            fireEvent(this, 'getSVG', { chartCopy: chartCopy });
-
-            svg = chart.sanitizeSVG(svg, options);
-
-            // free up memory
-            options = null;
-            chartCopy.destroy();
-            discardElement(sandbox);
-
-            return svg;*/
             return chartCopy;
+        },
+        rebuildAndAddToplist = function (charts) {
+            $(DashboardPowerups.SELECTORS.TOPLIST_SELECTOR).each((i,el) => {
+                let data = [], categories = [];
+                let $toplist = $(el);
+                let $tile = $toplist.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                let $left = $el.children().first();
+                let $right = $el.children().last();
+                $right.find(DashboardPowerups.SELECTORS.TOPLIST_BAR_SELECTOR).each((b_idx,bar) => {
+                    let $bar = $(bar);
+                    let color = $bar.css('background-color');
+                    let percent = $bar.css('width');
+                    let name = $bar.next().text();
+                    let val = $left.eq().text();
+
+                    data.push({
+                        longName: name,
+                        color: color,
+                        y: percent
+                    });
+                    categories.push(val);
+                });
+                let $container = $("<div>").appendTo($copies);
+                let newChart = H.chart($container[0],{
+                    series: {
+                        type: "bar",
+                        data: data,
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function() { return this.point.longName},
+                            align: "left",
+                            inside: true
+                        },
+                    },
+                    title: getTitleOpt(null,$tile[0]),
+                    xAxis: {
+                        categories: categories
+                    }
+                });
+                charts.push(newChart);
+            });
         },
             copyCharts = function () {
                 //get all the charts and export as PDF
@@ -197,10 +226,15 @@ function generateReport() {
                 });
                 return charts;
             },
-            getTitleOpt = function (chart) {
-                //Dynatrace charts don't set the title, get it and set it
-                let $chart = $(chart.container);
-                let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+            getTitleOpt = function (chart=null,tile=null) {  //Dynatrace charts don't set the title, get it and set it
+                let $chart, $tile;
+                if(chart != null){
+                    $chart = $(chart.container);
+                    $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                } else if(tile != null){
+                    $tile = $(tile);
+                } else return null;
+
                 let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
                 let title = $title.text();
                 let idx = title.length;
@@ -400,6 +434,7 @@ function generateReport() {
 
 
         let charts = copyCharts();
+        rebuildAndAddToplist(charts);
         exportCharts(charts,
             {
                 type: 'application/pdf',
