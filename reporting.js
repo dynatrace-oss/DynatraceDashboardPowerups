@@ -185,7 +185,7 @@ function generateReport() {
                     data.push({
                         longName: name,
                         color: color,
-                        y: percent
+                        y: Number(percent.replace(/%/g,''))
                     });
                     categories.push(val);
                 });
