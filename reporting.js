@@ -106,14 +106,14 @@ function generateReport() {
                 }
 
                 //troubleshooting crash from pies
-                if(options.series.filter(s => s.type == "pie").length){
+                if (options.series.filter(s => s.type == "pie").length) {
                     //console.log(`Powerup: DEBUG - reporting proactively disabling legend for pie chart.`);
                     //options.legend.enabled = false;
-                    if(options.legend.itemStyle){
+                    if (options.legend.itemStyle) {
                         delete options.legend.itemStyle.lineHeight;
                     }
                 }
-                
+
             });
 
             // Assign an internal key to ensure a one-to-one mapping (#5924)
@@ -168,48 +168,54 @@ function generateReport() {
 
             return chartCopy;
         },
-        rebuildAndAddToplist = function (charts) {
-            $(DashboardPowerups.SELECTORS.TOPLIST_SELECTOR).each((i,el) => {
-                let data = [], categories = [];
-                let $toplist = $(el);
-                let $tile = $toplist.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
-                let $left = $toplist.children().first();
-                let $right = $toplist.children().last();
-                $right.find(DashboardPowerups.SELECTORS.TOPLIST_BAR_SELECTOR).each((b_idx,bar) => {
-                    let $bar = $(bar);
-                    let color = $bar.css('background-color');
-                    let percent = $bar.attr('style').match(/width:([0-9.]+)%/);
-                    percent = (Array.isArray(percent) && percent.length>1)?Number(percent[1]):0;
-                    let name = $bar.next().text();
-                    let val = $left.eq().text();
+            rebuildAndAddToplist = function (charts) {
+                $(DashboardPowerups.SELECTORS.TOPLIST_SELECTOR).each((i, el) => {
+                    let data = [], categories = [];
+                    let $toplist = $(el);
+                    let $tile = $toplist.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                    let $left = $toplist.children().first();
+                    let $right = $toplist.children().last();
+                    $right.find(DashboardPowerups.SELECTORS.TOPLIST_BAR_SELECTOR).each((b_idx, bar) => {
+                        let $bar = $(bar);
+                        let color = $bar.css('background-color');
+                        let percent = $bar.attr('style').match(/width:([0-9.]+)%/);
+                        percent = (Array.isArray(percent) && percent.length > 1) ? Number(percent[1]) : 0;
+                        let name = $bar.next().text();
+                        let val = $left.children.eq(b_idx).text();
 
-                    data.push({
-                        longName: name,
-                        color: color,
-                        y: percent
+                        data.push({
+                            longName: name,
+                            color: color,
+                            y: percent
+                        });
+                        categories.push(val);
                     });
-                    categories.push(val);
+                    let $container = $("<div>").appendTo($copies);
+                    let newChart = H.chart($container[0], {
+                        series: [{
+                            type: "bar",
+                            data: data,
+                            dataLabels: {
+                                enabled: true,
+                                formatter: function () { return this.point.longName },
+                                align: "left",
+                                inside: true,
+                                style: {
+                                    fontSize: "10px",
+                                    color: "black",
+                                    fontWeight: "",
+                                    textOutline: ""
+                                }
+                            },
+                        }],
+                        title: getTitleOpt(null, $tile[0]),
+                        xAxis: {
+                            categories: categories
+                        }
+                    });
+                    charts.push(newChart);
                 });
-                let $container = $("<div>").appendTo($copies);
-                let newChart = H.chart($container[0],{
-                    series: [{
-                        type: "bar",
-                        data: data,
-                        dataLabels: {
-                            enabled: true,
-                            formatter: function() { return this.point.longName},
-                            align: "left",
-                            inside: true
-                        },
-                    }],
-                    title: getTitleOpt(null,$tile[0]),
-                    xAxis: {
-                        categories: categories
-                    }
-                });
-                charts.push(newChart);
-            });
-        },
+            },
             copyCharts = function () {
                 //get all the charts and export as PDF
                 let charts = [];
@@ -227,12 +233,12 @@ function generateReport() {
                 });
                 return charts;
             },
-            getTitleOpt = function (chart=null,tile=null) {  //Dynatrace charts don't set the title, get it and set it
+            getTitleOpt = function (chart = null, tile = null) {  //Dynatrace charts don't set the title, get it and set it
                 let $chart, $tile;
-                if(chart != null){
+                if (chart != null) {
                     $chart = $(chart.container);
                     $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
-                } else if(tile != null){
+                } else if (tile != null) {
                     $tile = $(tile);
                 } else return null;
 
