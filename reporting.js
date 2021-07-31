@@ -173,8 +173,8 @@ function generateReport() {
                 let data = [], categories = [];
                 let $toplist = $(el);
                 let $tile = $toplist.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
-                let $left = $el.children().first();
-                let $right = $el.children().last();
+                let $left = $toplist.children().first();
+                let $right = $toplist.children().last();
                 $right.find(DashboardPowerups.SELECTORS.TOPLIST_BAR_SELECTOR).each((b_idx,bar) => {
                     let $bar = $(bar);
                     let color = $bar.css('background-color');
