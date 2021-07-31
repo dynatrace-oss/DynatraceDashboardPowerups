@@ -181,7 +181,7 @@ function generateReport() {
                         let percent = $bar.attr('style').match(/width:([0-9.]+)%/);
                         percent = (Array.isArray(percent) && percent.length > 1) ? Number(percent[1]) : 0;
                         let name = $bar.next().text();
-                        let val = $left.children.eq(b_idx).text();
+                        let val = $left.children().eq(b_idx).text();
 
                         data.push({
                             longName: name,
