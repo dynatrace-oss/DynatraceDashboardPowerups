@@ -202,7 +202,7 @@ function generateReport() {
                                 inside: true,
                                 style: {
                                     fontSize: "10px",
-                                    color: "black",
+                                    //color: "black",
                                     fontWeight: "",
                                     textOutline: ""
                                 }
