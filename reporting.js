@@ -191,7 +191,7 @@ function generateReport() {
                 });
                 let $container = $("<div>").appendTo($copies);
                 let newChart = H.chart($container[0],{
-                    series: {
+                    series: [{
                         type: "bar",
                         data: data,
                         dataLabels: {
@@ -200,7 +200,7 @@ function generateReport() {
                             align: "left",
                             inside: true
                         },
-                    },
+                    }],
                     title: getTitleOpt(null,$tile[0]),
                     xAxis: {
                         categories: categories
