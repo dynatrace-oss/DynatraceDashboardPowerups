@@ -1,4 +1,5 @@
 function openReportGenerator() {
+
     let $repgen = $("<div>")
         .html(`
         <div id="PowerupReportGeneratorTitleBar"><h3>Generate Report</h3></div>
@@ -13,6 +14,7 @@ function openReportGenerator() {
         .addClass("PowerupReportGenerator")
         .appendTo("body");
     let $buttonBar = $repgen.find(`#PowerupReportGeneratorButtonBar`);
+
 
     let $cancel = $(`<button type="button" id="cancelReportButton">`)
         .on('click', closeReportGenerator)
@@ -33,6 +35,7 @@ function closeReportGenerator() {
 
 function generateReport() {
     $(`#generateReportButton`).hide();
+    $(`#PowerupReportGeneratorPreviewOptions`).show();
     let $previewContent = $(`#PowerupReportGeneratorPreviewContent`);
     let $previewTitle = $(`#PowerupReportGeneratorPreviewTitle`);
     let $previewOptions = $(`#PowerupReportGeneratorPreviewOptions`);
@@ -43,7 +46,7 @@ function generateReport() {
         // adapted from https://jsfiddle.net/gh/get/library/pure/H/H/tree/master/samples/H/exporting/multiple-charts-offline/
 
         let copyChart = function (chart, chartOptions, containerContainer) {
-            if(!Object.keys(chart).length) return null;
+            if (!Object.keys(chart).length) return null;
             let chartCopy,
                 sandbox,
                 svg,
@@ -300,26 +303,11 @@ function generateReport() {
                         width = Math.max(width, svgWidth);
                         svgArr.push(svg);
                     },
-                    validateJSON = function (e) {
-                        let $target = $(e.target);
-                        let valid = true;
-                        try {
-                            JSON.parse($target.val());
-                        } catch (err) {
-                            valid = false;
-                        }
-                        if (valid) {
-                            $target.addClass("powerupValidJSON");
-                            $target.removeClass("powerupInvalidJSON");
-                        } else {
-                            $target.addClass("powerupInvalidJSON");
-                            $target.removeClass("powerupValidJSON");
-                        }
-                    },
                     previewSVG = function (svg, i, chartOptions) {
                         let p = $.Deferred();
                         $previewTitle.text(`Chart ${i}:`);
                         $previewContent.html(svg);
+                        buildOptions(chartOptions);
                         let $options = $(`<textarea>`)
                             .addClass("powerupPreviewOptions")
                             .val(JSON.stringify(chartOptions, null, 2))
@@ -442,10 +430,11 @@ function generateReport() {
         },
             cleanup = function (charts) {
                 charts.forEach(chart => {
-                    chart.destroy();
+                    if(chart && typeof(chart.destroy) == "function")
+                        chart.destroy();
                 });
                 $(`#cancelReportButton`).text('Close');
-            };;
+            };
 
         // Set global default options for all charts
         H.setOptions({
@@ -457,6 +446,7 @@ function generateReport() {
 
         let charts = copyCharts();
         rebuildAndAddToplist(charts);
+        $(`#cancelReportButton`).on('click',cleanup); //don't leak charts, if cancelling early
         exportCharts(charts,
             {
                 type: 'application/pdf',
@@ -464,4 +454,83 @@ function generateReport() {
             })
 
     }(Highcharts));
+}
+
+function buildOptions(chartOptions) {
+    let $optionsBlock = $(`#PowerupReportGeneratorPreviewOptions`);
+
+    //draw options sections closed, fill in after click
+    let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)"));
+    let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background"));
+    let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments"));
+    let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines"));
+    let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations"));
+    let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative"));
+    let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter"));
+    let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert)", jsonContent));
+
+    function createSection(id, name, callback = dummyContent) {
+        let $section = $(`<section>`)
+            .attr('id', id)
+            .appendTo($optionsBlock);
+        let $button = $(`
+        <button _ngcontent-barista-design-system-c132="" role="button" class="dt-expandable-panel-trigger dt-expandable-section-header-trigger dt-expandable-panel-trigger-open" aria-controls="dt-expandable-section-0" aria-expanded="true" tabindex="0" aria-disabled="false">
+            <div _ngcontent-barista-design-system-c132="">
+                <dt-icon _ngcontent-barista-design-system-c132="" role="img" name="dropdownopen" class="dt-icon dt-expandable-section-arrow" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M403.078 142.412L256 289.49 108.922 142.412l-45.255 45.255L256 380l192.333-192.333z"></path></svg>
+                </dt-icon>
+            </div>
+            <div _ngcontent-barista-design-system-c132="" class="dt-expandable-section-header-content">
+                <dt-expandable-section-header> ${name} </dt-expandable-section-header>
+            </div>
+        </button>`)
+            .appendTo($section);
+        let $content = $(`<div>`)
+            .addClass("powerupOptionsContent")
+            .appendTo($section);
+
+        $button.on('click', function () {
+            if ($section.hasClass("powerupOptionsOpen")) {
+                $section.removeClass("powerupOptionsOpen");
+                $content.html();
+            } else {
+                $section.addClass("powerupOptionsOpen");
+                callback($content);
+            }
+        });
+
+        return $section;
+    }
+
+    function dummyContent(content) {
+        let $content = $(content);
+
+        $content.html(`<h3>Dummy content...</h3>`);
+    }
+
+    function jsonContent(content) {
+        let $content = $(content);
+        let $options = $(`<textarea>`)
+        .addClass("powerupPreviewOptions")
+        .val(JSON.stringify(chartOptions, null, 2))
+        .appendTo($content)
+        .on('keypress paste', validateJSON);
+    }
+}
+
+function validateJSON (e) {
+    let $target = $(e.target);
+    let valid = true;
+    try {
+        JSON.parse($target.val());
+    } catch (err) {
+        valid = false;
+    }
+    if (valid) {
+        $target.addClass("powerupValidJSON");
+        $target.removeClass("powerupInvalidJSON");
+    } else {
+        $target.addClass("powerupInvalidJSON");
+        $target.removeClass("powerupValidJSON");
+    }
 }
