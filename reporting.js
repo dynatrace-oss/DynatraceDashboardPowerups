@@ -474,13 +474,13 @@ function buildOptions(chartOptions) {
             .attr('id', id)
             .appendTo($optionsBlock);
         let $button = $(`
-        <button _ngcontent-barista-design-system-c132="" role="button" class="dt-expandable-panel-trigger dt-expandable-section-header-trigger dt-expandable-panel-trigger-open" aria-controls="dt-expandable-section-0" aria-expanded="true" tabindex="0" aria-disabled="false">
-            <div _ngcontent-barista-design-system-c132="">
-                <dt-icon _ngcontent-barista-design-system-c132="" role="img" name="dropdownopen" class="dt-icon dt-expandable-section-arrow" aria-hidden="true">
+        <button role="button" class="powerupExpandable">
+            <div>
+                <div role="img" name="dropdownopen" class="powerupExpandableArrow">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M403.078 142.412L256 289.49 108.922 142.412l-45.255 45.255L256 380l192.333-192.333z"></path></svg>
                 </dt-icon>
             </div>
-            <div _ngcontent-barista-design-system-c132="" class="dt-expandable-section-header-content">
+            <div class="powerupExpandableHeader">
                 <dt-expandable-section-header> ${name} </dt-expandable-section-header>
             </div>
         </button>`)

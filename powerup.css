@@ -808,3 +808,28 @@ table.powerupActionPopup tr > *:nth-of-type(4) {
 #PowerupReportGeneratorHiddenCopy {
   display: none;
 }
+
+button.powerupExpandable {
+  border: none;
+  display: inline-flex;
+  align-items: baseline;
+  background: none;
+}
+
+.powerupExpandableArrow {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  transform: rotate(0deg);
+  transition: 0.125s;
+}
+
+.powerupExpandableArrow svg {
+  fill: #00a1b2;
+  width: 16px;
+  height: 16px;
+}
+
+section.powerupOptionsOpen .powerupExpandableArrow {
+  transform: rotate(-90deg);
+}
