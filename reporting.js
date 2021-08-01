@@ -475,14 +475,10 @@ function buildOptions(chartOptions) {
             .appendTo($optionsBlock);
         let $button = $(`
         <button role="button" class="powerupExpandable">
-            <div>
-                <div role="img" name="dropdownopen" class="powerupExpandableArrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M403.078 142.412L256 289.49 108.922 142.412l-45.255 45.255L256 380l192.333-192.333z"></path></svg>
-                </dt-icon>
+            <div role="img" name="dropdownopen" class="powerupExpandableArrow">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M403.078 142.412L256 289.49 108.922 142.412l-45.255 45.255L256 380l192.333-192.333z"></path></svg>
             </div>
-            <div class="powerupExpandableHeader">
-                <dt-expandable-section-header> ${name} </dt-expandable-section-header>
-            </div>
+            <div class="powerupExpandableHeader"> ${name} </div>
         </button>`)
             .appendTo($section);
         let $content = $(`<div>`)
@@ -492,7 +488,7 @@ function buildOptions(chartOptions) {
         $button.on('click', function () {
             if ($section.hasClass("powerupOptionsOpen")) {
                 $section.removeClass("powerupOptionsOpen");
-                $content.html();
+                $content.html('');
             } else {
                 $section.addClass("powerupOptionsOpen");
                 callback($content);
