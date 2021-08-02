@@ -833,3 +833,8 @@ button.powerupExpandable {
 section.powerupOptionsOpen .powerupExpandableArrow {
   transform: rotate(-90deg);
 }
+
+.powerupErrorBar {
+  color: red;
+  font-weight: bold;
+}

@@ -303,40 +303,13 @@ function generateReport() {
                         width = Math.max(width, svgWidth);
                         svgArr.push(svg);
                     },
-                    previewSVG = function (svg, i, chartOptions) {
-                        let p = $.Deferred();
+                    previewSVG = function (svg, i, chartOptions, result=null) {
+                        let p = $.Deferred();  //expecting {refresh: bool, id: string}
                         $previewTitle.text(`Chart ${i}:`);
                         $previewContent.html(svg);
-                        buildOptions(chartOptions);
-                        let $options = $(`<textarea>`)
-                            .addClass("powerupPreviewOptions")
-                            .val(JSON.stringify(chartOptions, null, 2))
-                            .appendTo($previewOptions)
-                            .on('keypress paste', validateJSON);
-                        let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
-                            .on('click', (e) => {
-                                try {
-                                    let obj = JSON.parse($options.val());
-                                    H.merge(true, chartOptions, obj); //deep copy into chartOptions ref
-                                } catch (err) {
-                                    let $err = $previewOptions.find(`.powerupErrorBar`);
-                                    if (!$err.length)
-                                        $err = $(`<span>`)
-                                            .addClass("powerupErrorBar")
-                                            .appendTo($previewOptions);
-                                    $err.text(err);
-                                    return (false);
-                                }
+                        let id = (result != null && result.id)?result.id:null;
+                        buildOptions(chartOptions, p, id);
 
-                                $previewTitle.text(``);
-                                $previewContent.html(``);
-                                $previewOptions.html(``);
-                                $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
-                                p.resolve(true);
-                            })
-                            .text("Refresh")
-                            .addClass("powerupButton")
-                            .appendTo($buttonBar);
                         let $next = $(`<button type="button" id="generateReportNextButton">`)
                             .on('click', (e) => {
                                 $previewTitle.text(``);
@@ -378,7 +351,7 @@ function generateReport() {
                             }
                         return title; //in case we need the actual title string, use chartOptions by ref
                     },
-                    exportChart = function (i, chartOptions = null) {
+                    exportChart = function (i, chartOptions = null, result=null) {
                         if (i === charts.length) { //when done, combine everything
                             let combinedSVG = '<svg height="' + top + '" width="' + width +
                                 '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
@@ -395,16 +368,12 @@ function generateReport() {
                         if (chartOptions == null)
                             chartOptions = charts[i].userOptions;
 
-                        /*if (typeof (chartOptions.title) == "undefined" //try doing this before we copy
-                            || chartOptions.title.text == null)
-                            getTitle(i, chartOptions);*/
-
                         charts[i].getSVGForLocalExport(options, chartOptions, function () {
                             console.log("Powerup: getSVGForLocalExport Failed to get SVG");
                         }, async function (svg) {
-                            let refresh = await previewSVG(svg, i, chartOptions);
-                            if (refresh) {
-                                return exportChart(i, chartOptions);
+                            let p_result = await previewSVG(svg, i, chartOptions, result);
+                            if (p_result && p_result.refresh) {
+                                return exportChart(i, chartOptions, p_result);
                             } else {
                                 addSVG(svg, i);
                                 return exportChart(i + 1); // Export next only when this SVG is received
@@ -430,7 +399,7 @@ function generateReport() {
         },
             cleanup = function (charts) {
                 charts.forEach(chart => {
-                    if(chart && typeof(chart.destroy) == "function")
+                    if (chart && typeof (chart.destroy) == "function")
                         chart.destroy();
                 });
                 $(`#cancelReportButton`).text('Close');
@@ -446,7 +415,7 @@ function generateReport() {
 
         let charts = copyCharts();
         rebuildAndAddToplist(charts);
-        $(`#cancelReportButton`).on('click',cleanup); //don't leak charts, if cancelling early
+        $(`#cancelReportButton`).on('click', cleanup); //don't leak charts, if cancelling early
         exportCharts(charts,
             {
                 type: 'application/pdf',
@@ -456,7 +425,7 @@ function generateReport() {
     }(Highcharts));
 }
 
-function buildOptions(chartOptions) {
+function buildOptions(chartOptions, promise, open = null) {
     let $optionsBlock = $(`#PowerupReportGeneratorPreviewOptions`);
 
     //draw options sections closed, fill in after click
@@ -487,15 +456,33 @@ function buildOptions(chartOptions) {
 
         $button.on('click', function () {
             if ($section.hasClass("powerupOptionsOpen")) {
-                $section.removeClass("powerupOptionsOpen");
-                $content.html('');
+                closeThisSection();
             } else {
-                $section.addClass("powerupOptionsOpen");
-                callback($content);
+                openThisSection();
+                closeOtherSections();
             }
         });
 
+        if (open === id) openThisSection();
         return $section;
+
+        function openThisSection() {
+            $section.addClass("powerupOptionsOpen");
+            callback($content);
+        }
+
+        function closeThisSection() {
+            $section.removeClass("powerupOptionsOpen");
+            $content.html('');
+        }
+
+        function closeOtherSections() {
+            $optionsBlock.find(`section:not([id=${id}])`).each((s_i, s) => {
+                $(s).removeClass("powerupOptionsOpen")
+                    .find(`.powerupOptionsContent`)
+                    .html('');
+            })
+        }
     }
 
     function dummyContent(content) {
@@ -506,15 +493,41 @@ function buildOptions(chartOptions) {
 
     function jsonContent(content) {
         let $content = $(content);
+        let id = $content.parents(`section`).attr('id');
         let $options = $(`<textarea>`)
-        .addClass("powerupPreviewOptions")
-        .val(JSON.stringify(chartOptions, null, 2))
-        .appendTo($content)
-        .on('keypress paste', validateJSON);
+            .addClass("powerupPreviewOptions")
+            .val(JSON.stringify(chartOptions, null, 2))
+            .appendTo($content)
+            .on('keypress paste', validateJSON);
+
+        let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
+            .on('click', (e) => {
+                try {
+                    let obj = JSON.parse($options.val());
+                    H.merge(true, chartOptions, obj); //deep copy into chartOptions ref
+                } catch (err) {
+                    let $err = $content.find(`.powerupErrorBar`);
+                    if (!$err.length)
+                        $err = $(`<span>`)
+                            .addClass("powerupErrorBar")
+                            .appendTo($content);
+                    $err.text(err);
+                    return (false);
+                }
+
+                $(`#generateReportRefreshButton`).remove();
+                promise.resolve({
+                    refresh: true,
+                    id: id
+                });
+            })
+            .text("Refresh")
+            .addClass("powerupButton")
+            .appendTo($content);
     }
 }
 
-function validateJSON (e) {
+function validateJSON(e) {
     let $target = $(e.target);
     let valid = true;
     try {
