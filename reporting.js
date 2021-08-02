@@ -450,7 +450,7 @@ var PowerupReporting = (function () {
         let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations"));
         let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative"));
         let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter"));
-        let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert)", jsonContent));
+        let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert mode)", jsonContent));
 
         function createSection(id, name, callback = dummyContent) {
             let $section = $(`<section>`)
@@ -507,11 +507,12 @@ var PowerupReporting = (function () {
 
         function jsonContent(content) {
             let $content = $(content);
+            let $div = $(`<div>`).appendTo($content);
             let id = $content.parents(`section`).attr('id');
             let $options = $(`<textarea>`)
                 .addClass("powerupPreviewOptions")
                 .val(JSON.stringify(chartOptions, null, 2))
-                .appendTo($content)
+                .appendTo($div)
                 .on('keydown paste', validateJSON);
 
             let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
@@ -520,11 +521,11 @@ var PowerupReporting = (function () {
                         let obj = JSON.parse($options.val());
                         Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
                     } catch (err) {
-                        let $err = $content.find(`.powerupErrorBar`);
+                        let $err = $div.find(`.powerupErrorBar`);
                         if (!$err.length)
                             $err = $(`<span>`)
                                 .addClass("powerupErrorBar")
-                                .appendTo($content);
+                                .appendTo($div);
                         $err.text(err);
                         return (false);
                     }
@@ -537,6 +538,10 @@ var PowerupReporting = (function () {
                 })
                 .text("Refresh")
                 .addClass("powerupButton")
+                .appendTo($div);
+
+            let $help = $(`<div>Format help: <a href="https://api.highcharts.com/highcharts/" target="_blank">Highcharts</a></div>`)
+                .addClass("powerupHelpFooter")
                 .appendTo($content);
         }
     }

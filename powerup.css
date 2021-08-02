@@ -842,3 +842,13 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 #generateReportRefreshButton {
   margin-left: 5px;
 }
+
+.powerupHelpFooter {
+  font-size: smaller;
+  font-style: italic;
+}
+
+.powerupOptionsContent {
+  display: inline-flex;
+  align-items: baseline;
+}
