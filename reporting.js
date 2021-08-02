@@ -43,8 +43,8 @@ function generateReport() {
     let $copies = $(`#PowerupReportGeneratorHiddenCopy`);
 
     (function (H) {
+        
         // adapted from https://jsfiddle.net/gh/get/library/pure/H/H/tree/master/samples/H/exporting/multiple-charts-offline/
-
         let copyChart = function (chart, chartOptions, containerContainer) {
             if (!Object.keys(chart).length) return null;
             let chartCopy,
@@ -504,7 +504,7 @@ function buildOptions(chartOptions, promise, open = null) {
             .on('click', (e) => {
                 try {
                     let obj = JSON.parse($options.val());
-                    H.merge(true, chartOptions, obj); //deep copy into chartOptions ref
+                    Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
                 } catch (err) {
                     let $err = $content.find(`.powerupErrorBar`);
                     if (!$err.length)
