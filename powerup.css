@@ -846,9 +846,15 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupHelpFooter {
   font-size: smaller;
   font-style: italic;
+  font-family: sans-serif;
 }
 
 .powerupOptionsContent {
-  display: inline-flex;
-  align-items: baseline;
+  display: flex;
+  flex-direction: column;
+}
+
+.powerupOptionsContent > div {
+  display: flex;
+  align-content: flex-end;
 }
