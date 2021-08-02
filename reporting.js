@@ -426,7 +426,7 @@ function generateReport() {
 }
 
 function buildOptions(chartOptions, promise, open = null) {
-    let $optionsBlock = $(`#PowerupReportGeneratorPreviewOptions`);
+    let $optionsBlock = $(`#PowerupReportGeneratorPreviewOptions`).html();
 
     //draw options sections closed, fill in after click
     let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)"));

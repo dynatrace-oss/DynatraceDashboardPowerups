@@ -838,3 +838,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   color: red;
   font-weight: bold;
 }
+
+#generateReportRefreshButton {
+  margin-left: 5px;
+}
