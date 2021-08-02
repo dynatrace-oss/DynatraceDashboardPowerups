@@ -310,6 +310,7 @@ function generateReport() {
                         let id = (result != null && result.id)?result.id:null;
                         buildOptions(chartOptions, p, id);
 
+                        $(`#generateReportNextButton`).remove();
                         let $next = $(`<button type="button" id="generateReportNextButton">`)
                             .on('click', (e) => {
                                 $previewTitle.text(``);
