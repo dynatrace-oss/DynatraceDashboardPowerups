@@ -264,7 +264,7 @@ if (typeof (INJECTED) == "undefined") {
                     }
                     case "GenerateReport": {
                         chrome.storage.local.get(['Powerups'], function (result) {
-                            let s = `if(typeof(openReportGenerator)=="function") openReportGenerator();
+                            let s = `if(typeof(PowerupReporting.openReportGenerator)=="function") PowerupReporting.openReportGenerator();
                                 else console.log("Powerup: generateReport called but lib not loaded");`;
                             injectClientsideString(s);
                             sendResponse({ Powerup: "LaunchedReportGeneration" });
