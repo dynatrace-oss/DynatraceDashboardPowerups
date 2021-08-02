@@ -513,7 +513,7 @@ var PowerupReporting = (function () {
                 .addClass("powerupPreviewOptions")
                 .val(JSON.stringify(chartOptions, null, 2))
                 .appendTo($div)
-                .on('keydown paste', validateJSON);
+                .on('keydown paste', debounce(validateJSON,100));
 
             let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
                 .on('click', (e) => {
