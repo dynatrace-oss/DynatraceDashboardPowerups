@@ -330,7 +330,10 @@ var PowerupReporting = (function () {
                                     $previewContent.html(``);
                                     $previewOptions.html(``);
                                     $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
-                                    p.resolve(false);
+                                    p.resolve({
+                                        refresh: false,
+                                        include: $(`#includeChart`).is(":checked")
+                                    });
                                 })
                                 .text("Next")
                                 .addClass("powerupButton")
@@ -389,7 +392,8 @@ var PowerupReporting = (function () {
                                 if (p_result && p_result.refresh) {
                                     return exportChart(i, chartOptions, p_result);
                                 } else {
-                                    addSVG(svg, i);
+                                    if (p_result && p_result.include)
+                                        addSVG(svg, i);
                                     return exportChart(i + 1); // Export next only when this SVG is received
                                 }
                             });
@@ -444,6 +448,7 @@ var PowerupReporting = (function () {
             .html('<h4>Options:</h4>')
             .addClass('generated');
 
+        drawIncludeOptions();
         //draw options sections closed, fill in after click
         let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)", storyContent));
         let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background"));
@@ -453,6 +458,14 @@ var PowerupReporting = (function () {
         let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative"));
         let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter"));
         let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert mode)", jsonContent));
+
+        ///////////////////////////////
+        function drawIncludeOptions() {
+            let $include = $(`
+                <span>Include chart:</span>
+                <input type="checkbox" id="includeChart" checked>`)
+                .appendTo($optionsBlock);
+        }
 
         function createSection(id, name, callback = dummyContent) {
             let $section = $(`<section>`)
@@ -572,8 +585,9 @@ var PowerupReporting = (function () {
                     .text(text)
                     .appendTo($right);
                 $img = $(`<img>`)
-                    .attr('src', DashboardPowerups.POWERUP_EXT_URL + img)
                     .appendTo($right);
+                if(img && img.length)
+                    $img.attr('src', DashboardPowerups.POWERUP_EXT_URL + img);
             }
         }
 
