@@ -858,3 +858,8 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   display: flex;
   align-content: flex-end;
 }
+
+#PowerupReportGeneratorPreviewOptions {
+  margin-top: 20px;
+  border-top: 1px #e6e6e6 solid;
+}
