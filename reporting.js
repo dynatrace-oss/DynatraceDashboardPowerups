@@ -441,8 +441,10 @@ var PowerupReporting = (function () {
             },
                 cleanup = function (charts) {
                     charts.forEach(chart => {
-                        if (chart && typeof (chart.destroy) == "function")
+                        if (chart && typeof (chart.destroy) == "function") {
+                            if(typeof(chart.renderer) != "object") chart.renderer = {}; //crash prevention
                             chart.destroy();
+                        }
                     });
                     $(`#cancelReportButton`).text('Close');
                 };
