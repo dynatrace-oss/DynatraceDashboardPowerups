@@ -318,7 +318,7 @@ var PowerupReporting = (function () {
                         },
                         previewSVG = function (svg, i, chartOptions, result = null) {
                             let p = $.Deferred();  //expecting {refresh: bool, id: string}
-                            $previewTitle.text(`Chart ${i}:`);
+                            $previewTitle.text(`<h4>Chart ${i}:</h4>`);
                             $previewContent.html(svg);
                             let id = (result != null && result.id) ? result.id : null;
                             buildOptions(chartOptions, p, id);
@@ -440,7 +440,9 @@ var PowerupReporting = (function () {
     }
 
     function buildOptions(chartOptions, promise, open = null) {
-        let $optionsBlock = $(`#PowerupReportGeneratorPreviewOptions`).html('<h4>Options:</h4>');
+        let $optionsBlock = $(`#PowerupReportGeneratorPreviewOptions`)
+            .html('<h4>Options:</h4>')
+            .addClass('generated');
 
         //draw options sections closed, fill in after click
         let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)"));
