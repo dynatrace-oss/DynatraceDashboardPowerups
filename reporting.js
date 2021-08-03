@@ -359,7 +359,7 @@ var PowerupReporting = (function () {
                                 $previewTitle.text(``);
                                 $previewContent.html(``);
                                 $previewOptions.html(``);
-                                $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
+                                $(`#generateReportRefreshButton, #generateReportNextButton, #generateReportFFButton`).remove();
                                 p.resolve({
                                     refresh: false,
                                     include: checked
