@@ -557,7 +557,7 @@ var PowerupReporting = (function () {
                 .appendTo($content);
             $radio = $(`<input type="radio" value="none" checked>`)
                 .appendTo($div)
-                .on('click', noPreset);
+                .on('click', notYetImplemented);
             $right = $(`<div>`)
                 .appendTo($div);
             $img = $(`<img>`)
@@ -573,7 +573,7 @@ var PowerupReporting = (function () {
                 .appendTo($content);
             $radio = $(`<input type="radio" value="improvingTrend" checked>`)
                 .appendTo($div)
-                .on('click', noPreset);
+                .on('click', notYetImplemented);
             $right = $(`<div>`)
                 .appendTo($div);
             $img = $(`<img>`)
@@ -589,7 +589,7 @@ var PowerupReporting = (function () {
                 .appendTo($content);
             $radio = $(`<input type="radio" value="degradingTrend" checked>`)
                 .appendTo($div)
-                .on('click', noPreset);
+                .on('click', notYetImplemented);
                 $right = $(`<div>`)
                 .appendTo($div);
             $img = $(`<img>`)
@@ -605,7 +605,7 @@ var PowerupReporting = (function () {
                 .appendTo($content);
             $radio = $(`<input type="radio" value="positiveImpact" checked>`)
                 .appendTo($div)
-                .on('click', noPreset);
+                .on('click', notYetImplemented);
                 $right = $(`<div>`)
                 .appendTo($div);
             $img = $(`<img>`)
@@ -621,7 +621,7 @@ var PowerupReporting = (function () {
                 .appendTo($content);
             $radio = $(`<input type="radio" value="negativeImpact" checked>`)
                 .appendTo($div)
-                .on('click', noPreset);
+                .on('click', notYetImplemented);
                 $right = $(`<div>`)
                 .appendTo($div);
             $img = $(`<img>`)
@@ -637,7 +637,7 @@ var PowerupReporting = (function () {
                 .appendTo($content);
             $radio = $(`<input type="radio" value="interestingOutlier" checked>`)
                 .appendTo($div)
-                .on('click', noPreset);
+                .on('click', notYetImplemented);
                 $right = $(`<div>`)
                 .appendTo($div);
             $img = $(`<img>`)
@@ -653,7 +653,7 @@ var PowerupReporting = (function () {
                 .appendTo($content);
             $radio = $(`<input type="radio" value="recommendation" checked>`)
                 .appendTo($div)
-                .on('click', noPreset);
+                .on('click', notYetImplemented);
                 $right = $(`<div>`)
                 .appendTo($div);
             $img = $(`<img>`)
@@ -662,6 +662,10 @@ var PowerupReporting = (function () {
             $span = $(`<span>`)
                 .text(`Recommendation`)
                 .appendTo($right);
+        }
+
+        function notYetImplemented() {
+            alert(`Not yet implemented...`);
         }
     }
 
