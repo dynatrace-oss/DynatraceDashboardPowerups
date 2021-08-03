@@ -25,6 +25,7 @@
     },
     "web_accessible_resources": [
         "powerup.css",
+        "Assets/*.png",
         "3rdParty/node_modules/@dynatrace/barista-icons/*",
         "clientside.*js*",
         "reporting.*js*",
