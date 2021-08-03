@@ -445,7 +445,7 @@ var PowerupReporting = (function () {
             .addClass('generated');
 
         //draw options sections closed, fill in after click
-        let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)"),storyContent);
+        let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)",storyContent));
         let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background"));
         let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments"));
         let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines"));
