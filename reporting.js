@@ -318,7 +318,7 @@ var PowerupReporting = (function () {
                         },
                         previewSVG = function (svg, i, chartOptions, result = null) {
                             let p = $.Deferred();  //expecting {refresh: bool, id: string}
-                            $previewTitle.text(`<h4>Chart ${i}:</h4>`);
+                            $previewTitle.html(`<h4>Chart ${i}:</h4>`);
                             $previewContent.html(svg);
                             let id = (result != null && result.id) ? result.id : null;
                             buildOptions(chartOptions, p, id);
