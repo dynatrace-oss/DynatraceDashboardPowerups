@@ -337,7 +337,7 @@ var PowerupReporting = (function () {
 
                                 //fast forward button
                                 $(`#generateReportFFButton`).remove();
-                                let $next = $(`<button type="button" id="generateReportFFButton">`)
+                                let $ff = $(`<button type="button" id="generateReportFFButton">`)
                                     .on('click', (e) => {
                                         fastForward = true;
                                         gotoNext(e);
