@@ -568,11 +568,11 @@ var PowerupReporting = (function () {
                     .on('click', callback);
                 $right = $(`<div>`)
                     .appendTo($div);
-                $img = $(`<img>`)
-                    .attr('src', DashboardPowerups.POWERUP_EXT_URL + img)
-                    .appendTo($right);
                 $span = $(`<span>`)
                     .text(text)
+                    .appendTo($right);
+                $img = $(`<img>`)
+                    .attr('src', DashboardPowerups.POWERUP_EXT_URL + img)
                     .appendTo($right);
             }
         }
