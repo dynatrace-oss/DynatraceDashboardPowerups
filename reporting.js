@@ -344,7 +344,6 @@ var PowerupReporting = (function () {
                                     })
                                     .text(" >> ")
                                     .addClass("powerupButton")
-                                    .addClass("powerupButtonDefault")
                                     .appendTo($buttonBar);
                             } else {
                                 p.resolve({
