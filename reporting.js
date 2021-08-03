@@ -301,6 +301,7 @@ var PowerupReporting = (function () {
                     let svgArr = [],
                         top = 0,
                         width = 0,
+                        fastForward = false,
                         addSVG = function (svgres, i) {
                             // Grab width/height from exported chart
                             let svgWidth = +svgres.match(
@@ -318,29 +319,52 @@ var PowerupReporting = (function () {
                         },
                         previewSVG = function (svg, i, chartOptions, result = null) {
                             let p = $.Deferred();  //expecting {refresh: bool, id: string}
-                            $previewTitle.html(`<h4>Chart ${i}:</h4>`);
-                            $previewContent.html(svg);
-                            let id = (result != null && result.id) ? result.id : null;
-                            buildOptions(chartOptions, p, id);
 
-                            $(`#generateReportNextButton`).remove();
-                            let $next = $(`<button type="button" id="generateReportNextButton">`)
-                                .on('click', (e) => {
-                                    let checked = $(`#includeChart`).is(":checked");
-                                    $previewTitle.text(``);
-                                    $previewContent.html(``);
-                                    $previewOptions.html(``);
-                                    $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
-                                    p.resolve({
-                                        refresh: false,
-                                        include: checked
-                                    });
-                                })
-                                .text("Next")
-                                .addClass("powerupButton")
-                                .addClass("powerupButtonDefault")
-                                .appendTo($buttonBar);
+                            if (!fastForward) {
+                                $previewTitle.html(`<h4>Chart ${i}:</h4>`);
+                                $previewContent.html(svg);
+                                let id = (result != null && result.id) ? result.id : null;
+                                buildOptions(chartOptions, p, id);
+
+                                //next button
+                                $(`#generateReportNextButton`).remove();
+                                let $next = $(`<button type="button" id="generateReportNextButton">`)
+                                    .on('click', gotoNext)
+                                    .text("Next")
+                                    .addClass("powerupButton")
+                                    .addClass("powerupButtonDefault")
+                                    .appendTo($buttonBar);
+
+                                //fast forward button
+                                $(`#generateReportFFButton`).remove();
+                                let $next = $(`<button type="button" id="generateReportFFButton">`)
+                                    .on('click', (e) => {
+                                        fastForward = true;
+                                        gotoNext(e);
+                                    })
+                                    .text(" >> ")
+                                    .addClass("powerupButton")
+                                    .addClass("powerupButtonDefault")
+                                    .appendTo($buttonBar);
+                            } else {
+                                p.resolve({
+                                    refresh: false,
+                                    include: true
+                                });
+                            }
                             return (p);
+
+                            function gotoNext(e) {
+                                let checked = $(`#includeChart`).is(":checked");
+                                $previewTitle.text(``);
+                                $previewContent.html(``);
+                                $previewOptions.html(``);
+                                $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
+                                p.resolve({
+                                    refresh: false,
+                                    include: checked
+                                });
+                            }
                         },
                         getTitle = function (i, chartOptions = {}) {
                             //Dynatrace charts don't set the title, get it and set it
@@ -587,7 +611,7 @@ var PowerupReporting = (function () {
                     .appendTo($right);
                 $img = $(`<img>`)
                     .appendTo($right);
-                if(img && img.length)
+                if (img && img.length)
                     $img.attr('src', DashboardPowerups.POWERUP_EXT_URL + img);
             }
         }
