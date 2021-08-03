@@ -852,6 +852,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   font-size: smaller;
   font-style: italic;
   font-family: sans-serif;
+  margin-top: 5px;
 }
 
 .powerupOptionsContent {
@@ -867,4 +868,18 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 #PowerupReportGeneratorPreviewOptions.generated {
   margin-top: 20px;
   border-top: 1px #e6e6e6 solid;
+}
+
+.powerupRadioOption {
+  display: flex;
+  flex-direction: row;
+}
+
+.powerupRadioOption div {
+  display: flex;
+  flex-direction: column;
+}
+
+.powerupRadioOption img {
+  width: 400px;
 }
