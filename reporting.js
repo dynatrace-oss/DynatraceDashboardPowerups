@@ -457,7 +457,7 @@ var PowerupReporting = (function () {
 
             let charts = copyCharts();
             rebuildAndAddToplist(charts);
-            $(`#cancelReportButton`).on('click', cleanup); //don't leak charts, if cancelling early
+            $(`#cancelReportButton`).on('click', () => { cleanup(charts) }); //don't leak charts, if cancelling early
             exportCharts(charts,
                 {
                     type: 'application/pdf',
