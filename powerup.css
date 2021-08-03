@@ -860,7 +860,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   flex-direction: column;
 }
 
-.powerupOptionsContent > div {
+.powerupOptionsContent > div:not([class]) {
   display: flex;
   align-items: flex-end;
 }
@@ -873,6 +873,8 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupRadioOption {
   display: flex;
   flex-direction: row;
+  align-items: flex-start;
+  margin: 10px;
 }
 
 .powerupRadioOption div {

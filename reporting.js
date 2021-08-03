@@ -445,7 +445,7 @@ var PowerupReporting = (function () {
             .addClass('generated');
 
         //draw options sections closed, fill in after click
-        let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)",storyContent));
+        let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)", storyContent));
         let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background"));
         let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments"));
         let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines"));
@@ -549,119 +549,32 @@ var PowerupReporting = (function () {
 
         function storyContent(content) {
             let $content = $(content);
-            let $div, $radio, $right, $img, $span;
 
-            //No preset option
-            $div = $(`<div>`)
-                .addClass('powerupRadioOption')
-                .appendTo($content);
-            $radio = $(`<input type="radio" value="none" checked>`)
-                .appendTo($div)
-                .on('click', notYetImplemented);
-            $right = $(`<div>`)
-                .appendTo($div);
-            $img = $(`<img>`)
-                //.attr('src',DashboardPowerups.POWERUP_EXT_URL+"Assets/story-mock1.png")
-                .appendTo($right);
-            $span = $(`<span>`)
-                .text(`None`)
-                .appendTo($right);
+            buildRadioOption("none", "None", "");
+            buildRadioOption("improvingTrend", "Improving Trend", "Assets/story-mock1.png");
+            buildRadioOption("degradingTrend", "Degrading Trend", "Assets/story-mock7.png");
+            buildRadioOption("positiveImpact", "Positive Impact", "Assets/story-mock2.png");
+            buildRadioOption("negativeImpact", "Negative Impact", "Assets/story-mock3.png");
+            buildRadioOption("interestingOutlier", "Interesting Outlier", "Assets/story-mock6.png");
+            buildRadioOption("recommendation", "Recommendation", "Assets/story-mock4.png");
 
-            //Improving trend
-            $div = $(`<div>`)
-                .addClass('powerupRadioOption')
-                .appendTo($content);
-            $radio = $(`<input type="radio" value="improvingTrend" checked>`)
-                .appendTo($div)
-                .on('click', notYetImplemented);
-            $right = $(`<div>`)
-                .appendTo($div);
-            $img = $(`<img>`)
-                .attr('src', DashboardPowerups.POWERUP_EXT_URL + "Assets/story-mock1.png")
-                .appendTo($right);
-            $span = $(`<span>`)
-                .text(`Improving Trend`)
-                .appendTo($right);
-
-            //Degrading trend
-            $div = $(`<div>`)
-                .addClass('powerupRadioOption')
-                .appendTo($content);
-            $radio = $(`<input type="radio" value="degradingTrend" checked>`)
-                .appendTo($div)
-                .on('click', notYetImplemented);
+            function buildRadioOption(value, text, img, callback = notYetImplemented) {
+                let $div, $radio, $right, $img, $span;
+                $div = $(`<div>`)
+                    .addClass('powerupRadioOption')
+                    .appendTo($content);
+                $radio = $(`<input type="radio" value="${value}">`)
+                    .appendTo($div)
+                    .on('click', callback);
                 $right = $(`<div>`)
-                .appendTo($div);
-            $img = $(`<img>`)
-                .attr('src', DashboardPowerups.POWERUP_EXT_URL + "Assets/story-mock7.png")
-                .appendTo($right);
-            $span = $(`<span>`)
-                .text(`Degrading Trend`)
-                .appendTo($right);
-
-            //Positive impact
-            $div = $(`<div>`)
-                .addClass('powerupRadioOption')
-                .appendTo($content);
-            $radio = $(`<input type="radio" value="positiveImpact" checked>`)
-                .appendTo($div)
-                .on('click', notYetImplemented);
-                $right = $(`<div>`)
-                .appendTo($div);
-            $img = $(`<img>`)
-                .attr('src', DashboardPowerups.POWERUP_EXT_URL + "Assets/story-mock2.png")
-                .appendTo($right);
-            $span = $(`<span>`)
-                .text(`Positive Impact`)
-                .appendTo($right);
-
-            //Negative impact
-            $div = $(`<div>`)
-                .addClass('powerupRadioOption')
-                .appendTo($content);
-            $radio = $(`<input type="radio" value="negativeImpact" checked>`)
-                .appendTo($div)
-                .on('click', notYetImplemented);
-                $right = $(`<div>`)
-                .appendTo($div);
-            $img = $(`<img>`)
-                .attr('src', DashboardPowerups.POWERUP_EXT_URL + "Assets/story-mock3.png")
-                .appendTo($right);
-            $span = $(`<span>`)
-                .text(`Negative Impact`)
-                .appendTo($right);
-
-            //Interesting Outlier
-            $div = $(`<div>`)
-                .addClass('powerupRadioOption')
-                .appendTo($content);
-            $radio = $(`<input type="radio" value="interestingOutlier" checked>`)
-                .appendTo($div)
-                .on('click', notYetImplemented);
-                $right = $(`<div>`)
-                .appendTo($div);
-            $img = $(`<img>`)
-                .attr('src', DashboardPowerups.POWERUP_EXT_URL + "Assets/story-mock6.png")
-                .appendTo($right);
-            $span = $(`<span>`)
-                .text(`Interesting Outlier`)
-                .appendTo($right);
-
-            //Recommendation
-            $div = $(`<div>`)
-                .addClass('powerupRadioOption')
-                .appendTo($content);
-            $radio = $(`<input type="radio" value="recommendation" checked>`)
-                .appendTo($div)
-                .on('click', notYetImplemented);
-                $right = $(`<div>`)
-                .appendTo($div);
-            $img = $(`<img>`)
-                .attr('src', DashboardPowerups.POWERUP_EXT_URL + "Assets/story-mock4.png")
-                .appendTo($right);
-            $span = $(`<span>`)
-                .text(`Recommendation`)
-                .appendTo($right);
+                    .appendTo($div);
+                $img = $(`<img>`)
+                    .attr('src', DashboardPowerups.POWERUP_EXT_URL + img)
+                    .appendTo($right);
+                $span = $(`<span>`)
+                    .text(text)
+                    .appendTo($right);
+            }
         }
 
         function notYetImplemented() {
