@@ -326,13 +326,14 @@ var PowerupReporting = (function () {
                             $(`#generateReportNextButton`).remove();
                             let $next = $(`<button type="button" id="generateReportNextButton">`)
                                 .on('click', (e) => {
+                                    let checked = $(`#includeChart`).is(":checked");
                                     $previewTitle.text(``);
                                     $previewContent.html(``);
                                     $previewOptions.html(``);
                                     $(`#generateReportRefreshButton, #generateReportNextButton`).remove();
                                     p.resolve({
                                         refresh: false,
-                                        include: $(`#includeChart`).is(":checked")
+                                        include: checked
                                     });
                                 })
                                 .text("Next")
