@@ -813,7 +813,7 @@ table.powerupActionPopup tr > *:nth-of-type(4) {
 button.powerupExpandable {
   border: none;
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   background: none;
 }
 
@@ -823,12 +823,16 @@ button.powerupExpandable {
   vertical-align: middle;
   transform: rotate(0deg);
   transition: 0.125s;
+  margin-right: 5px;
 }
 
 .powerupExpandableArrow svg {
   fill: #00a1b2;
   width: 16px;
   height: 16px;
+}
+#PowerupReportGeneratorPreviewOptions section {
+  margin: 5px;
 }
 
 section.powerupOptionsOpen .powerupExpandableArrow {
@@ -857,7 +861,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 
 .powerupOptionsContent > div {
   display: flex;
-  align-content: flex-end;
+  align-items: flex-end;
 }
 
 #PowerupReportGeneratorPreviewOptions.generated {
