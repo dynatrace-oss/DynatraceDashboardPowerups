@@ -608,17 +608,17 @@ var PowerupReporting = (function () {
                 .appendTo($content);
             let $header = $(`<tr><th>Series</th></tr>`)
                 .appendTo($table);
-            let $fgheader = $(`<th>Foreground</th>`)
+            let $fgheader = $(`<th><a>Foreground</a></th>`)
                 .addClass('powerupClickableHeader')
                 .appendTo($header)
-                .on('click',(e)=>{
+                .on('click', (e) => {
                     $table.find(`input[type=radio]:nth-of-type(1)`)
                         .trigger('click');
                 });
-                let $bgheader = $(`<th>Background</th>`)
+            let $bgheader = $(`<th><a>Background</a></th>`)
                 .addClass('powerupClickableHeader')
                 .appendTo($header)
-                .on('click',(e)=>{
+                .on('click', (e) => {
                     $table.find(`input[type=radio]:nth-of-type(2)`)
                         .trigger('click');
                 });
@@ -652,13 +652,13 @@ var PowerupReporting = (function () {
                     .html(`&nbsp;`)
                     .css('background-color', fgcolor)
                     .appendTo($fg)
-                    .on('click',()=>{$fg_button.trigger('click')});
+                    .on('click', () => { $fg_button.trigger('click') });
                 let $bg_color = $(`<div>`)
                     .addClass('powerupColorPreview')
                     .html(`&nbsp;`)
                     .css('background-color', bgcolor)
                     .appendTo($bg)
-                    .on('click',()=>{$bg_button.trigger('click')});
+                    .on('click', () => { $bg_button.trigger('click') });
                 $row.appendTo($table);
             });
             addRefreshButton($content);
@@ -766,16 +766,16 @@ var PowerupReporting = (function () {
 
     const seriesName = (series) => {
         let name = "";
-        if(series && series.name && series.name != "null") {
+        if (series && series.name && series.name != "null") {
             name = series.name;
-        } else if(series && series.entityId && series.entityId != "null") {
+        } else if (series && series.entityId && series.entityId != "null") {
             name = series.entityId;
-        } else if(series && series.chartableTimeseriesUniqueIdentifier && series.chartableTimeseriesUniqueIdentifier != "null") {
+        } else if (series && series.chartableTimeseriesUniqueIdentifier && series.chartableTimeseriesUniqueIdentifier != "null") {
             name = series.chartableTimeseriesUniqueIdentifier;
         }
         let idx = name.indexOf('¦');
-        if(idx < 1) idx = name.indexOf('|'); //sometimes a broken pipe, sometimes a pipe
-        if(idx > 0) name = name.substring(0,idx);
+        if (idx < 1) idx = name.indexOf('|'); //sometimes a broken pipe, sometimes a pipe
+        if (idx > 0) name = name.substring(0, idx);
 
         //TODO: add DT API to get actual entity names
         return name;

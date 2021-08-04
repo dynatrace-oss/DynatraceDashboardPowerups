@@ -906,11 +906,12 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   display: block;
 }
 
-.powerupClickableHeader {
+.powerupClickableHeader a, .powerupClickableHeader a:visited {
   color: #00a1b2;
+  text-decoration: none;
 }
 
-.powerupClickableHeader:hover {
+.powerupClickableHeader a:hover {
   color: #00848e;
   text-decoration: underline;
 }
