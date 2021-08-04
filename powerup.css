@@ -793,9 +793,10 @@ table.powerupActionPopup tr > *:nth-of-type(4) {
   border-top: 1px #e6e6e6 solid;
 }
 
-.powerupPreviewOptions {
+textarea.powerupPreviewOptions {
   width: 500px;
   height: 150px;
+  font-size: 10px;
 }
 
 .powerupValidJSON {
@@ -884,4 +885,9 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 
 .powerupRadioOption img {
   width: 400px;
+}
+
+.powerupColorPreview {
+  height: 16px;
+  width: 32px;
 }

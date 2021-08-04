@@ -442,7 +442,7 @@ var PowerupReporting = (function () {
                 cleanup = function (charts) {
                     charts.forEach(chart => {
                         if (chart && typeof (chart.destroy) == "function") {
-                            if(typeof(chart.renderer) != "object") chart.renderer = {}; //crash prevention
+                            if (typeof (chart.renderer) != "object") chart.renderer = {}; //crash prevention
                             chart.destroy();
                         }
                     });
@@ -477,8 +477,9 @@ var PowerupReporting = (function () {
         drawIncludeOptions();
         //draw options sections closed, fill in after click
         let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)", storyContent));
-        let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background"));
+        let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background", foregroundContent));
         let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments"));
+        let $trends = $(createSection("PowerupReportOptionsTrends", "Trendlines"));
         let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines"));
         let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations"));
         let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative"));
@@ -602,7 +603,7 @@ var PowerupReporting = (function () {
                 $div = $(`<div>`)
                     .addClass('powerupRadioOption')
                     .appendTo($content);
-                $radio = $(`<input type="radio" value="${value}">`)
+                $radio = $(`<input type="radio" value="${value}" name="preset">`)
                     .appendTo($div)
                     .on('click', callback);
                 $right = $(`<div>`)
@@ -615,6 +616,52 @@ var PowerupReporting = (function () {
                 if (img && img.length)
                     $img.attr('src', DashboardPowerups.POWERUP_EXT_URL + img);
             }
+        }
+
+        function foregroundContent(content) {
+            let $content = $(content);
+            let $table = $(`<table>`)
+                .appendTo($content);
+            let $header = $(`<tr><th>Series</th><th>Foreground</th><th>Background</th></tr>`)
+                .appendTo($table);
+
+            chartOptions.series.forEach((s, s_idx) => {
+                let name = s.chartableTimeseriesUniqueIdentifier;
+                let color = s.color;
+                let bgcolor = desaturate(color);
+                let fgcolor = saturate(color);
+
+                let $row = $(`<tr>`);
+                let $series = $(`<td>`)
+                    .text(name)
+                    .appendTo($row);
+                let $fg = $(`<td>`)
+                    .appendTo($row);
+                let $bg = $(`<td>`)
+                    .appendTo($row);
+                let $fg_button = $(`<input type="radio" name="${s_idx}" value="fg">`)
+                    .appendTo($fg);
+                let $bg_button = $(`<input type="radio" name="${s_idx}" value="bg">`)
+                    .appendTo($bg);
+                let $fg_color = $(`<div>`)
+                    .addClass('powerupColorPreview')
+                    .html(`&nbsp;`)
+                    .css('background-color',fgcolor)
+                    .appendTo($fg)
+                    on('click', (e) => {
+                        chartOptions.series[s_idx].color = fgcolor;
+                    });
+                let $bg_color = $(`<div>`)
+                    .addClass('powerupColorPreview')
+                    .html(`&nbsp;`)
+                    .css('background-color',bgcolor)
+                    .appendTo($bg)
+                    on('click', (e) => {
+                        chartOptions.series[s_idx].color = bgcolor;
+                    });
+
+                $row.appendTo($table);
+            });
         }
 
         function notYetImplemented() {
@@ -652,6 +699,40 @@ var PowerupReporting = (function () {
             timeout = setTimeout(later, wait);
         };
     };
+
+    const desaturate = (color) => {
+        const factor = 0.25;
+        if (typeof (d3) == "undefined") {
+            console.log(`Powerup reporting: WARN - D3 unavailable`);
+            return color;
+        }
+
+        let hsl = d3.hsl(color);
+        if (isNaN(hsl.h)) {
+            console.log(`Powerup reporting: WARN - D3 invalid color`);
+            return color;
+        }
+
+        hsl.s = hsl.s * factor;
+        return hsl.toString();
+    }
+
+    const saturate = (color) => {
+        const factor = 1.75;
+        if (typeof (d3) == "undefined") {
+            console.log(`Powerup reporting: WARN - D3 unavailable`);
+            return color;
+        }
+
+        let hsl = d3.hsl(color);
+        if (isNaN(hsl.h)) {
+            console.log(`Powerup reporting: WARN - D3 invalid color`);
+            return color;
+        }
+
+        hsl.s = hsl.s * factor;
+        return hsl.toString();
+    }
 
     return pub;
 })();
