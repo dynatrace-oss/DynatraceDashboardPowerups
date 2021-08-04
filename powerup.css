@@ -890,4 +890,14 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupColorPreview {
   height: 16px;
   width: 32px;
+  display: inline-block;
+  margin-left: 3px;
+}
+
+.powerupOptionsContent table {
+  width: 30%;
+}
+
+.powerupOptionsContent th {
+  text-align: left;
 }
