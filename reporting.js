@@ -557,7 +557,7 @@ var PowerupReporting = (function () {
                 .appendTo($div)
                 .on('keydown paste', debounce(validateJSON, 100));
 
-            addRefreshButton(()=>{
+            addRefreshButton($div,()=>{
                 let obj = JSON.parse($options.val());
                 Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
             });
@@ -620,6 +620,8 @@ var PowerupReporting = (function () {
                 if (img && img.length)
                     $img.attr('src', DashboardPowerups.POWERUP_EXT_URL + img);
             }
+
+            addRefreshButton();
         }
 
         function foregroundContent(content) {
@@ -665,24 +667,25 @@ var PowerupReporting = (function () {
                     });
                 $row.appendTo($table);
             });
-            addRefreshButton();
+            addRefreshButton($content);
         }
 
         function notYetImplemented() {
             alert(`Not yet implemented...`);
         }
 
-        function addRefreshButton(refreshCallback=()=>{}) {
+        function addRefreshButton(target="#PowerupReportGeneratorButtonBar",refreshCallback=()=>{}) {
+            let $target = $(target);
             let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
                 .on('click', (e) => {
                     try {
                         refreshCallback();
                     } catch (err) {
-                        let $err = $div.find(`.powerupErrorBar`);
+                        let $err = $target.find(`.powerupErrorBar`);
                         if (!$err.length)
                             $err = $(`<span>`)
                                 .addClass("powerupErrorBar")
-                                .appendTo($div);
+                                .appendTo($target);
                         $err.text(err);
                         return (false);
                     }
@@ -695,7 +698,9 @@ var PowerupReporting = (function () {
                 })
                 .text("Refresh")
                 .addClass("powerupButton")
-                .appendTo($div);
+                .appendTo($target);
+
+            return $refresh;
         }
     }
 
