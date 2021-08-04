@@ -758,8 +758,9 @@ var PowerupReporting = (function () {
         } else if(series && series.chartableTimeseriesUniqueIdentifier) {
             name = series.chartableTimeseriesUniqueIdentifier;
         }
-        let idx = name.indexOf('|');
-        if(idx) name = name.substring(0,idx);
+        let idx = name.indexOf('¦');
+        if(idx < 1) idx = name.indexOf('|'); //sometimes a broken pipe, sometimes a pipe
+        if(idx > 0) name = name.substring(0,idx);
 
         //TODO: add DT API to get actual entity names
         return name;
