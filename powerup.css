@@ -901,3 +901,16 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupOptionsContent th {
   text-align: left;
 }
+
+.powerupNoFlex {
+  display: block;
+}
+
+.powerupClickableHeader {
+  color: #00a1b2;
+}
+
+.powerupClickableHeader:hover {
+  color: #00848e;
+  text-decoration: underline;
+}

@@ -602,11 +602,26 @@ var PowerupReporting = (function () {
         }
 
         function foregroundContent(content) {
-            let $content = $(content);
+            let $content = $(content)
+                .addClass('powerupNoFlex');
             let $table = $(`<table>`)
                 .appendTo($content);
-            let $header = $(`<tr><th>Series</th><th>Foreground</th><th>Background</th></tr>`)
+            let $header = $(`<tr><th>Series</th></tr>`)
                 .appendTo($table);
+            let $fgheader = $(`<th>Foreground</th>`)
+                .addClass('powerupClickableHeader')
+                .appendTo($header)
+                .on('click',(e)=>{
+                    $table.find(`input[type=radio]:nth-of-type(1)`)
+                        .trigger('click');
+                });
+                let $bgheader = $(`<th>Background</th>`)
+                .addClass('powerupClickableHeader')
+                .appendTo($header)
+                .on('click',(e)=>{
+                    $table.find(`input[type=radio]:nth-of-type(2)`)
+                        .trigger('click');
+                });
 
             chartOptions.series.forEach((s, s_idx) => {
                 let name = seriesName(s);
