@@ -648,7 +648,7 @@ var PowerupReporting = (function () {
                     .html(`&nbsp;`)
                     .css('background-color',fgcolor)
                     .appendTo($fg)
-                    on('click', (e) => {
+                    .on('click', (e) => {
                         chartOptions.series[s_idx].color = fgcolor;
                     });
                 let $bg_color = $(`<div>`)
@@ -656,7 +656,7 @@ var PowerupReporting = (function () {
                     .html(`&nbsp;`)
                     .css('background-color',bgcolor)
                     .appendTo($bg)
-                    on('click', (e) => {
+                    .on('click', (e) => {
                         chartOptions.series[s_idx].color = bgcolor;
                     });
 
