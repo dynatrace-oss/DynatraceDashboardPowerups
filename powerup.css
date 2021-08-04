@@ -914,4 +914,5 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupClickableHeader a:hover {
   color: #00848e;
   text-decoration: underline;
+  cursor: pointer;
 }
