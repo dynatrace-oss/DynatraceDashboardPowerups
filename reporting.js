@@ -550,41 +550,18 @@ var PowerupReporting = (function () {
         function jsonContent(content) {
             let $content = $(content);
             let $div = $(`<div>`).appendTo($content);
-            let id = $content.parents(`section`).attr('id');
             let $options = $(`<textarea>`)
                 .addClass("powerupPreviewOptions")
                 .val(JSON.stringify(chartOptions, null, 2))
                 .appendTo($div)
                 .on('keydown paste', debounce(validateJSON, 100));
 
-            addRefreshButton($div,()=>{
-                let obj = JSON.parse($options.val());
-                Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
-            });
-            /*let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
-                .on('click', (e) => {
-                    try {
-                        let obj = JSON.parse($options.val());
-                        Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
-                    } catch (err) {
-                        let $err = $div.find(`.powerupErrorBar`);
-                        if (!$err.length)
-                            $err = $(`<span>`)
-                                .addClass("powerupErrorBar")
-                                .appendTo($div);
-                        $err.text(err);
-                        return (false);
-                    }
-
-                    $(`#generateReportRefreshButton`).remove();
-                    promise.resolve({
-                        refresh: true,
-                        id: id
-                    });
-                })
-                .text("Refresh")
-                .addClass("powerupButton")
-                .appendTo($div);*/
+            addRefreshButton(
+                $div,
+                () => {
+                    let obj = JSON.parse($options.val());
+                    Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
+                });
 
             let $help = $(`<div>Format help: <a href="https://api.highcharts.com/highcharts/" target="_blank">Highcharts</a></div>`)
                 .addClass("powerupHelpFooter")
@@ -652,7 +629,7 @@ var PowerupReporting = (function () {
                 let $fg_color = $(`<div>`)
                     .addClass('powerupColorPreview')
                     .html(`&nbsp;`)
-                    .css('background-color',fgcolor)
+                    .css('background-color', fgcolor)
                     .appendTo($fg)
                     .on('click', (e) => {
                         chartOptions.series[s_idx].color = fgcolor;
@@ -660,7 +637,7 @@ var PowerupReporting = (function () {
                 let $bg_color = $(`<div>`)
                     .addClass('powerupColorPreview')
                     .html(`&nbsp;`)
-                    .css('background-color',bgcolor)
+                    .css('background-color', bgcolor)
                     .appendTo($bg)
                     .on('click', (e) => {
                         chartOptions.series[s_idx].color = bgcolor;
@@ -674,8 +651,9 @@ var PowerupReporting = (function () {
             alert(`Not yet implemented...`);
         }
 
-        function addRefreshButton(target="#PowerupReportGeneratorButtonBar",refreshCallback=()=>{}) {
+        function addRefreshButton(target = "#PowerupReportGeneratorButtonBar", refreshCallback = () => { }) {
             let $target = $(target);
+            let id = $(`section.powerupOptionsOpen`).attr('id');
             let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
                 .on('click', (e) => {
                     try {
