@@ -557,7 +557,11 @@ var PowerupReporting = (function () {
                 .appendTo($div)
                 .on('keydown paste', debounce(validateJSON, 100));
 
-            let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
+            addRefreshButton(()=>{
+                let obj = JSON.parse($options.val());
+                Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
+            });
+            /*let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
                 .on('click', (e) => {
                     try {
                         let obj = JSON.parse($options.val());
@@ -580,7 +584,7 @@ var PowerupReporting = (function () {
                 })
                 .text("Refresh")
                 .addClass("powerupButton")
-                .appendTo($div);
+                .appendTo($div);*/
 
             let $help = $(`<div>Format help: <a href="https://api.highcharts.com/highcharts/" target="_blank">Highcharts</a></div>`)
                 .addClass("powerupHelpFooter")
@@ -659,13 +663,39 @@ var PowerupReporting = (function () {
                     .on('click', (e) => {
                         chartOptions.series[s_idx].color = bgcolor;
                     });
-
                 $row.appendTo($table);
             });
+            addRefreshButton();
         }
 
         function notYetImplemented() {
             alert(`Not yet implemented...`);
+        }
+
+        function addRefreshButton(refreshCallback=()=>{}) {
+            let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
+                .on('click', (e) => {
+                    try {
+                        refreshCallback();
+                    } catch (err) {
+                        let $err = $div.find(`.powerupErrorBar`);
+                        if (!$err.length)
+                            $err = $(`<span>`)
+                                .addClass("powerupErrorBar")
+                                .appendTo($div);
+                        $err.text(err);
+                        return (false);
+                    }
+
+                    $(`#generateReportRefreshButton`).remove();
+                    promise.resolve({
+                        refresh: true,
+                        id: id
+                    });
+                })
+                .text("Refresh")
+                .addClass("powerupButton")
+                .appendTo($div);
         }
     }
 
