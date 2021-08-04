@@ -751,11 +751,11 @@ var PowerupReporting = (function () {
 
     const seriesName = (series) => {
         let name = "";
-        if(series && series.name) {
+        if(series && series.name && series.name != "null") {
             name = series.name;
-        } else if(series && series.entityId) {
+        } else if(series && series.entityId && series.entityId != "null") {
             name = series.entityId;
-        } else if(series && series.chartableTimeseriesUniqueIdentifier) {
+        } else if(series && series.chartableTimeseriesUniqueIdentifier && series.chartableTimeseriesUniqueIdentifier != "null") {
             name = series.chartableTimeseriesUniqueIdentifier;
         }
         let idx = name.indexOf('¦');
