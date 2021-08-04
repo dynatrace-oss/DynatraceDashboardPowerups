@@ -623,25 +623,27 @@ var PowerupReporting = (function () {
                 let $bg = $(`<td>`)
                     .appendTo($row);
                 let $fg_button = $(`<input type="radio" name="${s_idx}" value="fg">`)
-                    .appendTo($fg);
+                    .appendTo($fg)
+                    .on('click', (e) => {
+                        chartOptions.series[s_idx].color = fgcolor;
+                    });
                 let $bg_button = $(`<input type="radio" name="${s_idx}" value="bg">`)
-                    .appendTo($bg);
+                    .appendTo($bg)
+                    .on('click', (e) => {
+                        chartOptions.series[s_idx].color = bgcolor;
+                    });
                 let $fg_color = $(`<div>`)
                     .addClass('powerupColorPreview')
                     .html(`&nbsp;`)
                     .css('background-color', fgcolor)
                     .appendTo($fg)
-                    .on('click', (e) => {
-                        chartOptions.series[s_idx].color = fgcolor;
-                    });
+                    .on('click',()=>{$fg_button.trigger('click')});
                 let $bg_color = $(`<div>`)
                     .addClass('powerupColorPreview')
                     .html(`&nbsp;`)
                     .css('background-color', bgcolor)
                     .appendTo($bg)
-                    .on('click', (e) => {
-                        chartOptions.series[s_idx].color = bgcolor;
-                    });
+                    .on('click',()=>{$bg_button.trigger('click')});
                 $row.appendTo($table);
             });
             addRefreshButton($content);
