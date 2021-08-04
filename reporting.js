@@ -609,7 +609,7 @@ var PowerupReporting = (function () {
                 .appendTo($table);
 
             chartOptions.series.forEach((s, s_idx) => {
-                let name = s.chartableTimeseriesUniqueIdentifier;
+                let name = seriesName(s);
                 let color = s.color;
                 let bgcolor = desaturate(color);
                 let fgcolor = saturate(color);
@@ -747,6 +747,22 @@ var PowerupReporting = (function () {
 
         hsl.s = hsl.s * factor;
         return hsl.toString();
+    }
+
+    const seriesName = (series) => {
+        let name = "";
+        if(series && series.name) {
+            name = series.name;
+        } else if(series && series.entityId) {
+            name = series.entityId;
+        } else if(series && series.chartableTimeseriesUniqueIdentifier) {
+            name = series.chartableTimeseriesUniqueIdentifier;
+        }
+        let idx = name.indexOf('|');
+        if(idx) name = name.substring(0,idx);
+
+        //TODO: add DT API to get actual entity names
+        return name;
     }
 
     return pub;
