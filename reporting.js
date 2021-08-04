@@ -612,14 +612,14 @@ var PowerupReporting = (function () {
                 .addClass('powerupClickableHeader')
                 .appendTo($header)
                 .on('click', (e) => {
-                    $table.find(`input[type=radio]:nth-of-type(0)`)
+                    $table.find(`input[type=radio][value="fg"]`)
                         .trigger('click');
                 });
             let $bgheader = $(`<th><a>Background</a></th>`)
                 .addClass('powerupClickableHeader')
                 .appendTo($header)
                 .on('click', (e) => {
-                    $table.find(`input[type=radio]:nth-of-type(1)`)
+                    $table.find(`input[type=radio][value="bg"]`)
                         .trigger('click');
                 });
 
