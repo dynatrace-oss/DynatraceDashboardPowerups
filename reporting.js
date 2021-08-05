@@ -483,7 +483,7 @@ var PowerupReporting = (function () {
         let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines"));
         let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations"));
         let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative"));
-        let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter"), declutterContent);
+        let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter", declutterContent));
         let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert mode)", jsonContent));
 
         ///////////////////////////////
