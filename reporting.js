@@ -681,20 +681,36 @@ var PowerupReporting = (function () {
                 .on('click',()=>{$content.find(`input[type=radio][value="disable"]`).trigger('click')})
                 .appendTo($header);
 
+            //chart title
+            if(typeof(chartOptions.title) != "object") chartOptions.title = {};
+            buildTextRow("Chart Title", chartOptions.title.text, function (e) {
+                let val = $(this).val();
+                if(val && val.length) {
+                    chartOptions.title.text = val;
+                } else {
+                    chartOptions.title.text = undefined;
+                }
+                
+            });
+            
             //xAxis title
             if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
             if (typeof (chartOptions.xAxis.title) != "object") chartOptions.xAxis.title = {};
-            buildRow(
-                "xAxis Title",
-                chartOptions.xAxis.title.enabled,
-                () => { chartOptions.xAxis.title.enabled = true },
-                () => { chartOptions.xAxis.title.enabled = false },
-            );
+            buildTextRow("xAxis Title", chartOptions.xAxis.title.text, function (e) {
+                let val = $(this).val();
+                if(val && val.length) {
+                    chartOptions.xAxis.title.text = val;
+                    chartOptions.xAxis.title.enabled = true
+                } else {
+                    chartOptions.xAxis.title.text = undefined;
+                    chartOptions.xAxis.title.enabled = false
+                }
+            });
 
             //xAxis labels
             if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
             if (typeof (chartOptions.xAxis.labels) != "object") chartOptions.xAxis.labels = {};
-            buildRow(
+            buildRadioRow(
                 "xAxis Labels",
                 chartOptions.xAxis.labels.enabled,
                 () => { chartOptions.xAxis.labels.enabled = true },
@@ -703,7 +719,7 @@ var PowerupReporting = (function () {
 
             //xAxis gridlines
             if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
-            buildRow(
+            buildRadioRow(
                 "xAxis Gridlines",
                 chartOptions.xAxis.gridLineWidth > 0,
                 () => { 
@@ -715,7 +731,7 @@ var PowerupReporting = (function () {
 
             //legend
             if (typeof (chartOptions.legend) != "object") chartOptions.legend = {};
-            buildRow(
+            buildRadioRow(
                 "Legend",
                 chartOptions.legend.enabled,
                 () => { chartOptions.legend.enabled = true },
@@ -726,20 +742,24 @@ var PowerupReporting = (function () {
             if (Array.isArray(chartOptions.yAxis)) {
                 chartOptions.yAxis.forEach((yAxis, axisNum) => {
                     if (typeof (yAxis.title) != "object") yAxis.title = {};
-                    buildRow(
-                        `yAxis(${axisNum}) Title`,
-                        yAxis.title.enabled,
-                        () => { yAxis.title.enabled = true },
-                        () => { yAxis.title.enabled = false },
-                    );
+                    buildTextRow(`yAxis(${axisNum}) Title`, chartOptions.xAxis.title.text, function (e) {
+                        let val = $(this).val();
+                        if(val && val.length) {
+                            yAxis.title.text = val;
+                            yAxis.title.enabled = true
+                        } else {
+                            yAxis.title.text = undefined;
+                            yAxis.title.enabled = false
+                        }
+                    });
                     if (typeof (yAxis.labels) != "object") yAxis.labels = {};
-                    buildRow(
+                    buildRadioRow(
                         `yAxis(${axisNum}) Labels`,
                         yAxis.labels.enabled,
                         () => { yAxis.labels.enabled = true },
                         () => { yAxis.labels.enabled = false },
                     );
-                    buildRow(
+                    buildRadioRow(
                         `yAxis(${axisNum}) Gridlines`,
                         yAxis.gridLineWidth > 0,
                         () => { 
@@ -755,14 +775,14 @@ var PowerupReporting = (function () {
             if (Array.isArray(chartOptions.series)) {
                 chartOptions.series.forEach((serie, s_idx) => {
                     if (typeof (serie.labels) != "object") serie.labels = {};
-                    buildRow(
+                    buildRadioRow(
                         `Series(${s_idx}) Data Labels`,
                         serie.labels.enabled,
                         () => { serie.labels.enabled = true },
                         () => { serie.labels.enabled = false },
                     );
                     if (typeof (serie.markers) != "object") serie.markers = {};
-                    buildRow(
+                    buildRadioRow(
                         `Series(${s_idx}) Data Markers`,
                         serie.markers.enabled,
                         () => { serie.markers.enabled = true },
@@ -773,7 +793,7 @@ var PowerupReporting = (function () {
 
             addRefreshButton($content);
 
-            function buildRow(name, enabled, enableCallback, disableCallback) {
+            function buildRadioRow(name, enabled, enableCallback, disableCallback) {
                 let $row = $(`<tr>`);
                 let $name = $(`<td>`)
                     .text(name)
@@ -792,6 +812,22 @@ var PowerupReporting = (function () {
                     .attr('checked', !enabled)
                     .appendTo($disable)
                     .on('click', disableCallback);
+
+                $row.appendTo($table);
+            }
+
+            function buildTextRow(name, value, editCallback){
+                let $row = $(`<tr>`);
+                let $name = $(`<td>`)
+                    .text(name)
+                    .appendTo($row);
+                let $text = $(`<td colspan=2>`)
+                    .appendTo($row);
+                let $input = $(`<input type="text">`)
+                    .attr('name', name)
+                    .val(value)
+                    .appendTo($text)
+                    .on('change', editCallback);
 
                 $row.appendTo($table);
             }
