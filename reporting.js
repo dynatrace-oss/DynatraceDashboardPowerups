@@ -665,6 +665,7 @@ var PowerupReporting = (function () {
         }
 
         function declutterContent(content) {
+            if (typeof (chartOptions) != "object" || !Object.keys(chartOptions).length) return false; //crash prevention
             let $content = $(content)
                 .addClass('powerupNoFlex');
             let $table = $(`<table>`)
@@ -678,39 +679,111 @@ var PowerupReporting = (function () {
                 //.addClass('powerupClickableHeader')
                 .appendTo($header);
 
-            let visuals = [
-                { name: "xAxis Title", obj: chartOptions.xAxis.title, param: "enabled" },
-                { name: "xAxis Labels", obj: chartOptions.xAxis.labels, param: "enabled" },
-                { name: "yAxis Title", obj: chartOptions.yAxis.map(y => y.title), param: "enabled" },
-                { name: "yAxis Labels", obj: chartOptions.yAxis.map(y => y.labels), param: "enabled" },
-                { name: "Legend", obj: chartOptions.legend, param: "enabled" },
-                { name: "Data Labels", obj: chartOptions.plotOptions.series.dataLabels, param: "enabled" }
-            ];
+            //xAxis title
+            if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
+            if (typeof (chartOptions.xAxis.title) != "object") chartOptions.xAxis.title = {};
+            buildRow(
+                "xAxis Title",
+                chartOptions.xAxis.title.enabled,
+                () => { chartOptions.xAxis.title.enabled = true },
+                () => { chartOptions.xAxis.title.enabled = false },
+            );
 
-            visuals.forEach((v, v_idx) => {
+            //xAxis labels
+            if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
+            if (typeof (chartOptions.xAxis.labels) != "object") chartOptions.xAxis.labels = {};
+            buildRow(
+                "xAxis Labels",
+                chartOptions.xAxis.labels.enabled,
+                () => { chartOptions.xAxis.labels.enabled = true },
+                () => { chartOptions.xAxis.labels.enabled = false },
+            );
+
+            //xAxis gridlines
+            if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
+            buildRow(
+                "xAxis Gridlines",
+                chartOptions.xAxis.gridLineWidth > 0,
+                () => { chartOptions.xAxis.gridLineWidth = 1 },
+                () => { chartOptions.xAxis.gridLineWidth = 0 },
+            );
+
+            //legend
+            if (typeof (chartOptions.legend) != "object") chartOptions.legend = {};
+            buildRow(
+                "Legend",
+                chartOptions.legend.enabled,
+                () => { chartOptions.legend.enabled = true },
+                () => { chartOptions.legend.enabled = false },
+            );
+
+            //yAxes titles & labels
+            if (Array.isArray(chartOptions.yAxis)) {
+                chartOptions.yAxis.forEach((yAxis, axisNum) => {
+                    if (typeof (yAxis.title) != "object") yAxis.title = {};
+                    buildRow(
+                        `yAxis(${axisNum}) Title`,
+                        yAxis.title.enabled,
+                        () => { yAxis.title.enabled = true },
+                        () => { yAxis.title.enabled = false },
+                    );
+                    if (typeof (yAxis.labels) != "object") yAxis.labels = {};
+                    buildRow(
+                        `yAxis(${axisNum}) Labels`,
+                        yAxis.labels.enabled,
+                        () => { yAxis.labels.enabled = true },
+                        () => { yAxis.labels.enabled = false },
+                    );
+                    buildRow(
+                        `yAxis(${axisNum}) Gridlines`,
+                        yAxis.gridLineWidth > 0,
+                        () => { yAxis.gridLineWidth = 1 },
+                        () => { yAxis.gridLineWidth = 0 },
+                    );
+                })
+            }
+
+            //series data labels & markers
+            if (Array.isArray(chartOptions.series)) {
+                chartOptions.series.forEach((serie, s_idx) => {
+                    if (typeof (serie.labels) != "object") serie.labels = {};
+                    buildRow(
+                        `Series(${s_idx}) Data Labels`,
+                        serie.labels.enabled,
+                        () => { serie.labels.enabled = true },
+                        () => { serie.labels.enabled = false },
+                    );
+                    if (typeof (serie.markers) != "object") serie.markers = {};
+                    buildRow(
+                        `Series(${s_idx}) Data Markers`,
+                        serie.markers.enabled,
+                        () => { serie.markers.enabled = true },
+                        () => { serie.markers.enabled = false },
+                    );
+                })
+            }
+
+
+            function buildRow(name, enabled, enableCallback, disableCallback) {
                 let $row = $(`<tr>`);
                 let $name = $(`<td>`)
-                    .text(v.name)
+                    .text(name)
                     .appendTo($row);
                 let $enable = $(`<td>`)
                     .appendTo($row);
                 let $disable = $(`<td>`)
                     .appendTo($row);
                 let $enable_button = $(`<input type="radio" name="${v_idx}" value="enable">`)
-                    .attr('checked',v.obj[v.param])
+                    .attr('checked', enabled)
                     .appendTo($enable)
-                    .on('click', (e) => {
-                        v.obj[v.param] = true;
-                    });
+                    .on('click', enableCallback);
                 let $disable_button = $(`<input type="radio" name="${v_idx}" value="disable">`)
-                    .attr('checked',!v.obj[v.param])
+                    .attr('checked', !enabled)
                     .appendTo($disable)
-                    .on('click', (e) => {
-                        v.obj[v.param] = false;
-                    });
+                    .on('click', disableCallback);
 
                 $row.appendTo($table);
-            })
+            }
         }
 
         function notYetImplemented() {
