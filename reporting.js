@@ -674,11 +674,11 @@ var PowerupReporting = (function () {
                 .appendTo($table);
             let $enabledheader = $(`<th><a>Enabled</a></th>`)
                 .addClass('powerupClickableHeader')
-                .on('click',()=>{$content.find(`input[value=enabled].trigger('click)`)})
+                .on('click',()=>{$content.find(`input[value=enabled]`).trigger('click')})
                 .appendTo($header);
             let $disabledheader = $(`<th><a>Disabled</a></th>`)
                 .addClass('powerupClickableHeader')
-                .on('click',()=>{$content.find(`input[value=disabled].trigger('click)`)})
+                .on('click',()=>{$content.find(`input[value=disabled]`).trigger('click')})
                 .appendTo($header);
 
             //xAxis title
@@ -706,7 +706,10 @@ var PowerupReporting = (function () {
             buildRow(
                 "xAxis Gridlines",
                 chartOptions.xAxis.gridLineWidth > 0,
-                () => { chartOptions.xAxis.gridLineWidth = 1 },
+                () => { 
+                    chartOptions.xAxis.gridLineWidth = 1;
+                    chartOptions.xAxis.gridLineColor = "#b7b7b7";
+                },
                 () => { chartOptions.xAxis.gridLineWidth = 0 },
             );
 
@@ -739,7 +742,10 @@ var PowerupReporting = (function () {
                     buildRow(
                         `yAxis(${axisNum}) Gridlines`,
                         yAxis.gridLineWidth > 0,
-                        () => { yAxis.gridLineWidth = 1 },
+                        () => { 
+                            yAxis.gridLineWidth = 1;
+                            yAxis.gridLineColor = "#b7b7b7";
+                        },
                         () => { yAxis.gridLineWidth = 0 },
                     );
                 })
