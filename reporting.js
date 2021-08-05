@@ -674,11 +674,11 @@ var PowerupReporting = (function () {
                 .appendTo($table);
             let $enabledheader = $(`<th><a>Enabled</a></th>`)
                 .addClass('powerupClickableHeader')
-                .on('click',()=>{$content.find(`input[value=enabled]`).trigger('click')})
+                .on('click',()=>{$content.find(`input[type=radio][value="enable"]`).trigger('click')})
                 .appendTo($header);
             let $disabledheader = $(`<th><a>Disabled</a></th>`)
                 .addClass('powerupClickableHeader')
-                .on('click',()=>{$content.find(`input[value=disabled]`).trigger('click')})
+                .on('click',()=>{$content.find(`input[type=radio][value="disable"]`).trigger('click')})
                 .appendTo($header);
 
             //xAxis title
