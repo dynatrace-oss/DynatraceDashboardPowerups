@@ -765,6 +765,7 @@ var PowerupReporting = (function () {
                 })
             }
 
+            addRefreshButton($content);
 
             function buildRow(name, enabled, enableCallback, disableCallback) {
                 let $row = $(`<tr>`);
