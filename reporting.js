@@ -697,16 +697,16 @@ var PowerupReporting = (function () {
                 let $disable = $(`<td>`)
                     .appendTo($row);
                 let $enable_button = $(`<input type="radio" name="${v_idx}" value="enable">`)
-                    .attr('checked',v.obj[param])
+                    .attr('checked',v.obj[v.param])
                     .appendTo($enable)
                     .on('click', (e) => {
-                        v.obj[param] = true;
+                        v.obj[v.param] = true;
                     });
                 let $disable_button = $(`<input type="radio" name="${v_idx}" value="disable">`)
-                    .attr('checked',!v.obj[param])
+                    .attr('checked',!v.obj[v.param])
                     .appendTo($disable)
                     .on('click', (e) => {
-                        v.obj[param] = false;
+                        v.obj[v.param] = false;
                     });
 
                 $row.appendTo($table);
