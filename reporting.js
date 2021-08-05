@@ -672,11 +672,13 @@ var PowerupReporting = (function () {
                 .appendTo($content);
             let $header = $(`<tr><th>Visual</th></tr>`)
                 .appendTo($table);
-            let $enabledheader = $(`<th>Enabled</th>`)
-                //.addClass('powerupClickableHeader')
+            let $enabledheader = $(`<th><a>Enabled</a></th>`)
+                .addClass('powerupClickableHeader')
+                .on('click',()=>{$content.find(`input[value=enabled].trigger('click)`)})
                 .appendTo($header);
-            let $disabledheader = $(`<th>Disabled</th>`)
-                //.addClass('powerupClickableHeader')
+            let $disabledheader = $(`<th><a>Disabled</a></th>`)
+                .addClass('powerupClickableHeader')
+                .on('click',()=>{$content.find(`input[value=disabled].trigger('click)`)})
                 .appendTo($header);
 
             //xAxis title
@@ -773,11 +775,13 @@ var PowerupReporting = (function () {
                     .appendTo($row);
                 let $disable = $(`<td>`)
                     .appendTo($row);
-                let $enable_button = $(`<input type="radio" name="${v_idx}" value="enable">`)
+                let $enable_button = $(`<input type="radio" value="enable">`)
+                    .attr('name', name)
                     .attr('checked', enabled)
                     .appendTo($enable)
                     .on('click', enableCallback);
-                let $disable_button = $(`<input type="radio" name="${v_idx}" value="disable">`)
+                let $disable_button = $(`<input type="radio" value="disable">`)
+                    .attr('name', name)
                     .attr('checked', !enabled)
                     .appendTo($disable)
                     .on('click', disableCallback);
