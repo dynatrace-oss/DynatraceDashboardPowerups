@@ -483,7 +483,7 @@ var PowerupReporting = (function () {
         let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines"));
         let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations"));
         let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative"));
-        let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter"));
+        let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter"), declutterContent);
         let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert mode)", jsonContent));
 
         ///////////////////////////////
@@ -662,6 +662,55 @@ var PowerupReporting = (function () {
                 $row.appendTo($table);
             });
             addRefreshButton($content);
+        }
+
+        function declutterContent(content) {
+            let $content = $(content)
+                .addClass('powerupNoFlex');
+            let $table = $(`<table>`)
+                .appendTo($content);
+            let $header = $(`<tr><th>Visual</th></tr>`)
+                .appendTo($table);
+            let $enabledheader = $(`<th>Enabled</th>`)
+                //.addClass('powerupClickableHeader')
+                .appendTo($header);
+            let $disabledheader = $(`<th>Disabled</th>`)
+                //.addClass('powerupClickableHeader')
+                .appendTo($header);
+
+            let visuals = [
+                { name: "xAxis Title", obj: chartOptions.xAxis.title, param: "enabled" },
+                { name: "xAxis Labels", obj: chartOptions.xAxis.labels, param: "enabled" },
+                { name: "yAxis Title", obj: chartOptions.yAxis.map(y => y.title), param: "enabled" },
+                { name: "yAxis Labels", obj: chartOptions.yAxis.map(y => y.labels), param: "enabled" },
+                { name: "Legend", obj: chartOptions.legend, param: "enabled" },
+                { name: "Data Labels", obj: chartOptions.plotOptions.series.dataLabels, param: "enabled" }
+            ];
+
+            visuals.forEach((v, v_idx) => {
+                let $row = $(`<tr>`);
+                let $name = $(`<td>`)
+                    .text(v.name)
+                    .appendTo($row);
+                let $enable = $(`<td>`)
+                    .appendTo($row);
+                let $disable = $(`<td>`)
+                    .appendTo($row);
+                let $enable_button = $(`<input type="radio" name="${v_idx}" value="enable">`)
+                    .attr('checked',v.obj[param])
+                    .appendTo($enable)
+                    .on('click', (e) => {
+                        v.obj[param] = true;
+                    });
+                let $disable_button = $(`<input type="radio" name="${v_idx}" value="disable">`)
+                    .attr('checked',!v.obj[param])
+                    .appendTo($disable)
+                    .on('click', (e) => {
+                        v.obj[param] = false;
+                    });
+
+                $row.appendTo($table);
+            })
         }
 
         function notYetImplemented() {
