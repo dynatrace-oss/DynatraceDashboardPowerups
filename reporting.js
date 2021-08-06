@@ -250,7 +250,7 @@ var PowerupReporting = (function () {
                         };
                         narrativeSupport(options);
 
-                        let newChart = H.chart($container[0],options);
+                        let newChart = H.chart($container[0], options);
                         charts.push(newChart);
                     });
                 },
@@ -489,7 +489,7 @@ var PowerupReporting = (function () {
         let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background", foregroundContent));
         let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments"));
         let $trends = $(createSection("PowerupReportOptionsTrends", "Trendlines"));
-        let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines"));
+        let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines",bandsAndLinesContent));
         let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations"));
         let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative", narrativeContent));
         let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter", declutterContent));
@@ -683,31 +683,31 @@ var PowerupReporting = (function () {
                 .appendTo($table);
             let $enabledheader = $(`<th><a>Enabled</a></th>`)
                 .addClass('powerupClickableHeader')
-                .on('click',()=>{$content.find(`input[type=radio][value="enable"]`).trigger('click')})
+                .on('click', () => { $content.find(`input[type=radio][value="enable"]`).trigger('click') })
                 .appendTo($header);
             let $disabledheader = $(`<th><a>Disabled</a></th>`)
                 .addClass('powerupClickableHeader')
-                .on('click',()=>{$content.find(`input[type=radio][value="disable"]`).trigger('click')})
+                .on('click', () => { $content.find(`input[type=radio][value="disable"]`).trigger('click') })
                 .appendTo($header);
 
             //chart title
-            if(typeof(chartOptions.title) != "object") chartOptions.title = {};
+            if (typeof (chartOptions.title) != "object") chartOptions.title = {};
             buildTextRow("Chart Title", chartOptions.title.text, function (e) {
                 let val = $(this).val();
-                if(val && val.length) {
+                if (val && val.length) {
                     chartOptions.title.text = val;
                 } else {
                     chartOptions.title.text = undefined;
                 }
-                
+
             });
-            
+
             //xAxis title
             if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
             if (typeof (chartOptions.xAxis.title) != "object") chartOptions.xAxis.title = {};
             buildTextRow("xAxis Title", chartOptions.xAxis.title.text, function (e) {
                 let val = $(this).val();
-                if(val && val.length) {
+                if (val && val.length) {
                     chartOptions.xAxis.title.text = val;
                     chartOptions.xAxis.title.enabled = true
                 } else {
@@ -731,7 +731,7 @@ var PowerupReporting = (function () {
             buildRadioRow(
                 "xAxis Gridlines",
                 chartOptions.xAxis.gridLineWidth > 0,
-                () => { 
+                () => {
                     chartOptions.xAxis.gridLineWidth = 1;
                     chartOptions.xAxis.gridLineColor = "#b7b7b7";
                 },
@@ -744,21 +744,21 @@ var PowerupReporting = (function () {
             buildRadioRow(
                 "Legend",
                 chartOptions.legend.enabled,
-                () => { 
+                () => {
                     chartOptions.legend.enabled = true;
                     chartOptions.legend.itemStyle.fontSize = "10px";
-                 },
+                },
                 () => { chartOptions.legend.enabled = false },
             );
 
             //yAxes titles & labels
             if (Array.isArray(chartOptions.yAxis)) {
                 chartOptions.yAxis.forEach((yAxis, axisNum) => {
-                    if(!pub.activeChart.yAxis[axisNum].visible) return;
+                    if (!pub.activeChart.yAxis[axisNum].visible) return;
                     if (typeof (yAxis.title) != "object") yAxis.title = {};
                     buildTextRow(`yAxis(${axisNum}) Title`, chartOptions.xAxis.title.text, function (e) {
                         let val = $(this).val();
-                        if(val && val.length) {
+                        if (val && val.length) {
                             yAxis.title.text = val;
                             yAxis.title.enabled = true
                         } else {
@@ -776,7 +776,7 @@ var PowerupReporting = (function () {
                     buildRadioRow(
                         `yAxis(${axisNum}) Gridlines`,
                         yAxis.gridLineWidth > 0,
-                        () => { 
+                        () => {
                             yAxis.gridLineWidth = 1;
                             yAxis.gridLineColor = "#b7b7b7";
                         },
@@ -831,7 +831,7 @@ var PowerupReporting = (function () {
                 $row.appendTo($table);
             }
 
-            function buildTextRow(name, value, editCallback){
+            function buildTextRow(name, value, editCallback) {
                 let $row = $(`<tr>`);
                 let $name = $(`<td>`)
                     .text(name)
@@ -854,15 +854,116 @@ var PowerupReporting = (function () {
             let $textarea = $(`<textarea>`)
                 .addClass('powerupPreviewOptions')
                 .appendTo($content);
-            
-            if(chartOptions.customNarrative && chartOptions.customNarrative.text)
+
+            if (chartOptions.customNarrative && chartOptions.customNarrative.text)
                 $textarea.val(chartOptions.customNarrative.text);
 
             $textarea.on('keydown paste', debounce(
-                ()=>{chartOptions.customNarrative.text = $textarea.val()},
+                () => { chartOptions.customNarrative.text = $textarea.val() },
                 100));
-            
+
             addRefreshButton($content);
+        }
+
+        function bandsAndLinesContent(content) {
+            let $content = $(content);
+            let $buttons = $(`<div>`)
+                .appendTo($content);
+            let $addLine = $(`<button>`)
+                .addClass('powerupButton')
+                .text(`Line`)
+                .on(`click`, ()=>{
+                    let newLine = addLine();
+                    let axis = chartOptions[newLine.axis][newLine.axisNum];
+                    if(!Array.isArray(axis.plotLines)) axis.plotLines = [];
+                    axis.plotLines.push(newLine);
+                })
+                .appendTo($buttons);
+            let $addLine = $(`<button>`)
+                .addClass('powerupButton')
+                .text(`Band`)
+                .on(`click`, addBand)
+                .appendTo($buttons);
+
+            //pub.activeChart.xAxis.forEach((x, xIdx) => {
+
+            addRefreshButton($content);
+
+            function addLine(line = null) {
+                if (line == null) {
+                    line = {
+                        color: "#dc172a",
+                        axis: "xAxis",
+                        axisNum: 0,
+                        value: null,
+                        label: {
+                            text: "New Line"
+                        }
+                    }
+                }
+                let axis, min, max;
+
+                let $lineDiv = $(`<div>`);
+                let $table = $(`<table>`).appendTo($lineDiv);
+
+                //Component: Axis selector
+                let $axisRow = $(`<tr><td>Axis:</td><td></td></tr>`).appendTo($table);
+                let $axisSelector = $(`<select>`).appendTo($axisRow.children().eq(1));
+                pub.activeChart.xAxis.forEach((x, xIdx) => {
+                    if (!x.visible) return;
+                    let $opt = $(`<option>`)
+                        .data('axis', 'xAxis')
+                        .data('axisNum', xIdx)
+                        .text(`xAxis - ${xIdx}`)
+                        .appendTo($axisSelector);
+                });
+                pub.activeChart.yAxis.forEach((y, yIdx) => {
+                    if (!y.visible) return;
+                    let $opt = $(`<option>`)
+                        .data('axis', 'yAxis')
+                        .data('axisNum', yIdx)
+                        .text(`yAxis - ${yIdx}`)
+                        .appendTo($axisSelector);
+                });
+                $axisSelector.on('change', () => {
+                    line.axis = $axisSelector.data('axis');
+                    line.axisNum = $axisSelector.data('axisNum');
+
+                    axis = pub.activeChart[line.axis][line.axisNum];
+                    min = axis.min;
+                    max = axis.max;
+                    line.value = (min + max) / 2;
+                });
+                $axisSelector.value(`${line.axis} - ${line.axisNum}`);
+
+                let $valueRow = $(`<tr><td>Value:</td><td></td></tr>`).appendTo($table);
+                let $range = $(`<input type="range">`)
+                    .attr('min', min)
+                    .attr('max', max)
+                    .val(line.value)
+                    .appendTo($valueRow.children().eq(1));
+                let $value = $(`<input type="text">`)
+                    .val(line.value)
+                    .appendTo($valueRow.children().eq(1));
+                $range.on('change', () => { $value.val($range.val()) });
+
+                let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
+                let $colorPicker = $(`<input type="color">`)
+                    .val(line.color)
+                    .appendTo($colorRow.children().eq(1));
+
+                let $labelRow = $(`<tr><td>Label:</td><td></td></tr>`).appendTo($table);
+                let $label = $(`<input type="text">`)
+                    .val(line.label)
+                    .appendTo($labelRow.children().eq(1));
+
+                //update on change
+                $value.on('change', ()=>{line.value=$value.val()});
+                $colorPicker.on('change', ()=>{line.color=$colorPicker.val()});
+                $label.on('change', ()=>{line.label=$label.val()});
+
+                return line;
+            }
         }
 
         function notYetImplemented() {
@@ -983,51 +1084,51 @@ var PowerupReporting = (function () {
     }
 
     const narrativeSupport = (options) => {
-        if(typeof(options.customNarrative) != "object") 
+        if (typeof (options.customNarrative) != "object")
             options.customNarrative = {
                 text: "",
                 width: 200,
                 height: 200,
                 position: "right"
             };
-        if(typeof(options.chart) == "object"){
-            if(typeof(options.chart.events) != "object")
+        if (typeof (options.chart) == "object") {
+            if (typeof (options.chart.events) != "object")
                 options.chart.events = {};
-            if(typeof(options.chart.events.load) != "function")
-                options.chart.events.load = function() {
-                    let x,y;
-                    switch(options.customNarrative.position){
+            if (typeof (options.chart.events.load) != "function")
+                options.chart.events.load = function () {
+                    let x, y;
+                    switch (options.customNarrative.position) {
                         case "bottom":
                             x = 0;
                             break;
                         case "right":
                         default:
                             x = options.chart.width || 200;
-                            if(options.customNarrative.text.length){
-                                if(!options.chart.originalWidth){
+                            if (options.customNarrative.text.length) {
+                                if (!options.chart.originalWidth) {
                                     options.chart.originalWidth = options.chart.width;
                                     options.chart.width += options.customNarrative.width;
                                 } else { //already expanded
 
                                 }
                             } else { //nothing to display
-                                if(options.chart.originalWidth){
+                                if (options.chart.originalWidth) {
                                     options.chart.width = options.chart.originalWidth;
                                 } else { //wasn't expanded
 
                                 }
                             }
-                            
+
                             break;
                     }
 
                     y = options.chart.height - 10;
-          
+
                     if (this.customNarrative) {
-                      this.customNarrative.destroy();
-                      this.customNarrative = undefined;
+                        this.customNarrative.destroy();
+                        this.customNarrative = undefined;
                     }
-          
+
                     this.customNarrative = this.renderer.g('customNarrative').add();
                     this.renderer.text(options.customNarrative.text, x, y)
                         .css({
@@ -1036,7 +1137,7 @@ var PowerupReporting = (function () {
                             width: "200px"
                         })
                         .add(this.customNarrative);
-                  }
+                }
         }
     }
 
