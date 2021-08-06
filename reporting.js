@@ -1003,10 +1003,21 @@ var PowerupReporting = (function () {
                         case "right":
                         default:
                             x = options.chart.width || 200;
-                            if(!options.chart.originalWidth){
-                                options.chart.originalWidth = options.chart.width;
-                                options.chart.width += options.customNarrative.width;
+                            if(options.customNarrative.text.length){
+                                if(!options.chart.originalWidth){
+                                    options.chart.originalWidth = options.chart.width;
+                                    options.chart.width += options.customNarrative.width;
+                                } else { //already expanded
+
+                                }
+                            } else { //nothing to display
+                                if(options.chart.originalWidth){
+                                    options.chart.width = options.chart.originalWidth;
+                                } else { //wasn't expanded
+
+                                }
                             }
+                            
                             break;
                     }
 
