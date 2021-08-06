@@ -988,13 +988,13 @@ var PowerupReporting = (function () {
                 text: "",
                 width: 200,
                 height: 200,
-                position: "left"
+                position: "right"
             };
-        if(typeof(options.charts) == "object"){
-            if(typeof(options.charts.events) != "object")
-                options.charts.events = {};
-            if(typeof(options.charts.events.load) != "function")
-                options.charts.events.load = function() {
+        if(typeof(options.chart) == "object"){
+            if(typeof(options.chart.events) != "object")
+                options.chart.events = {};
+            if(typeof(options.chart.events.load) != "function")
+                options.chart.events.load = function() {
                     let x,y;
                     switch(options.customNarrative.position){
                         case "bottom":
