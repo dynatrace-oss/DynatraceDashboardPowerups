@@ -12,7 +12,8 @@ var PowerupReporting = (function () {
     var pub = {};
 
     pub.openReportGenerator = () => {
-
+        $(`.PowerupReportGenerator`).remove(); //remove any stragglers
+        
         let $repgen = $("<div>")
             .html(`
         <div id="PowerupReportGeneratorTitleBar"><h3>Generate Report</h3></div>
