@@ -964,6 +964,8 @@ var PowerupReporting = (function () {
 
                 return line;
             }
+
+            function addBand(band = null) {}
         }
 
         function notYetImplemented() {
