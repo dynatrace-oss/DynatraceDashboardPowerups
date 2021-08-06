@@ -861,6 +861,8 @@ var PowerupReporting = (function () {
             $textarea.on('change',()=>{
                 chartOptions.customNarrative.text = $textarea.val();
             })
+
+            addRefreshButton($content);
         }
 
         function notYetImplemented() {
