@@ -852,16 +852,16 @@ var PowerupReporting = (function () {
             let $content = $(content);
 
             let $textarea = $(`<textarea>`)
-                .addClass('powerupNarrative')
+                .addClass('powerupPreviewOptions')
                 .appendTo($content);
             
             if(chartOptions.customNarrative && chartOptions.customNarrative.text)
                 $textarea.val(chartOptions.customNarrative.text);
 
-            $textarea.on('change',()=>{
-                chartOptions.customNarrative.text = $textarea.val();
-            })
-
+            $textarea.on('keydown paste', debounce(
+                ()=>{chartOptions.customNarrative.text = $textarea.val()},
+                100));
+            
             addRefreshButton($content);
         }
 
