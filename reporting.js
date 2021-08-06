@@ -879,7 +879,7 @@ var PowerupReporting = (function () {
                     axis.plotLines.push(newLine);
                 })
                 .appendTo($buttons);
-            let $addLine = $(`<button>`)
+            let $addBand = $(`<button>`)
                 .addClass('powerupButton')
                 .text(`Band`)
                 .on(`click`, addBand)
