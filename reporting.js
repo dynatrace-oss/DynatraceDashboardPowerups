@@ -780,14 +780,14 @@ var PowerupReporting = (function () {
                     let name = seriesName(serie);
                     if (typeof (serie.dataLabels) != "object") serie.dataLabels = {};
                     buildRadioRow(
-                        `Series(${s_idx} - ${name}) Data Labels`,
+                        `Series (${s_idx} - ${name}) Data Labels`,
                         serie.dataLabels.enabled,
                         () => { serie.dataLabels.enabled = true },
                         () => { serie.dataLabels.enabled = false },
                     );
                     if (typeof (serie.marker) != "object") serie.marker = {};
                     buildRadioRow(
-                        `Series(${s_idx} - ${name}) Data Markers`,
+                        `Series (${s_idx} - ${name}) Data Markers`,
                         serie.marker.enabled,
                         () => { serie.marker.enabled = true },
                         () => { serie.marker.enabled = false },

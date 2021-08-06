@@ -898,6 +898,10 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   width: 30%;
 }
 
+.powerupOptionsContent table td {
+  white-space: nowrap;
+}
+
 .powerupOptionsContent th {
   text-align: left;
 }
