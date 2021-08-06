@@ -934,7 +934,7 @@ var PowerupReporting = (function () {
                     max = axis.max;
                     line.value = (min + max) / 2;
                 });
-                $axisSelector.value(`${line.axis} - ${line.axisNum}`);
+                $axisSelector.val(`${line.axis} - ${line.axisNum}`);
 
                 let $valueRow = $(`<tr><td>Value:</td><td></td></tr>`).appendTo($table);
                 let $range = $(`<input type="range">`)
