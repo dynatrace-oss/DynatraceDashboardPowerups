@@ -776,12 +776,12 @@ var PowerupReporting = (function () {
             //series data labels & markers
             if (Array.isArray(chartOptions.series)) {
                 chartOptions.series.forEach((serie, s_idx) => {
-                    if (typeof (serie.labels) != "object") serie.labels = {};
+                    if (typeof (serie.dataLabels) != "object") serie.dataLabels = {};
                     buildRadioRow(
                         `Series(${s_idx}) Data Labels`,
-                        serie.labels.enabled,
-                        () => { serie.labels.enabled = true },
-                        () => { serie.labels.enabled = false },
+                        serie.dataLabels.enabled,
+                        () => { serie.dataLabels.enabled = true },
+                        () => { serie.dataLabels.enabled = false },
                     );
                     if (typeof (serie.markers) != "object") serie.markers = {};
                     buildRadioRow(
