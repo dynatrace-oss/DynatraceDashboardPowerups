@@ -743,6 +743,7 @@ var PowerupReporting = (function () {
             //yAxes titles & labels
             if (Array.isArray(chartOptions.yAxis)) {
                 chartOptions.yAxis.forEach((yAxis, axisNum) => {
+                    if(!pub.activeChart.yAxis[axisNum].visible) return;
                     if (typeof (yAxis.title) != "object") yAxis.title = {};
                     buildTextRow(`yAxis(${axisNum}) Title`, chartOptions.xAxis.title.text, function (e) {
                         let val = $(this).val();
