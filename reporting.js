@@ -212,7 +212,7 @@ var PowerupReporting = (function () {
                             categories.push(val);
                         });
                         let $container = $("<div>").appendTo($copies);
-                        let newChart = H.chart($container[0], {
+                        let options = {
                             chart: {
                                 plotBackgroundColor: "#f2f2f2"
                             },
@@ -247,7 +247,10 @@ var PowerupReporting = (function () {
                                     enabled: false
                                 }
                             }
-                        });
+                        };
+                        narrativeSupport(options);
+
+                        let newChart = H.chart($container[0],options);
                         charts.push(newChart);
                     });
                 },
