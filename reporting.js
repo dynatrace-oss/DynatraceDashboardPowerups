@@ -783,12 +783,12 @@ var PowerupReporting = (function () {
                         () => { serie.dataLabels.enabled = true },
                         () => { serie.dataLabels.enabled = false },
                     );
-                    if (typeof (serie.markers) != "object") serie.markers = {};
+                    if (typeof (serie.marker) != "object") serie.marker = {};
                     buildRadioRow(
                         `Series(${s_idx}) Data Markers`,
-                        serie.markers.enabled,
-                        () => { serie.markers.enabled = true },
-                        () => { serie.markers.enabled = false },
+                        serie.marker.enabled,
+                        () => { serie.marker.enabled = true },
+                        () => { serie.marker.enabled = false },
                     );
                 })
             }
