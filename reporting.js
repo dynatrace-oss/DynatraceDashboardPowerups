@@ -13,7 +13,7 @@ var PowerupReporting = (function () {
 
     pub.openReportGenerator = () => {
         $(`.PowerupReportGenerator`).remove(); //remove any stragglers
-        
+
         let $repgen = $("<div>")
             .html(`
         <div id="PowerupReportGeneratorTitleBar"><h3>Generate Report</h3></div>
@@ -140,6 +140,9 @@ var PowerupReporting = (function () {
                         axis.userOptions.internalKey = H.uniqueKey();
                     }
                 });
+
+                // Add support for narrative
+                narrativeSupport(options);
 
                 // generate the chart copy
                 try {
@@ -485,7 +488,7 @@ var PowerupReporting = (function () {
         let $trends = $(createSection("PowerupReportOptionsTrends", "Trendlines"));
         let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines"));
         let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations"));
-        let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative"));
+        let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative", narrativeContent));
         let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter", declutterContent));
         let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert mode)", jsonContent));
 
@@ -842,6 +845,21 @@ var PowerupReporting = (function () {
             }
         }
 
+        function narrativeContent(content) {
+            let $content = $(content);
+
+            let $textarea = $(`<textarea>`)
+                .addClass('powerupNarrative')
+                .appendTo($content);
+            
+            if(chartOptions.customNarrative && chartOptions.customNarrative.text)
+                $textarea.val(chartOptions.customNarrative.text);
+
+            $textarea.on('change',()=>{
+                chartOptions.customNarrative.text = $textarea.val();
+            })
+        }
+
         function notYetImplemented() {
             alert(`Not yet implemented...`);
         }
@@ -957,6 +975,53 @@ var PowerupReporting = (function () {
 
         //TODO: add DT API to get actual entity names
         return name;
+    }
+
+    const narrativeSupport = (options) => {
+        if(typeof(options.customNarrative) != "object") 
+            options.customNarrative = {
+                text: "",
+                width: 200,
+                height: 200,
+                position: "left"
+            };
+        if(typeof(options.charts) == "object"){
+            if(typeof(options.charts.events) != "object")
+                options.charts.events = {};
+            if(typeof(options.charts.events.load) != "function")
+                options.charts.events.load = function() {
+                    let x,y;
+                    switch(options.customNarrative.position){
+                        case "bottom":
+                            x = 0;
+                            break;
+                        case "right":
+                        default:
+                            x = options.chart.width || 200;
+                            if(!options.chart.originalWidth){
+                                options.chart.originalWidth = options.chart.width;
+                                options.chart.width += options.customNarrative.width;
+                            }
+                            break;
+                    }
+
+                    y = options.chart.height - options.customNarrative.height;
+          
+                    if (this.customNarrative) {
+                      this.customNarrative.destroy();
+                      this.customNarrative = undefined;
+                    }
+          
+                    this.customNarrative = this.renderer.g('customNarrative').add();
+                    this.renderer.text(options.customNarrative.text, x, y)
+                        .css({
+                            color: "#6d6d6d",
+                            fontSize: "12px",
+                            width: "200px"
+                        })
+                        .add(this.customNarrative);
+                  }
+        }
     }
 
     return pub;
