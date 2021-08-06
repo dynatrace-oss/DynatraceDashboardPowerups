@@ -777,16 +777,17 @@ var PowerupReporting = (function () {
             //series data labels & markers
             if (Array.isArray(chartOptions.series)) {
                 chartOptions.series.forEach((serie, s_idx) => {
+                    let name = seriesName(serie);
                     if (typeof (serie.dataLabels) != "object") serie.dataLabels = {};
                     buildRadioRow(
-                        `Series(${s_idx}) Data Labels`,
+                        `Series(${s_idx} - ${name}) Data Labels`,
                         serie.dataLabels.enabled,
                         () => { serie.dataLabels.enabled = true },
                         () => { serie.dataLabels.enabled = false },
                     );
                     if (typeof (serie.marker) != "object") serie.marker = {};
                     buildRadioRow(
-                        `Series(${s_idx}) Data Markers`,
+                        `Series(${s_idx} - ${name}) Data Markers`,
                         serie.marker.enabled,
                         () => { serie.marker.enabled = true },
                         () => { serie.marker.enabled = false },
