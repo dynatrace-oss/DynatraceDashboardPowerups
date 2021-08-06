@@ -1021,7 +1021,7 @@ var PowerupReporting = (function () {
                             break;
                     }
 
-                    y = options.chart.height - options.customNarrative.height;
+                    y = options.chart.height - 10;
           
                     if (this.customNarrative) {
                       this.customNarrative.destroy();
