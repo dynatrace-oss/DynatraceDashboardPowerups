@@ -319,6 +319,7 @@ var PowerupReporting = (function () {
                         },
                         previewSVG = function (svg, i, chartOptions, result = null) {
                             let p = $.Deferred();  //expecting {refresh: bool, id: string}
+                            pub.activeChart = charts[i];
 
                             if (!fastForward) {
                                 $previewTitle.html(`<h4>Chart ${i}:</h4>`);
@@ -413,6 +414,7 @@ var PowerupReporting = (function () {
                                 console.log("Powerup: getSVGForLocalExport Failed to get SVG");
                             }, async function (svg) {
                                 let p_result = await previewSVG(svg, i, chartOptions, result);
+                                pub.activeChart = null; //don't leak chart
                                 if (p_result && p_result.refresh) {
                                     return exportChart(i, chartOptions, p_result);
                                 } else {
