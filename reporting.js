@@ -733,10 +733,14 @@ var PowerupReporting = (function () {
 
             //legend
             if (typeof (chartOptions.legend) != "object") chartOptions.legend = {};
+            if (typeof (chartOptions.legend.itemStyle) != "object") chartOptions.legend.itemStyle = {};
             buildRadioRow(
                 "Legend",
                 chartOptions.legend.enabled,
-                () => { chartOptions.legend.enabled = true },
+                () => { 
+                    chartOptions.legend.enabled = true;
+                    chartOptions.legend.itemStyle.fontSize = "10px";
+                 },
                 () => { chartOptions.legend.enabled = false },
             );
 
