@@ -970,13 +970,13 @@ var PowerupReporting = (function () {
 
                 let $labelRow = $(`<tr><td>Label:</td><td></td></tr>`).appendTo($table);
                 let $label = $(`<input type="text">`)
-                    .val(line.label)
+                    .val(line.label.text)
                     .appendTo($labelRow.children().eq(1));
 
                 //update on change
                 $value.on('change', ()=>{line.value=$value.val()});
                 $colorPicker.on('change', ()=>{line.color=$colorPicker.val()});
-                $label.on('change', ()=>{line.label=$label.val()});
+                $label.on('change', ()=>{line.label.text=$label.val()});
 
                 return line;
             }
