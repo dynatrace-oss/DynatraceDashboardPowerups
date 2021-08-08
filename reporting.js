@@ -868,7 +868,8 @@ var PowerupReporting = (function () {
         function bandsAndLinesContent(content) {
             let $content = $(content);
             let $buttons = $(`<div>`)
-                .appendTo($content);
+                .appendTo($content)
+                .addClass('powerupNoFlex');
             let $addLine = $(`<button>`)
                 .addClass('powerupButton')
                 .text(`Line`)
@@ -903,7 +904,7 @@ var PowerupReporting = (function () {
                 }
                 let axis, min, max;
 
-                let $lineDiv = $(`<div>`);
+                let $lineDiv = $(`<div>`).appendTo($content);
                 let $table = $(`<table>`).appendTo($lineDiv);
 
                 //Component: Axis selector
