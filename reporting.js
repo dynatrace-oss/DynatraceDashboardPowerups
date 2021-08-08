@@ -927,8 +927,8 @@ var PowerupReporting = (function () {
                         .appendTo($axisSelector);
                 });
                 $axisSelector.on('change', () => {
-                    line.axis = $axisSelector.data('axis');
-                    line.axisNum = $axisSelector.data('axisNum');
+                    line.axis = $axisSelector.children(`:selected`).data('axis');
+                    line.axisNum = $axisSelector.children(`:selected`).data('axisNum');
 
                     axis = pub.activeChart[line.axis][line.axisNum];
                     min = axis.min;
