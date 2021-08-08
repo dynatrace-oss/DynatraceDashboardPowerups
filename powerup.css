@@ -766,8 +766,11 @@ table.powerupActionPopup tr > *:nth-of-type(4) {
 }
 
 .powerupButton.powerupCloseButton {
-  width: "22px";
-  height: "22px";
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  top: 2px;
+  right: 2px;
 }
 
 .PowerupReportGenerator {
@@ -929,4 +932,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupLineConfig {
   border:rgb(51, 51, 51) 1px solid;
   margin: 5px;
+  left: 10px;
+  position: relative;
+  width: 400px;
 }

@@ -885,20 +885,21 @@ var PowerupReporting = (function () {
                 .appendTo($buttons);
 
             //load existing plotLines
-            pub.activeChart.xAxis.forEach((x, xIdx) => {
-                if(Array.isArray(x.plotLines) && x.plotLines.length) {
-                    x.plotLines.forEach(pl => {
-                        addLine(pl);
-                    })
-                }
-            });
-            pub.activeChart.yAxis.forEach((y, yIdx) => {
-                if(Array.isArray(y.plotLines) && y.plotLines.length) {
-                    y.plotLines.forEach(pl => {
-                        addLine(pl);
-                    })
-                }
-            });
+            if (Array.isArray(chartOptions.xAxis)) {
+                chartOptions.xAxis.forEach((x, xIdx) => {
+                    if (Array.isArray(x.plotLines) && x.plotLines.length) 
+                        x.plotLines.forEach(pl => { addLine(pl) })
+                });
+            } else if (typeof (chartOptions.xAxis) == "object") {
+                if (Array.isArray(x.plotLines) && x.plotLines.length) 
+                    x.plotLines.forEach(pl => { addLine(pl) })
+            }
+            if (Array.isArray(chartOptions.yAxis)) {
+                chartOptions.yAxis.forEach((y, yIdx) => {
+                    if (Array.isArray(y.plotLines) && y.plotLines.length) 
+                        y.plotLines.forEach(pl => { addLine(pl) })
+                });
+            }
 
             addRefreshButton($content);
 
@@ -1012,26 +1013,26 @@ var PowerupReporting = (function () {
                     .addClass('powerupCloseButton')
                     .text('x')
                     .appendTo($lineDiv)
-                    .on('click', ()=> {
-                        if(chartOptions.xAxis && Array.isArray(chartOptions.xAxis)){
+                    .on('click', () => {
+                        if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
                             chartOptions.xAxis.forEach(axis => {
-                                if(Array.isArray(axis.plotLines)){
+                                if (Array.isArray(axis.plotLines)) {
                                     axis.plotLines = axis.plotLines.filter(x => x != line);
-                                }    
+                                }
                             })
-                        } else if(chartOptions.xAxis && typeof(chartOptions.xAxis) == "object"){
+                        } else if (chartOptions.xAxis && typeof (chartOptions.xAxis) == "object") {
                             let axis = chartOptions.xAxis;
-                            if(Array.isArray(axis.plotLines)){
+                            if (Array.isArray(axis.plotLines)) {
                                 axis.plotLines = axis.plotLines.filter(x => x != line);
                             }
-                        } 
-                        if(chartOptions.yAxis && Array.isArray(chartOptions.yAxis)){
+                        }
+                        if (chartOptions.yAxis && Array.isArray(chartOptions.yAxis)) {
                             chartOptions.yAxis.forEach(axis => {
-                                if(Array.isArray(axis.plotLines)){
+                                if (Array.isArray(axis.plotLines)) {
                                     axis.plotLines = axis.plotLines.filter(x => x != line);
-                                }    
+                                }
                             })
-                        } 
+                        }
                     })
 
                 return line;
