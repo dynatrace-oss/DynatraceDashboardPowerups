@@ -489,7 +489,7 @@ var PowerupReporting = (function () {
         let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background", foregroundContent));
         let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments"));
         let $trends = $(createSection("PowerupReportOptionsTrends", "Trendlines"));
-        let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines",bandsAndLinesContent));
+        let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines", bandsAndLinesContent));
         let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations"));
         let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative", narrativeContent));
         let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter", declutterContent));
@@ -870,6 +870,9 @@ var PowerupReporting = (function () {
             let $buttons = $(`<div>`)
                 .appendTo($content)
                 .addClass('powerupNoFlex');
+            let $linesAndBands = $(`<div>`)
+                .appendTo($content)
+                .addClass('powerupNoFlex');
             let $addLine = $(`<button>`)
                 .addClass('powerupButton')
                 .text(`Line`)
@@ -881,7 +884,21 @@ var PowerupReporting = (function () {
                 .on(`click`, addBand)
                 .appendTo($buttons);
 
-            //pub.activeChart.xAxis.forEach((x, xIdx) => {
+            //load existing plotLines
+            pub.activeChart.xAxis.forEach((x, xIdx) => {
+                if(Array.isArray(x.plotLines) && x.plotLines.length) {
+                    x.plotLines.forEach(pl => {
+                        addLine(pl);
+                    })
+                }
+            });
+            pub.activeChart.yAxis.forEach((y, yIdx) => {
+                if(Array.isArray(y.plotLines) && y.plotLines.length) {
+                    y.plotLines.forEach(pl => {
+                        addLine(pl);
+                    })
+                }
+            });
 
             addRefreshButton($content);
 
@@ -890,16 +907,16 @@ var PowerupReporting = (function () {
             function newLine() {
                 let newLine = addLine();
                 let axis;
-                if(Array.isArray(chartOptions[newLine.axis])){ //case: multiple axes
+                if (Array.isArray(chartOptions[newLine.axis])) { //case: multiple axes
                     axis = chartOptions[newLine.axis][newLine.axisNum];
-                } else if(typeof(chartOptions[newLine.axis]) == "object") { //case: single axis
+                } else if (typeof (chartOptions[newLine.axis]) == "object") { //case: single axis
                     axis = chartOptions[newLine.axis];
                 } else { //case: not in options
                     chartOptions[newLine.axis] = [];
                     axis = {};
                     chartOptions[newLine.axis].push(axis);
                 }
-                if(!Array.isArray(axis.plotLines)) axis.plotLines = [];
+                if (!Array.isArray(axis.plotLines)) axis.plotLines = [];
                 axis.plotLines.push(newLine);
             }
 
@@ -918,7 +935,9 @@ var PowerupReporting = (function () {
                 }
                 let axis, min, max;
 
-                let $lineDiv = $(`<div>`).appendTo($content);
+                let $lineDiv = $(`<div>`)
+                    .addClass('powerupLineConfig')
+                    .appendTo($linesAndBands);
                 let $table = $(`<table>`).appendTo($lineDiv);
 
                 //Component: Axis selector
@@ -940,29 +959,14 @@ var PowerupReporting = (function () {
                         .text(`yAxis - ${yIdx}`)
                         .appendTo($axisSelector);
                 });
-                $axisSelector.on('change', () => {
-                    line.axis = $axisSelector.children(`:selected`).data('axis');
-                    line.axisNum = $axisSelector.children(`:selected`).data('axisNum');
-
-                    axis = pub.activeChart[line.axis][line.axisNum];
-                    min = axis.min;
-                    max = axis.max;
-                    line.value = (min + max) / 2;
-                });
-                $axisSelector
-                    .val(`${line.axis} - ${line.axisNum}`)
-                    .trigger('change');
 
                 let $valueRow = $(`<tr><td>Value:</td><td></td></tr>`).appendTo($table);
                 let $range = $(`<input type="range">`)
-                    .attr('min', min)
-                    .attr('max', max)
-                    .val(line.value)
                     .appendTo($valueRow.children().eq(1));
                 let $value = $(`<input type="text">`)
                     .val(line.value)
                     .appendTo($valueRow.children().eq(1));
-                $range.on('change', () => { 
+                $range.on('change', () => {
                     $value.val($range.val());
                     $value.trigger('change');
                 });
@@ -977,15 +981,63 @@ var PowerupReporting = (function () {
                     .val(line.label.text)
                     .appendTo($labelRow.children().eq(1));
 
+                //vals
+                $axisSelector.on('change', () => {
+                    line.axis = $axisSelector.children(`:selected`).data('axis');
+                    line.axisNum = $axisSelector.children(`:selected`).data('axisNum');
+
+                    axis = pub.activeChart[line.axis][line.axisNum];
+                    min = axis.min;
+                    max = axis.max;
+                    line.value = (min + max) / 2;
+
+                    $range
+                        .attr('min', min)
+                        .attr('max', max)
+                        .val(line.value)
+                        .trigger('change');
+                });
+                $axisSelector
+                    .val(`${line.axis} - ${line.axisNum}`)
+                    .trigger('change');
+
                 //update on change
-                $value.on('change', ()=>{line.value=$value.val()});
-                $colorPicker.on('change', ()=>{line.color=$colorPicker.val()});
-                $label.on('change', ()=>{line.label.text=$label.val()});
+                $value.on('change', () => { line.value = $value.val() });
+                $colorPicker.on('change', () => { line.color = $colorPicker.val() });
+                $label.on('change', () => { line.label.text = $label.val() });
+
+                //delete button
+                let $remove = $(`<button>`)
+                    .addClass('powerupButton')
+                    .addClass('powerupCloseButton')
+                    .text('x')
+                    .appendTo($lineDiv)
+                    .on('click', ()=> {
+                        if(chartOptions.xAxis && Array.isArray(chartOptions.xAxis)){
+                            chartOptions.xAxis.forEach(axis => {
+                                if(Array.isArray(axis.plotLines)){
+                                    axis.plotLines = axis.plotLines.filter(x => x != line);
+                                }    
+                            })
+                        } else if(chartOptions.xAxis && typeof(chartOptions.xAxis) == "object"){
+                            let axis = chartOptions.xAxis;
+                            if(Array.isArray(axis.plotLines)){
+                                axis.plotLines = axis.plotLines.filter(x => x != line);
+                            }
+                        } 
+                        if(chartOptions.yAxis && Array.isArray(chartOptions.yAxis)){
+                            chartOptions.yAxis.forEach(axis => {
+                                if(Array.isArray(axis.plotLines)){
+                                    axis.plotLines = axis.plotLines.filter(x => x != line);
+                                }    
+                            })
+                        } 
+                    })
 
                 return line;
             }
 
-            function addBand(band = null) {}
+            function addBand(band = null) { }
         }
 
         function notYetImplemented() {
