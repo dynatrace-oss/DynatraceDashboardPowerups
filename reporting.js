@@ -873,12 +873,7 @@ var PowerupReporting = (function () {
             let $addLine = $(`<button>`)
                 .addClass('powerupButton')
                 .text(`Line`)
-                .on(`click`, ()=>{
-                    let newLine = addLine();
-                    let axis = chartOptions[newLine.axis][newLine.axisNum];
-                    if(!Array.isArray(axis.plotLines)) axis.plotLines = [];
-                    axis.plotLines.push(newLine);
-                })
+                .on(`click`, newLine)
                 .appendTo($buttons);
             let $addBand = $(`<button>`)
                 .addClass('powerupButton')
@@ -889,6 +884,24 @@ var PowerupReporting = (function () {
             //pub.activeChart.xAxis.forEach((x, xIdx) => {
 
             addRefreshButton($content);
+
+
+            ///////////////
+            function newLine() {
+                let newLine = addLine();
+                let axis;
+                if(Array.isArray(chartOptions[newLine.axis])){ //case: multiple axes
+                    axis = chartOptions[newLine.axis][newLine.axisNum];
+                } else if(typeof(chartOptions[newLine.axis]) == "object") { //case: single axis
+                    axis = chartOptions[newLine.axis];
+                } else { //case: not in options
+                    chartOptions[newLine.axis] = [];
+                    axis = {};
+                    chartOptions[newLine.axis].push(axis);
+                }
+                if(!Array.isArray(axis.plotLines)) axis.plotLines = [];
+                axis.plotLines.push(newLine);
+            }
 
             function addLine(line = null) {
                 if (line == null) {
