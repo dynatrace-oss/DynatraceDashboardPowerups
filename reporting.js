@@ -912,7 +912,8 @@ var PowerupReporting = (function () {
                         value: null,
                         label: {
                             text: "New Line"
-                        }
+                        },
+                        width: 2
                     }
                 }
                 let axis, min, max;
@@ -961,7 +962,10 @@ var PowerupReporting = (function () {
                 let $value = $(`<input type="text">`)
                     .val(line.value)
                     .appendTo($valueRow.children().eq(1));
-                $range.on('change', () => { $value.val($range.val()) });
+                $range.on('change', () => { 
+                    $value.val($range.val());
+                    $value.trigger('change');
+                });
 
                 let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
                 let $colorPicker = $(`<input type="color">`)
