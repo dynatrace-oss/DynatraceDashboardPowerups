@@ -990,7 +990,10 @@ var PowerupReporting = (function () {
                     axis = pub.activeChart[line.axis][line.axisNum];
                     min = axis.min;
                     max = axis.max;
-                    line.value = (min + max) / 2;
+                    if(line.value == null
+                        || line.value < min
+                        || line.value > max)
+                        line.value = (min + max) / 2;
 
                     $range
                         .attr('min', min)
