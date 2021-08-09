@@ -1188,10 +1188,15 @@ var PowerupReporting = (function () {
                         || band.value > max)
                         band.value = (min + max) / 2;
 
-                    $range
+                    $fromRange
                         .attr('min', min)
                         .attr('max', max)
-                        .val(band.value)
+                        .val(band.from)
+                        .trigger('change');
+                    $toRange
+                        .attr('min', min)
+                        .attr('max', max)
+                        .val(band.to)
                         .trigger('change');
 
                     removeBandFromOptions(band);
