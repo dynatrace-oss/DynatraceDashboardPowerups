@@ -1183,10 +1183,14 @@ var PowerupReporting = (function () {
                     axis = pub.activeChart[band.axis][band.axisNum];
                     min = axis.min;
                     max = axis.max;
-                    if (band.value == null
-                        || band.value < min
-                        || band.value > max)
-                        band.value = (min + max) / 2;
+                    if (band.from == null
+                        || band.from < min
+                        || band.from > max)
+                        band.from = min + ((max - min) / 4);
+                    if (band.to == null
+                        || band.to < min
+                        || band.to > max)
+                        band.to = max - ((max - min) / 4);
 
                     $fromRange
                         .attr('min', min)
@@ -1253,7 +1257,7 @@ var PowerupReporting = (function () {
                     })
 
                 return band;
-             }
+            }
         }
 
         function notYetImplemented() {
