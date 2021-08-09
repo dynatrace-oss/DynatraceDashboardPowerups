@@ -936,3 +936,41 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   position: relative;
   width: 400px;
 }
+
+.powerupTDTooltip {
+  position: relative;
+}
+
+.powerupTDTooltipText {
+  visibility: hidden;
+  width: 120px;
+  background-color: white;
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 3px;
+  opacity: 0.8;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+
+  position: absolute;
+  z-index: 1;
+  right: 105%;
+  top: -5px;
+  font-weight: normal;
+}
+
+.powerupTDTooltip:hover .powerupTDTooltipText {
+  visibility: visible;
+}
+
+.powerupTDTooltip .powerupTDTooltipText::after {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  left: 100%; /* To the right of the tooltip */
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent #00848e;
+}

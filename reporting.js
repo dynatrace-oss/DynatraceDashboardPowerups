@@ -992,6 +992,16 @@ var PowerupReporting = (function () {
                     $value.val($range.val());
                     $value.trigger('change');
                 });
+                if (axis && axis.isDatetimeAxis) {
+                    $valueRow.children().eq(1).addClass('powerupTDTooltip');
+                    let $hover = $(`<div>`)
+                        .addClass('powerupTDTooltipText')
+                        .text(Date($value.val()).toString());
+                    $value.on('change', () => {
+                        $hover
+                            .text(Date($value.val()).toString());
+                    })
+                }
 
                 let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
                 let $colorPicker = $(`<input type="color">`)
