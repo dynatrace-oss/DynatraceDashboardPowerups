@@ -961,6 +961,7 @@ var PowerupReporting = (function () {
                     .addClass('powerupLineConfig')
                     .appendTo($linesAndBands);
                 let $table = $(`<table>`).appendTo($lineDiv);
+                let $header = $(`<tr><th></th><th>Plot line</th></tr>`).appendTo($table);
 
                 //Component: Axis selector
                 let $axisRow = $(`<tr><td>Axis:</td><td></td></tr>`).appendTo($table);
