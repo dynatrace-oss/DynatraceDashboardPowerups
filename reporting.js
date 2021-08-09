@@ -876,7 +876,7 @@ var PowerupReporting = (function () {
             let $addLine = $(`<button>`)
                 .addClass('powerupButton')
                 .text(`Line`)
-                .on(`click`, newLine)
+                .on(`click`, addLine)
                 .appendTo($buttons);
             let $addBand = $(`<button>`)
                 .addClass('powerupButton')
@@ -905,8 +905,29 @@ var PowerupReporting = (function () {
 
 
             ///////////////
-            function newLine() {
-                let newLine = addLine();
+            function removeLineFromOptions(line){
+                if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
+                    chartOptions.xAxis.forEach(axis => {
+                        if (Array.isArray(axis.plotLines)) {
+                            axis.plotLines = axis.plotLines.filter(x => x != line);
+                        }
+                    })
+                } else if (chartOptions.xAxis && typeof (chartOptions.xAxis) == "object") {
+                    let axis = chartOptions.xAxis;
+                    if (Array.isArray(axis.plotLines)) {
+                        axis.plotLines = axis.plotLines.filter(x => x != line);
+                    }
+                }
+                if (chartOptions.yAxis && Array.isArray(chartOptions.yAxis)) {
+                    chartOptions.yAxis.forEach(axis => {
+                        if (Array.isArray(axis.plotLines)) {
+                            axis.plotLines = axis.plotLines.filter(x => x != line);
+                        }
+                    })
+                }
+            }
+
+            function addLineToOptions(line){
                 let axis;
                 if (Array.isArray(chartOptions[newLine.axis])) { //case: multiple axes
                     axis = chartOptions[newLine.axis][newLine.axisNum];
@@ -1000,6 +1021,9 @@ var PowerupReporting = (function () {
                         .attr('max', max)
                         .val(line.value)
                         .trigger('change');
+
+                    removeLineFromOptions(line);
+                    addLineToOptions(line);
                 });
                 $axisSelector
                     .val(`${line.axis} - ${line.axisNum}`)
@@ -1017,25 +1041,7 @@ var PowerupReporting = (function () {
                     .text('x')
                     .appendTo($lineDiv)
                     .on('click', () => {
-                        if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
-                            chartOptions.xAxis.forEach(axis => {
-                                if (Array.isArray(axis.plotLines)) {
-                                    axis.plotLines = axis.plotLines.filter(x => x != line);
-                                }
-                            })
-                        } else if (chartOptions.xAxis && typeof (chartOptions.xAxis) == "object") {
-                            let axis = chartOptions.xAxis;
-                            if (Array.isArray(axis.plotLines)) {
-                                axis.plotLines = axis.plotLines.filter(x => x != line);
-                            }
-                        }
-                        if (chartOptions.yAxis && Array.isArray(chartOptions.yAxis)) {
-                            chartOptions.yAxis.forEach(axis => {
-                                if (Array.isArray(axis.plotLines)) {
-                                    axis.plotLines = axis.plotLines.filter(x => x != line);
-                                }
-                            })
-                        }
+                        removeLineFromOptions(line);
                         $lineDiv.remove();
                     })
 
