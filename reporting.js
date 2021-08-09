@@ -1069,19 +1069,19 @@ var PowerupReporting = (function () {
                 if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
                     chartOptions.xAxis.forEach(axis => {
                         if (Array.isArray(axis.plotBands)) {
-                            axis.plotBands = axis.plotBands.filter(x => x != line);
+                            axis.plotBands = axis.plotBands.filter(x => x != band);
                         }
                     })
                 } else if (chartOptions.xAxis && typeof (chartOptions.xAxis) == "object") {
                     let axis = chartOptions.xAxis;
                     if (Array.isArray(axis.plotBands)) {
-                        axis.plotBands = axis.plotBands.filter(x => x != line);
+                        axis.plotBands = axis.plotBands.filter(x => x != band);
                     }
                 }
                 if (chartOptions.yAxis && Array.isArray(chartOptions.yAxis)) {
                     chartOptions.yAxis.forEach(axis => {
                         if (Array.isArray(axis.plotBands)) {
-                            axis.plotBands = axis.plotBands.filter(x => x != line);
+                            axis.plotBands = axis.plotBands.filter(x => x != band);
                         }
                     })
                 }
@@ -1089,17 +1089,17 @@ var PowerupReporting = (function () {
 
             function addBandToOptions(band) {
                 let axis;
-                if (Array.isArray(chartOptions[line.axis])) { //case: multiple axes
-                    axis = chartOptions[line.axis][line.axisNum];
-                } else if (typeof (chartOptions[line.axis]) == "object") { //case: single axis
-                    axis = chartOptions[line.axis];
+                if (Array.isArray(chartOptions[band.axis])) { //case: multiple axes
+                    axis = chartOptions[band.axis][band.axisNum];
+                } else if (typeof (chartOptions[band.axis]) == "object") { //case: single axis
+                    axis = chartOptions[band.axis];
                 } else { //case: not in options
-                    chartOptions[line.axis] = [];
+                    chartOptions[band.axis] = [];
                     axis = {};
-                    chartOptions[line.axis].push(axis);
+                    chartOptions[band.axis].push(axis);
                 }
                 if (!Array.isArray(axis.plotBands)) axis.plotBands = [];
-                axis.plotBands.push(line);
+                axis.plotBands.push(band);
             }
 
             function addBand(band = null) {
