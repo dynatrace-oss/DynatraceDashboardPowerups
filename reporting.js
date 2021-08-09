@@ -1036,6 +1036,9 @@ var PowerupReporting = (function () {
                             $hover
                                 .text(Date($value.val()).toString());
                         })
+                    } else {
+                        $valueRow.children().removeClass('powerupTDTooltip');
+                        $valueRow.find(`.powerupTDTooltipText`).remove();
                     }
                 });
                 $axisSelector
