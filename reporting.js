@@ -929,17 +929,17 @@ var PowerupReporting = (function () {
 
             function addLineToOptions(line) {
                 let axis;
-                if (Array.isArray(chartOptions[newLine.axis])) { //case: multiple axes
-                    axis = chartOptions[newLine.axis][newLine.axisNum];
-                } else if (typeof (chartOptions[newLine.axis]) == "object") { //case: single axis
-                    axis = chartOptions[newLine.axis];
+                if (Array.isArray(chartOptions[line.axis])) { //case: multiple axes
+                    axis = chartOptions[line.axis][line.axisNum];
+                } else if (typeof (chartOptions[line.axis]) == "object") { //case: single axis
+                    axis = chartOptions[line.axis];
                 } else { //case: not in options
-                    chartOptions[newLine.axis] = [];
+                    chartOptions[line.axis] = [];
                     axis = {};
-                    chartOptions[newLine.axis].push(axis);
+                    chartOptions[line.axis].push(axis);
                 }
                 if (!Array.isArray(axis.plotLines)) axis.plotLines = [];
-                axis.plotLines.push(newLine);
+                axis.plotLines.push(line);
             }
 
             function addLine(line = null) {
