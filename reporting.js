@@ -887,16 +887,16 @@ var PowerupReporting = (function () {
             //load existing plotLines
             if (Array.isArray(chartOptions.xAxis)) {
                 chartOptions.xAxis.forEach((x, xIdx) => {
-                    if (Array.isArray(x.plotLines) && x.plotLines.length) 
+                    if (Array.isArray(x.plotLines) && x.plotLines.length)
                         x.plotLines.forEach(pl => { addLine(pl) })
                 });
             } else if (typeof (chartOptions.xAxis) == "object") {
-                if (Array.isArray(x.plotLines) && x.plotLines.length) 
-                    x.plotLines.forEach(pl => { addLine(pl) })
+                if (Array.isArray(chartOptions.xAxis.plotLines) && chartOptions.xAxis.plotLines.length)
+                    chartOptions.xAxis.plotLines.forEach(pl => { addLine(pl) })
             }
             if (Array.isArray(chartOptions.yAxis)) {
                 chartOptions.yAxis.forEach((y, yIdx) => {
-                    if (Array.isArray(y.plotLines) && y.plotLines.length) 
+                    if (Array.isArray(y.plotLines) && y.plotLines.length)
                         y.plotLines.forEach(pl => { addLine(pl) })
                 });
             }
