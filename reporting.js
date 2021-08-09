@@ -1033,6 +1033,7 @@ var PowerupReporting = (function () {
                                 }
                             })
                         }
+                        $lineDiv.remove();
                     })
 
                 return line;
