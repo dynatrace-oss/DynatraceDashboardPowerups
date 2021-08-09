@@ -876,12 +876,12 @@ var PowerupReporting = (function () {
             let $addLine = $(`<button>`)
                 .addClass('powerupButton')
                 .text(`Line`)
-                .on(`click`, addLine)
+                .on(`click`, () => { addLine() })
                 .appendTo($buttons);
             let $addBand = $(`<button>`)
                 .addClass('powerupButton')
                 .text(`Band`)
-                .on(`click`, addBand)
+                .on(`click`, () => { addBand() })
                 .appendTo($buttons);
 
             //load existing plotLines
@@ -905,7 +905,7 @@ var PowerupReporting = (function () {
 
 
             ///////////////
-            function removeLineFromOptions(line){
+            function removeLineFromOptions(line) {
                 if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
                     chartOptions.xAxis.forEach(axis => {
                         if (Array.isArray(axis.plotLines)) {
@@ -927,7 +927,7 @@ var PowerupReporting = (function () {
                 }
             }
 
-            function addLineToOptions(line){
+            function addLineToOptions(line) {
                 let axis;
                 if (Array.isArray(chartOptions[newLine.axis])) { //case: multiple axes
                     axis = chartOptions[newLine.axis][newLine.axisNum];
@@ -1011,7 +1011,7 @@ var PowerupReporting = (function () {
                     axis = pub.activeChart[line.axis][line.axisNum];
                     min = axis.min;
                     max = axis.max;
-                    if(line.value == null
+                    if (line.value == null
                         || line.value < min
                         || line.value > max)
                         line.value = (min + max) / 2;
