@@ -875,12 +875,12 @@ var PowerupReporting = (function () {
                 .addClass('powerupNoFlex');
             let $addLine = $(`<button>`)
                 .addClass('powerupButton')
-                .text(`Line`)
+                .text(`+ Line`)
                 .on(`click`, () => { addLine() })
                 .appendTo($buttons);
             let $addBand = $(`<button>`)
                 .addClass('powerupButton')
-                .text(`Band`)
+                .text(`+ Band`)
                 .on(`click`, () => { addBand() })
                 .appendTo($buttons);
 
@@ -1065,7 +1065,190 @@ var PowerupReporting = (function () {
                 return line;
             }
 
-            function addBand(band = null) { }
+            function removeBandFromOptions(band) {
+                if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
+                    chartOptions.xAxis.forEach(axis => {
+                        if (Array.isArray(axis.plotBands)) {
+                            axis.plotBands = axis.plotBands.filter(x => x != line);
+                        }
+                    })
+                } else if (chartOptions.xAxis && typeof (chartOptions.xAxis) == "object") {
+                    let axis = chartOptions.xAxis;
+                    if (Array.isArray(axis.plotBands)) {
+                        axis.plotBands = axis.plotBands.filter(x => x != line);
+                    }
+                }
+                if (chartOptions.yAxis && Array.isArray(chartOptions.yAxis)) {
+                    chartOptions.yAxis.forEach(axis => {
+                        if (Array.isArray(axis.plotBands)) {
+                            axis.plotBands = axis.plotBands.filter(x => x != line);
+                        }
+                    })
+                }
+            }
+
+            function addBandToOptions(band) {
+                let axis;
+                if (Array.isArray(chartOptions[line.axis])) { //case: multiple axes
+                    axis = chartOptions[line.axis][line.axisNum];
+                } else if (typeof (chartOptions[line.axis]) == "object") { //case: single axis
+                    axis = chartOptions[line.axis];
+                } else { //case: not in options
+                    chartOptions[line.axis] = [];
+                    axis = {};
+                    chartOptions[line.axis].push(axis);
+                }
+                if (!Array.isArray(axis.plotBands)) axis.plotBands = [];
+                axis.plotBands.push(line);
+            }
+
+            function addBand(band = null) {
+                if (band == null) {
+                    band = {
+                        color: "#dc172a",
+                        axis: "xAxis",
+                        axisNum: 0,
+                        from: null,
+                        to: null,
+                        label: {
+                            text: "New Line"
+                        }
+                    }
+                }
+                let axis, min, max;
+
+                let $bandDiv = $(`<div>`)
+                    .addClass('powerupBandConfig')
+                    .appendTo($linesAndBands);
+                let $table = $(`<table>`).appendTo($bandDiv);
+                let $header = $(`<tr><th></th><th>Plot band</th></tr>`).appendTo($table);
+
+                //Component: Axis selector
+                let $axisRow = $(`<tr><td>Axis:</td><td></td></tr>`).appendTo($table);
+                let $axisSelector = $(`<select>`).appendTo($axisRow.children().eq(1));
+                pub.activeChart.xAxis.forEach((x, xIdx) => {
+                    if (!x.visible) return;
+                    let $opt = $(`<option>`)
+                        .data('axis', 'xAxis')
+                        .data('axisNum', xIdx)
+                        .text(`xAxis - ${xIdx}`)
+                        .appendTo($axisSelector);
+                });
+                pub.activeChart.yAxis.forEach((y, yIdx) => {
+                    if (!y.visible) return;
+                    let $opt = $(`<option>`)
+                        .data('axis', 'yAxis')
+                        .data('axisNum', yIdx)
+                        .text(`yAxis - ${yIdx}`)
+                        .appendTo($axisSelector);
+                });
+
+                let $fromRow = $(`<tr><td>From:</td><td></td></tr>`).appendTo($table);
+                let $fromRange = $(`<input type="range">`)
+                    .appendTo($fromRow.children().eq(1));
+                let $from = $(`<input type="text">`)
+                    .val(band.from)
+                    .appendTo($fromRow.children().eq(1));
+                $fromRange.on('change', () => {
+                    $from.val($fromRange.val());
+                    $from.trigger('change');
+                });
+
+                let $toRow = $(`<tr><td>Value:</td><td></td></tr>`).appendTo($table);
+                let $toRange = $(`<input type="range">`)
+                    .appendTo($toRow.children().eq(1));
+                let $to = $(`<input type="text">`)
+                    .val(band.to)
+                    .appendTo($toRow.children().eq(1));
+                $toRange.on('change', () => {
+                    $to.val($toRange.val());
+                    $to.trigger('change');
+                });
+
+                let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
+                let $colorPicker = $(`<input type="color">`)
+                    .val(band.color)
+                    .appendTo($colorRow.children().eq(1));
+
+                let $labelRow = $(`<tr><td>Label:</td><td></td></tr>`).appendTo($table);
+                let $label = $(`<input type="text">`)
+                    .val(band.label.text)
+                    .appendTo($labelRow.children().eq(1));
+
+                //vals
+                $axisSelector.on('change', () => {
+                    band.axis = $axisSelector.children(`:selected`).data('axis');
+                    band.axisNum = $axisSelector.children(`:selected`).data('axisNum');
+
+                    axis = pub.activeChart[band.axis][band.axisNum];
+                    min = axis.min;
+                    max = axis.max;
+                    if (band.value == null
+                        || band.value < min
+                        || band.value > max)
+                        band.value = (min + max) / 2;
+
+                    $range
+                        .attr('min', min)
+                        .attr('max', max)
+                        .val(band.value)
+                        .trigger('change');
+
+                    removeBandFromOptions(band);
+                    addBandToOptions(band);
+
+                    if (axis && axis.isDatetimeAxis) {
+                        let $td = $fromRow.children().eq(1)
+                            .addClass('powerupTDTooltip');
+                        let $hover = $(`<div>`)
+                            .addClass('powerupTDTooltipText')
+                            .text(Date($from.val()).toString())
+                            .appendTo($td);
+                        $from.on('change', () => {
+                            $hover
+                                .text(Date($from.val()).toString());
+                        })
+
+                        $td = $toRow.children().eq(1)
+                            .addClass('powerupTDTooltip');
+                        $hover = $(`<div>`)
+                            .addClass('powerupTDTooltipText')
+                            .text(Date($td.val()).toString())
+                            .appendTo($td);
+                        $to.on('change', () => {
+                            $hover
+                                .text(Date($to.val()).toString());
+                        })
+                    } else {
+                        $fromRow.children().removeClass('powerupTDTooltip');
+                        $fromRow.find(`.powerupTDTooltipText`).remove();
+                        $toRow.children().removeClass('powerupTDTooltip');
+                        $toRow.find(`.powerupTDTooltipText`).remove();
+                    }
+                });
+                $axisSelector
+                    .val(`${band.axis} - ${band.axisNum}`)
+                    .trigger('change');
+
+                //update on change
+                $from.on('change', () => { band.from = $from.val() });
+                $to.on('change', () => { band.to = $to.val() });
+                $colorPicker.on('change', () => { band.color = $colorPicker.val() });
+                $label.on('change', () => { band.label.text = $label.val() });
+
+                //delete button
+                let $remove = $(`<button>`)
+                    .addClass('powerupButton')
+                    .addClass('powerupCloseButton')
+                    .text('x')
+                    .appendTo($bandDiv)
+                    .on('click', () => {
+                        removeLineFromOptions(band);
+                        $bandDiv.remove();
+                    })
+
+                return band;
+             }
         }
 
         function notYetImplemented() {
