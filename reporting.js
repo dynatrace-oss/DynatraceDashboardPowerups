@@ -974,7 +974,8 @@ var PowerupReporting = (function () {
                         label: {
                             text: "New Line"
                         },
-                        width: 2
+                        width: 2,
+                        zIndex: 2
                     }
                 }
                 let axis, min, max;
@@ -1134,7 +1135,8 @@ var PowerupReporting = (function () {
                         to: null,
                         label: {
                             text: "New Band"
-                        }
+                        },
+                        zIndex: 0
                     }
                 }
                 let axis, min, max;
