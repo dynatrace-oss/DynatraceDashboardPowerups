@@ -929,7 +929,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   cursor: pointer;
 }
 
-.powerupLineConfig {
+.powerupLineConfig, .powerupBandConfig {
   border:rgb(51, 51, 51) 1px solid;
   margin: 5px;
   left: 10px;

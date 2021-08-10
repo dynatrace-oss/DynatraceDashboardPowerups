@@ -967,7 +967,7 @@ var PowerupReporting = (function () {
             function addLine(line = null) {
                 if (line == null) {
                     line = {
-                        color: "#dc172a",
+                        color: "#526cff",
                         axis: "xAxis",
                         axisNum: 0,
                         value: null,
@@ -1128,7 +1128,7 @@ var PowerupReporting = (function () {
             function addBand(band = null) {
                 if (band == null) {
                     band = {
-                        color: "#ffd0ab",
+                        color: "#fff5e4",
                         axis: "xAxis",
                         axisNum: 0,
                         from: null,
