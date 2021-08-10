@@ -1127,7 +1127,7 @@ var PowerupReporting = (function () {
             function addBand(band = null) {
                 if (band == null) {
                     band = {
-                        color: "#fff5e4",
+                        color: "#ffd0ab",
                         axis: "xAxis",
                         axisNum: 0,
                         from: null,
