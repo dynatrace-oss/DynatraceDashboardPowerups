@@ -884,27 +884,49 @@ var PowerupReporting = (function () {
                 .on(`click`, () => { addBand() })
                 .appendTo($buttons);
 
-            //load existing plotLines
-            if (Array.isArray(chartOptions.xAxis)) {
-                chartOptions.xAxis.forEach((x, xIdx) => {
-                    if (Array.isArray(x.plotLines) && x.plotLines.length)
-                        x.plotLines.forEach(pl => { addLine(pl) })
-                });
-            } else if (typeof (chartOptions.xAxis) == "object") {
-                if (Array.isArray(chartOptions.xAxis.plotLines) && chartOptions.xAxis.plotLines.length)
-                    chartOptions.xAxis.plotLines.forEach(pl => { addLine(pl) })
-            }
-            if (Array.isArray(chartOptions.yAxis)) {
-                chartOptions.yAxis.forEach((y, yIdx) => {
-                    if (Array.isArray(y.plotLines) && y.plotLines.length)
-                        y.plotLines.forEach(pl => { addLine(pl) })
-                });
-            }
-
+            
+            drawExistingPlotLines();
+            drawExistingPlotBands();
             addRefreshButton($content);
 
 
             ///////////////
+            function drawExistingPlotLines() {
+                if (Array.isArray(chartOptions.xAxis)) {
+                    chartOptions.xAxis.forEach((x, xIdx) => {
+                        if (Array.isArray(x.plotLines) && x.plotLines.length)
+                            x.plotLines.forEach(pl => { addLine(pl) })
+                    });
+                } else if (typeof (chartOptions.xAxis) == "object") {
+                    if (Array.isArray(chartOptions.xAxis.plotLines) && chartOptions.xAxis.plotLines.length)
+                        chartOptions.xAxis.plotLines.forEach(pl => { addLine(pl) })
+                }
+                if (Array.isArray(chartOptions.yAxis)) {
+                    chartOptions.yAxis.forEach((y, yIdx) => {
+                        if (Array.isArray(y.plotLines) && y.plotLines.length)
+                            y.plotLines.forEach(pl => { addLine(pl) })
+                    });
+                }
+            }
+
+            function drawExistingPlotBands() {
+                if (Array.isArray(chartOptions.xAxis)) {
+                    chartOptions.xAxis.forEach((x, xIdx) => {
+                        if (Array.isArray(x.plotBands) && x.plotBands.length)
+                            x.plotBands.forEach(pl => { addLine(pl) })
+                    });
+                } else if (typeof (chartOptions.xAxis) == "object") {
+                    if (Array.isArray(chartOptions.xAxis.plotBands) && chartOptions.xAxis.plotBands.length)
+                        chartOptions.xAxis.plotBands.forEach(pl => { addLine(pl) })
+                }
+                if (Array.isArray(chartOptions.yAxis)) {
+                    chartOptions.yAxis.forEach((y, yIdx) => {
+                        if (Array.isArray(y.plotBands) && y.plotBands.length)
+                            y.plotBands.forEach(pl => { addLine(pl) })
+                    });
+                }
+            }
+
             function removeLineFromOptions(line) {
                 if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
                     chartOptions.xAxis.forEach(axis => {
@@ -1106,7 +1128,6 @@ var PowerupReporting = (function () {
                 if (band == null) {
                     band = {
                         color: "#dc172a",
-                        opacity: 0.3,
                         axis: "xAxis",
                         axisNum: 0,
                         from: null,
