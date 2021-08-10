@@ -913,16 +913,16 @@ var PowerupReporting = (function () {
                 if (Array.isArray(chartOptions.xAxis)) {
                     chartOptions.xAxis.forEach((x, xIdx) => {
                         if (Array.isArray(x.plotBands) && x.plotBands.length)
-                            x.plotBands.forEach(pl => { addLine(pl) })
+                            x.plotBands.forEach(pl => { addBand(pl) })
                     });
                 } else if (typeof (chartOptions.xAxis) == "object") {
                     if (Array.isArray(chartOptions.xAxis.plotBands) && chartOptions.xAxis.plotBands.length)
-                        chartOptions.xAxis.plotBands.forEach(pl => { addLine(pl) })
+                        chartOptions.xAxis.plotBands.forEach(pl => { addBand(pl) })
                 }
                 if (Array.isArray(chartOptions.yAxis)) {
                     chartOptions.yAxis.forEach((y, yIdx) => {
                         if (Array.isArray(y.plotBands) && y.plotBands.length)
-                            y.plotBands.forEach(pl => { addLine(pl) })
+                            y.plotBands.forEach(pl => { addBand(pl) })
                     });
                 }
             }
