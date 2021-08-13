@@ -487,7 +487,7 @@ var PowerupReporting = (function () {
         //draw options sections closed, fill in after click
         let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)", storyContent));
         let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background", foregroundContent));
-        let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments"));
+        let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments", highlightContent));
         let $trends = $(createSection("PowerupReportOptionsTrends", "Trendlines"));
         let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines", bandsAndLinesContent));
         let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations"));
@@ -884,7 +884,7 @@ var PowerupReporting = (function () {
                 .on(`click`, () => { addBand() })
                 .appendTo($buttons);
 
-            
+
             drawExistingPlotLines();
             drawExistingPlotBands();
             addRefreshButton($content);
@@ -1178,7 +1178,7 @@ var PowerupReporting = (function () {
                     $from.trigger('change');
                 });
 
-                let $toRow = $(`<tr><td>Value:</td><td></td></tr>`).appendTo($table);
+                let $toRow = $(`<tr><td>To:</td><td></td></tr>`).appendTo($table);
                 let $toRange = $(`<input type="range">`)
                     .appendTo($toRow.children().eq(1));
                 let $to = $(`<input type="text">`)
@@ -1281,6 +1281,223 @@ var PowerupReporting = (function () {
                     })
 
                 return band;
+            }
+        }
+
+        function highlightContent(content) {
+            let $content = $(content);
+            let $buttons = $(`<div>`)
+                .appendTo($content)
+                .addClass('powerupNoFlex');
+            let $highlights = $(`<div>`)
+                .appendTo($content)
+                .addClass('powerupNoFlex');
+            let $addHighlight = $(`<button>`)
+                .addClass('powerupButton')
+                .text(`+ Highlight`)
+                .on(`click`, () => { addHighlight() })
+                .appendTo($buttons);
+
+
+
+            drawExistingHighlights();
+            addRefreshButton($content);
+
+
+            function drawExistingHighlights() {
+                if (Array.isArray(chartOptions.series)) {
+                    chartOptions.series.forEach((s,sIdx) => {
+                        if(Array.isArray(s.highlights)){
+                            s.highlights.forEach(h => addHighlight(h))
+                        }
+                    })
+                }
+            }
+
+            function removeHighlightFromOptions(highlight) {
+                let series = chartOptions.series[highlight.seriesNum];
+                series.highlights = series.highlights.filter(x => x != highlight);
+
+                if(series.originalColor){
+                    series.color = series.originalColor;
+                    delete series.originalColor;
+                    series.data.forEach(d => { //delete only matching, in case there's other highlights
+                        if(typeof(d.x) != "undefined"){
+                            if(d.x >= highlight.from && d.x <= highlight.to){
+                                delete d.color;
+                            }
+                        }
+                    })
+                }
+            }
+
+            function addHighlightToOptions(highlight) {
+                let series = chartOptions.series[highlight.seriesNum];
+                if (!Array.isArray(series.highlights)) series.highlights = [];
+                series.highlights.push(highlight);
+
+                let originalColor;
+                if(series.originalColor){
+                    originalColor = series.originalColor;
+                } else {
+                    originalColor = series.color;
+                    series.originalColor = originalColor;
+                }
+                series.color = desaturate(originalColor);
+                series.data.forEach(d => {
+                    if(typeof(d.x) != "undefined"){
+                        if(d.x >= highlight.from && d.x <= highlight.to){
+                            d.color = highlight.color;
+                        }
+                    }
+                })
+            }
+
+            function addHighlight(highlight = null) {
+                if (highlight == null) {
+                    highlight = {
+                        color: null,
+                        seriesNum: 0,
+                        from: null,
+                        to: null
+                    }
+                }
+                let series, axis, min, max;
+
+                let $highlightDiv = $(`<div>`)
+                    .addClass('powerupLineConfig')
+                    .appendTo($highlights);
+                let $table = $(`<table>`).appendTo($highlightDiv);
+                let $header = $(`<tr><th></th><th>Highlight</th></tr>`).appendTo($table);
+
+
+                //Component: Series selector
+                let $seriesRow = $(`<tr><td>Series:</td><td></td></tr>`).appendTo($table);
+                let $seriesSelector = $(`<select>`).appendTo($seriesRow.children().eq(1));
+                pub.activeChart.series.forEach((s, sIdx) => {
+                    if (!s.visible) return;
+                    let $opt = $(`<option>`)
+                        .data('seriesNum', sIdx)
+                        .val(sIdx)
+                        .text(seriesName(s))
+                        .appendTo($seriesSelector);
+                });
+                
+
+                let $fromRow = $(`<tr><td>From:</td><td></td></tr>`).appendTo($table);
+                let $fromRange = $(`<input type="range">`)
+                    .appendTo($fromRow.children().eq(1));
+                let $from = $(`<input type="text">`)
+                    .val(highlight.from)
+                    .appendTo($fromRow.children().eq(1));
+                $fromRange.on('change', () => {
+                    $from.val($fromRange.val());
+                    $from.trigger('change');
+                });
+
+                let $toRow = $(`<tr><td>To:</td><td></td></tr>`).appendTo($table);
+                let $toRange = $(`<input type="range">`)
+                    .appendTo($toRow.children().eq(1));
+                let $to = $(`<input type="text">`)
+                    .val(highlight.to)
+                    .appendTo($toRow.children().eq(1));
+                $toRange.on('change', () => {
+                    $to.val($toRange.val());
+                    $to.trigger('change');
+                });
+
+                let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
+                let $colorPicker = $(`<input type="color">`)
+                    //.val(highlight.color)
+                    .appendTo($colorRow.children().eq(1));
+
+
+                //vals
+                $seriesSelector.on('change', () => {
+                    highlight.seriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
+
+                    series = pub.activeChart.series[highlight.seriesNum];
+                    axis = series.xAxis;
+                    min = axis.min;
+                    max = axis.max;
+                    if (highlight.from == null
+                        || highlight.from < min
+                        || highlight.from > max)
+                        highlight.from = min + ((max - min) / 4);
+                    if (highlight.to == null
+                        || highlight.to < min
+                        || highlight.to > max)
+                        highlight.to = max - ((max - min) / 4);
+
+                    if(highlight.color == null) {
+                        highlight.color = saturate(series.color);
+                    }
+                    $colorPicker.val(highlight.color);
+
+                    $fromRange
+                        .attr('min', min)
+                        .attr('max', max)
+                        .val(highlight.from)
+                        .trigger('change');
+                    $toRange
+                        .attr('min', min)
+                        .attr('max', max)
+                        .val(highlight.to)
+                        .trigger('change');
+
+                    removeHighlightFromOptions(highlight);
+                    addHighlightToOptions(highlight);
+
+                    if (axis && axis.isDatetimeAxis) {
+                        let $td = $fromRow.children().eq(1)
+                            .addClass('powerupTDTooltip');
+                        let $hover = $(`<div>`)
+                            .addClass('powerupTDTooltipText')
+                            .text(Date($from.val()).toString())
+                            .appendTo($td);
+                        $from.on('change', () => {
+                            $hover
+                                .text(Date($from.val()).toString());
+                        })
+
+                        $td = $toRow.children().eq(1)
+                            .addClass('powerupTDTooltip');
+                        $hover = $(`<div>`)
+                            .addClass('powerupTDTooltipText')
+                            .text(Date($td.val()).toString())
+                            .appendTo($td);
+                        $to.on('change', () => {
+                            $hover
+                                .text(Date($to.val()).toString());
+                        })
+                    } else {
+                        $fromRow.children().removeClass('powerupTDTooltip');
+                        $fromRow.find(`.powerupTDTooltipText`).remove();
+                        $toRow.children().removeClass('powerupTDTooltip');
+                        $toRow.find(`.powerupTDTooltipText`).remove();
+                    }
+                });
+                $seriesSelector
+                    .val(highlight.seriesNum)
+                    .trigger('change');
+
+                //update on change
+                $from.on('change', () => { highlight.from = $from.val() });
+                $to.on('change', () => { highlight.to = $to.val() });
+                $colorPicker.on('change', () => { highlight.color = $colorPicker.val() });
+
+                //delete button
+                let $remove = $(`<button>`)
+                    .addClass('powerupButton')
+                    .addClass('powerupCloseButton')
+                    .text('x')
+                    .appendTo($highlightDiv)
+                    .on('click', () => {
+                        removeHighlightFromOptions(highlight);
+                        $highlightDiv.remove();
+                    })
+
+                return highlight;
             }
         }
 
