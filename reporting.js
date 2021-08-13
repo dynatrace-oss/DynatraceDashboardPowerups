@@ -1346,7 +1346,7 @@ var PowerupReporting = (function () {
                     series.originalColor = originalColor;
                 }
                 series.color = desaturate(originalColor);
-                series.data.forEach(d => {
+                series.data.forEach((d,dIdx) => {
                     if (Array.isArray(d) && d.length == 2) { //data type 1: array of 2 element arrays
                         if (d[0] >= highlight.from && d[0] <= highlight.to) {
                             let newD = {};
