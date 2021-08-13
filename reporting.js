@@ -1445,7 +1445,7 @@ var PowerupReporting = (function () {
                         highlight.to = max - ((max - min) / 4);
 
                     if (highlight.color == null) {
-                        highlight.color = saturate(series.color,"hex");
+                        highlight.color = saturate(series.color, "hex");
                     }
                     $colorPicker.val(highlight.color);
 
@@ -1582,6 +1582,15 @@ var PowerupReporting = (function () {
         };
     };
 
+    const componentToHex = (c) => {
+        let hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+
+    const rgbToHex = (r, g, b) => {
+        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    }
+
     const desaturate = (color, format = "rbg") => {
         const factor = 0.25;
         if (typeof (d3) == "undefined") {
@@ -1599,9 +1608,10 @@ var PowerupReporting = (function () {
 
         switch (format) {
             case "hex":
-                return hsl.formatHex();
-            case "hsl":
-                return hsl.formatHsl();
+                let rbg = hsl.rbg();
+                return rgbToHex(rbg.r, rbg.b, rbg.g);
+            //case "hsl":
+            //    return hsl.formatHsl();
             case "d3":
                 return hsl;
             case "rbg":
@@ -1627,9 +1637,10 @@ var PowerupReporting = (function () {
 
         switch (format) {
             case "hex":
-                return hsl.formatHex();
-            case "hsl":
-                return hsl.formatHsl();
+                let rbg = hsl.rbg();
+                return rgbToHex(rbg.r, rbg.b, rbg.g);
+            //case "hsl":
+            //    return hsl.formatHsl();
             case "d3":
                 return hsl;
             case "rbg":
