@@ -1629,6 +1629,10 @@ var PowerupReporting = (function () {
         if (idx < 1) idx = name.indexOf('|'); //sometimes a broken pipe, sometimes a pipe
         if (idx > 0) name = name.substring(0, idx);
 
+        if(name == "" && typeof(series.index) !== "undefined")
+            name = `Series: ${series.index}`;
+
+
         //TODO: add DT API to get actual entity names
         return name;
     }
