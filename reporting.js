@@ -1591,7 +1591,7 @@ var PowerupReporting = (function () {
         return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
     }
 
-    const desaturate = (color, format = "rbg") => {
+    const desaturate = (color, format = "rgb") => {
         const factor = 0.25;
         if (typeof (d3) == "undefined") {
             console.log(`Powerup reporting: WARN - D3 unavailable`);
@@ -1608,19 +1608,19 @@ var PowerupReporting = (function () {
 
         switch (format) {
             case "hex":
-                let rbg = hsl.rbg();
-                return rgbToHex(rbg.r, rbg.b, rbg.g);
+                let rgb = hsl.rgb();
+                return rgbToHex(rgb.r, rgb.g, rgb.b);
             //case "hsl":
             //    return hsl.formatHsl();
             case "d3":
                 return hsl;
-            case "rbg":
+            case "rgb":
             default:
                 return hsl.toString();
         }
     }
 
-    const saturate = (color, format = "rbg") => {
+    const saturate = (color, format = "rgb") => {
         const factor = 1.75;
         if (typeof (d3) == "undefined") {
             console.log(`Powerup reporting: WARN - D3 unavailable`);
@@ -1637,13 +1637,13 @@ var PowerupReporting = (function () {
 
         switch (format) {
             case "hex":
-                let rbg = hsl.rbg();
-                return rgbToHex(rbg.r, rbg.b, rbg.g);
+                let rgb = hsl.rgb();
+                return rgbToHex(rgb.r, rgb.g, rgb.b);
             //case "hsl":
             //    return hsl.formatHsl();
             case "d3":
                 return hsl;
-            case "rbg":
+            case "rgb":
             default:
                 return hsl.toString();
         }
