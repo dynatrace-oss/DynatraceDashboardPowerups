@@ -1583,7 +1583,10 @@ var PowerupReporting = (function () {
     };
 
     const componentToHex = (c) => {
-        let hex = Math.round(c).toString(16);
+        let num = Math.round(c);
+        num = Math.min(num,255);
+        num = Math.max(num,0);
+        let hex = num.toString(16);
         return hex.length == 1 ? "0" + hex : hex;
     }
 
