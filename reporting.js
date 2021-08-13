@@ -1306,8 +1306,8 @@ var PowerupReporting = (function () {
 
             function drawExistingHighlights() {
                 if (Array.isArray(chartOptions.series)) {
-                    chartOptions.series.forEach((s,sIdx) => {
-                        if(Array.isArray(s.highlights)){
+                    chartOptions.series.forEach((s, sIdx) => {
+                        if (Array.isArray(s.highlights)) {
                             s.highlights.forEach(h => addHighlight(h))
                         }
                     })
@@ -1316,21 +1316,21 @@ var PowerupReporting = (function () {
 
             function removeHighlightFromOptions(highlight) {
                 let series = chartOptions.series[highlight.seriesNum];
-                if(Array.isArray(series.highlights)){
+                if (Array.isArray(series.highlights)) {
                     series.highlights = series.highlights.filter(x => x != highlight);
 
-                    if(series.originalColor){
+                    if (series.originalColor) {
                         series.color = series.originalColor;
                         delete series.originalColor;
-                        series.data.forEach(d => { //delete only matching, in case there's other highlights
-                            if(typeof(d.x) != "undefined"){
-                                if(d.x >= highlight.from && d.x <= highlight.to){
+                        series.data.forEach((d, dIdx) => { //delete only matching, in case there's other highlights
+                            if (typeof (d.x) != "undefined") {
+                                if (d.x >= highlight.from && d.x <= highlight.to) {
                                     delete d.color;
                                 }
                             }
                         })
                     }
-                }  
+                }
             }
 
             function addHighlightToOptions(highlight) {
@@ -1339,7 +1339,7 @@ var PowerupReporting = (function () {
                 series.highlights.push(highlight);
 
                 let originalColor;
-                if(series.originalColor){
+                if (series.originalColor) {
                     originalColor = series.originalColor;
                 } else {
                     originalColor = series.color;
@@ -1347,10 +1347,23 @@ var PowerupReporting = (function () {
                 }
                 series.color = desaturate(originalColor);
                 series.data.forEach(d => {
-                    if(typeof(d.x) != "undefined"){
-                        if(d.x >= highlight.from && d.x <= highlight.to){
+                    if (Array.isArray(d) && d.length == 2) { //data type 1: array of 2 element arrays
+                        if (d[0] >= highlight.from && d[0] <= highlight.to) {
+                            let newD = {};
+                            newD.x = d[0];
+                            newD.y = d[1];
+                            newD.color = highlight.color;
+                            series.data[dIdx] = newD; //switch to object
+                        }
+                    } else if (typeof (d) == "object") { //data type 2: object
+                        if (d.x >= highlight.from && d.x <= highlight.to) {
                             d.color = highlight.color;
                         }
+                    } else if (typeof (d.x) != "undefined") { //data type 3: primitive
+                        let newD = {};
+                        newD.y = d;
+                        newD.color = highlight.color;
+                        series.data[dIdx] = newD; //switch to object
                     }
                 })
             }
@@ -1384,7 +1397,7 @@ var PowerupReporting = (function () {
                         .text(seriesName(s))
                         .appendTo($seriesSelector);
                 });
-                
+
 
                 let $fromRow = $(`<tr><td>From:</td><td></td></tr>`).appendTo($table);
                 let $fromRange = $(`<input type="range">`)
@@ -1431,7 +1444,7 @@ var PowerupReporting = (function () {
                         || highlight.to > max)
                         highlight.to = max - ((max - min) / 4);
 
-                    if(highlight.color == null) {
+                    if (highlight.color == null) {
                         highlight.color = saturate(series.color);
                     }
                     $colorPicker.val(highlight.color);
