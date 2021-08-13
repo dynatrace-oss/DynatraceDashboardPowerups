@@ -1346,7 +1346,7 @@ var PowerupReporting = (function () {
                     series.originalColor = originalColor;
                 }
                 series.color = desaturate(originalColor);
-                series.data.forEach((d,dIdx) => {
+                series.data.forEach((d, dIdx) => {
                     if (Array.isArray(d) && d.length == 2) { //data type 1: array of 2 element arrays
                         if (d[0] >= highlight.from && d[0] <= highlight.to) {
                             let newD = {};
@@ -1445,7 +1445,7 @@ var PowerupReporting = (function () {
                         highlight.to = max - ((max - min) / 4);
 
                     if (highlight.color == null) {
-                        highlight.color = saturate(series.color);
+                        highlight.color = saturate(series.color,"hex");
                     }
                     $colorPicker.val(highlight.color);
 
@@ -1582,7 +1582,7 @@ var PowerupReporting = (function () {
         };
     };
 
-    const desaturate = (color) => {
+    const desaturate = (color, format = "rbg") => {
         const factor = 0.25;
         if (typeof (d3) == "undefined") {
             console.log(`Powerup reporting: WARN - D3 unavailable`);
@@ -1596,10 +1596,21 @@ var PowerupReporting = (function () {
         }
 
         hsl.s = hsl.s * factor;
-        return hsl.toString();
+
+        switch (format) {
+            case "hex":
+                return hsl.formatHex();
+            case "hsl":
+                return hsl.formatHsl();
+            case "d3":
+                return hsl;
+            case "rbg":
+            default:
+                return hsl.toString();
+        }
     }
 
-    const saturate = (color) => {
+    const saturate = (color, format = "rbg") => {
         const factor = 1.75;
         if (typeof (d3) == "undefined") {
             console.log(`Powerup reporting: WARN - D3 unavailable`);
@@ -1613,7 +1624,18 @@ var PowerupReporting = (function () {
         }
 
         hsl.s = hsl.s * factor;
-        return hsl.toString();
+
+        switch (format) {
+            case "hex":
+                return hsl.formatHex();
+            case "hsl":
+                return hsl.formatHsl();
+            case "d3":
+                return hsl;
+            case "rbg":
+            default:
+                return hsl.toString();
+        }
     }
 
     const seriesName = (series) => {
@@ -1629,7 +1651,7 @@ var PowerupReporting = (function () {
         if (idx < 1) idx = name.indexOf('|'); //sometimes a broken pipe, sometimes a pipe
         if (idx > 0) name = name.substring(0, idx);
 
-        if(name == "" && typeof(series.index) !== "undefined")
+        if (name == "" && typeof (series.index) !== "undefined")
             name = `Series: ${series.index}`;
 
 
