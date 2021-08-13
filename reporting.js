@@ -1316,19 +1316,21 @@ var PowerupReporting = (function () {
 
             function removeHighlightFromOptions(highlight) {
                 let series = chartOptions.series[highlight.seriesNum];
-                series.highlights = series.highlights.filter(x => x != highlight);
+                if(Array.isArray(series.highlights)){
+                    series.highlights = series.highlights.filter(x => x != highlight);
 
-                if(series.originalColor){
-                    series.color = series.originalColor;
-                    delete series.originalColor;
-                    series.data.forEach(d => { //delete only matching, in case there's other highlights
-                        if(typeof(d.x) != "undefined"){
-                            if(d.x >= highlight.from && d.x <= highlight.to){
-                                delete d.color;
+                    if(series.originalColor){
+                        series.color = series.originalColor;
+                        delete series.originalColor;
+                        series.data.forEach(d => { //delete only matching, in case there's other highlights
+                            if(typeof(d.x) != "undefined"){
+                                if(d.x >= highlight.from && d.x <= highlight.to){
+                                    delete d.color;
+                                }
                             }
-                        }
-                    })
-                }
+                        })
+                    }
+                }  
             }
 
             function addHighlightToOptions(highlight) {
