@@ -1456,6 +1456,7 @@ var PowerupReporting = (function () {
 
                 //vals
                 $seriesSelector.on('change', () => {
+                    removeHighlightFromOptions(highlight);
                     highlight.seriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
 
                     series = pub.activeChart.series[highlight.seriesNum];
@@ -1487,7 +1488,6 @@ var PowerupReporting = (function () {
                         .val(highlight.to)
                         .trigger('change');
 
-                    removeHighlightFromOptions(highlight);
                     addHighlightToOptions(highlight);
 
                     if (axis && axis.isDatetimeAxis) {
