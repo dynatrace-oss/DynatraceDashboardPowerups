@@ -1339,11 +1339,11 @@ var PowerupReporting = (function () {
                             }
                         })
                     }
-                    if(series.type == "line"){
+                    if (series.type == "line") {
                         //delete series.zoneAxis;
-                        if(Array.isArray(series.zones)) {
+                        if (Array.isArray(series.zones)) {
                             series.zones = series.zones
-                                .filter(x => 
+                                .filter(x =>
                                     x.hlID != highlight.id);
                         }
                     }
@@ -1386,9 +1386,9 @@ var PowerupReporting = (function () {
                         series.data[dIdx] = newD; //switch to object
                     }
                 })
-                if(series.type == "line"){
+                if (series.type == "line") {
                     series.zoneAxis = "x";
-                    if(!Array.isArray(series.zones)) series.zones = [];
+                    if (!Array.isArray(series.zones)) series.zones = [];
                     series.zones.push({
                         value: highlight.from,
                         hlID: highlight.id
@@ -1467,9 +1467,16 @@ var PowerupReporting = (function () {
                 //vals
                 $seriesSelector.on('change', () => {
                     removeHighlightFromOptions(highlight);
-                    highlight.seriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
+                    let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
 
-                    series = pub.activeChart.series[highlight.seriesNum];
+                    //set color
+                    if (highlight.color == null || newSeriesNum != highlight.seriesNum) {
+                        highlight.color = saturate(series.color, "hex");
+                    }
+                    $colorPicker.val(highlight.color);
+
+                    //set extremes
+                    series = pub.activeChart.series[newSeriesNum];
                     axis = series.xAxis;
                     min = axis.min;
                     max = axis.max;
@@ -1482,11 +1489,6 @@ var PowerupReporting = (function () {
                         || highlight.to > max)
                         highlight.to = max - ((max - min) / 4);
 
-                    //if (highlight.color == null) { //always do this
-                        highlight.color = saturate(series.color, "hex");
-                    //}
-                    $colorPicker.val(highlight.color);
-
                     $fromRange
                         .attr('min', min)
                         .attr('max', max)
@@ -1498,6 +1500,8 @@ var PowerupReporting = (function () {
                         .val(highlight.to)
                         .trigger('change');
 
+                    //add highlight
+                    highlight.seriesNum = newSeriesNum;
                     addHighlightToOptions(highlight);
 
                     if (axis && axis.isDatetimeAxis) {
@@ -1621,8 +1625,8 @@ var PowerupReporting = (function () {
 
     const componentToHex = (c) => {
         let num = Math.round(c);
-        num = Math.min(num,255);
-        num = Math.max(num,0);
+        num = Math.min(num, 255);
+        num = Math.max(num, 0);
         let hex = num.toString(16);
         return hex.length == 1 ? "0" + hex : hex;
     }
