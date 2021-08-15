@@ -1326,7 +1326,7 @@ var PowerupReporting = (function () {
                             if (typeof (d.x) != "undefined") {
                                 if (d.x >= highlight.from && d.x <= highlight.to) {
                                     delete d.color;
-                                    deleted.marker;
+                                    delete d.marker;
                                 }
                             }
                         })
