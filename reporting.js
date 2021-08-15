@@ -1326,10 +1326,19 @@ var PowerupReporting = (function () {
                             if (typeof (d.x) != "undefined") {
                                 if (d.x >= highlight.from && d.x <= highlight.to) {
                                     delete d.color;
-                                    delete d.marker;
+                                    //delete d.marker;
                                 }
                             }
                         })
+                    }
+                    if(series.type == "line"){
+                        delete series.zoneAxis;
+                        if(Array.isArray(series.zones)) {
+                            series.zones = series.zones
+                                .filter(x => 
+                                    x.value != highlight.from 
+                                    && x.value != highlight.to);
+                        }
                     }
                 }
             }
@@ -1354,22 +1363,33 @@ var PowerupReporting = (function () {
                             newD.x = d[0];
                             newD.y = d[1];
                             newD.color = highlight.color;
-                            newD.marker = highlight.marker;
+                            //newD.marker = highlight.marker;
                             series.data[dIdx] = newD; //switch to object
                         }
                     } else if (typeof (d) == "object") { //data type 2: object
                         if (d.x >= highlight.from && d.x <= highlight.to) {
                             d.color = highlight.color;
-                            d.marker = highlight.marker;
+                            //d.marker = highlight.marker;
                         }
                     } else if (typeof (d.x) != "undefined") { //data type 3: primitive
                         let newD = {};
                         newD.y = d;
                         newD.color = highlight.color;
-                        newD.marker = highlight.marker;
+                        //newD.marker = highlight.marker;
                         series.data[dIdx] = newD; //switch to object
                     }
                 })
+                if(series.type == "line"){
+                    series.zoneAxis = "x";
+                    if(!Array.isArray(series.zones)) series.zones = [];
+                    series.zones.push({
+                        value: highlight.from
+                    });
+                    series.zones.push({
+                        value: highlight.to,
+                        color: highlight.color
+                    });
+                }
             }
 
             function addHighlight(highlight = null) {
@@ -1379,9 +1399,9 @@ var PowerupReporting = (function () {
                         seriesNum: 0,
                         from: null,
                         to: null,
-                        marker: {
-                            enabled: true
-                        }
+                        //marker: {
+                        //    enabled: true
+                        //}
                     }
                 }
                 let series, axis, min, max;
