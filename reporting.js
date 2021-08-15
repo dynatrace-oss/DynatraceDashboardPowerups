@@ -1326,6 +1326,7 @@ var PowerupReporting = (function () {
                             if (typeof (d.x) != "undefined") {
                                 if (d.x >= highlight.from && d.x <= highlight.to) {
                                     delete d.color;
+                                    deleted.marker;
                                 }
                             }
                         })
@@ -1353,16 +1354,19 @@ var PowerupReporting = (function () {
                             newD.x = d[0];
                             newD.y = d[1];
                             newD.color = highlight.color;
+                            newD.marker = highlight.marker;
                             series.data[dIdx] = newD; //switch to object
                         }
                     } else if (typeof (d) == "object") { //data type 2: object
                         if (d.x >= highlight.from && d.x <= highlight.to) {
                             d.color = highlight.color;
+                            d.marker = highlight.marker;
                         }
                     } else if (typeof (d.x) != "undefined") { //data type 3: primitive
                         let newD = {};
                         newD.y = d;
                         newD.color = highlight.color;
+                        newD.marker = highlight.marker;
                         series.data[dIdx] = newD; //switch to object
                     }
                 })
@@ -1374,7 +1378,10 @@ var PowerupReporting = (function () {
                         color: null,
                         seriesNum: 0,
                         from: null,
-                        to: null
+                        to: null,
+                        marker: {
+                            enabled: true
+                        }
                     }
                 }
                 let series, axis, min, max;
