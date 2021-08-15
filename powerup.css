@@ -815,9 +815,9 @@ textarea.powerupPreviewOptions {
   border-bottom: red 3px solid;
 }
 
-#PowerupReportGeneratorHiddenCopy > div {
+/*#PowerupReportGeneratorHiddenCopy > div {
   display: none;
-}
+}*/
 
 button.powerupExpandable {
   border: none;
