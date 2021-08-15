@@ -1485,7 +1485,7 @@ var PowerupReporting = (function () {
                     //add highlight
                     removeHighlightFromOptions(highlight);
                     highlight.seriesNum = newSeriesNum;
-                    addHighlightToOptions(highlight);
+                    $axisSelector.trigger('change');
                 });
 
                 $axisSelector.on('change', () => {
@@ -1545,7 +1545,12 @@ var PowerupReporting = (function () {
                         $toRow.children().removeClass('powerupTDTooltip');
                         $toRow.find(`.powerupTDTooltipText`).remove();
                     }
+
+                    removeHighlightFromOptions(highlight);
+                    addHighlightToOptions(highlight);
                 })
+
+                //initial load
                 $seriesSelector
                     .val(highlight.seriesNum)
                     .trigger('change');
