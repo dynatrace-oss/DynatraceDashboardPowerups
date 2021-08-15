@@ -1387,7 +1387,7 @@ var PowerupReporting = (function () {
                     }
                 })
                 if (series.type == "line") {
-                    series.zoneAxis = "x";
+                    series.zoneAxis = highlight.axis;
                     if (!Array.isArray(series.zones)) series.zones = [];
                     series.zones.push({
                         value: highlight.from,
@@ -1407,11 +1407,9 @@ var PowerupReporting = (function () {
                         id: 'HL' + uniqId(),
                         color: null,
                         seriesNum: 0,
+                        axis: "x",
                         from: null,
                         to: null,
-                        //marker: {
-                        //    enabled: true
-                        //}
                     }
                 }
                 let series, axis, min, max;
@@ -1435,6 +1433,14 @@ var PowerupReporting = (function () {
                         .appendTo($seriesSelector);
                 });
 
+                let $axisRow = $(`<tr><td>Axis:</td><td></td></tr>`).appendTo($table);
+                let $axisSelector = $(`
+                <select>
+                    <option>x</option>
+                    <option>y</option>
+                </select>`)
+                    .val(highlight.axis)
+                    .appendTo($axisRow.children().eq(1));
 
                 let $fromRow = $(`<tr><td>From:</td><td></td></tr>`).appendTo($table);
                 let $fromRange = $(`<input type="range">`)
@@ -1475,8 +1481,18 @@ var PowerupReporting = (function () {
                     }
                     $colorPicker.val(highlight.color);
 
+                    //add highlight
+                    removeHighlightFromOptions(highlight);
+                    highlight.seriesNum = newSeriesNum;
+                    addHighlightToOptions(highlight);
+                });
+
+                $axisSelector.on('change', () => {
                     //set extremes
-                    axis = series.xAxis;
+                    if(highlight.axis == "x")
+                        axis = series.xAxis;
+                    else if(highlight.axis == "y")
+                        axis = series.yAxis;
                     min = axis.min;
                     max = axis.max;
                     if (highlight.from == null
@@ -1498,11 +1514,6 @@ var PowerupReporting = (function () {
                         .attr('max', max)
                         .val(highlight.to)
                         .trigger('change');
-
-                    //add highlight
-                    removeHighlightFromOptions(highlight);
-                    highlight.seriesNum = newSeriesNum;
-                    addHighlightToOptions(highlight);
 
                     if (axis && axis.isDatetimeAxis) {
                         let $td = $fromRow.children().eq(1)
@@ -1532,23 +1543,25 @@ var PowerupReporting = (function () {
                         $toRow.children().removeClass('powerupTDTooltip');
                         $toRow.find(`.powerupTDTooltipText`).remove();
                     }
-                });
+                })
                 $seriesSelector
                     .val(highlight.seriesNum)
                     .trigger('change');
+                $axisSelector
+                    .trigger('change');
 
                 //update on change (must readd to chart to update zones)
-                $from.on('change', () => { 
+                $from.on('change', () => {
                     highlight.from = $from.val();
                     removeHighlightFromOptions(highlight);
-                    addHighlightToOptions(highlight); 
+                    addHighlightToOptions(highlight);
                 });
-                $to.on('change', () => { 
+                $to.on('change', () => {
                     highlight.to = $to.val();
                     removeHighlightFromOptions(highlight);
                     addHighlightToOptions(highlight);
                 });
-                $colorPicker.on('change', () => { 
+                $colorPicker.on('change', () => {
                     highlight.color = $colorPicker.val();
                     removeHighlightFromOptions(highlight);
                     addHighlightToOptions(highlight);
