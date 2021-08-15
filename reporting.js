@@ -335,6 +335,7 @@ var PowerupReporting = (function () {
                         previewSVG = function (svg, i, chartOptions, result = null) {
                             let p = $.Deferred();  //expecting {refresh: bool, id: string}
                             pub.activeChart = charts[i];
+                            pub.chartOptions = chartOptions;
 
                             if (!fastForward) {
                                 $previewTitle.html(`<h4>Chart ${i}:</h4>`);
