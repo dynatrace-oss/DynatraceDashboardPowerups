@@ -980,3 +980,8 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   border-style: solid;
   border-color:  #00a1b2 transparent transparent transparent;
 }
+
+.powerupOptionsButtonBar {
+  flex: 0;
+  padding: 5px;
+}

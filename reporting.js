@@ -1288,7 +1288,7 @@ var PowerupReporting = (function () {
             let $content = $(content);
             let $buttons = $(`<div>`)
                 .appendTo($content)
-                .addClass('powerupNoFlex');
+                .addClass('powerupOptionsButtonBar');
             let $highlights = $(`<div>`)
                 .appendTo($content)
                 .addClass('powerupNoFlex');
@@ -1471,9 +1471,9 @@ var PowerupReporting = (function () {
                         || highlight.to > max)
                         highlight.to = max - ((max - min) / 4);
 
-                    if (highlight.color == null) {
+                    //if (highlight.color == null) { //always do this
                         highlight.color = saturate(series.color, "hex");
-                    }
+                    //}
                     $colorPicker.val(highlight.color);
 
                     $fromRange
