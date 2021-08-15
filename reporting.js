@@ -1488,6 +1488,7 @@ var PowerupReporting = (function () {
                 });
 
                 $axisSelector.on('change', () => {
+                    highlight.axis = $axisSelector.val();
                     //set extremes
                     if(highlight.axis == "x")
                         axis = series.xAxis;
