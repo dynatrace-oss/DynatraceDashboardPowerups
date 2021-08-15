@@ -1537,10 +1537,22 @@ var PowerupReporting = (function () {
                     .val(highlight.seriesNum)
                     .trigger('change');
 
-                //update on change
-                $from.on('change', () => { highlight.from = $from.val() });
-                $to.on('change', () => { highlight.to = $to.val() });
-                $colorPicker.on('change', () => { highlight.color = $colorPicker.val() });
+                //update on change (must readd to chart to update zones)
+                $from.on('change', () => { 
+                    highlight.from = $from.val();
+                    removeHighlightFromOptions(highlight);
+                    addHighlightToOptions(highlight); 
+                });
+                $to.on('change', () => { 
+                    highlight.to = $to.val();
+                    removeHighlightFromOptions(highlight);
+                    addHighlightToOptions(highlight);
+                });
+                $colorPicker.on('change', () => { 
+                    highlight.color = $colorPicker.val();
+                    removeHighlightFromOptions(highlight);
+                    addHighlightToOptions(highlight);
+                });
 
                 //delete button
                 let $remove = $(`<button>`)
