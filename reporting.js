@@ -1468,6 +1468,7 @@ var PowerupReporting = (function () {
                 $seriesSelector.on('change', () => {
                     removeHighlightFromOptions(highlight);
                     let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
+                    series = pub.activeChart.series[newSeriesNum];
 
                     //set color
                     if (highlight.color == null || newSeriesNum != highlight.seriesNum) {
@@ -1476,7 +1477,6 @@ var PowerupReporting = (function () {
                     $colorPicker.val(highlight.color);
 
                     //set extremes
-                    series = pub.activeChart.series[newSeriesNum];
                     axis = series.xAxis;
                     min = axis.min;
                     max = axis.max;
