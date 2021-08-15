@@ -8,6 +8,14 @@ Unless required by applicable law or agreed to in writing, software distributed 
 */
 var PowerupReporting = (function () {
 
+    var uniqId = (function () {
+        //usage: let myId = uniqId();
+        var i = 0;
+        return function () {
+            return i++;
+        }
+    })();
+
     //Public methods
     var pub = {};
 
@@ -1332,12 +1340,11 @@ var PowerupReporting = (function () {
                         })
                     }
                     if(series.type == "line"){
-                        delete series.zoneAxis;
+                        //delete series.zoneAxis;
                         if(Array.isArray(series.zones)) {
                             series.zones = series.zones
                                 .filter(x => 
-                                    x.value != highlight.from 
-                                    && x.value != highlight.to);
+                                    x.hlID != highlight.id);
                         }
                     }
                 }
@@ -1383,11 +1390,13 @@ var PowerupReporting = (function () {
                     series.zoneAxis = "x";
                     if(!Array.isArray(series.zones)) series.zones = [];
                     series.zones.push({
-                        value: highlight.from
+                        value: highlight.from,
+                        hlID: highlight.id
                     });
                     series.zones.push({
                         value: highlight.to,
-                        color: highlight.color
+                        color: highlight.color,
+                        hlID: highlight.id
                     });
                 }
             }
@@ -1395,6 +1404,7 @@ var PowerupReporting = (function () {
             function addHighlight(highlight = null) {
                 if (highlight == null) {
                     highlight = {
+                        id: 'HL' + uniqId(),
                         color: null,
                         seriesNum: 0,
                         from: null,
