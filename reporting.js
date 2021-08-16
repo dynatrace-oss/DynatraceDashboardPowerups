@@ -1485,6 +1485,19 @@ var PowerupReporting = (function () {
                     //add highlight
                     removeHighlightFromOptions(highlight);
                     highlight.seriesNum = newSeriesNum;
+
+                    //handle axis
+                    let existingAxis = series.highlights
+                        .filter(h => h != highlight)
+                        .map(h => h.axis);
+                    if(Array.isArray(existingAxis) && existingAxis.length){
+                        $axisSelector
+                            .val(existingAxis[0])
+                            .prop('disabled',true);
+                    } else {
+                        $axisSelector
+                            .prop('disabled',false);
+                    }
                     $axisSelector.trigger('change');
                 });
 
