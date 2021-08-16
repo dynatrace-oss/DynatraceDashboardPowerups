@@ -1559,12 +1559,16 @@ var PowerupReporting = (function () {
 
                 //update on change (must readd to chart to update zones)
                 $from.on('change', () => {
-                    highlight.from = $from.val();
+                    let val = $from.val();
+                    let num = Number(val);
+                    highlight.from = (isNaN(num)?num:val);
                     removeHighlightFromOptions(highlight);
                     addHighlightToOptions(highlight);
                 });
                 $to.on('change', () => {
-                    highlight.to = $to.val();
+                    let val = $to.val();
+                    let num = Number(val);
+                    highlight.to = (isNaN(num)?num:val);
                     removeHighlightFromOptions(highlight);
                     addHighlightToOptions(highlight);
                 });
