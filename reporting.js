@@ -1487,8 +1487,9 @@ var PowerupReporting = (function () {
                     highlight.seriesNum = newSeriesNum;
 
                     //handle axis
-                    if(!Array.isArray(series.highlights)) series.highlights = [];
-                    let existingAxis = series.highlights
+                    if(!Array.isArray(chartOptions.series[highlight.seriesNum].highlights)) 
+                        chartOptions.series[highlight.seriesNum].highlights = [];
+                    let existingAxis = chartOptions.series[highlight.seriesNum].highlights
                         .filter(h => h != highlight)
                         .map(h => h.axis);
                     if(Array.isArray(existingAxis) && existingAxis.length){
