@@ -1665,7 +1665,7 @@ var PowerupReporting = (function () {
                             }]
                     }
                 }
-                let series, axis, min, max, 
+                let series, axis, xmin, xmax, ymin, ymax, 
                     point = annotation.labels[0].point;
 
                 let $annotationDiv = $(`<div>`)
@@ -1727,12 +1727,14 @@ var PowerupReporting = (function () {
 
                     //add annotation
                     axis = series.xAxis;
-                    min = axis.min;
-                    max = axis.max;
+                    xmin = axis.min;
+                    xmax = axis.max;
+                    ymin = series.yAxis.min;
+                    ymax = series.yAxis.max;
                     if (point.x == null
-                        || point.x < min
-                        || point.x > max){
-                            let goal = min + ((max - min) / 2);
+                        || point.x < xmin
+                        || point.x > xmax){
+                            let goal = xmin + ((xmax - xmin) / 2);
                             let dataPoint = series.data //find closest point
                                 .reduce((prev,curr)=>Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
                             point.x = dataPoint.x;
@@ -1741,13 +1743,13 @@ var PowerupReporting = (function () {
 
 
                     $xRange
-                        .attr('min', min)
-                        .attr('max', max)
+                        .attr('min', xmin)
+                        .attr('max', xmax)
                         .val(point.x)
                         .trigger('change');
                     $yRange
-                        .attr('min', min)
-                        .attr('max', max)
+                        .attr('min', ymin)
+                        .attr('max', ymax)
                         .val(point.y)
                         .trigger('change');
 
