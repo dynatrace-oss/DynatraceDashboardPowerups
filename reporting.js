@@ -1659,7 +1659,7 @@ var PowerupReporting = (function () {
                                 y: null
                             },
                             text: 'x: {x}<br/>y: {y}',
-                            backgroundColor: 'rbga(255,249,213,0.5)'
+                            backgroundColor: 'rgba(255,249,213,0.5)'
                         }]
                     }
                 }
