@@ -217,6 +217,7 @@ if (typeof (INJECTED) == "undefined") {
                 tablePU: true,
                 honeycombPU: true,
                 treemapPU: true,
+                reporting: true,
                 debug: false,
                 colorPUTarget: "Text",
                 animateCritical: "3 Pulses",
@@ -328,6 +329,8 @@ if (typeof (INJECTED) == "undefined") {
             injectHighchartsModule("tilemap");
         if (config.Powerups.treemapPU)
             injectHighchartsModule("treemap");
+        if (config.Powerups.reporting)
+            injectHighchartsModule("annotations");
     }
 
     function injectD3Modules(config) {
