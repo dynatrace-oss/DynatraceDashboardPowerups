@@ -499,7 +499,7 @@ var PowerupReporting = (function () {
         let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments", highlightContent));
         let $trends = $(createSection("PowerupReportOptionsTrends", "Trendlines"));
         let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines", bandsAndLinesContent));
-        let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations"));
+        let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations", annotationContent));
         let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative", narrativeContent));
         let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter", declutterContent));
         let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert mode)", jsonContent));
@@ -1608,6 +1608,231 @@ var PowerupReporting = (function () {
             }
         }
 
+        function annotationContent(content) {
+            let $content = $(content);
+            let $buttons = $(`<div>`)
+                .appendTo($content)
+                .addClass('powerupOptionsButtonBar');
+            let $annotations = $(`<div>`)
+                .appendTo($content)
+                .addClass('powerupNoFlex');
+            let $addAnnotation = $(`<button>`)
+                .addClass('powerupButton')
+                .text(`+ Annotation`)
+                .on(`click`, () => { addAnnotation() })
+                .appendTo($buttons);
+
+
+
+            drawExistingAnnotations();
+            addRefreshButton($content);
+
+
+            function drawExistingAnnotations() {
+                if (Array.isArray(chartOptions.annotations)) {
+                    chartOptions.annotations.forEach((a, aIdx) => {
+                            a.forEach(h => addAnnotation(a))
+                    })
+                }
+            }
+
+            function removeAnnotationFromOptions(annotation) {
+                if (Array.isArray(chartOptions.annotations)) {
+                    chartOptions.annotations = chartOptions.annotations.filter(x => x != annotation);
+                }
+            }
+
+            function addAnnotationToOptions(annotation) {
+                if (!Array.isArray(chartOptions.annotations)) chartOptions.annotations = [];
+                if(!chartOptions.annotations.includes(annotation))
+                    chartOptions.annotations.push(annotation);
+            }
+
+            function addAnnotation(annotation = null) {
+                if (annotation == null) {
+                    annotation = {
+                        id: 'a' + uniqId(),
+                        seriesNum: 0,
+                        labels: [{
+                                point: {
+                                    xAxis: 0,
+                                    yAxis: 0,
+                                    x: null,
+                                    y: null
+                                },
+                                text: 'x: {x}<br/>y: {y}',
+                                backgroundColor: 'rbga(0,0,0,0.75)'
+                            }]
+                    }
+                }
+                let series, axis, min, max, 
+                    point = annotation.labels[0].point;
+
+                let $annotationDiv = $(`<div>`)
+                    .addClass('powerupLineConfig')
+                    .appendTo($annotations);
+                let $table = $(`<table>`).appendTo($annotationDiv);
+                let $header = $(`<tr><th></th><th>Annotation</th></tr>`).appendTo($table);
+
+
+                //Component: Series selector
+                let $seriesRow = $(`<tr><td>Series:</td><td></td></tr>`).appendTo($table);
+                let $seriesSelector = $(`<select>`).appendTo($seriesRow.children().eq(1));
+                pub.activeChart.series.forEach((s, sIdx) => {
+                    if (!s.visible) return;
+                    let $opt = $(`<option>`)
+                        .data('seriesNum', sIdx)
+                        .val(sIdx)
+                        .text(seriesName(s))
+                        .appendTo($seriesSelector);
+                });
+
+                let $xRow = $(`<tr><td>X:</td><td></td></tr>`).appendTo($table);
+                let $xRange = $(`<input type="range">`)
+                    .appendTo($xRow.children().eq(1));
+                let $x = $(`<input type="text">`)
+                    .val(point.x)
+                    .appendTo($xRow.children().eq(1));
+                $xRange.on('change', () => {
+                    $x.val($xRange.val());
+                    $x.trigger('change');
+                });
+
+                let $yRow = $(`<tr><td>Y:</td><td></td></tr>`).appendTo($table);
+                let $yRange = $(`<input type="range">`)
+                    .appendTo($yRow.children().eq(1));
+                let $y = $(`<input type="text">`)
+                    .val(point.y)
+                    .appendTo($yRow.children().eq(1));
+                $yRange.on('change', () => {
+                    $y.val($yRange.val());
+                    $y.trigger('change');
+                });
+
+                let $colorRow = $(`<tr><td>Background:</td><td></td></tr>`).appendTo($table);
+                let $colorPicker = $(`<input type="color">`)
+                    .val(colorToHex(annotation.labels[0].backgroundColor))
+                    .appendTo($colorRow.children().eq(1));
+
+                let $textRow = $(`<tr><td>Text:</td><td></td></tr>`).appendTo($table);
+                let $text = $(`<input type="text">`)
+                    .val(annotation.labels[0].text)
+                    .appendTo($textRow.children().eq(1));
+
+                //vals
+                $seriesSelector.on('change', () => {
+                    let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
+                    series = pub.activeChart.series[newSeriesNum];
+                    annotation.seriesNum = newSeriesNum;
+
+                    //add annotation
+                    axis = series.xAxis;
+                    min = axis.min;
+                    max = axis.max;
+                    if (point.x == null
+                        || point.x < min
+                        || point.x > max){
+                            let goal = min + ((max - min) / 2);
+                            let dataPoint = series.data //find closest point
+                                .reduce((prev,curr)=>Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
+                            point.x = dataPoint.x;
+                            point.y = dataPoint.y;
+                        }
+
+
+                    $xRange
+                        .attr('min', min)
+                        .attr('max', max)
+                        .val(point.x)
+                        .trigger('change');
+                    $yRange
+                        .attr('min', min)
+                        .attr('max', max)
+                        .val(point.y)
+                        .trigger('change');
+
+                    if (axis && axis.isDatetimeAxis) {
+                        let $td = $xRow.children().eq(1)
+                            .addClass('powerupTDTooltip');
+                        let $hover = $(`<div>`)
+                            .addClass('powerupTDTooltipText')
+                            .text(Date($x.val()).toString())
+                            .appendTo($td);
+                        $x.on('change', () => {
+                            $hover
+                                .text(Date($x.val()).toString());
+                        })
+
+                        $td = $yRow.children().eq(1)
+                            .addClass('powerupTDTooltip');
+                        $hover = $(`<div>`)
+                            .addClass('powerupTDTooltipText')
+                            .text(Date($td.val()).toString())
+                            .appendTo($td);
+                        $y.on('change', () => {
+                            $hover
+                                .text(Date($y.val()).toString());
+                        })
+                    } else {
+                        $xRow.children().removeClass('powerupTDTooltip');
+                        $xRow.find(`.powerupTDTooltipText`).remove();
+                        $yRow.children().removeClass('powerupTDTooltip');
+                        $yRow.find(`.powerupTDTooltipText`).remove();
+                    }
+
+                    addAnnotationToOptions(annotation);
+                });
+
+                    
+
+                //initial load
+                $seriesSelector
+                    .val(annotation.seriesNum)
+                    .trigger('change');
+
+                //update on change 
+                $x.on('change', () => {
+                    let val = $x.val();
+                    let goal = Number(val);
+                    if(isNaN(goal)){
+                        point.x = goal;
+                    } else {
+                        let dataPoint = series.data //find closest point
+                                .reduce((prev,curr)=>Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
+                        point.x = dataPoint.x;
+                        point.y = dataPoint.y;
+                        $x.val(point.x);
+                    }
+                });
+                $y.on('change', () => {
+                    let val = $y.val();
+                    let num = Number(val);
+                    point.y = (isNaN(num)?num:val);
+                });
+                $colorPicker.on('change', () => {
+                    let color = $colorPicker.val();
+                    let rgb = d3.rgb(color);
+                    annotation.labels[0].backgroundColor = `rgba(${rgb.r},${rgb.g},${rgb.b},0.75)`;
+                });
+                $text.on('change', () => {
+                    annotation.labels[0].text = $text.val();
+                })
+
+                //delete button
+                let $remove = $(`<button>`)
+                    .addClass('powerupButton')
+                    .addClass('powerupCloseButton')
+                    .text('x')
+                    .appendTo($annotationDiv)
+                    .on('click', () => {
+                        removeAnnotationFromOptions(annotation);
+                        $annotationDiv.remove();
+                    })
+
+                return annotation;
+            }
+        }
+
         function notYetImplemented() {
             alert(`Not yet implemented...`);
         }
@@ -1684,6 +1909,11 @@ var PowerupReporting = (function () {
 
     const rgbToHex = (r, g, b) => {
         return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    }
+
+    const colorToHex = (s) => {
+        let c = d3.rgb(s);
+        return rgbToHex(c.r, c.g, c.b);
     }
 
     const desaturate = (color, format = "rgb") => {
