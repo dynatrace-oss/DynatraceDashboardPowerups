@@ -1487,18 +1487,18 @@ var PowerupReporting = (function () {
                     highlight.seriesNum = newSeriesNum;
 
                     //handle axis
-                    if(!Array.isArray(chartOptions.series[highlight.seriesNum].highlights)) 
+                    if (!Array.isArray(chartOptions.series[highlight.seriesNum].highlights))
                         chartOptions.series[highlight.seriesNum].highlights = [];
                     let existingAxis = chartOptions.series[highlight.seriesNum].highlights
                         .filter(h => h != highlight)
                         .map(h => h.axis);
-                    if(Array.isArray(existingAxis) && existingAxis.length){
+                    if (Array.isArray(existingAxis) && existingAxis.length) {
                         $axisSelector
                             .val(existingAxis[0])
-                            .prop('disabled',true);
+                            .prop('disabled', true);
                     } else {
                         $axisSelector
-                            .prop('disabled',false);
+                            .prop('disabled', false);
                     }
                     $axisSelector.trigger('change');
                 });
@@ -1506,9 +1506,9 @@ var PowerupReporting = (function () {
                 $axisSelector.on('change', () => {
                     highlight.axis = $axisSelector.val();
                     //set extremes
-                    if(highlight.axis == "x")
+                    if (highlight.axis == "x")
                         axis = series.xAxis;
-                    else if(highlight.axis == "y")
+                    else if (highlight.axis == "y")
                         axis = series.yAxis;
                     min = axis.min;
                     max = axis.max;
@@ -1576,14 +1576,14 @@ var PowerupReporting = (function () {
                 $from.on('change', () => {
                     let val = $from.val();
                     let num = Number(val);
-                    highlight.from = (isNaN(num)?num:val);
+                    highlight.from = (isNaN(num) ? num : val);
                     removeHighlightFromOptions(highlight);
                     addHighlightToOptions(highlight);
                 });
                 $to.on('change', () => {
                     let val = $to.val();
                     let num = Number(val);
-                    highlight.to = (isNaN(num)?num:val);
+                    highlight.to = (isNaN(num) ? num : val);
                     removeHighlightFromOptions(highlight);
                     addHighlightToOptions(highlight);
                 });
@@ -1631,7 +1631,7 @@ var PowerupReporting = (function () {
             function drawExistingAnnotations() {
                 if (Array.isArray(chartOptions.annotations)) {
                     chartOptions.annotations.forEach((a, aIdx) => {
-                            a.forEach(h => addAnnotation(a))
+                        a.forEach(h => addAnnotation(a))
                     })
                 }
             }
@@ -1644,7 +1644,7 @@ var PowerupReporting = (function () {
 
             function addAnnotationToOptions(annotation) {
                 if (!Array.isArray(chartOptions.annotations)) chartOptions.annotations = [];
-                if(!chartOptions.annotations.includes(annotation))
+                if (!chartOptions.annotations.includes(annotation))
                     chartOptions.annotations.push(annotation);
             }
 
@@ -1654,18 +1654,18 @@ var PowerupReporting = (function () {
                         id: 'a' + uniqId(),
                         seriesNum: 0,
                         labels: [{
-                                point: {
-                                    xAxis: 0,
-                                    yAxis: 0,
-                                    x: null,
-                                    y: null
-                                },
-                                text: 'x: {x}<br/>y: {y}',
-                                backgroundColor: 'rbga(0,0,0,0.75)'
-                            }]
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: null,
+                                y: null
+                            },
+                            text: 'x: {x}<br/>y: {y}',
+                            backgroundColor: 'rbga(0,0,0,0.75)'
+                        }]
                     }
                 }
-                let series, axis, xmin, xmax, ymin, ymax, 
+                let series, axis, xmin, xmax, ymin, ymax,
                     point = annotation.labels[0].point;
 
                 let $annotationDiv = $(`<div>`)
@@ -1733,13 +1733,13 @@ var PowerupReporting = (function () {
                     ymax = series.yAxis.max;
                     if (point.x == null
                         || point.x < xmin
-                        || point.x > xmax){
-                            let goal = xmin + ((xmax - xmin) / 2);
-                            let dataPoint = series.data //find closest point
-                                .reduce((prev,curr)=>Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
-                            point.x = dataPoint.x;
-                            point.y = dataPoint.y;
-                        }
+                        || point.x > xmax) {
+                        let goal = xmin + ((xmax - xmin) / 2);
+                        let dataPoint = series.data //find closest point
+                            .reduce((prev, curr) => Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
+                        point.x = dataPoint.x;
+                        point.y = dataPoint.y;
+                    }
 
 
                     $xRange
@@ -1785,7 +1785,7 @@ var PowerupReporting = (function () {
                     addAnnotationToOptions(annotation);
                 });
 
-                    
+
 
                 //initial load
                 $seriesSelector
@@ -1796,20 +1796,24 @@ var PowerupReporting = (function () {
                 $x.on('change', () => {
                     let val = $x.val();
                     let goal = Number(val);
-                    if(isNaN(goal)){
+                    if (isNaN(goal)) {
                         point.x = goal;
                     } else {
                         let dataPoint = series.data //find closest point
-                                .reduce((prev,curr)=>Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
+                            .reduce((prev, curr) => Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
                         point.x = dataPoint.x;
                         point.y = dataPoint.y;
                         $x.val(point.x);
+
+                        $yRange
+                            .val(point.y)
+                            .trigger('change');
                     }
                 });
                 $y.on('change', () => {
                     let val = $y.val();
                     let num = Number(val);
-                    point.y = (isNaN(num)?num:val);
+                    point.y = (isNaN(num) ? num : val);
                 });
                 $colorPicker.on('change', () => {
                     let color = $colorPicker.val();

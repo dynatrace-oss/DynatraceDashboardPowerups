@@ -733,10 +733,10 @@ table.powerupActionPopup tr > *:nth-of-type(4) {
 
 .powerupButton,
 .powerupButton:visited {
-  width: 70px;
+  min-width: 70px;
   height: 22px;
   margin: 5px 10px 5px auto;
-  padding: 2px 0px;
+  padding: 2px 2px;
   color: #00a1b2;
   font-size: 14px;
   border: #00a1b2 1px solid;
@@ -864,10 +864,10 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   margin-top: 5px;
 }
 
-.powerupOptionsContent {
+/*.powerupOptionsContent {
   display: flex;
   flex-direction: column;
-}
+}*/
 
 .powerupOptionsContent > div:not([class]) {
   display: flex;
