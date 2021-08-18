@@ -1659,7 +1659,7 @@ var PowerupReporting = (function () {
                                 y: null
                             },
                             text: 'x: {x}<br/>y: {y}',
-                            backgroundColor: 'rbga(0,0,0,0.75)'
+                            backgroundColor: 'rbga(255,249,213,0.5)'
                         }]
                     }
                 }
@@ -1816,7 +1816,7 @@ var PowerupReporting = (function () {
                 $colorPicker.on('change', () => {
                     let color = $colorPicker.val();
                     let rgb = d3.rgb(color);
-                    annotation.labels[0].backgroundColor = `rgba(${rgb.r},${rgb.g},${rgb.b},0.75)`;
+                    annotation.labels[0].backgroundColor = `rgba(${rgb.r},${rgb.g},${rgb.b},0.5)`;
                 });
                 $text.on('change', () => {
                     annotation.labels[0].text = $text.val();
