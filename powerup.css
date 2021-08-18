@@ -767,6 +767,7 @@ table.powerupActionPopup tr > *:nth-of-type(4) {
 
 .powerupButton.powerupCloseButton {
   width: 22px;
+  min-width: 22px;
   height: 22px;
   position: absolute;
   top: 2px;

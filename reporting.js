@@ -1630,9 +1630,7 @@ var PowerupReporting = (function () {
 
             function drawExistingAnnotations() {
                 if (Array.isArray(chartOptions.annotations)) {
-                    chartOptions.annotations.forEach((a, aIdx) => {
-                        a.forEach(h => addAnnotation(a))
-                    })
+                    chartOptions.annotations.forEach((a, aIdx) => addAnnotation(a));
                 }
             }
 
