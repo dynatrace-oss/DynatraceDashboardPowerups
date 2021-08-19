@@ -1837,6 +1837,152 @@ var PowerupReporting = (function () {
             }
         }
 
+        function trendlineContent(content) {
+            let $content = $(content);
+            let $buttons = $(`<div>`)
+                .appendTo($content)
+                .addClass('powerupOptionsButtonBar');
+            let $trendlines = $(`<div>`)
+                .appendTo($content)
+                .addClass('powerupNoFlex');
+            let $addTrendline = $(`<button>`)
+                .addClass('powerupButton')
+                .text(`+ Trendline`)
+                .on(`click`, () => { addTrendline() })
+                .appendTo($buttons);
+
+
+
+            drawExistingTrendlines();
+            addRefreshButton($content);
+
+
+            function drawExistingTrendlines() {
+                if (Array.isArray(chartOptions.trendlines)) {
+                    chartOptions.trendlines.forEach((a, aIdx) => addTrendline(a));
+                }
+            }
+
+            function removeTrendlineFromOptions(trendline) {
+                if (Array.isArray(chartOptions.trendlines)) {
+                    chartOptions.trendlines = chartOptions.trendlines.filter(x => x != trendline);
+                }
+                removeTrendlineFromSeries(trendline);
+            }
+
+            function addTrendlineToOptions(trendline) {
+                if (!Array.isArray(chartOptions.trendlines)) chartOptions.trendlines = [];
+                if (!chartOptions.trendlines.includes(trendline))
+                    chartOptions.trendlines.push(trendline);
+
+                addTrendlineToSeries(trendline);
+            }
+
+            function addTrendlineToSeries(trendline) {
+                let series = pub.activeChart.series[trendline.seriesNum];
+
+                switch (trendline.type) {
+                    case "linear":
+                    default:
+                        let reg = linearRegression(series.data);
+                }
+
+                chartOptions.series.push({
+                    name: `${trendline.type}-${trendline.seriesNum}`,
+                    id: `tl-${trendline.id}`,
+                    originalSeriesNum: trendline.seriesNum,
+                    data: reg.data,
+                    color: trendline.color,
+                    visible: true,
+                    powerupTrendline: true
+                });
+            }
+
+            function removeTrendlineFromSeries(trendline) {
+                chartOptions.series = chartOptions.series
+                    .filter(s => !(s.powerupTrendline && s.originalSeriesNum == trendline.seriesNum))
+            }
+
+            function addTrendline(trendline = null) {
+                if (trendline == null) {
+                    trendline = {
+                        id: 'tl' + uniqId(),
+                        seriesNum: 0,
+                        color: "#2ab6f4",
+                        type: "linear"
+                    }
+                }
+                let series;
+
+                let $trendlineDiv = $(`<div>`)
+                    .addClass('powerupLineConfig')
+                    .appendTo($trendlines);
+                let $table = $(`<table>`).appendTo($trendlineDiv);
+                let $header = $(`<tr><th></th><th>Trendline</th></tr>`).appendTo($table);
+
+
+                //Component: Series selector
+                let $seriesRow = $(`<tr><td>Series:</td><td></td></tr>`).appendTo($table);
+                let $seriesSelector = $(`<select>`).appendTo($seriesRow.children().eq(1));
+                pub.activeChart.series
+                    .filter(s => !s.powerupTrendline)
+                    .forEach((s, sIdx) => {
+                        if (!s.visible) return;
+                        let $opt = $(`<option>`)
+                            .data('seriesNum', sIdx)
+                            .val(sIdx)
+                            .text(seriesName(s))
+                            .appendTo($seriesSelector);
+                    });
+
+                    let $typeRow = $(`<tr><td>Type:</td><td></td></tr>`).appendTo($table);
+                    let $typeSelector = $(
+                        `<select>
+                            <option selected>linear</option>
+                        </select>`)
+                        .appendTo($typeRow.children().eq(1));
+
+                let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
+                let $colorPicker = $(`<input type="color">`)
+                    .val(colorToHex(trendline.color))
+                    .appendTo($colorRow.children().eq(1));
+
+                //vals
+                $seriesSelector.on('change', () => {
+                    let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
+                    series = pub.activeChart.series[newSeriesNum];
+                    trendline.seriesNum = newSeriesNum;
+
+                    addTrendlineToOptions(trendline);
+                });
+
+                //initial load
+                $seriesSelector
+                    .val(trendline.seriesNum)
+                    .trigger('change');
+
+                $typeSelector.on('change', () => {
+                    trendline.type = $typeSelector.val();
+                });
+                $colorPicker.on('change', () => {
+                    trendline.color = $colorPicker.val();
+                });
+
+                //delete button
+                let $remove = $(`<button>`)
+                    .addClass('powerupButton')
+                    .addClass('powerupCloseButton')
+                    .text('x')
+                    .appendTo($trendlineDiv)
+                    .on('click', () => {
+                        removeTrendlineFromOptions(trendline);
+                        $trendlineDiv.remove();
+                    })
+
+                return trendline;
+            }
+        }
+
         function notYetImplemented() {
             alert(`Not yet implemented...`);
         }
@@ -1997,6 +2143,41 @@ var PowerupReporting = (function () {
 
         //TODO: add DT API to get actual entity names
         return name;
+    }
+
+    const linearRegression = (data) => {
+        let dataSet = data.filter(i => i.y != null).map(i => [i.x, i.y]);
+        let x_sum = 0;
+        let y_sum = 0;
+        let xy_sum = 0;
+        let xx_sum = 0;
+        let count = 0;
+
+        for (let i = 0; i < dataSet.length; i++) {
+            if (dataSet[i][1] == null) continue;
+            let x = dataSet[i][0];
+            let y = dataSet[i][1];
+            x_sum += x;
+            y_sum += y;
+            xx_sum += x * x;
+            xy_sum += x * y;
+            count++;
+        }
+
+        // Calculate m and b for the line equation: y = m * x + b
+        let m = (count * xy_sum - x_sum * y_sum) / (count * xx_sum - x_sum * x_sum);
+        let b = (y_sum / count) - (m * x_sum) / count;
+        let line = [];
+
+        for (let i = 0; i < dataSet.length; i++) {
+            if (dataSet[i][1] == null) continue;
+            let point = [
+                dataSet[i][0],
+                dataSet[i][0] * m + b
+            ];
+            line.push(point);
+        }
+        return { m: m, b: b, data: line };
     }
 
     const narrativeSupport = (options) => {
