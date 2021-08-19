@@ -1879,12 +1879,13 @@ var PowerupReporting = (function () {
             }
 
             function addTrendlineToSeries(trendline) {
+                let reg;
                 let series = pub.activeChart.series[trendline.seriesNum];
 
                 switch (trendline.type) {
                     case "linear":
                     default:
-                        let reg = linearRegression(series.data);
+                        reg = linearRegression(series.data);
                 }
 
                 chartOptions.series.push({
