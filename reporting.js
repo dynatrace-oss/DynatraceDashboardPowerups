@@ -2219,7 +2219,7 @@ var PowerupReporting = (function () {
         // Calculate m and b for the line equation: y = m * x + b
         let m = (count * xy_sum - x_sum * y_sum) / (count * xx_sum - x_sum * x_sum);
         let b = (y_sum / count) - (m * x_sum) / count;
-        let r2 = Math.pow((n * xy_sum - x_sum * y_sum) / Math.sqrt((count * xx_sum - x_sum * x_sum) * (count * yy_sum - y_sum * y_sum)), 2);
+        let r2 = Math.pow((count * xy_sum - x_sum * y_sum) / Math.sqrt((count * xx_sum - x_sum * x_sum) * (count * yy_sum - y_sum * y_sum)), 2);
         let line = [];
 
         for (let i = 0; i < dataSet.length; i++) {
