@@ -497,7 +497,7 @@ var PowerupReporting = (function () {
         let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)", storyContent));
         let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background", foregroundContent));
         let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments", highlightContent));
-        let $trends = $(createSection("PowerupReportOptionsTrends", "Trendlines",trendlineContent));
+        let $trends = $(createSection("PowerupReportOptionsTrends", "Trendlines", trendlineContent));
         let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines", bandsAndLinesContent));
         let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations", annotationContent));
         let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative", narrativeContent));
@@ -1868,6 +1868,7 @@ var PowerupReporting = (function () {
                     chartOptions.trendlines = chartOptions.trendlines.filter(x => x != trendline);
                 }
                 removeTrendlineFromSeries(trendline);
+                removeR2(trendline);
             }
 
             function addTrendlineToOptions(trendline) {
@@ -1876,16 +1877,16 @@ var PowerupReporting = (function () {
                     chartOptions.trendlines.push(trendline);
 
                 addTrendlineToSeries(trendline);
+                if(trendline.showR2) addR2(trendline);
             }
 
             function addTrendlineToSeries(trendline) {
-                let reg;
                 let series = pub.activeChart.series[trendline.seriesNum];
 
                 switch (trendline.type) {
                     case "linear":
                     default:
-                        reg = linearRegression(series.data);
+                        trendline.reg = linearRegression(series.data);
                 }
 
                 let newSeries = {
@@ -1893,22 +1894,53 @@ var PowerupReporting = (function () {
                     name: `${trendline.type}-${trendline.seriesNum}`,
                     id: `tl-${trendline.id}`,
                     originalSeriesNum: trendline.seriesNum,
-                    data: reg.data,
+                    data: trendline.reg.data,
                     color: trendline.color,
                     visible: true,
                     powerupTrendline: true
                 }
                 chartOptions.series.push(newSeries);
-                pub.activeChart.addSeries(newSeries,false);
+                pub.activeChart.addSeries(newSeries, false);
+            }
+
+            function addR2(trendline){
+                let last;
+                if(trendline.reg.data) last = trendline.reg.data[trendline.reg.data.length-1];
+                let annotation = {
+                    id: `a-${trendline.id}`,
+                    seriesNum: trendline.seriesNum,
+                    forTrendline: true,
+                    labels: [{
+                        point: {
+                            xAxis: 0,
+                            yAxis: 0,
+                            x: last.x,
+                            y: last.y
+                        },
+                        text: `r^2: ${trendline.reg.r2}`,
+                        backgroundColor: 'rgba(0,0,0,0)',
+                        borderWidth: 0
+                    }]
+                }
+                if (!Array.isArray(chartOptions.annotations)) chartOptions.annotations = [];
+                if (!chartOptions.annotations.includes(annotation))
+                    chartOptions.annotations.push(annotation);
+            }
+
+            function removeR2(trendline){
+                if(Array.isArray(chartOptions.annotations)){
+                    chartOptions.annotations = chartOptions.annotations
+                        .filter(a => a.id != `a-${trendline.id}`);
+                }
             }
 
             function removeTrendlineFromSeries(trendline) {
                 chartOptions.series = chartOptions.series
                     .filter(s => !(s.powerupTrendline && s.originalSeriesNum == trendline.seriesNum))
-                
-                    pub.activeChart
-                        .get(`tl-${trendline.id}`)
-                        .remove();
+
+                pub.activeChart
+                    .get(`tl-${trendline.id}`)
+                    .remove();
             }
 
             function addTrendline(trendline = null) {
@@ -1917,7 +1949,8 @@ var PowerupReporting = (function () {
                         id: 'tl' + uniqId(),
                         seriesNum: 0,
                         color: "#2ab6f4",
-                        type: "linear"
+                        type: "linear",
+                        showR2: true
                     }
                 }
                 let series;
@@ -1943,17 +1976,22 @@ var PowerupReporting = (function () {
                             .appendTo($seriesSelector);
                     });
 
-                    let $typeRow = $(`<tr><td>Type:</td><td></td></tr>`).appendTo($table);
-                    let $typeSelector = $(
-                        `<select>
+                let $typeRow = $(`<tr><td>Type:</td><td></td></tr>`).appendTo($table);
+                let $typeSelector = $(
+                    `<select>
                             <option selected>linear</option>
                         </select>`)
-                        .appendTo($typeRow.children().eq(1));
+                    .appendTo($typeRow.children().eq(1));
 
                 let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
                 let $colorPicker = $(`<input type="color">`)
                     .val(colorToHex(trendline.color))
                     .appendTo($colorRow.children().eq(1));
+
+                let $r2Row = $(`<tr><td>Show r<sup>2</sup>:</td><td></td></tr>`).appendTo($table);
+                let $r2 = $(`<input type="checkbox">`)
+                    .prop('checked',trendline.showR2)
+                    .appendTo($r2Row.children().eq(1));
 
                 //vals
                 $seriesSelector.on('change', () => {
@@ -1969,11 +2007,15 @@ var PowerupReporting = (function () {
                     .val(trendline.seriesNum)
                     .trigger('change');
 
+                //changes
                 $typeSelector.on('change', () => {
                     trendline.type = $typeSelector.val();
                 });
                 $colorPicker.on('change', () => {
                     trendline.color = $colorPicker.val();
+                });
+                $r2.on('click', () => {
+                    trendline.showR2 = $r2.prop('checked');
                 });
 
                 //delete button
@@ -2159,9 +2201,10 @@ var PowerupReporting = (function () {
         let y_sum = 0;
         let xy_sum = 0;
         let xx_sum = 0;
+        let yy_sum = 0;
         let count = 0;
 
-        for (let i = 0; i < dataSet.length; i++) {
+        for (let i = 0; i < n; i++) {
             if (dataSet[i][1] == null) continue;
             let x = dataSet[i][0];
             let y = dataSet[i][1];
@@ -2169,12 +2212,14 @@ var PowerupReporting = (function () {
             y_sum += y;
             xx_sum += x * x;
             xy_sum += x * y;
+            yy_sum += y * y;
             count++;
         }
 
         // Calculate m and b for the line equation: y = m * x + b
         let m = (count * xy_sum - x_sum * y_sum) / (count * xx_sum - x_sum * x_sum);
         let b = (y_sum / count) - (m * x_sum) / count;
+        let r2 = Math.pow((n * xy_sum - x_sum * y_sum) / Math.sqrt((count * xx_sum - x_sum * x_sum) * (count * yy_sum - y_sum * y_sum)), 2);
         let line = [];
 
         for (let i = 0; i < dataSet.length; i++) {
@@ -2185,7 +2230,7 @@ var PowerupReporting = (function () {
             ];
             line.push(point);
         }
-        return { m: m, b: b, data: line };
+        return { m: m, b: b, data: line, r2: r2 };
     }
 
     const narrativeSupport = (options) => {
