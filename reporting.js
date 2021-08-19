@@ -1927,7 +1927,7 @@ var PowerupReporting = (function () {
                             x: x,
                             y: y
                         },
-                        text: `r^2: ${trendline.reg.r2}`,
+                        text: `r^2: ${trendline.reg.r2.toFixed(2)}`,
                         backgroundColor: 'rgba(0,0,0,0)',
                         borderWidth: 0,
                         style: {
