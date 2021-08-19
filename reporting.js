@@ -1888,7 +1888,8 @@ var PowerupReporting = (function () {
                         reg = linearRegression(series.data);
                 }
 
-                chartOptions.series.push({
+                let newSeries = {
+                    type: 'line',
                     name: `${trendline.type}-${trendline.seriesNum}`,
                     id: `tl-${trendline.id}`,
                     originalSeriesNum: trendline.seriesNum,
@@ -1896,12 +1897,18 @@ var PowerupReporting = (function () {
                     color: trendline.color,
                     visible: true,
                     powerupTrendline: true
-                });
+                }
+                chartOptions.series.push(newSeries);
+                pub.activeChart.addSeries(newSeries,false);
             }
 
             function removeTrendlineFromSeries(trendline) {
                 chartOptions.series = chartOptions.series
                     .filter(s => !(s.powerupTrendline && s.originalSeriesNum == trendline.seriesNum))
+                
+                    pub.activeChart
+                        .get(`tl-${trendline.id}`)
+                        .remove();
             }
 
             function addTrendline(trendline = null) {
