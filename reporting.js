@@ -2204,7 +2204,7 @@ var PowerupReporting = (function () {
         let yy_sum = 0;
         let count = 0;
 
-        for (let i = 0; i < n; i++) {
+        for (let i = 0; i < dataSet.length; i++) {
             if (dataSet[i][1] == null) continue;
             let x = dataSet[i][0];
             let y = dataSet[i][1];
