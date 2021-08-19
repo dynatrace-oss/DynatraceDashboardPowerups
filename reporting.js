@@ -1873,11 +1873,13 @@ var PowerupReporting = (function () {
 
             function addTrendlineToOptions(trendline) {
                 if (!Array.isArray(chartOptions.trendlines)) chartOptions.trendlines = [];
-                if (!chartOptions.trendlines.includes(trendline))
+                if (!chartOptions.trendlines.includes(trendline)) {
                     chartOptions.trendlines.push(trendline);
 
-                addTrendlineToSeries(trendline);
-                if(trendline.showR2) addR2(trendline);
+                    addTrendlineToSeries(trendline);
+                    if (trendline.showR2) addR2(trendline);
+                }
+
             }
 
             function addTrendlineToSeries(trendline) {
@@ -1903,9 +1905,17 @@ var PowerupReporting = (function () {
                 pub.activeChart.addSeries(newSeries, false);
             }
 
-            function addR2(trendline){
-                let last;
-                if(trendline.reg.data) last = trendline.reg.data[trendline.reg.data.length-1];
+            function addR2(trendline) {
+                let last, x, y;
+                if (trendline.reg.data) last = trendline.reg.data[trendline.reg.data.length - 1];
+                else return;
+                if (Array.isArray(last)) {
+                    x = last[0];
+                    y = last[1];
+                } else if (typeof (last) == "object") {
+                    x = last.x;
+                    y = last.y;
+                }
                 let annotation = {
                     id: `a-${trendline.id}`,
                     seriesNum: trendline.seriesNum,
@@ -1914,8 +1924,8 @@ var PowerupReporting = (function () {
                         point: {
                             xAxis: 0,
                             yAxis: 0,
-                            x: last.x,
-                            y: last.y
+                            x: x,
+                            y: y
                         },
                         text: `r^2: ${trendline.reg.r2}`,
                         backgroundColor: 'rgba(0,0,0,0)',
@@ -1927,8 +1937,8 @@ var PowerupReporting = (function () {
                     chartOptions.annotations.push(annotation);
             }
 
-            function removeR2(trendline){
-                if(Array.isArray(chartOptions.annotations)){
+            function removeR2(trendline) {
+                if (Array.isArray(chartOptions.annotations)) {
                     chartOptions.annotations = chartOptions.annotations
                         .filter(a => a.id != `a-${trendline.id}`);
                 }
@@ -1990,7 +2000,7 @@ var PowerupReporting = (function () {
 
                 let $r2Row = $(`<tr><td>Show r<sup>2</sup>:</td><td></td></tr>`).appendTo($table);
                 let $r2 = $(`<input type="checkbox">`)
-                    .prop('checked',trendline.showR2)
+                    .prop('checked', trendline.showR2)
                     .appendTo($r2Row.children().eq(1));
 
                 //vals
