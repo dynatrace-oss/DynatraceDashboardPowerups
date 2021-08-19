@@ -1929,7 +1929,11 @@ var PowerupReporting = (function () {
                         },
                         text: `r^2: ${trendline.reg.r2}`,
                         backgroundColor: 'rgba(0,0,0,0)',
-                        borderWidth: 0
+                        borderWidth: 0,
+                        style: {
+                            color: 'black',
+                            fontSize: '8px'
+                        }
                     }]
                 }
                 if (!Array.isArray(chartOptions.annotations)) chartOptions.annotations = [];
