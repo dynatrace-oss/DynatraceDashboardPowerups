@@ -442,7 +442,7 @@ var PowerupReporting = (function () {
                                         .on('click',()=>{
                                             let svgOptions = JSON.parse(JSON.stringify(options));
                                             svgOptions.type = 'image/svg+xml';
-                                            H.downloadSVGLocal(combinedsvg, options, function () {
+                                            H.downloadSVGLocal(combinedSVG, svgOptions, function () {
                                                 console.log("Failed to export SVG on client side");
                                             });
                                         })
@@ -450,9 +450,9 @@ var PowerupReporting = (function () {
                                         .text("PNG")
                                         .appendTo($previewContent)
                                         .on('click',()=>{
-                                            let svgOptions = JSON.parse(JSON.stringify(options));
-                                            svgOptions.type = 'image/png';
-                                            H.downloadSVGLocal(combinedsvg, options, function () {
+                                            let pngOptions = JSON.parse(JSON.stringify(options));
+                                            pngOptions.type = 'image/png';
+                                            H.downloadSVGLocal(combinedSVG, pngOptions, function () {
                                                 console.log("Failed to export SVG on client side");
                                             });
                                         })
@@ -554,12 +554,14 @@ var PowerupReporting = (function () {
             });
 
 
+            let reportName = $(DashboardPowerups.SELECTORS.BANNER_SELECTOR).text();
             let charts = copyCharts();
             rebuildAndAddToplist(charts);
             charts = sortCharts(charts);
             $(`#cancelReportButton`).on('click', () => { cleanup(charts) }); //don't leak charts, if cancelling early
             exportCharts(charts,
                 {
+                    filename: reportName,
                     type: 'application/pdf',
                     libURL: DashboardPowerups.POWERUP_EXT_URL + '3rdParty/Highcharts/lib'
                 })
