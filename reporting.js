@@ -259,6 +259,11 @@ var PowerupReporting = (function () {
                         narrativeSupport(options);
 
                         let newChart = H.chart($container[0], options);
+
+                        //get the original coordinates and safe store for sorting
+                        let rect = el.getBoundingClientRect();
+                        newChart.originalRect = rect;
+
                         charts.push(newChart);
                     });
                 },
@@ -267,14 +272,14 @@ var PowerupReporting = (function () {
                     let charts = [];
                     //Copy all charts for safe keeping
                     H.charts.filter(x => typeof (x) != "undefined").forEach(chart => {
-                        /*let opts = H.merge(chart.userOptions);
-                        if (typeof (opts.series) == "undefined") opts.series = [];
-                        chart.series.forEach(s => opts.series.push(H.merge(s.userOptions)));
-                        let container = $(`<div>`).appendTo($copies)[0];*/
                         let opts = {};
                         opts.title = getTitleOpt(chart);
-                        //let newChart = H.chart(container, opts);
                         let newChart = copyChart(chart, opts, $copies[0]);
+
+                        //get the original coordinates and safe store for sorting
+                        let rect = chart.container.getBoundingClientRect();
+                        newChart.originalRect = rect;
+
                         charts.push(newChart);
                     });
                     return charts;
@@ -457,6 +462,33 @@ var PowerupReporting = (function () {
                 });
 
             },
+                sortCharts = (inCharts) => { //sort based on originalRect coordinates
+                     let sortedCharts = inCharts.sort((a,b) => {
+                        if(typeof(a.originalRect)!="object" 
+                        || typeof(a.originalRect.x) == "undefined" 
+                        || typeof(a.originalRect.y) == "undefined"
+                        || typeof(b.originalRect)!="object" 
+                        || typeof(b.originalRect.x) == "undefined" 
+                        || typeof(b.originalRect.y) == "undefined"){
+                            console.warn("Powerup: chart copy missing originalRect");
+                            return false;
+                        }
+                        if(a.originalRect.y < b.originalRect.y){
+                            return -1;
+                        } else if(a.originalRect.y > b.originalRect.y){
+                            return 1;
+                        } else if(a.originalRect.y == b.originalRect.y){
+                            if(a.originalRect.x < b.originalRect.x){
+                                return -1;
+                            } else if(a.originalRect.x > b.originalRect.x){
+                                return 1;
+                            } else if(a.originalRect.x == b.originalRect.x){
+                                return 0;
+                            }
+                        }
+                    })
+                    return sortedCharts;
+                }, 
                 cleanup = function (charts) {
                     charts.forEach(chart => {
                         if (chart && typeof (chart.destroy) == "function") {
@@ -477,6 +509,7 @@ var PowerupReporting = (function () {
 
             let charts = copyCharts();
             rebuildAndAddToplist(charts);
+            charts = sortCharts(charts);
             $(`#cancelReportButton`).on('click', () => { cleanup(charts) }); //don't leak charts, if cancelling early
             exportCharts(charts,
                 {
