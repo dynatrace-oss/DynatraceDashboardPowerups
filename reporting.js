@@ -423,8 +423,17 @@ var PowerupReporting = (function () {
                             if (i === charts.length) { //when done, combine everything
                                 let combinedSVG = '<svg height="' + top + '" width="' + width +
                                     '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
-                                $previewTitle.text(`Combined:`);
-                                $previewContent.html(combinedSVG);
+                                
+                                    //display combined SVG (as an img for copy-paste)
+                                    $previewTitle.text(`Combined:`);
+                                    let base64 = `data:image/svg+xml;`+btoa(combinedSVG);
+                                    $previewContent.html('');
+                                    let $img = $(`<img>`)
+                                        .attr('src',base64)
+                                        .attr('width',width)
+                                        .attr('height',height)
+                                        .attr('alt','Combined')
+                                        .appendTo($previewContent);
                                 return callback(combinedSVG);
                             }
 
