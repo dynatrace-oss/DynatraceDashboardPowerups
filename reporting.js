@@ -438,7 +438,8 @@ var PowerupReporting = (function () {
                                     $previewContent.html(combinedSVG);
                                     let $svgButton = $(`<button>`)
                                         .text("SVG")
-                                        .appendTo($previewContent)
+                                        .addClass("powerupButton")
+                                        .appendTo($previewTitle)
                                         .on('click',()=>{
                                             let svgOptions = JSON.parse(JSON.stringify(options));
                                             svgOptions.type = 'image/svg+xml';
@@ -446,16 +447,19 @@ var PowerupReporting = (function () {
                                                 console.log("Failed to export SVG on client side");
                                             });
                                         })
-                                    let $pngButton = $(`<button>`)
-                                        .text("PNG")
-                                        .appendTo($previewContent)
+                                    let $pdfButton = $(`<button>`)
+                                        .text("PDF")
+                                        .addClass("powerupButton")
+                                        .addClass("powerupButtonDefault")
+                                        .appendTo($previewTitle)
                                         .on('click',()=>{
-                                            let pngOptions = JSON.parse(JSON.stringify(options));
-                                            pngOptions.type = 'image/png';
-                                            H.downloadSVGLocal(combinedSVG, pngOptions, function () {
-                                                console.log("Failed to export SVG on client side");
+                                            let pdfOptions = JSON.parse(JSON.stringify(options));
+                                            pdfOptions.type = 'application/pdf';
+                                            H.downloadSVGLocal(combinedSVG, pdfOptions, function () {
+                                                console.log("Failed to export PDF on client side");
                                             });
                                         })
+                                        $(`#cancelReportButton`).text('Close');
                                 return callback(combinedSVG);
                             }
 
@@ -490,9 +494,9 @@ var PowerupReporting = (function () {
 
                 // Get SVG asynchronously and then download the resulting SVG
                 getSVG(charts, options, function (combinedsvg) {
-                    H.downloadSVGLocal(combinedsvg, options, function () {
-                        console.log("Failed to export on client side");
-                    });
+                    //H.downloadSVGLocal(combinedsvg, options, function () {
+                    //    console.log("Failed to export on client side");
+                    //});
                     //only clean up when hitting close, since svg button added
                     //cleanup(charts);
                 });
@@ -543,7 +547,6 @@ var PowerupReporting = (function () {
                         }
                     });
                     charts = charts.filter(x => x != null);
-                    $(`#cancelReportButton`).text('Close');
                 };
 
             // Set global default options for all charts
