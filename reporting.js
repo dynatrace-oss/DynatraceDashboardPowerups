@@ -426,10 +426,11 @@ var PowerupReporting = (function () {
                                 
                                     //display combined SVG (as an img for copy-paste)
                                     $previewTitle.text(`Combined:`);
-                                    let base64 = `data:image/svg+xml;`+btoa(combinedSVG);
+                                    //let base64 = `data:image/svg+xml;`+btoa(combinedSVG);
+                                    let src = `data:image/svg+xml;utf8,`+combinedSVG;
                                     $previewContent.html('');
                                     let $img = $(`<img>`)
-                                        .attr('src',base64)
+                                        .attr('src',src)
                                         .attr('width',width)
                                         .attr('height',top)
                                         .attr('alt','Combined')
