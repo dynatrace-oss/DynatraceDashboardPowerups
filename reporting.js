@@ -738,11 +738,13 @@ var PowerupReporting = (function () {
                     .appendTo($fg)
                     .on('click', (e) => {
                         chartOptions.series[s_idx].color = fgcolor;
+                        chartOptions.series[s_idx].zIndex = 4;
                     });
                 let $bg_button = $(`<input type="radio" name="${s_idx}" value="bg">`)
                     .appendTo($bg)
                     .on('click', (e) => {
                         chartOptions.series[s_idx].color = bgcolor;
+                        chartOptions.series[s_idx].zIndex = 2;
                     });
                 let $fg_color = $(`<div>`)
                     .addClass('powerupColorPreview')
