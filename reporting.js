@@ -431,7 +431,7 @@ var PowerupReporting = (function () {
                                     let $img = $(`<img>`)
                                         .attr('src',base64)
                                         .attr('width',width)
-                                        .attr('height',height)
+                                        .attr('height',top)
                                         .attr('alt','Combined')
                                         .appendTo($previewContent);
                                 return callback(combinedSVG);
