@@ -493,8 +493,8 @@ var PowerupReporting = (function () {
                     H.downloadSVGLocal(combinedsvg, options, function () {
                         console.log("Failed to export on client side");
                     });
-                    //moved to callback simplify async
-                    cleanup(charts);
+                    //only clean up when hitting close, since svg button added
+                    //cleanup(charts);
                 });
 
             },
