@@ -425,17 +425,10 @@ var PowerupReporting = (function () {
                                     '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
                                 
                                     //display combined SVG (as an img for copy-paste)
-                                    $previewTitle.text(`Combined:`);
-                                    //let base64 = `data:image/svg+xml;`+btoa(combinedSVG);
-                                    /*let src = `data:image/svg+xml;utf8,`+combinedSVG;
-                                    $previewContent.html('');
-                                    let $img = $(`<img>`)
-                                        .attr('src',src)
-                                        .attr('width',width)
-                                        .attr('height',top)
-                                        .attr('alt','Combined')
-                                        .appendTo($previewContent);*/
-                                    $previewContent.html(combinedSVG);
+                                    $previewTitle.text(`Download:  `);
+                                    $previewContent
+                                        .html(combinedSVG)
+                                        .addClass('powerupBordered');
                                     let $svgButton = $(`<button>`)
                                         .text("SVG")
                                         .addClass("powerupButton")
@@ -460,6 +453,7 @@ var PowerupReporting = (function () {
                                             });
                                         })
                                         $(`#cancelReportButton`).text('Close');
+                                    $previewTitle.append(`<h3>Combined</h3>`);
                                 return callback(combinedSVG);
                             }
 

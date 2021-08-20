@@ -986,3 +986,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   flex: 0;
   padding: 5px;
 }
+
+.powerupBordered {
+  border: 1px #e6e6e6 solid;
+}
