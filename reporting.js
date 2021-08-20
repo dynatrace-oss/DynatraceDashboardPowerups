@@ -261,7 +261,7 @@ var PowerupReporting = (function () {
                         let newChart = H.chart($container[0], options);
 
                         //get the original coordinates and safe store for sorting
-                        let rect = el.getBoundingClientRect();
+                        let rect = $tile[0].getBoundingClientRect();
                         newChart.originalRect = rect;
 
                         charts.push(newChart);
@@ -276,11 +276,13 @@ var PowerupReporting = (function () {
                         .filter(x => typeof (x.container) != "undefined")
                         .forEach(chart => {
                             let opts = {};
-                            opts.title = getTitleOpt(chart);
+                            let $chart = $(chart.container);
+                            let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                            opts.title = getTitleOpt(chart,$tile[0]);
                             let newChart = copyChart(chart, opts, $copies[0]);
 
                             //get the original coordinates and safe store for sorting
-                            let rect = chart.container.getBoundingClientRect();
+                            let rect = $tile[0].getBoundingClientRect();
                             newChart.originalRect = rect;
 
                             charts.push(newChart);
