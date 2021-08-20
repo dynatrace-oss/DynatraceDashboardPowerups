@@ -427,14 +427,35 @@ var PowerupReporting = (function () {
                                     //display combined SVG (as an img for copy-paste)
                                     $previewTitle.text(`Combined:`);
                                     //let base64 = `data:image/svg+xml;`+btoa(combinedSVG);
-                                    let src = `data:image/svg+xml;utf8,`+combinedSVG;
+                                    /*let src = `data:image/svg+xml;utf8,`+combinedSVG;
                                     $previewContent.html('');
                                     let $img = $(`<img>`)
                                         .attr('src',src)
                                         .attr('width',width)
                                         .attr('height',top)
                                         .attr('alt','Combined')
-                                        .appendTo($previewContent);
+                                        .appendTo($previewContent);*/
+                                    $previewContent.html(combinedSVG);
+                                    let $svgButton = $(`<button>`)
+                                        .text("SVG")
+                                        .appendTo($previewContent)
+                                        .on('click',()=>{
+                                            let svgOptions = JSON.parse(JSON.stringify(options));
+                                            svgOptions.type = 'image/svg+xml';
+                                            H.downloadSVGLocal(combinedsvg, options, function () {
+                                                console.log("Failed to export SVG on client side");
+                                            });
+                                        })
+                                    let $pngButton = $(`<button>`)
+                                        .text("PNG")
+                                        .appendTo($previewContent)
+                                        .on('click',()=>{
+                                            let svgOptions = JSON.parse(JSON.stringify(options));
+                                            svgOptions.type = 'image/png';
+                                            H.downloadSVGLocal(combinedsvg, options, function () {
+                                                console.log("Failed to export SVG on client side");
+                                            });
+                                        })
                                 return callback(combinedSVG);
                             }
 
