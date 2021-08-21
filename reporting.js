@@ -956,7 +956,9 @@ var PowerupReporting = (function () {
                 () => { chartOptions.customNarrative.text = $textarea.val() },
                 100));
 
-            addRefreshButton($content);
+            addRefreshButton($content,()=> {
+                pub.activeChart.redraw(false);
+            });
         }
 
         function bandsAndLinesContent(content) {
