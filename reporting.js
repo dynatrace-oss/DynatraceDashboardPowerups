@@ -2359,6 +2359,7 @@ var PowerupReporting = (function () {
                                 if (!options.chart.originalWidth) {
                                     options.chart.originalWidth = options.chart.width;
                                     options.chart.width += options.customNarrative.width;
+                                    options.exporting.sourceWidth = options.chart.width;
                                     options.chart.marginRight = options.customNarrative.width;
                                     //options.chart.spacingRight = options.customNarrative.width;
                                     options.chart.plotBorderWidth = 1;
@@ -2368,6 +2369,7 @@ var PowerupReporting = (function () {
                             } else { //nothing to display
                                 if (options.chart.originalWidth) {
                                     options.chart.width = options.chart.originalWidth;
+                                    options.exporting.sourceWidth = options.chart.originalWidth;
                                     delete options.chart.originalWidth;
                                     delete options.chart.marginRight;
                                 } else { //wasn't expanded
