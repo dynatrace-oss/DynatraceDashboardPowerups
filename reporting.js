@@ -1146,11 +1146,11 @@ var PowerupReporting = (function () {
                             .addClass('powerupTDTooltip');
                         let $hover = $(`<div>`)
                             .addClass('powerupTDTooltipText')
-                            .text(Date($value.val()).toString())
+                            .text(new Date($value.val()).toString())
                             .appendTo($td);
                         $value.on('change', () => {
                             $hover
-                                .text(Date($value.val()).toString());
+                                .text(new Date(Number($value.val())).toString());
                         })
                     } else {
                         $valueRow.children().removeClass('powerupTDTooltip');
@@ -1327,11 +1327,11 @@ var PowerupReporting = (function () {
                             .addClass('powerupTDTooltip');
                         let $fromhover = $(`<div>`)
                             .addClass('powerupTDTooltipText')
-                            .text(Date($from.val()).toString())
+                            .text(new Date($from.val()).toString())
                             .appendTo($fromtd);
                         $from.on('change', () => {
-                            band.from = $from.val();
-                            let date = Date(band.from).toString();
+                            band.from = Number($from.val());
+                            let date = new Date(band.from).toString();
                             $fromhover.text(date);
                         })
 
@@ -1342,8 +1342,8 @@ var PowerupReporting = (function () {
                             .text(Date($to.val()).toString())
                             .appendTo($totd);
                         $to.on('change', () => {
-                            band.to = $to.val();
-                            let date = Date(band.to).toString();
+                            band.to = Number($to.val());
+                            let date = new Date(band.to).toString();
                             $tohover.text(date);
                         })
                     } else {
@@ -1622,22 +1622,22 @@ var PowerupReporting = (function () {
                             .addClass('powerupTDTooltip');
                         let $hover = $(`<div>`)
                             .addClass('powerupTDTooltipText')
-                            .text(Date($from.val()).toString())
+                            .text(new Date(Number($from.val())).toString())
                             .appendTo($td);
                         $from.on('change', () => {
                             $hover
-                                .text(Date($from.val()).toString());
+                                .text(new Date(Number($from.val())).toString());
                         })
 
                         $td = $toRow.children().eq(1)
                             .addClass('powerupTDTooltip');
                         $hover = $(`<div>`)
                             .addClass('powerupTDTooltipText')
-                            .text(Date($td.val()).toString())
+                            .text(new Date(Number($td.val())).toString())
                             .appendTo($td);
                         $to.on('change', () => {
                             $hover
-                                .text(Date($to.val()).toString());
+                                .text(new Date(Number($to.val())).toString());
                         })
                     } else {
                         $fromRow.children().removeClass('powerupTDTooltip');
@@ -1841,11 +1841,11 @@ var PowerupReporting = (function () {
                             .addClass('powerupTDTooltip');
                         let $hover = $(`<div>`)
                             .addClass('powerupTDTooltipText')
-                            .text(Date($x.val()).toString())
+                            .text(new Date(Number($x.val())).toString())
                             .appendTo($td);
                         $x.on('change', () => {
                             $hover
-                                .text(Date($x.val()).toString());
+                                .text(new Date(Number($x.val())).toString());
                         })
 
                         $td = $yRow.children().eq(1)
@@ -1856,7 +1856,7 @@ var PowerupReporting = (function () {
                             .appendTo($td);
                         $y.on('change', () => {
                             $hover
-                                .text(Date($y.val()).toString());
+                                .text(new Date(Number($y.val())).toString());
                         })
                     } else {
                         $xRow.children().removeClass('powerupTDTooltip');
