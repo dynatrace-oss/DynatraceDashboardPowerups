@@ -90,7 +90,7 @@ var PowerupReporting = (function () {
                 }, containerContainer);
 
                 // get the source size
-                cssWidth = chart.renderTo.style.width;
+                /*cssWidth = chart.renderTo.style.width;
                 cssHeight = chart.renderTo.style.height;
                 sourceWidth = allOptions.exporting.sourceWidth ||
                     allOptions.chart.width ||
@@ -99,7 +99,7 @@ var PowerupReporting = (function () {
                 sourceHeight = allOptions.exporting.sourceHeight ||
                     allOptions.chart.height ||
                     (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
-                    400;
+                    400;*/
 
                 // override some options
                 H.extend(options.chart, {
@@ -107,8 +107,8 @@ var PowerupReporting = (function () {
                     renderTo: sandbox,
                     forExport: true,
                     renderer: 'SVGRenderer',
-                    width: sourceWidth,
-                    height: sourceHeight
+                    //width: sourceWidth,
+                    //height: sourceHeight
                 });
                 options.exporting = { enabled: false }// hide buttons in print
                 delete options.data; // #3004
