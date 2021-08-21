@@ -1323,25 +1323,25 @@ var PowerupReporting = (function () {
                     addBandToOptions(band);
 
                     if (axis && axis.isDatetimeAxis) {
-                        let $td = $fromRow.children().eq(1)
+                        let $fromtd = $fromRow.children().eq(1)
                             .addClass('powerupTDTooltip');
-                        let $hover = $(`<div>`)
+                        let $fromhover = $(`<div>`)
                             .addClass('powerupTDTooltipText')
                             .text(Date($from.val()).toString())
-                            .appendTo($td);
+                            .appendTo($fromtd);
                         $from.on('change', () => {
-                            $hover
+                            $fromhover
                                 .text(Date($from.val()).toString());
                         })
 
-                        $td = $toRow.children().eq(1)
+                        let $totd = $toRow.children().eq(1)
                             .addClass('powerupTDTooltip');
-                        $hover = $(`<div>`)
+                        let $tohover = $(`<div>`)
                             .addClass('powerupTDTooltipText')
-                            .text(Date($td.val()).toString())
-                            .appendTo($td);
+                            .text(Date($to.val()).toString())
+                            .appendTo($totd);
                         $to.on('change', () => {
-                            $hover
+                            $tohover
                                 .text(Date($to.val()).toString());
                         })
                     } else {
