@@ -1370,7 +1370,7 @@ var PowerupReporting = (function () {
                     .text('x')
                     .appendTo($bandDiv)
                     .on('click', () => {
-                        removeLineFromOptions(band);
+                        removeBandFromOptions(band);
                         $bandDiv.remove();
                     })
 
