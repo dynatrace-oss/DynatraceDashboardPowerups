@@ -2352,7 +2352,7 @@ var PowerupReporting = (function () {
                             break;
                         case "right":
                         default:
-                            x = options.chart.width || 200;
+                            x = options.chart.originalWidth || options.chart.width || 200;
                             if (options.customNarrative.text.length) {
                                 if (!options.chart.originalWidth) {
                                     options.chart.originalWidth = options.chart.width;
