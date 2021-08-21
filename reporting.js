@@ -1330,8 +1330,9 @@ var PowerupReporting = (function () {
                             .text(Date($from.val()).toString())
                             .appendTo($fromtd);
                         $from.on('change', () => {
-                            $fromhover
-                                .text(Date($from.val()).toString());
+                            band.from = $from.val();
+                            let date = Date(band.from).toString();
+                            $fromhover.text(date);
                         })
 
                         let $totd = $toRow.children().eq(1)
@@ -1341,8 +1342,9 @@ var PowerupReporting = (function () {
                             .text(Date($to.val()).toString())
                             .appendTo($totd);
                         $to.on('change', () => {
-                            $tohover
-                                .text(Date($to.val()).toString());
+                            band.to = $to.val();
+                            let date = Date(band.to).toString();
+                            $tohover.text(date);
                         })
                     } else {
                         $fromRow.children().removeClass('powerupTDTooltip');
