@@ -2357,8 +2357,8 @@ var PowerupReporting = (function () {
                                 if (!options.chart.originalWidth) {
                                     options.chart.originalWidth = options.chart.width;
                                     options.chart.width += options.customNarrative.width;
-                                    //options.chart.marginRight = options.customNarrative.width;
-                                    options.chart.spacingRight = options.customNarrative.width;
+                                    options.chart.marginRight = options.customNarrative.width;
+                                    //options.chart.spacingRight = options.customNarrative.width;
                                     options.chart.plotBorderWidth = 1;
                                 } else { //already expanded
 
