@@ -280,7 +280,7 @@ var PowerupReporting = (function () {
                             let opts = {};
                             let $chart = $(chart.container);
                             let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
-                            opts.title = getTitleOpt(chart,$tile[0]);
+                            opts.title = getTitleOpt(chart, $tile[0]);
                             let newChart = copyChart(chart, opts, $copies[0]);
 
                             //get the original coordinates and safe store for sorting
@@ -425,37 +425,37 @@ var PowerupReporting = (function () {
                             if (i === charts.length) { //when done, combine everything
                                 let combinedSVG = '<svg height="' + top + '" width="' + width +
                                     '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
-                                
-                                    //display combined SVG (as an img for copy-paste)
-                                    $previewTitle.text(`Download:  `);
-                                    $previewContent
-                                        .html(combinedSVG)
-                                        .addClass('powerupBordered');
-                                    let $svgButton = $(`<button>`)
-                                        .text("SVG")
-                                        .addClass("powerupButton")
-                                        .appendTo($previewTitle)
-                                        .on('click',()=>{
-                                            let svgOptions = JSON.parse(JSON.stringify(options));
-                                            svgOptions.type = 'image/svg+xml';
-                                            H.downloadSVGLocal(combinedSVG, svgOptions, function () {
-                                                console.log("Failed to export SVG on client side");
-                                            });
-                                        })
-                                    let $pdfButton = $(`<button>`)
-                                        .text("PDF")
-                                        .addClass("powerupButton")
-                                        .addClass("powerupButtonDefault")
-                                        .appendTo($previewTitle)
-                                        .on('click',()=>{
-                                            let pdfOptions = JSON.parse(JSON.stringify(options));
-                                            pdfOptions.type = 'application/pdf';
-                                            H.downloadSVGLocal(combinedSVG, pdfOptions, function () {
-                                                console.log("Failed to export PDF on client side");
-                                            });
-                                        })
-                                        $(`#cancelReportButton`).text('Close');
-                                    $previewTitle.append(`<h3>Combined</h3>`);
+
+                                //display combined SVG (as an img for copy-paste)
+                                $previewTitle.text(`Download:  `);
+                                $previewContent
+                                    .html(combinedSVG)
+                                    .addClass('powerupBordered');
+                                let $svgButton = $(`<button>`)
+                                    .text("SVG")
+                                    .addClass("powerupButton")
+                                    .appendTo($previewTitle)
+                                    .on('click', () => {
+                                        let svgOptions = JSON.parse(JSON.stringify(options));
+                                        svgOptions.type = 'image/svg+xml';
+                                        H.downloadSVGLocal(combinedSVG, svgOptions, function () {
+                                            console.log("Failed to export SVG on client side");
+                                        });
+                                    })
+                                let $pdfButton = $(`<button>`)
+                                    .text("PDF")
+                                    .addClass("powerupButton")
+                                    .addClass("powerupButtonDefault")
+                                    .appendTo($previewTitle)
+                                    .on('click', () => {
+                                        let pdfOptions = JSON.parse(JSON.stringify(options));
+                                        pdfOptions.type = 'application/pdf';
+                                        H.downloadSVGLocal(combinedSVG, pdfOptions, function () {
+                                            console.log("Failed to export PDF on client side");
+                                        });
+                                    })
+                                $(`#cancelReportButton`).text('Close');
+                                $previewTitle.append(`<h3>Combined</h3>`);
                                 return callback(combinedSVG);
                             }
 
@@ -530,12 +530,12 @@ var PowerupReporting = (function () {
                             } catch (e) {
                                 charts[cIdx] = null;
                                 let hIdx = H.charts.findIndex(x => x == chart);
-                                if(hIdx > -1) H.charts[hIdx] = undefined;
+                                if (hIdx > -1) H.charts[hIdx] = undefined;
                             }
                         } else {
                             charts[cIdx] = null;
                             let hIdx = H.charts.findIndex(x => x == chart);
-                            if(chart != undefined && hIdx > -1) H.charts[hIdx] = undefined;
+                            if (chart != undefined && hIdx > -1) H.charts[hIdx] = undefined;
                         }
                     });
                     charts = charts.filter(x => x != null);
@@ -952,9 +952,9 @@ var PowerupReporting = (function () {
                 () => { chartOptions.customNarrative.text = $textarea.val() },
                 100));
 
-            addRefreshButton($content,()=> {
-                narrativeSupport(chartOptions);
-                pub.activeChart.redraw(false);
+            addRefreshButton($content, () => {
+                //drawNarrative(chartOptions);
+                //pub.activeChart.redraw(false);
             });
         }
 
@@ -2345,56 +2345,62 @@ var PowerupReporting = (function () {
             if (typeof (options.chart.events) != "object")
                 options.chart.events = {};
             if (typeof (options.chart.events.load) != "function")
-                options.chart.events.load = function () {
-                    let x, y;
-                    switch (options.customNarrative.position) {
-                        case "bottom":
-                            x = 0;
-                            break;
-                        case "right":
-                        default:
-                            x = options.chart.originalWidth || options.chart.width || 200;
-                            if (options.customNarrative.text.length) {
-                                if (!options.chart.originalWidth) {
-                                    options.chart.originalWidth = options.chart.width;
-                                    options.chart.width += options.customNarrative.width;
-                                    options.exporting.sourceWidth = options.chart.width;
-                                    options.chart.marginRight = options.customNarrative.width;
-                                    //options.chart.spacingRight = options.customNarrative.width;
-                                    options.chart.plotBorderWidth = 1;
-                                } else { //already expanded
+                drawNarrative(options);
+            if (typeof (options.chart.events.exportData) != "function")
+                drawNarrative(options);
+            if (typeof (options.chart.events.redraw) != "function")
+                drawNarrative(options);
+        }
 
-                                }
-                            } else { //nothing to display
-                                if (options.chart.originalWidth) {
-                                    options.chart.width = options.chart.originalWidth;
-                                    options.exporting.sourceWidth = options.chart.originalWidth;
-                                    delete options.chart.originalWidth;
-                                    delete options.chart.marginRight;
-                                } else { //wasn't expanded
+        const drawNarrative = (options) => {
+            let x, y;
+            switch (options.customNarrative.position) {
+                case "bottom":
+                    x = 0;
+                    break;
+                case "right":
+                default:
+                    x = options.chart.originalWidth || options.chart.width || 200;
+                    if (options.customNarrative.text.length) {
+                        if (!options.chart.originalWidth) {
+                            options.chart.originalWidth = options.chart.width;
+                            options.chart.width += options.customNarrative.width;
+                            options.exporting.sourceWidth = options.chart.width;
+                            options.chart.marginRight = options.customNarrative.width;
+                            //options.chart.spacingRight = options.customNarrative.width;
+                            options.chart.plotBorderWidth = 1;
+                        } else { //already expanded
 
-                                }
-                            }
+                        }
+                    } else { //nothing to display
+                        if (options.chart.originalWidth) {
+                            options.chart.width = options.chart.originalWidth;
+                            options.exporting.sourceWidth = options.chart.originalWidth;
+                            delete options.chart.originalWidth;
+                            delete options.chart.marginRight;
+                        } else { //wasn't expanded
 
-                            break;
+                        }
                     }
 
-                    y = options.chart.height - 10;
+                    break;
+            }
 
-                    if (this.customNarrative) {
-                        this.customNarrative.destroy();
-                        this.customNarrative = undefined;
-                    }
+            y = options.chart.height - 10;
 
-                    this.customNarrative = this.renderer.g('customNarrative').add();
-                    this.renderer.text(options.customNarrative.text, x, y)
-                        .css({
-                            color: "#6d6d6d",
-                            fontSize: "12px",
-                            width: "200px"
-                        })
-                        .add(this.customNarrative);
-                }
+            if (this.customNarrative) {
+                this.customNarrative.destroy();
+                this.customNarrative = undefined;
+            }
+
+            this.customNarrative = this.renderer.g('customNarrative').add();
+            this.renderer.text(options.customNarrative.text, x, y)
+                .css({
+                    color: "#6d6d6d",
+                    fontSize: "12px",
+                    width: "200px"
+                })
+                .add(this.customNarrative);
         }
     }
 
