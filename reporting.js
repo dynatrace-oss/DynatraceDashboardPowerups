@@ -2352,7 +2352,7 @@ var PowerupReporting = (function () {
                 drawNarrative(options);
         }
 
-        const drawNarrative = (options) => {
+        function drawNarrative (options) {
             let x, y;
             switch (options.customNarrative.position) {
                 case "bottom":
