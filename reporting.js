@@ -953,8 +953,7 @@ var PowerupReporting = (function () {
                 100));
 
             addRefreshButton($content, () => {
-                //drawNarrative(chartOptions);
-                //pub.activeChart.redraw(false);
+                setNarrativeOptions(chartOptions);
             });
         }
 
@@ -2339,7 +2338,10 @@ var PowerupReporting = (function () {
                 text: "",
                 width: 200,
                 height: 200,
-                position: "right"
+                position: "right",
+                color: "#6d6d6d",
+                x: 0,
+                y: 0
             };
         if (typeof (options.chart) == "object") {
             if (typeof (options.chart.events) != "object")
@@ -2353,40 +2355,8 @@ var PowerupReporting = (function () {
         }
 
         function drawNarrative() {
-            let x, y;
-            switch (options.customNarrative.position) {
-                case "bottom":
-                    x = 0;
-                    break;
-                case "right":
-                default:
-                    x = options.chart.originalWidth || options.chart.width || 200;
-                    if (options.customNarrative.text.length) {
-                        if (!options.chart.originalWidth) {
-                            options.chart.originalWidth = options.chart.width;
-                            options.chart.width += options.customNarrative.width;
-                            options.exporting.sourceWidth = options.chart.width;
-                            options.chart.marginRight = options.customNarrative.width;
-                            //options.chart.spacingRight = options.customNarrative.width;
-                            options.chart.plotBorderWidth = 1;
-                        } else { //already expanded
-
-                        }
-                    } else { //nothing to display
-                        if (options.chart.originalWidth) {
-                            options.chart.width = options.chart.originalWidth;
-                            options.exporting.sourceWidth = options.chart.originalWidth;
-                            delete options.chart.originalWidth;
-                            delete options.chart.marginRight;
-                        } else { //wasn't expanded
-
-                        }
-                    }
-
-                    break;
-            }
-
-            y = options.chart.height - 10;
+            let cn = options.customNarrative;
+            setNarrativeOptions(options);
 
             if (this.customNarrative) {
                 this.customNarrative.destroy();
@@ -2394,14 +2364,51 @@ var PowerupReporting = (function () {
             }
 
             this.customNarrative = this.renderer.g('customNarrative').add();
-            this.renderer.text(options.customNarrative.text, x, y)
+            this.renderer.text(cn.text, cn.x, cn.y)
                 .css({
-                    color: "#6d6d6d",
+                    color: cn.color,
                     fontSize: "12px",
-                    width: "200px"
+                    width: cn.width
                 })
                 .add(this.customNarrative);
         }
+    }
+
+    const setNarrativeOptions = (options) => {
+        let cn = options.customNarrative;
+        switch (cn.position) {
+            case "bottom":
+                cn.x = 0;
+                break;
+            case "right":
+            default:
+                cn.x = options.chart.originalWidth || options.chart.width || 200;
+                if (cn.text.length) {
+                    if (!options.chart.originalWidth) {
+                        options.chart.originalWidth = options.chart.width;
+                        options.chart.width += cn.width;
+                        options.exporting.sourceWidth = options.chart.width;
+                        options.chart.marginRight = cn.width;
+                        //options.chart.spacingRight = options.customNarrative.width;
+                        options.chart.plotBorderWidth = 1;
+                    } else { //already expanded
+
+                    }
+                } else { //nothing to display
+                    if (options.chart.originalWidth) {
+                        options.chart.width = options.chart.originalWidth;
+                        options.exporting.sourceWidth = options.chart.originalWidth;
+                        delete options.chart.originalWidth;
+                        delete options.chart.marginRight;
+                    } else { //wasn't expanded
+
+                    }
+                }
+
+                break;
+        }
+
+        cn.y = options.chart.height - 10;
     }
 
     return pub;
