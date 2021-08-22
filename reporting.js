@@ -490,11 +490,7 @@ var PowerupReporting = (function () {
 
                 // Get SVG asynchronously and then download the resulting SVG
                 getSVG(charts, options, function (combinedsvg) {
-                    //H.downloadSVGLocal(combinedsvg, options, function () {
-                    //    console.log("Failed to export on client side");
-                    //});
-                    //only clean up when hitting close, since svg button added
-                    //cleanup(charts);
+                    //callback for when everything is built
                 });
 
             },
@@ -957,6 +953,7 @@ var PowerupReporting = (function () {
                 100));
 
             addRefreshButton($content,()=> {
+                narrativeSupport(chartOptions);
                 pub.activeChart.redraw(false);
             });
         }
