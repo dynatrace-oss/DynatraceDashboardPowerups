@@ -2345,14 +2345,14 @@ var PowerupReporting = (function () {
             if (typeof (options.chart.events) != "object")
                 options.chart.events = {};
             if (typeof (options.chart.events.load) != "function")
-                drawNarrative(options);
+                options.chart.events.load = drawNarrative;
             if (typeof (options.chart.events.exportData) != "function")
-                drawNarrative(options);
+                options.chart.events.exportData = drawNarrative;
             if (typeof (options.chart.events.redraw) != "function")
-                drawNarrative(options);
+                options.chart.events.redraw = drawNarrative;
         }
 
-        function drawNarrative (options) {
+        function drawNarrative() {
             let x, y;
             switch (options.customNarrative.position) {
                 case "bottom":
