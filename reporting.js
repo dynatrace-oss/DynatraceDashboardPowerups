@@ -791,7 +791,7 @@ var PowerupReporting = (function () {
                 }
             });
 
-            //chart background color
+            //plot background color
             if (typeof (chartOptions.chart.plotBackgroundColor) == "undefined") chartOptions.chart.plotBackgroundColor = "#f2f2f2";
             buildColorRow("Plot Background", chartOptions.chart.plotBackgroundColor, function (e) {
                 let val = $(this).val();
@@ -801,6 +801,30 @@ var PowerupReporting = (function () {
                     chartOptions.chart.plotBackgroundColor = undefined;
                 }
             });
+
+            //chart border
+            if (typeof (chartOptions.chart.borderWidth) == "undefined") chartOptions.chart.borderWidth = 0;
+            buildRadioRow(
+                "Plot Border",
+                chartOptions.chart.borderWidth,
+                () => {
+                    chartOptions.chart.borderWidth = 1;
+                    chartOptions.xAxis.gridLineColor = "#b7b7b7";
+                },
+                () => { chartOptions.chart.borderWidth = 0 },
+            );
+
+            //plot border
+            if (typeof (chartOptions.chart.plotBorderWidth) == "undefined") chartOptions.chart.plotBorderWidth = 0;
+            buildRadioRow(
+                "Plot Border",
+                chartOptions.chart.plotBorderWidth,
+                () => {
+                    chartOptions.chart.plotBorderWidth = 1;
+                    chartOptions.xAxis.gridLineColor = "#b7b7b7";
+                },
+                () => { chartOptions.chart.plotBorderWidth = 0 },
+            );
 
             //xAxis title
             if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
@@ -947,7 +971,7 @@ var PowerupReporting = (function () {
                 $row.appendTo($table);
             }
 
-            
+
             function buildColorRow(name, value, editCallback) {
                 let $row = $(`<tr>`);
                 let $name = $(`<td>`)
