@@ -1847,7 +1847,12 @@ var PowerupReporting = (function () {
                             $xhover
                                 .text(new Date(Number($x.val())).toString());
                         })
+                    } else {
+                        $xRow.children().removeClass('powerupTDTooltip');
+                        $xRow.find(`.powerupTDTooltipText`).remove();
+                    }
 
+                    if (series.yAxis && series.yAxis.isDatetimeAxis) {
                         $ytd = $yRow.children().eq(1)
                             .addClass('powerupTDTooltip');
                         $yhover = $(`<div>`)
@@ -1859,8 +1864,6 @@ var PowerupReporting = (function () {
                                 .text(new Date(Number($y.val())).toString());
                         })
                     } else {
-                        $xRow.children().removeClass('powerupTDTooltip');
-                        $xRow.find(`.powerupTDTooltipText`).remove();
                         $yRow.children().removeClass('powerupTDTooltip');
                         $yRow.find(`.powerupTDTooltipText`).remove();
                     }
