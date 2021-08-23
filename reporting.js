@@ -2391,9 +2391,9 @@ var PowerupReporting = (function () {
                 if (cn.text.length) {
                     if (!options.chart.originalWidth) {
                         options.chart.originalWidth = options.chart.width;
-                        options.chart.width += cn.width + cn.pad;
+                        options.chart.width += cn.width + (2 * cn.pad);
                         options.exporting.sourceWidth = options.chart.width;
-                        options.chart.marginRight = cn.width + cn.pad;
+                        options.chart.marginRight = cn.width + (2 * cn.pad);
                         //options.chart.spacingRight = options.customNarrative.width;
                         options.chart.plotBorderWidth = 1;
                     } else { //already expanded
