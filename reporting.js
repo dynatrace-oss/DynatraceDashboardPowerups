@@ -805,7 +805,7 @@ var PowerupReporting = (function () {
             //chart border
             if (typeof (chartOptions.chart.borderWidth) == "undefined") chartOptions.chart.borderWidth = 0;
             buildRadioRow(
-                "Plot Border",
+                "Chart Border",
                 chartOptions.chart.borderWidth,
                 () => {
                     chartOptions.chart.borderWidth = 1;
