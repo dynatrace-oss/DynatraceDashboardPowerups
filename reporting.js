@@ -1852,8 +1852,8 @@ var PowerupReporting = (function () {
                             .addClass('powerupTDTooltip');
                         $yhover = $(`<div>`)
                             .addClass('powerupTDTooltipText')
-                            .text(Date($td.val()).toString())
-                            .appendTo($td);
+                            .text(Date($y.val()).toString())
+                            .appendTo($ytd);
                         $y.on('change', () => {
                             $yhover
                                 .text(new Date(Number($y.val())).toString());
