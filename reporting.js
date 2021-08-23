@@ -2408,8 +2408,9 @@ var PowerupReporting = (function () {
                 break;
         }
 
-        cn.y = pub.activeChart.plotTop
-            + pub.activeChart.plotHeight;
+        cn.y = (pub.activeChart ?
+            pub.activeChart.plotTop + pub.activeChart.plotHeight :
+            options.chart.height - 10 );
     }
 
     return pub;
