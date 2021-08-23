@@ -789,7 +789,17 @@ var PowerupReporting = (function () {
                 } else {
                     chartOptions.title.text = undefined;
                 }
+            });
 
+            //chart background color
+            if (typeof (chartOptions.plotBackgroundColor) == "undefined") chartOptions.plotBackgroundColor = "#f2f2f2";
+            buildColorRow("Plot Background", chartOptions.plotBackgroundColor, function (e) {
+                let val = $(this).val();
+                if (val && val.length) {
+                    chartOptions.plotBackgroundColor = val;
+                } else {
+                    chartOptions.plotBackgroundColor = undefined;
+                }
             });
 
             //xAxis title
@@ -932,6 +942,23 @@ var PowerupReporting = (function () {
                     .attr('name', name)
                     .val(value)
                     .appendTo($text)
+                    .on('change', editCallback);
+
+                $row.appendTo($table);
+            }
+
+            
+            function buildColorRow(name, value, editCallback) {
+                let $row = $(`<tr>`);
+                let $name = $(`<td>`)
+                    .text(name)
+                    .appendTo($row);
+                let $color = $(`<td colspan=2>`)
+                    .appendTo($row);
+                let $input = $(`<input type="color">`)
+                    .attr('name', name)
+                    .val(value)
+                    .appendTo($color)
                     .on('change', editCallback);
 
                 $row.appendTo($table);
