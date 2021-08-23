@@ -792,13 +792,13 @@ var PowerupReporting = (function () {
             });
 
             //chart background color
-            if (typeof (chartOptions.plotBackgroundColor) == "undefined") chartOptions.plotBackgroundColor = "#f2f2f2";
-            buildColorRow("Plot Background", chartOptions.plotBackgroundColor, function (e) {
+            if (typeof (chartOptions.chart.plotBackgroundColor) == "undefined") chartOptions.chart.plotBackgroundColor = "#f2f2f2";
+            buildColorRow("Plot Background", chartOptions.chart.plotBackgroundColor, function (e) {
                 let val = $(this).val();
                 if (val && val.length) {
-                    chartOptions.plotBackgroundColor = val;
+                    chartOptions.chart.plotBackgroundColor = val;
                 } else {
-                    chartOptions.plotBackgroundColor = undefined;
+                    chartOptions.chart.plotBackgroundColor = undefined;
                 }
             });
 
