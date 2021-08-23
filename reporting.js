@@ -2341,7 +2341,8 @@ var PowerupReporting = (function () {
                 position: "right",
                 color: "#6d6d6d",
                 x: 0,
-                y: 0
+                y: 0,
+                pad: 2
             };
         if (typeof (options.chart) == "object") {
             if (typeof (options.chart.events) != "object")
@@ -2383,12 +2384,13 @@ var PowerupReporting = (function () {
             case "right":
             default:
                 cn.x = options.chart.originalWidth || options.chart.width || 200;
+                cn.x += 2;
                 if (cn.text.length) {
                     if (!options.chart.originalWidth) {
                         options.chart.originalWidth = options.chart.width;
-                        options.chart.width += cn.width;
+                        options.chart.width += cn.width + cn.pad;
                         options.exporting.sourceWidth = options.chart.width;
-                        options.chart.marginRight = cn.width;
+                        options.chart.marginRight = cn.width + cn.pad;
                         //options.chart.spacingRight = options.customNarrative.width;
                         options.chart.plotBorderWidth = 1;
                     } else { //already expanded
