@@ -1633,7 +1633,7 @@ var PowerupReporting = (function () {
                             .addClass('powerupTDTooltip');
                         $tohover = $(`<div>`)
                             .addClass('powerupTDTooltipText')
-                            .text(new Date(Number($td.val())).toString())
+                            .text(new Date(Number($totd.val())).toString())
                             .appendTo($totd);
                         $to.on('change', () => {
                             $tohover
