@@ -666,31 +666,38 @@ var PowerupReporting = (function () {
         function storyContent(content) {
             let $content = $(content);
 
-            const stories = {
-                improvingTrend: {
+            const stories = [
+                {   id: "improvingTrend", 
+                    name: "Improving Trend",
+                    example: "Assets/story-mock1.png",
                     plotBackgroundColor: "#e1f7dc",
                     highlightColor: "#2ab06f",
                     bandColor: "#99dea8"
                 },
-                degradingTrend: {
+                {   id: "degradingTrend",
+                    name: "Degrading Trend",
+                    example: "Assets/story-mock7.png",
                     plotBackgroundColor: "#ffeaea",
                     highlightColor: "#c41425",
                     bandColor: "#f28289"
                 },
-                interestingEvent: {
+                {   id: "interestingEvent",
+                    name: "Interesting Event",
+                    example: "Assets/story-mock6.png",
                     plotBackgroundColor: "#f8f8f8",
                     highlightColor: "#f5d30f",
                     bandColor: "#ffee7c"
                 }
-            }
+            ]
 
             buildRadioOption("none", "None", "", changeStory);
-            buildRadioOption("improvingTrend", "Improving Trend", "Assets/story-mock1.png", changeStory);
+            stories.forEach(s => buildRadioOption(s.id, s.name, s.example, changeStory));
+            /*buildRadioOption("improvingTrend", "Improving Trend", "Assets/story-mock1.png", changeStory);
             buildRadioOption("degradingTrend", "Degrading Trend", "Assets/story-mock7.png", changeStory);
             //buildRadioOption("positiveImpact", "Positive Impact", "Assets/story-mock2.png");
             //buildRadioOption("negativeImpact", "Negative Impact", "Assets/story-mock3.png");
             buildRadioOption("interestingEvent", "Interesting Event", "Assets/story-mock6.png", changeStory);
-            //buildRadioOption("recommendation", "Recommendation", "Assets/story-mock4.png");
+            //buildRadioOption("recommendation", "Recommendation", "Assets/story-mock4.png");*/
 
             addRefreshButton($content);
 
@@ -705,8 +712,8 @@ var PowerupReporting = (function () {
                 $right = $(`<div>`)
                     .appendTo($div);
                 $span = $(`<label>`)
-                    .attr('for',value)
                     .text(text)
+                    .on('click',()=>{$radio.trigger('click')})
                     .appendTo($right);
                 $img = $(`<img>`)
                     .on('click',()=>{$radio.trigger('click')})
@@ -716,12 +723,15 @@ var PowerupReporting = (function () {
             }
 
             function changeStory(value) {
-                chartOptions.dataStory = stories[value] ?
-                    JSON.parse(JSON.stringify(stories[value])) :
-                    null;
+                let story = stories.find(x => x.id == value);
+                chartOptions.dataStory = story ?
+                    JSON.parse(JSON.stringify(story)) :
+                    undefined;
 
                 if (chartOptions.dataStory && chartOptions.dataStory.plotBackgroundColor)
                     chartOptions.chart.plotBackgroundColor;
+                else 
+                    delete chartOptions.chart.plotBackgroundColor;
             }
         }
 
