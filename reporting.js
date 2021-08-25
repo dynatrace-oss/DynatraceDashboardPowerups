@@ -704,10 +704,12 @@ var PowerupReporting = (function () {
                     .on('click', () => { callback(value) });
                 $right = $(`<div>`)
                     .appendTo($div);
-                $span = $(`<span>`)
+                $span = $(`<label>`)
+                    .attr('for',value)
                     .text(text)
                     .appendTo($right);
                 $img = $(`<img>`)
+                    .on('click',()=>{$radio.trigger('click')})
                     .appendTo($right);
                 if (img && img.length)
                     $img.attr('src', DashboardPowerups.POWERUP_EXT_URL + img);
@@ -2479,8 +2481,9 @@ var PowerupReporting = (function () {
             }
 
             let color, text, bold = `font-weight: bold;`;
-            if (options.dataStory && options.dataStory.highlightColor)
-                color = `color: ${options.dataStory.highlightColor};`;
+            color = (options.dataStory && options.dataStory.highlightColor) ?
+                color = `color: ${options.dataStory.highlightColor};` :
+                '';
             let re = /\*\*([^*]+)\*\*/;
             text = cn.text.replace(re, `<span style="${color}${bold}">$1</span>`);
 
