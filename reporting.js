@@ -2504,6 +2504,7 @@ var PowerupReporting = (function () {
             default:
                 cn.x = options.chart.originalWidth || options.chart.width || 200;
                 cn.x += 2;
+                if(typeof(options.exporting) == "undefined") options.exporting = {}; //crash prevention
                 if (cn.text.length) {
                     if (!options.chart.originalWidth) {
                         options.chart.originalWidth = options.chart.width;
