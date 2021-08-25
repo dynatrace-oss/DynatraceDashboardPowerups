@@ -692,7 +692,7 @@ var PowerupReporting = (function () {
             buildRadioOption("interestingEvent", "Interesting Event", "Assets/story-mock6.png", changeStory);
             //buildRadioOption("recommendation", "Recommendation", "Assets/story-mock4.png");
 
-            addRefreshButton();
+            addRefreshButton($content);
 
             function buildRadioOption(value, text, img, callback = notYetImplemented) {
                 let $div, $radio, $right, $img, $span;
@@ -1054,8 +1054,19 @@ var PowerupReporting = (function () {
                 $textarea.val(chartOptions.customNarrative.text);
 
             $textarea.on('keydown paste', debounce(
-                () => { chartOptions.customNarrative.text = $textarea.val() },
+                () => { 
+                    chartOptions.customNarrative.text = $textarea.val();
+                    if(chartOptions.dataStory && chartOptions.dataStory.highlightColor){
+                        let color = chartOptions.dataStory.highlightColor;
+                        let re = /\*\*([^*])+\*\*/;
+                        chartOptions.customNarrative.text.replace(re,`<span style="color: ${color};">$1</span>`);
+                    }
+                },
                 100));
+
+            if(chartOptions.dataStory && chartOptions.dataStory.highlightColor){
+                $(`<p>Add data story highlighting by wrapping with **</p>`).appendTo($content);
+            }
 
             addRefreshButton($content, () => {
                 setNarrativeOptions(chartOptions);
