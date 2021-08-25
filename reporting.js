@@ -1054,17 +1054,12 @@ var PowerupReporting = (function () {
                 $textarea.val(chartOptions.customNarrative.text);
 
             $textarea.on('keydown paste', debounce(
-                () => { 
+                () => {
                     chartOptions.customNarrative.text = $textarea.val();
-                    if(chartOptions.dataStory && chartOptions.dataStory.highlightColor){
-                        let color = chartOptions.dataStory.highlightColor;
-                        let re = /\*\*([^*])+\*\*/;
-                        chartOptions.customNarrative.text.replace(re,`<span style="color: ${color};">$1</span>`);
-                    }
                 },
                 100));
 
-            if(chartOptions.dataStory && chartOptions.dataStory.highlightColor){
+            if (chartOptions.dataStory && chartOptions.dataStory.highlightColor) {
                 $(`<p>Add data story highlighting by wrapping with **</p>`).appendTo($content);
             }
 
@@ -2483,8 +2478,14 @@ var PowerupReporting = (function () {
                 this.customNarrative = undefined;
             }
 
+            let color, text, bold = `font-weight: bold;`;
+            if (options.dataStory && options.dataStory.highlightColor)
+                color = `color: ${options.dataStory.highlightColor};`;
+            let re = /\*\*([^*])+\*\*/;
+            text = options.customNarrative.text.replace(re, `<span style="${color}${bold}">$1</span>`);
+
             this.customNarrative = this.renderer.g('customNarrative').add();
-            this.renderer.text(cn.text, cn.x, cn.y)
+            this.renderer.text(text, cn.x, cn.y)
                 .css({
                     color: cn.color,
                     fontSize: "12px",
@@ -2504,7 +2505,7 @@ var PowerupReporting = (function () {
             default:
                 cn.x = options.chart.originalWidth || options.chart.width || 200;
                 cn.x += 2;
-                if(typeof(options.exporting) == "undefined") options.exporting = {}; //crash prevention
+                if (typeof (options.exporting) == "undefined") options.exporting = {}; //crash prevention
                 if (cn.text.length) {
                     if (!options.chart.originalWidth) {
                         options.chart.originalWidth = options.chart.width;
