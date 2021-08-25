@@ -666,13 +666,33 @@ var PowerupReporting = (function () {
         function storyContent(content) {
             let $content = $(content);
 
-            buildRadioOption("none", "None", "");
-            buildRadioOption("improvingTrend", "Improving Trend", "Assets/story-mock1.png");
-            buildRadioOption("degradingTrend", "Degrading Trend", "Assets/story-mock7.png");
-            buildRadioOption("positiveImpact", "Positive Impact", "Assets/story-mock2.png");
-            buildRadioOption("negativeImpact", "Negative Impact", "Assets/story-mock3.png");
-            buildRadioOption("interestingOutlier", "Interesting Outlier", "Assets/story-mock6.png");
-            buildRadioOption("recommendation", "Recommendation", "Assets/story-mock4.png");
+            const stories = {
+                improvingTrend: {
+                    plotBackgroundColor: "#e1f7dc",
+                    highlightColor: "#2ab06f",
+                    bandColor: "#99dea8"
+                },
+                degradingTrend: {
+                    plotBackgroundColor: "#ffeaea",
+                    highlightColor: "#c41425",
+                    bandColor: "#f28289"
+                },
+                interestingEvent: {
+                    plotBackgroundColor: "#f8f8f8",
+                    highlightColor: "#f5d30f",
+                    bandColor: "#ffee7c"
+                }
+            }
+
+            buildRadioOption("none", "None", "", changeStory);
+            buildRadioOption("improvingTrend", "Improving Trend", "Assets/story-mock1.png", changeStory);
+            buildRadioOption("degradingTrend", "Degrading Trend", "Assets/story-mock7.png", changeStory);
+            //buildRadioOption("positiveImpact", "Positive Impact", "Assets/story-mock2.png");
+            //buildRadioOption("negativeImpact", "Negative Impact", "Assets/story-mock3.png");
+            buildRadioOption("interestingEvent", "Interesting Event", "Assets/story-mock6.png", changeStory);
+            //buildRadioOption("recommendation", "Recommendation", "Assets/story-mock4.png");
+
+            addRefreshButton();
 
             function buildRadioOption(value, text, img, callback = notYetImplemented) {
                 let $div, $radio, $right, $img, $span;
@@ -681,7 +701,7 @@ var PowerupReporting = (function () {
                     .appendTo($content);
                 $radio = $(`<input type="radio" value="${value}" name="preset">`)
                     .appendTo($div)
-                    .on('click', callback);
+                    .on('click', () => { callback(value) });
                 $right = $(`<div>`)
                     .appendTo($div);
                 $span = $(`<span>`)
@@ -693,7 +713,14 @@ var PowerupReporting = (function () {
                     $img.attr('src', DashboardPowerups.POWERUP_EXT_URL + img);
             }
 
-            addRefreshButton();
+            function changeStory(value) {
+                chartOptions.dataStory = stories[value] ?
+                    JSON.parse(JSON.stringify(stories[value])) :
+                    null;
+
+                if (chartOptions.dataStory && chartOptions.dataStory.plotBackgroundColor)
+                    chartOptions.chart.plotBackgroundColor;
+            }
         }
 
         function foregroundContent(content) {
@@ -717,12 +744,20 @@ var PowerupReporting = (function () {
                     $table.find(`input[type=radio][value="bg"]`)
                         .trigger('click');
                 });
+            let $storyheader = !chartOptions.dataStory || !chartOptions.dataStory.highlightColor ?
+                undefined :
+                $(`<th><a>DataStory</a></th>`)
+                    //.addClass('powerupClickableHeader')
+                    .appendTo($header);
+
 
             chartOptions.series.forEach((s, s_idx) => {
                 let name = seriesName(s);
                 let color = s.color;
                 let bgcolor = desaturate(color);
                 let fgcolor = saturate(color);
+                let storycolor = chartOptions.dataStory && chartOptions.dataStory.highlightColor ?
+                    chartOptions.dataStory.highlightColor : undefined;
 
                 let $row = $(`<tr>`);
                 let $series = $(`<td>`)
@@ -759,6 +794,24 @@ var PowerupReporting = (function () {
                     .appendTo($bg)
                     .on('click', () => { $bg_button.trigger('click') });
                 $row.appendTo($table);
+
+                if (storycolor) {
+                    let $ds = $(`<td>`)
+                        .appendTo($row);
+                    let $ds_button = $(`<input type="radio" name="${s_idx}" value="ds">`)
+                        .appendTo($ds)
+                        .on('click', (e) => {
+                            chartOptions.series[s_idx].color = storycolor;
+                            chartOptions.series[s_idx].zIndex = 4;
+                            chartOptions.series[s_idx].shadow = true;
+                        });
+                    let $ds_color = $(`<div>`)
+                        .addClass('powerupColorPreview')
+                        .html(`&nbsp;`)
+                        .css('background-color', storycolor)
+                        .appendTo($ds)
+                        .on('click', () => { $ds_button.trigger('click') });
+                }
             });
             addRefreshButton($content);
         }
@@ -805,11 +858,13 @@ var PowerupReporting = (function () {
             //chart border
             if (typeof (chartOptions.chart.borderWidth) == "undefined") chartOptions.chart.borderWidth = 0;
             buildRadioRow(
-                "Chart Border",
-                chartOptions.chart.borderWidth,
+                "Chart Border", chartOptions.chart.borderWidth,
                 () => {
                     chartOptions.chart.borderWidth = 1;
                     chartOptions.xAxis.gridLineColor = "#b7b7b7";
+                    if (!chartOptions.chart.spacingBottom) chartOptions.chart.spacingBottom = 5;
+                    if (!chartOptions.chart.spacingLeft) chartOptions.chart.spacingLeft = 5;
+                    if (!chartOptions.chart.spacingRight) chartOptions.chart.spacingRight = 5;
                 },
                 () => { chartOptions.chart.borderWidth = 0 },
             );
@@ -817,8 +872,7 @@ var PowerupReporting = (function () {
             //plot border
             if (typeof (chartOptions.chart.plotBorderWidth) == "undefined") chartOptions.chart.plotBorderWidth = 0;
             buildRadioRow(
-                "Plot Border",
-                chartOptions.chart.plotBorderWidth,
+                "Plot Border", chartOptions.chart.plotBorderWidth,
                 () => {
                     chartOptions.chart.plotBorderWidth = 1;
                     chartOptions.xAxis.gridLineColor = "#b7b7b7";
