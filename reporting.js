@@ -2481,8 +2481,8 @@ var PowerupReporting = (function () {
             let color, text, bold = `font-weight: bold;`;
             if (options.dataStory && options.dataStory.highlightColor)
                 color = `color: ${options.dataStory.highlightColor};`;
-            let re = /\*\*([^*])+\*\*/;
-            text = options.customNarrative.text.replace(re, `<span style="${color}${bold}">$1</span>`);
+            let re = /\*\*([^*]+)\*\*/;
+            text = cn.text.replace(re, `<span style="${color}${bold}">$1</span>`);
 
             this.customNarrative = this.renderer.g('customNarrative').add();
             this.renderer.text(text, cn.x, cn.y)
