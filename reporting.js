@@ -939,11 +939,15 @@ var PowerupReporting = (function () {
                 "Legend",
                 chartOptions.legend.enabled,
                 () => {
+                    chartOptions.series.forEach(s => {
+                        s.prettyName = seriesName(s);
+                    });
                     chartOptions.legend = {
                         enabled: true,
                         align: 'right',
                         layout: 'proximate',
                         width: 200,
+                        labelFormat: "{prettyName}",
                         itemStyle: {
                             fontSize: "10px"
                         },
@@ -2439,6 +2443,8 @@ var PowerupReporting = (function () {
             name = series.entityId;
         } else if (series && series.chartableTimeseriesUniqueIdentifier && !series.chartableTimeseriesUniqueIdentifier.startsWith("null")) {
             name = series.chartableTimeseriesUniqueIdentifier;
+        } else if (series && series.name && series.name.match(/null¦[^»]+»([^»]+)»/)){
+            name = series.name.match(/null¦[^»]+»([^»]+)»/)[1];
         }
         let idx = name.indexOf('¦');
         if (idx < 1) idx = name.indexOf('|'); //sometimes a broken pipe, sometimes a pipe
