@@ -947,7 +947,7 @@ var PowerupReporting = (function () {
                         align: 'right',
                         layout: 'proximate',
                         width: 200,
-                        labelFormat: "{prettyName}",
+                        labelFormatter: function(){return this.prettyName},
                         itemStyle: {
                             fontSize: "10px"
                         },
@@ -2439,13 +2439,13 @@ var PowerupReporting = (function () {
         let name = "";
         if (series && series.name && !series.name.startsWith("null")) {
             name = series.name;
+        } else if (series && series.name && series.name.match(/null¦[^»]+»([^»]+)»/)){
+            name = series.name.match(/null¦[^»]+»([^»]+)»/)[1];
         } else if (series && series.entityId && !series.entityId.startsWith("null")) {
             name = series.entityId;
         } else if (series && series.chartableTimeseriesUniqueIdentifier && !series.chartableTimeseriesUniqueIdentifier.startsWith("null")) {
             name = series.chartableTimeseriesUniqueIdentifier;
-        } else if (series && series.name && series.name.match(/null¦[^»]+»([^»]+)»/)){
-            name = series.name.match(/null¦[^»]+»([^»]+)»/)[1];
-        }
+        } 
         let idx = name.indexOf('¦');
         if (idx < 1) idx = name.indexOf('|'); //sometimes a broken pipe, sometimes a pipe
         if (idx > 0) name = name.substring(0, idx);
