@@ -947,7 +947,9 @@ var PowerupReporting = (function () {
                         align: 'right',
                         layout: 'proximate',
                         width: 200,
-                        labelFormatter: function(){return this.prettyName},
+                        labelFormatter: function(){
+                            return this.prettyName
+                        },
                         itemStyle: {
                             fontSize: "10px"
                         },
