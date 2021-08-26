@@ -946,7 +946,7 @@ var PowerupReporting = (function () {
                         enabled: true,
                         align: 'right',
                         layout: 'proximate',
-                        width: 200,
+                        width: 250,
                         labelFormatter: function(){
                             return this.options.prettyName
                         },
@@ -956,7 +956,7 @@ var PowerupReporting = (function () {
                     };
                     if(!chartOptions.chart.originalWidth){
                         chartOptions.chart.originalWidth = chartOptions.chart.width;
-                        chartOptions.chart.width += 200;
+                        chartOptions.chart.width += 250;
                     }
                 },
                 () => { chartOptions.legend.enabled = false },
@@ -2504,7 +2504,7 @@ var PowerupReporting = (function () {
         if (typeof (options.customNarrative) != "object")
             options.customNarrative = {
                 text: "",
-                width: 200,
+                width: 250,
                 height: 200,
                 position: "right",
                 color: "#6d6d6d",
@@ -2544,8 +2544,8 @@ var PowerupReporting = (function () {
                 .css({
                     color: cn.color,
                     fontSize: "12px",
-                    //width: `${cn.width-20}px`
-                    width: `195px`
+                    width: `${cn.width-20}px`
+                    //width: `195px`
                 })
                 //.add(this.customNarrative);
                 .add();
@@ -2560,7 +2560,7 @@ var PowerupReporting = (function () {
                 break;
             case "right":
             default:
-                cn.x = options.chart.originalWidth || options.chart.width || 200;
+                cn.x = options.chart.originalWidth || options.chart.width || 250;
                 cn.x += 2;
                 if (typeof (options.exporting) == "undefined") options.exporting = {}; //crash prevention
                 if (cn.text.length) {
