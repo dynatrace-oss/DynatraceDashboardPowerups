@@ -2544,7 +2544,8 @@ var PowerupReporting = (function () {
                 .css({
                     color: cn.color,
                     fontSize: "12px",
-                    width: `${cn.width-20}px`
+                    //width: `${cn.width-20}px`
+                    width: `195px`
                 })
                 //.add(this.customNarrative);
                 .add();
