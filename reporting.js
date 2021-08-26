@@ -2238,7 +2238,7 @@ var PowerupReporting = (function () {
                         }
                         
                     }
-                    $colorPicker.val(highlight.color);
+                    $colorPicker.val(trendline.color);
 
                     removeTrendlineFromOptions(trendline);
                     trendline.seriesNum = newSeriesNum;
