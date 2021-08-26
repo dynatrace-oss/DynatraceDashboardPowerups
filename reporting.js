@@ -1687,7 +1687,12 @@ var PowerupReporting = (function () {
 
                     //set color
                     if (highlight.color == null || newSeriesNum != highlight.seriesNum) {
-                        highlight.color = saturate(series.color, "hex");
+                        if(chartOptions.dataStory && chartOptions.dataStory.highlightColor){
+                            highlight.color = chartOptions.dataStory.highlightColor;
+                        } else {
+                            highlight.color = saturate(series.color, "hex");
+                        }
+                        
                     }
                     $colorPicker.val(highlight.color);
 
