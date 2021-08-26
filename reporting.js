@@ -2536,7 +2536,7 @@ var PowerupReporting = (function () {
             color = (options.dataStory && options.dataStory.highlightColor) ?
                 color = `color: ${options.dataStory.highlightColor};` :
                 '';
-            let re = /\*\*([^*]+)\*\*/;
+            let re = /\*\*([^*]+)\*\*/g;
             text = cn.text.replace(re, `<span style="${color}${bold}">$1</span>`);
 
             this.customNarrative = this.renderer.g('customNarrative').add();
