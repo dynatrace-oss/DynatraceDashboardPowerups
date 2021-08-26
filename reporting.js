@@ -708,6 +708,7 @@ var PowerupReporting = (function () {
                     .appendTo($content);
                 $radio = $(`<input type="radio" value="${value}" name="preset">`)
                     .appendTo($div)
+                    .attr('checked', (chartOptions.dataStory && chartOptions.dataStory.id == value))
                     .on('click', () => { callback(value) });
                 $right = $(`<div>`)
                     .appendTo($div);
@@ -2401,11 +2402,11 @@ var PowerupReporting = (function () {
 
     const seriesName = (series) => {
         let name = "";
-        if (series && series.name && series.name != "null") {
+        if (series && series.name && !series.name.startsWith("null")) {
             name = series.name;
-        } else if (series && series.entityId && series.entityId != "null") {
+        } else if (series && series.entityId && !series.entityId.startsWith("null")) {
             name = series.entityId;
-        } else if (series && series.chartableTimeseriesUniqueIdentifier && series.chartableTimeseriesUniqueIdentifier != "null") {
+        } else if (series && series.chartableTimeseriesUniqueIdentifier && !series.chartableTimeseriesUniqueIdentifier.startsWith("null")) {
             name = series.chartableTimeseriesUniqueIdentifier;
         }
         let idx = name.indexOf('¦');
