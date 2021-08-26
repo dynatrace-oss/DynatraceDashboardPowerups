@@ -2179,7 +2179,7 @@ var PowerupReporting = (function () {
                     trendline = {
                         id: 'tl' + uniqId(),
                         seriesNum: 0,
-                        color: "#2ab6f4",
+                        color: null,
                         type: "linear",
                         showR2: true
                     }
@@ -2228,8 +2228,20 @@ var PowerupReporting = (function () {
                 $seriesSelector.on('change', () => {
                     let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
                     series = pub.activeChart.series[newSeriesNum];
-                    trendline.seriesNum = newSeriesNum;
+                    
+                    //set color
+                    if (trendline.color == null || newSeriesNum != trendline.seriesNum) {
+                        if(chartOptions.dataStory && chartOptions.dataStory.highlightColor){
+                            trendline.color = chartOptions.dataStory.highlightColor;
+                        } else {
+                            trendline.color = saturate(series.color, "hex");
+                        }
+                        
+                    }
+                    $colorPicker.val(highlight.color);
 
+                    removeTrendlineFromOptions(trendline);
+                    trendline.seriesNum = newSeriesNum;
                     addTrendlineToOptions(trendline);
                 });
 
