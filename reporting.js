@@ -670,7 +670,7 @@ var PowerupReporting = (function () {
                 {
                     id: "improvingTrend",
                     name: "Improving Trend",
-                    example: "Assets/story-mock1.png",
+                    example: "Assets/datastory-improving.png",
                     plotBackgroundColor: "#e1f7dc",
                     highlightColor: "#2ab06f",
                     bandColor: "#99dea8"
@@ -678,7 +678,7 @@ var PowerupReporting = (function () {
                 {
                     id: "degradingTrend",
                     name: "Degrading Trend",
-                    example: "Assets/story-mock7.png",
+                    example: "Assets/datastory-degraded.png",
                     plotBackgroundColor: "#ffeaea",
                     highlightColor: "#c41425",
                     bandColor: "#f28289"
@@ -686,7 +686,7 @@ var PowerupReporting = (function () {
                 {
                     id: "interestingEvent",
                     name: "Interesting Event",
-                    example: "Assets/story-mock6.png",
+                    example: "Assets/datastory-interesting.png",
                     plotBackgroundColor: "#f8f8f8",
                     highlightColor: "#f5d30f",
                     bandColor: "#ffee7c"
