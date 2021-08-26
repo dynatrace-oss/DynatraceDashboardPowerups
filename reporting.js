@@ -667,21 +667,24 @@ var PowerupReporting = (function () {
             let $content = $(content);
 
             const stories = [
-                {   id: "improvingTrend", 
+                {
+                    id: "improvingTrend",
                     name: "Improving Trend",
                     example: "Assets/story-mock1.png",
                     plotBackgroundColor: "#e1f7dc",
                     highlightColor: "#2ab06f",
                     bandColor: "#99dea8"
                 },
-                {   id: "degradingTrend",
+                {
+                    id: "degradingTrend",
                     name: "Degrading Trend",
                     example: "Assets/story-mock7.png",
                     plotBackgroundColor: "#ffeaea",
                     highlightColor: "#c41425",
                     bandColor: "#f28289"
                 },
-                {   id: "interestingEvent",
+                {
+                    id: "interestingEvent",
                     name: "Interesting Event",
                     example: "Assets/story-mock6.png",
                     plotBackgroundColor: "#f8f8f8",
@@ -714,10 +717,10 @@ var PowerupReporting = (function () {
                     .appendTo($div);
                 $span = $(`<label>`)
                     .text(text)
-                    .on('click',()=>{$radio.trigger('click')})
+                    .on('click', () => { $radio.trigger('click') })
                     .appendTo($right);
                 $img = $(`<img>`)
-                    .on('click',()=>{$radio.trigger('click')})
+                    .on('click', () => { $radio.trigger('click') })
                     .appendTo($right);
                 if (img && img.length)
                     $img.attr('src', DashboardPowerups.POWERUP_EXT_URL + img);
@@ -731,7 +734,7 @@ var PowerupReporting = (function () {
 
                 if (chartOptions.dataStory && chartOptions.dataStory.plotBackgroundColor)
                     chartOptions.chart.plotBackgroundColor;
-                else 
+                else
                     delete chartOptions.chart.plotBackgroundColor;
             }
         }
@@ -936,8 +939,19 @@ var PowerupReporting = (function () {
                 "Legend",
                 chartOptions.legend.enabled,
                 () => {
-                    chartOptions.legend.enabled = true;
-                    chartOptions.legend.itemStyle.fontSize = "10px";
+                    chartOptions.legend = {
+                        enabled: true,
+                        align: 'right',
+                        verticalAlign: 'top',
+                        width: 200,
+                        itemStyle: {
+                            fontSize: "10px"
+                        },
+                    };
+                    if(!chartOptions.chart.originalWidth){
+                        chartOptions.chart.originalWidth = chartOptions.chart.width;
+                        chartOptions.chart.width += 200;
+                    }
                 },
                 () => { chartOptions.legend.enabled = false },
             );
@@ -1687,12 +1701,12 @@ var PowerupReporting = (function () {
 
                     //set color
                     if (highlight.color == null || newSeriesNum != highlight.seriesNum) {
-                        if(chartOptions.dataStory && chartOptions.dataStory.highlightColor){
+                        if (chartOptions.dataStory && chartOptions.dataStory.highlightColor) {
                             highlight.color = chartOptions.dataStory.highlightColor;
                         } else {
                             highlight.color = saturate(series.color, "hex");
                         }
-                        
+
                     }
                     $colorPicker.val(highlight.color);
 
@@ -2170,7 +2184,7 @@ var PowerupReporting = (function () {
                     .filter(s => !(s.powerupTrendline && s.originalSeriesNum == trendline.seriesNum))
 
                 let activeSeries = pub.activeChart.get(`tl-${trendline.id}`);
-                if(activeSeries)    
+                if (activeSeries)
                     activeSeries.remove();
             }
 
@@ -2228,15 +2242,15 @@ var PowerupReporting = (function () {
                 $seriesSelector.on('change', () => {
                     let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
                     series = pub.activeChart.series[newSeriesNum];
-                    
+
                     //set color
                     if (trendline.color == null || newSeriesNum != trendline.seriesNum) {
-                        if(chartOptions.dataStory && chartOptions.dataStory.highlightColor){
+                        if (chartOptions.dataStory && chartOptions.dataStory.highlightColor) {
                             trendline.color = chartOptions.dataStory.highlightColor;
                         } else {
                             trendline.color = saturate(series.color, "hex");
                         }
-                        
+
                     }
                     $colorPicker.val(trendline.color);
 
