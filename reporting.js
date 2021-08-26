@@ -670,7 +670,7 @@ var PowerupReporting = (function () {
                 {
                     id: "improvingTrend",
                     name: "Improving Trend",
-                    example: "Assets/datastory-improving.png",
+                    example: "Assets/datastory-positive.png",
                     plotBackgroundColor: "#e1f7dc",
                     highlightColor: "#2ab06f",
                     bandColor: "#99dea8"
