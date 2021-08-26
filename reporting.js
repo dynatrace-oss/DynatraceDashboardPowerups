@@ -1364,7 +1364,7 @@ var PowerupReporting = (function () {
             function addBand(band = null) {
                 if (band == null) {
                     band = {
-                        color: "#fff5e4",
+                        color: null,
                         axis: "xAxis",
                         axisNum: 0,
                         from: null,
@@ -1425,6 +1425,8 @@ var PowerupReporting = (function () {
                     $to.trigger('change');
                 });
 
+                if(!band.color)
+                    band.color = (chartOptions.dataStory && chartOptions.dataStory.backgroundColor) || "#fff5e4";
                 let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
                 let $colorPicker = $(`<input type="color">`)
                     .val(band.color)
