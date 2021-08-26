@@ -942,7 +942,7 @@ var PowerupReporting = (function () {
                     chartOptions.legend = {
                         enabled: true,
                         align: 'right',
-                        verticalAlign: 'top',
+                        layout: 'proximate',
                         width: 200,
                         itemStyle: {
                             fontSize: "10px"
