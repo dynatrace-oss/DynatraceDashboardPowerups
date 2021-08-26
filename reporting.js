@@ -2539,14 +2539,15 @@ var PowerupReporting = (function () {
             let re = /\*\*([^*]+)\*\*/g;
             text = cn.text.replace(re, `<span style="${color}${bold}">$1</span>`);
 
-            this.customNarrative = this.renderer.g('customNarrative').add();
-            this.renderer.text(text, cn.x, cn.y)
+            //this.customNarrative = this.renderer.g('customNarrative').add();
+            this.customNarrative = this.renderer.text(text, cn.x, cn.y)
                 .css({
                     color: cn.color,
                     fontSize: "12px",
                     width: `${cn.width-20}px`
                 })
-                .add(this.customNarrative);
+                //.add(this.customNarrative);
+                .add();
         }
     }
 
