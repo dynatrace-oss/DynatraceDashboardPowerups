@@ -2169,9 +2169,9 @@ var PowerupReporting = (function () {
                 chartOptions.series = chartOptions.series
                     .filter(s => !(s.powerupTrendline && s.originalSeriesNum == trendline.seriesNum))
 
-                pub.activeChart
-                    .get(`tl-${trendline.id}`)
-                    .remove();
+                let activeSeries = pub.activeChart.get(`tl-${trendline.id}`);
+                if(activeSeries)    
+                    activeSeries.remove();
             }
 
             function addTrendline(trendline = null) {
