@@ -1,16 +1,17 @@
-# Dynatrace Dashboard Powerups
+# Dynatrace Dashboard PowerUps
 
 This extension powers-up Dynatrace dashboards to enable cool new experimental features live, such as:
 - Color changing tiles based on thresholds
 - Color changing icons based on thresholds
-- Tooltips on charts
+- Generating reports
 - USQL values on world maps
    
-*Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum or create an [issue](https://github.com/LucasHocker/DynatraceDashboardPowerups/issues) on Github*
+*Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum or create an [issue](https://github.com/LucasHocker/DynatraceDashboardPowerUps/issues) on Github*
 
 ## Table of contents
 - [Install](#Installation)
 - [Configure](#Configure-extension)
+- [Reports](#Reports)
 - Powerup List:
     - [Disclaimer](#Disclaimer)
     - [Tooltips](#Tooltips)
@@ -50,7 +51,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 
 ![Chrome Store](Assets/chromeStore.png)
 
-2. Click the puzzle icon and pin Powerups
+2. Click the puzzle icon and pin PowerUps
 
 ![puzzle](Assets/clickPuzzlePiece.png)
 ![pin](Assets/pinExtension.png)
@@ -74,7 +75,10 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
 7. Click save. Note: you may need to refresh your page for changes to take effect.
 
 ## Powerup Howto
-To add Powerups to your existing dashboards, you may add markup text in your dashboard tile titles. Alternatively, you may deploy dashboard packs with Powerups already included via the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a>.
+To add PowerUps to your existing dashboards, you may add markup text in your dashboard tile titles. Alternatively, you may deploy dashboard packs with PowerUps already included via the <a href="https://dynatrace.github.io/BizOpsConfigurator">BizOpsConfigurator</a>.
+
+## Reports
+As of 1.53, PowerUps now includes a Report Generator. For details, see: [Reports](Reports.md).
 
 ## Powerup List
 
@@ -100,6 +104,8 @@ If you deploy dashboard packs from the BizOpsConfigurator, this tile is already 
 
 ### Tooltips
 Nothing required, just enable the extension as per above and refresh your browser on a dashboard.
+
+**✔️ Deprecated** Tooltips are now available in-product with Explorer tiles.
 
 Example:
 ![Tooltips](Assets/tooltips.png)
@@ -128,7 +134,7 @@ Example:
 ### Icons
 This powerup renders icons in place of Markdown tiles. These icons change color to give a quick visual indication of environment / business health. For example, if payment processing was beyond a threshold hold, you might have a creditcard icon turn red. Here's how that might look:
 ```
-[Extension Needed](https://github.com/LucasHocker/DynatraceDashboardPowerups)
+[Extension Needed](https://github.com/LucasHocker/DynatraceDashboardPowerUps)
 !PU(svg):icon=creditcard;link=val3;base=high;warn=90;crit=85
 ```
 
@@ -259,7 +265,7 @@ Angular Easy Travel UserJourneys !PU(sankey):link=sankey1;kpi=revenue;kpicurr=EU
 
 and Markdown tile to get swapped out like this:
 ```
-[Extension Needed](https://github.com/LucasHocker/DynatraceDashboardPowerups)
+[Extension Needed](https://github.com/LucasHocker/DynatraceDashboardPowerUps)
 !PU(link):sankey1
 ```
 
