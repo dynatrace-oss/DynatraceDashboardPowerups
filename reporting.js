@@ -15,6 +15,7 @@ var PowerupReporting = (function () {
             return i++;
         }
     })();
+    let usedReportStyles = [];
 
     function startReportBeacon(action) {
         if (DashboardPowerups.config.Powerups.BeaconOptOut) return false;
@@ -39,12 +40,12 @@ var PowerupReporting = (function () {
         let vals = {
             tenantId: tenantId,
             host: location.host,
-            dashboardID: (location.hash.match(/id=([0-9a-f-]+)/) || [])[1],
+            //dashboardID: (location.hash.match(/id=([0-9a-f-]+)/) || [])[1],
             internalUser: internalUser,
             dtVersion: dtVersion,
             dbName: dbName,
             dbUrl: location.href,
-            configuratorTag: configuratorTag,
+            //configuratorTag: configuratorTag,
             envName: envName,
             libLocation: DashboardPowerups.config.Powerups.libLocation,
             uuid: DashboardPowerups.config.Powerups.uuid
@@ -92,17 +93,49 @@ var PowerupReporting = (function () {
             }, "*");
     }
 
-    function endReportBeacon() {
+    function endReportBeacon(vals = {}) {
         if (DashboardPowerups.config.Powerups.BeaconOptOut) return false;
         if (DashboardPowerups.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end beacon");
 
-        let vals = powerupsFired;
-        powerupsFired = {};
         window.postMessage(
             {
                 OpenKit: "end_report_beacon",
                 vals: vals
             }, "*");
+    }
+
+    function reportUsage() {
+        if (DashboardPowerups.config.Powerups.BeaconOptOut) return false;
+        if (DashboardPowerups.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit crash beacon");
+
+        
+        let aggUsage = usedReportStyles
+            .reduce((acc, cv) => {
+                Object.keys(cv).forEach(key => {
+                    switch (typeof (cv[key])) {
+                        case "boolean":
+                            if (cv[key]) {
+                                if (!acc[key])
+                                    acc[key] = 1;
+                                else acc[key]++;
+                            }
+                            break;
+                        case "string":
+                            let keyval = key + '_' + cv[key];
+                            if(!acc[keyval])
+                                acc[keyval] = 1;
+                            else acc[keyval]++;
+                            break;
+                    }
+                }, {})
+            })
+
+            window.postMessage(
+                {
+                    OpenKit: "report_usage",
+                    context: "clientside",
+                    vals: aggUsage
+                }, "*");
     }
 
     //Public methods
@@ -442,11 +475,12 @@ var PowerupReporting = (function () {
                             let p = $.Deferred();  //expecting {refresh: bool, id: string}
                             pub.activeChart = charts[i];
                             pub.chartOptions = chartOptions;
+                            if (!chartOptions.powerupStyles) chartOptions.powerupStyles = {};
 
                             if (!fastForward) {
                                 startReportBeacon(`Preview SVG - ${i}`
                                     + (result && result.id ? ` - ${result.id}` : ''));
-                                
+
                                 $previewTitle.html(`<h4>Chart ${i}:</h4>`);
                                 $previewContent.html(svg);
                                 let id = (result != null && result.id) ? result.id : null;
@@ -471,7 +505,7 @@ var PowerupReporting = (function () {
                                     .text(" >> ")
                                     .addClass("powerupButton")
                                     .appendTo($buttonBar);
-                                endReportBeacon();
+                                endReportBeacon(chartOptions.powerupStyles);
                             } else {
                                 p.resolve({
                                     refresh: false,
@@ -535,7 +569,7 @@ var PowerupReporting = (function () {
                                     .appendTo($previewTitle)
                                     .on('click', () => {
                                         startReportBeacon("Download SVG");
-        
+
                                         let svgOptions = JSON.parse(JSON.stringify(options));
                                         svgOptions.type = 'image/svg+xml';
                                         H.downloadSVGLocal(combinedSVG, svgOptions, function () {
@@ -550,7 +584,7 @@ var PowerupReporting = (function () {
                                     .appendTo($previewTitle)
                                     .on('click', () => {
                                         startReportBeacon("Download PDF");
-                                        
+
                                         let pdfOptions = JSON.parse(JSON.stringify(options));
                                         pdfOptions.type = 'application/pdf';
                                         H.downloadSVGLocal(combinedSVG, pdfOptions, function () {
@@ -579,8 +613,10 @@ var PowerupReporting = (function () {
                                 if (p_result && p_result.refresh) {
                                     return exportChart(i, chartOptions, p_result);
                                 } else {
-                                    if (p_result && p_result.include)
+                                    if (p_result && p_result.include) {
                                         addSVG(svg, i);
+                                        usedReportStyles.push(JSON.parse(JSON.stringify(chartOptions.powerupStyles)));
+                                    }
                                     return exportChart(i + 1); // Export next only when this SVG is received
                                 }
                             });
@@ -669,6 +705,7 @@ var PowerupReporting = (function () {
     }
 
     function buildOptions(chartOptions, promise, open = null) {
+        if (!chartOptions.powerupStyles) chartOptions.powerupStyles = {};
         let $optionsBlock = $(`#PowerupReportGeneratorPreviewOptions`)
             .html('<h4>Options:</h4>')
             .addClass('generated');
@@ -760,6 +797,7 @@ var PowerupReporting = (function () {
                 () => {
                     let obj = JSON.parse($options.val());
                     Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
+                    chartOptions.powerupStyles.json = true;
                 });
 
             let $help = $(`<div>Format help: <a href="https://api.highcharts.com/highcharts/" target="_blank">Highcharts</a></div>`)
@@ -840,6 +878,8 @@ var PowerupReporting = (function () {
                     chartOptions.chart.plotBackgroundColor;
                 else
                     delete chartOptions.chart.plotBackgroundColor;
+
+                chartOptions.powerupStyles.dataStory = value;
             }
         }
 
@@ -893,6 +933,7 @@ var PowerupReporting = (function () {
                         chartOptions.series[s_idx].color = fgcolor;
                         chartOptions.series[s_idx].zIndex = 4;
                         chartOptions.series[s_idx].shadow = true;
+                        chartOptions.powerupStyles.foreground = true;
                     });
                 let $bg_button = $(`<input type="radio" name="${s_idx}" value="bg">`)
                     .appendTo($bg)
@@ -900,6 +941,7 @@ var PowerupReporting = (function () {
                         chartOptions.series[s_idx].color = bgcolor;
                         chartOptions.series[s_idx].zIndex = 2;
                         chartOptions.series[s_idx].shadow = false;
+                        chartOptions.powerupStyles.background = true;
                     });
                 let $fg_color = $(`<div>`)
                     .addClass('powerupColorPreview')
@@ -924,6 +966,7 @@ var PowerupReporting = (function () {
                             chartOptions.series[s_idx].color = storycolor;
                             chartOptions.series[s_idx].zIndex = 4;
                             chartOptions.series[s_idx].shadow = true;
+                            chartOptions.powerupStyles.seriesStoryColor = true;
                         });
                     let $ds_color = $(`<div>`)
                         .addClass('powerupColorPreview')
@@ -1051,14 +1094,14 @@ var PowerupReporting = (function () {
                         align: 'right',
                         layout: 'proximate',
                         width: 250,
-                        labelFormatter: function(){
+                        labelFormatter: function () {
                             return this.options.prettyName
                         },
                         itemStyle: {
                             fontSize: "10px"
                         },
                     };
-                    if(!chartOptions.chart.originalWidth){
+                    if (!chartOptions.chart.originalWidth) {
                         chartOptions.chart.originalWidth = chartOptions.chart.width;
                         chartOptions.chart.width += 250;
                     }
@@ -1121,6 +1164,7 @@ var PowerupReporting = (function () {
                 })
             }
 
+            $content.find(`input`).on('click', () => { chartOptions.powerupStyles.declutter = true; });
             addRefreshButton($content);
 
             function buildRadioRow(name, enabled, enableCallback, disableCallback) {
@@ -1193,6 +1237,7 @@ var PowerupReporting = (function () {
             $textarea.on('keydown paste', debounce(
                 () => {
                     chartOptions.customNarrative.text = $textarea.val();
+                    chartOptions.powerupStyles.narrative = true;
                 },
                 100));
 
@@ -1305,6 +1350,7 @@ var PowerupReporting = (function () {
             }
 
             function addLine(line = null) {
+                chartOptions.powerupStyles.plotLine = true;
                 if (line == null) {
                     line = {
                         color: "#526cff",
@@ -1466,6 +1512,7 @@ var PowerupReporting = (function () {
             }
 
             function addBand(band = null) {
+                chartOptions.powerupStyles.plotBand = true;
                 if (band == null) {
                     band = {
                         color: null,
@@ -1529,7 +1576,7 @@ var PowerupReporting = (function () {
                     $to.trigger('change');
                 });
 
-                if(!band.color)
+                if (!band.color)
                     band.color = (chartOptions.dataStory && chartOptions.dataStory.bandColor) || "#fff5e4";
                 let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
                 let $colorPicker = $(`<input type="color">`)
@@ -1738,6 +1785,7 @@ var PowerupReporting = (function () {
             }
 
             function addHighlight(highlight = null) {
+                chartOptions.powerupStyles.highlight = true;
                 if (highlight == null) {
                     highlight = {
                         id: 'HL' + uniqId(),
@@ -1987,6 +2035,7 @@ var PowerupReporting = (function () {
             }
 
             function addAnnotation(annotation = null) {
+                chartOptions.powerupStyles.annotation = true;
                 if (annotation == null) {
                     annotation = {
                         id: 'a' + uniqId(),
@@ -2301,6 +2350,7 @@ var PowerupReporting = (function () {
             }
 
             function addTrendline(trendline = null) {
+                chartOptions.powerupStyles.trendline = true;
                 if (trendline == null) {
                     trendline = {
                         id: 'tl' + uniqId(),
@@ -2547,13 +2597,13 @@ var PowerupReporting = (function () {
         let name = "";
         if (series && series.name && !series.name.startsWith("null")) {
             name = series.name;
-        } else if (series && series.name && series.name.match(/null¦[^»]+»([^»]+)»/)){
+        } else if (series && series.name && series.name.match(/null¦[^»]+»([^»]+)»/)) {
             name = series.name.match(/null¦[^»]+»([^»]+)»/)[1];
         } else if (series && series.entityId && !series.entityId.startsWith("null")) {
             name = series.entityId;
         } else if (series && series.chartableTimeseriesUniqueIdentifier && !series.chartableTimeseriesUniqueIdentifier.startsWith("null")) {
             name = series.chartableTimeseriesUniqueIdentifier;
-        } 
+        }
         let idx = name.indexOf('¦');
         if (idx < 1) idx = name.indexOf('|'); //sometimes a broken pipe, sometimes a pipe
         if (idx > 0) name = name.substring(0, idx);
@@ -2648,7 +2698,7 @@ var PowerupReporting = (function () {
                 .css({
                     color: cn.color,
                     fontSize: "12px",
-                    width: `${cn.width-20}px`
+                    width: `${cn.width - 20}px`
                     //width: `195px`
                 })
                 //.add(this.customNarrative);
