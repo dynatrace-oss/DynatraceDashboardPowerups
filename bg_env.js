@@ -15,5 +15,7 @@ var BG_ENV = {
     API_URL: 'https://tgm10765.sprint.dynatracelabs.com/api/v2/metrics/ingest',
     DT_TOKEN: "XXXXXXXXXXXXXXX",
     METRIC_KEY: "powerups.usage",
-    METRIC_SUMMARY_KEY: "powerups.dashboards"
+    METRIC_SUMMARY_KEY: "powerups.dashboards",
+    METRIC_REPORT_DETAIL: "powerups.reportdetail",
+    METRIC_REPORTS: "powerups.reports"
 }

@@ -16,6 +16,95 @@ var PowerupReporting = (function () {
         }
     })();
 
+    function startReportBeacon(action) {
+        if (DashboardPowerups.config.Powerups.BeaconOptOut) return false;
+        if (DashboardPowerups.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
+
+        //send message to background.js instead to avoid CSP issues
+        let email = $(`[debugid="userEmail"]`).text();
+        let name = (email > "" ? email : $(`[debugid="userName"]`).text());
+        if (!name.length) name = "Anonymous";
+        let internalUser = (name.includes('@dynatrace.com')
+            || name.includes('@ruxitlabs.com')
+            || location.href.match(/managed[a-z-]*.internal.dynatrace/)
+            ? "true" : "false");
+        let dtVersion = ($(`[uitestid="gwt-debug-systemVerisionSection"]`).text().match(/[0-9.]+/) || [])[0];
+        let dbName = $(`[uitestid="gwt-debug-dashboardNameLabel"]`).text();
+        let configuratorTag = ($(`[uitestid="gwt-debug-showMoreTags"]`).parent().find(`[title="Configurator"]`).length ? "true" : "false");
+        let envName = (
+            ($(`[uitestid="gwt-debug-searchField"] div input`).attr("placeholder") || "")
+                .match(/Search Dynatrace (.+).../) || []
+        )[1];
+
+        let vals = {
+            tenantId: tenantId,
+            host: location.host,
+            dashboardID: (location.hash.match(/id=([0-9a-f-]+)/) || [])[1],
+            internalUser: internalUser,
+            dtVersion: dtVersion,
+            dbName: dbName,
+            dbUrl: location.href,
+            configuratorTag: configuratorTag,
+            envName: envName,
+            libLocation: DashboardPowerups.config.Powerups.libLocation,
+            uuid: DashboardPowerups.config.Powerups.uuid
+        };
+        window.postMessage(
+            {
+                OpenKit: "start_report_beacon",
+                action: "PowerUp Report: " + action,
+                beaconOptOut: DashboardPowerups.config.Powerups.BeaconOptOut,
+                uuid: DashboardPowerups.config.Powerups.uuid,
+                applicationVersion: DashboardPowerups.VERSION,
+                operatingSystem: (navigator.userAgent.match(/\(([^)]+)\)/) || [])[1],
+                manufacturer: 'Chrome',
+                modelId: (navigator.userAgent.match(/Chrome\/([^ ]+)/) || [])[1],
+                screenResolution: [window.innerWidth, window.innerHeight],
+                name: name,
+                vals: vals
+            }, "*");
+    }
+
+    function crashBeacon(e) {
+        if (DashboardPowerups.config.Powerups.BeaconOptOut) return false;
+        if (DashboardPowerups.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit crash beacon");
+
+        window.postMessage(
+            {
+                OpenKit: "crash_beacon",
+                e: {
+                    name: e.name,
+                    message: e.message,
+                    stack: e.stack
+                }
+            }, "*");
+    }
+
+    function errorBeacon(err) {
+        if (DashboardPowerups.config.Powerups.BeaconOptOut) return false;
+        if (DashboardPowerups.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit crash beacon");
+
+        window.postMessage(
+            {
+                OpenKit: "error_beacon",
+                context: "clientside",
+                err: err
+            }, "*");
+    }
+
+    function endReportBeacon() {
+        if (DashboardPowerups.config.Powerups.BeaconOptOut) return false;
+        if (DashboardPowerups.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit end beacon");
+
+        let vals = powerupsFired;
+        powerupsFired = {};
+        window.postMessage(
+            {
+                OpenKit: "end_report_beacon",
+                vals: vals
+            }, "*");
+    }
+
     //Public methods
     var pub = {};
 
@@ -49,10 +138,15 @@ var PowerupReporting = (function () {
             .text("Generate")
             .addClass("powerupButton")
             .appendTo($buttonBar);
+
+        startReportBeacon("Open report generator");
+        endReportBeacon();
     }
 
     function closeReportGenerator() {
         $("div.PowerupReportGenerator").remove();
+        startReportBeacon("Close report generator");
+        endReportBeacon();
     }
 
     function generateReport() {
@@ -65,8 +159,8 @@ var PowerupReporting = (function () {
         let $copies = $(`#PowerupReportGeneratorHiddenCopy`);
 
         (function (H) {
-
             // adapted from https://jsfiddle.net/gh/get/library/pure/H/H/tree/master/samples/H/exporting/multiple-charts-offline/
+
             let copyChart = function (chart, chartOptions, containerContainer) {
                 if (!Object.keys(chart).length) return null;
                 let chartCopy,
@@ -350,6 +444,9 @@ var PowerupReporting = (function () {
                             pub.chartOptions = chartOptions;
 
                             if (!fastForward) {
+                                startReportBeacon(`Preview SVG - ${i}`
+                                    + (result && result.id ? ` - ${result.id}` : ''));
+                                
                                 $previewTitle.html(`<h4>Chart ${i}:</h4>`);
                                 $previewContent.html(svg);
                                 let id = (result != null && result.id) ? result.id : null;
@@ -374,6 +471,7 @@ var PowerupReporting = (function () {
                                     .text(" >> ")
                                     .addClass("powerupButton")
                                     .appendTo($buttonBar);
+                                endReportBeacon();
                             } else {
                                 p.resolve({
                                     refresh: false,
@@ -436,11 +534,14 @@ var PowerupReporting = (function () {
                                     .addClass("powerupButton")
                                     .appendTo($previewTitle)
                                     .on('click', () => {
+                                        startReportBeacon("Download SVG");
+        
                                         let svgOptions = JSON.parse(JSON.stringify(options));
                                         svgOptions.type = 'image/svg+xml';
                                         H.downloadSVGLocal(combinedSVG, svgOptions, function () {
                                             console.log("Failed to export SVG on client side");
                                         });
+                                        endReportBeacon();
                                     })
                                 let $pdfButton = $(`<button>`)
                                     .text("PDF")
@@ -448,11 +549,14 @@ var PowerupReporting = (function () {
                                     .addClass("powerupButtonDefault")
                                     .appendTo($previewTitle)
                                     .on('click', () => {
+                                        startReportBeacon("Download PDF");
+                                        
                                         let pdfOptions = JSON.parse(JSON.stringify(options));
                                         pdfOptions.type = 'application/pdf';
                                         H.downloadSVGLocal(combinedSVG, pdfOptions, function () {
                                             console.log("Failed to export PDF on client side");
                                         });
+                                        endReportBeacon();
                                     })
                                 $(`#cancelReportButton`).text('Close');
                                 $previewTitle.append(`<h3>Combined</h3>`);
@@ -548,7 +652,7 @@ var PowerupReporting = (function () {
                 }
             });
 
-
+            startReportBeacon("Generate report");
             let reportName = $(DashboardPowerups.SELECTORS.BANNER_SELECTOR).text();
             let charts = copyCharts();
             rebuildAndAddToplist(charts);
@@ -560,7 +664,7 @@ var PowerupReporting = (function () {
                     type: 'application/pdf',
                     libURL: DashboardPowerups.POWERUP_EXT_URL + '3rdParty/Highcharts/lib'
                 })
-
+            endReportBeacon(); //should fire before all of the nested callbacks
         }(Highcharts));
     }
 

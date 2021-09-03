@@ -81,10 +81,12 @@ function listenForBeaconMessages() {
                     "from the extension");
                 switch (request.OpenKit) {
                     case "start_beacon":
+                    case "start_report_beacon":
                         startBeacon(request);
                         sendResponse({ beacon_status: "sent" });
                         break;
                     case "end_beacon":
+                    case "end_report_beacon":
                         endBeacon(request);
                         sendResponse({ beacon_status: "done" });
                         break;
@@ -187,7 +189,7 @@ function errorBeacon(request) {
     console.log("POWERUP: DEBUG - OpenKit crash beacon");
 }
 
-function endBeacon(request) {
+function endBeacon(request) { //ends user action & triggers MINT, does not close user session
     if (typeof (OpenKitBuilder) === "undefined" || !openKit) return false;
     console.log("POWERUP: DEBUG - OpenKit end beacon");
     if (openKitAction) {
@@ -196,12 +198,17 @@ function endBeacon(request) {
         });
         openKitAction.leaveAction();
 
-        let payload = createMetricPayload({ ...request.vals, ...openKitAction.vals });
-        if (payload && payload.length) sendMetricToDT(payload);
+        if(request.OpenKit == "end_beacon"){
+            let payload = createMetricPayload({ ...request.vals, ...openKitAction.vals });
+            if (payload && payload.length) sendMetricToDT(payload);
+        } else if(request.OpenKit == "end_beacon"){
+            //TODO: create a report payload here
+        }
+        
     }
 }
 
-function createMetricPayload(vals) {
+function createMetricPayload(vals) { //TODO: refactor for readability
     let payload = "";
     let line = `${BG_ENV.METRIC_KEY},dt.entity.custom_application=${BG_ENV.ENT_ID},`;
 
@@ -232,9 +239,42 @@ function createMetricPayload(vals) {
         return undefined;
     }
 
-
     return payload;
 }
+
+/*function createReportMetricPayload(vals) {
+    let payload = "";
+    let line = `${BG_ENV.METRIC_REPORT_DETAIL},dt.entity.custom_application=${BG_ENV.ENT_ID},`;
+
+    if ("internalUser" in vals) line += `internaluser=${vals['internalUser']},`;
+    if ("configuratorTag" in vals) line += `configuratortag=${vals['configuratorTag']},`;
+    if ("host" in vals) line += `host=${vals['host']},`;
+    if ("tenantId" in vals) line += `tenantid=${vals['tenantId']},`;
+    if ("libLocation" in vals) line += `liblocation=${vals['libLocation']},`;
+    if ("uuid" in vals) line += `uuid=${vals['uuid']},`
+    if (openKit && openKit.config && openKit.config.meta && openKit.config.meta.applicationVersion)
+        line += `version=${openKit.config.meta.applicationVersion},`;
+    if (openKitSession && openKitSession.userId) line += `userid=${openKitSession.userId},`;
+    if (typeof (HotFixMode) != "undefined") line += `hotfixmode=${HotFixMode},`;
+
+    let re = new RegExp(`^${BG_ENV.METRIC_REPORT_DETAIL},`);
+    let summaryLine = line.replace(re, `${BG_ENV.METRIC_REPORTS},`);
+    if (vals && Object.keys(vals).length) {
+        let powerups = Object.keys(vals).filter(x => x.startsWith('PU_'));
+        powerups.forEach(x => {
+            payload += line + `powerup=${x} ${vals[x]}\n`;
+        });
+        if (powerups.length)
+            payload += summaryLine + `poweredup=true 1\n`;
+        else
+            payload = summaryLine + `poweredup=false 1\n`;
+    } else {
+        console.log("POWERUP: unable to send beacon, vals empty!");
+        return undefined;
+    }
+
+    return payload;
+}*/
 
 function sendMetricToDT(payload) {
     let settings = {
