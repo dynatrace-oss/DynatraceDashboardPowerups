@@ -114,24 +114,25 @@ var PowerupReporting = (function () {
 
         let metadata = gatherMetadata();
         let aggUsage = usedReportStyles
-            .reduce((acc, cv) => {
+            .reduce((pv, cv) => {
                 Object.keys(cv).forEach(key => {
                     switch (typeof (cv[key])) {
                         case "boolean":
                             if (cv[key]) {
-                                if (!acc[key])
-                                    acc[key] = 1;
-                                else acc[key]++;
+                                if (!pv[key])
+                                    pv[key] = 1;
+                                else pv[key]++;
                             }
                             break;
                         case "string":
                             let keyval = key + '_' + cv[key];
-                            if (!acc[keyval])
-                                acc[keyval] = 1;
-                            else acc[keyval]++;
+                            if (!pv[keyval])
+                                pv[keyval] = 1;
+                            else pv[keyval]++;
                             break;
                     }
                 })
+                return pv;
             }, {});
 
         window.postMessage(
