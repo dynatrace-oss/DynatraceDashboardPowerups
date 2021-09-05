@@ -5316,6 +5316,7 @@ var DashboardPowerups = (function () {
             let res = (args.find(x => x[0] == "res") || [])[1];
             let fmt = (args.find(x => x[0] == "fmt") || [])[1];
             let color = (args.find(x => x[0] == "color") || [])[1];
+            let size = (args.find(x => x[0] == "size") || [])[1] || "20px";
 
             let dtDate = dtDateMath.resolve(res);
             if (!Array.isArray(dtDate) || dtDate.length < 3) {
@@ -5339,6 +5340,7 @@ var DashboardPowerups = (function () {
             let h1 = $("<h2>")
                 .text(formattedDate)
                 .css("color", color)
+                .css("font-size", size)
                 .appendTo($newContainer);
             powerupsFired['PU_DATE'] ? powerupsFired['PU_DATE']++ : powerupsFired['PU_DATE'] = 1;
         });

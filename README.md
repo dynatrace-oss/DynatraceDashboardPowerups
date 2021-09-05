@@ -363,6 +363,7 @@ Explanation:
 - `min=` - left end of the gauge, defaults to 0
 - `max=` - right end of the gauage, defaults to 100
 - `digits=2` - digits after the decimal, defaults to 1
+- `size=` - (optional) a valid CSS font-size, defaults to 20px
 
 Example:
 ![Gauge](Assets/gauge.png)
