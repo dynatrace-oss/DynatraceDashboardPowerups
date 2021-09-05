@@ -737,1663 +737,1093 @@ var PowerupReporting = (function () {
             let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter", declutterContent));
             let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert mode)", jsonContent));
 
-        } catch (err) {
-            console.warn(err);
-            crashBeacon(err);
-        }
-        ///////////////////////////////
-        function drawIncludeOptions() {
-            let $include = $(`
+            ///////////////////////////////
+            function drawIncludeOptions() {
+                let $include = $(`
                 <span>Include chart:</span>
                 <input type="checkbox" id="includeChart" checked>`)
-                .appendTo($optionsBlock);
-        }
+                    .appendTo($optionsBlock);
+            }
 
-        function createSection(id, name, callback = dummyContent) {
-            let $section = $(`<section>`)
-                .attr('id', id)
-                .appendTo($optionsBlock);
-            let $button = $(`
+            function createSection(id, name, callback = dummyContent) {
+                let $section = $(`<section>`)
+                    .attr('id', id)
+                    .appendTo($optionsBlock);
+                let $button = $(`
         <button role="button" class="powerupExpandable">
             <div role="img" name="dropdownopen" class="powerupExpandableArrow">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fit="" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"><path d="M403.078 142.412L256 289.49 108.922 142.412l-45.255 45.255L256 380l192.333-192.333z"></path></svg>
             </div>
             <div class="powerupExpandableHeader"> ${name} </div>
         </button>`)
-                .appendTo($section);
-            let $content = $(`<div>`)
-                .addClass("powerupOptionsContent")
-                .appendTo($section);
+                    .appendTo($section);
+                let $content = $(`<div>`)
+                    .addClass("powerupOptionsContent")
+                    .appendTo($section);
 
-            $button.on('click', function () {
-                if ($section.hasClass("powerupOptionsOpen")) {
-                    closeThisSection();
-                } else {
-                    openThisSection();
-                    closeOtherSections();
-                }
-            });
-
-            if (open === id) openThisSection();
-            return $section;
-
-            function openThisSection() {
-                $section.addClass("powerupOptionsOpen");
-                callback($content);
-            }
-
-            function closeThisSection() {
-                $section.removeClass("powerupOptionsOpen");
-                $content.html('');
-            }
-
-            function closeOtherSections() {
-                $optionsBlock.find(`section:not([id=${id}])`).each((s_i, s) => {
-                    $(s).removeClass("powerupOptionsOpen")
-                        .find(`.powerupOptionsContent`)
-                        .html('');
-                })
-            }
-        }
-
-        function dummyContent(content) {
-            let $content = $(content);
-
-            $content.html(`<h3>Dummy content...</h3>`);
-        }
-
-        function jsonContent(content) {
-            let $content = $(content);
-            let $div = $(`<div>`).appendTo($content);
-            let $options = $(`<textarea>`)
-                .addClass("powerupPreviewOptions")
-                .val(JSON.stringify(chartOptions, null, 2))
-                .appendTo($div)
-                .on('keydown paste', debounce(validateJSON, 100));
-
-            addRefreshButton(
-                $div,
-                () => {
-                    let obj = JSON.parse($options.val());
-                    Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
-                    chartOptions.powerupStyles.json = true;
+                $button.on('click', function () {
+                    if ($section.hasClass("powerupOptionsOpen")) {
+                        closeThisSection();
+                    } else {
+                        openThisSection();
+                        closeOtherSections();
+                    }
                 });
 
-            let $help = $(`<div>Format help: <a href="https://api.highcharts.com/highcharts/" target="_blank">Highcharts</a></div>`)
-                .addClass("powerupHelpFooter")
-                .appendTo($content);
-        }
+                if (open === id) openThisSection();
+                return $section;
 
-        function storyContent(content) {
-            let $content = $(content);
-
-            const stories = [
-                {
-                    id: "improvingTrend",
-                    name: "Improving Trend",
-                    example: "Assets/datastory-positive.png",
-                    plotBackgroundColor: "#e1f7dc",
-                    highlightColor: "#2ab06f",
-                    bandColor: "#99dea8"
-                },
-                {
-                    id: "degradingTrend",
-                    name: "Degrading Trend",
-                    example: "Assets/datastory-degraded.png",
-                    plotBackgroundColor: "#ffeaea",
-                    highlightColor: "#c41425",
-                    bandColor: "#f28289"
-                },
-                {
-                    id: "interestingEvent",
-                    name: "Interesting Event",
-                    example: "Assets/datastory-interesting.png",
-                    plotBackgroundColor: "#f8f8f8",
-                    highlightColor: "#f5d30f",
-                    bandColor: "#ffee7c"
+                function openThisSection() {
+                    $section.addClass("powerupOptionsOpen");
+                    callback($content);
                 }
-            ]
 
-            buildRadioOption("none", "None", "", changeStory);
-            stories.forEach(s => buildRadioOption(s.id, s.name, s.example, changeStory));
-            /*buildRadioOption("improvingTrend", "Improving Trend", "Assets/story-mock1.png", changeStory);
-            buildRadioOption("degradingTrend", "Degrading Trend", "Assets/story-mock7.png", changeStory);
-            //buildRadioOption("positiveImpact", "Positive Impact", "Assets/story-mock2.png");
-            //buildRadioOption("negativeImpact", "Negative Impact", "Assets/story-mock3.png");
-            buildRadioOption("interestingEvent", "Interesting Event", "Assets/story-mock6.png", changeStory);
-            //buildRadioOption("recommendation", "Recommendation", "Assets/story-mock4.png");*/
+                function closeThisSection() {
+                    $section.removeClass("powerupOptionsOpen");
+                    $content.html('');
+                }
 
-            addRefreshButton($content);
+                function closeOtherSections() {
+                    $optionsBlock.find(`section:not([id=${id}])`).each((s_i, s) => {
+                        $(s).removeClass("powerupOptionsOpen")
+                            .find(`.powerupOptionsContent`)
+                            .html('');
+                    })
+                }
+            }
 
-            function buildRadioOption(value, text, img, callback = notYetImplemented) {
-                let $div, $radio, $right, $img, $span;
-                $div = $(`<div>`)
-                    .addClass('powerupRadioOption')
-                    .appendTo($content);
-                $radio = $(`<input type="radio" value="${value}" name="preset">`)
+            function dummyContent(content) {
+                let $content = $(content);
+
+                $content.html(`<h3>Dummy content...</h3>`);
+            }
+
+            function jsonContent(content) {
+                let $content = $(content);
+                let $div = $(`<div>`).appendTo($content);
+                let $options = $(`<textarea>`)
+                    .addClass("powerupPreviewOptions")
+                    .val(JSON.stringify(chartOptions, null, 2))
                     .appendTo($div)
-                    .attr('checked', (chartOptions.dataStory && chartOptions.dataStory.id == value))
-                    .on('click', () => { callback(value) });
-                $right = $(`<div>`)
-                    .appendTo($div);
-                $span = $(`<label>`)
-                    .text(text)
-                    .on('click', () => { $radio.trigger('click') })
-                    .appendTo($right);
-                $img = $(`<img>`)
-                    .on('click', () => { $radio.trigger('click') })
-                    .appendTo($right);
-                if (img && img.length)
-                    $img.attr('src', DashboardPowerups.POWERUP_EXT_URL + img);
+                    .on('keydown paste', debounce(validateJSON, 100));
+
+                addRefreshButton(
+                    $div,
+                    () => {
+                        let obj = JSON.parse($options.val());
+                        Highcharts.merge(true, chartOptions, obj); //deep copy into chartOptions ref
+                        chartOptions.powerupStyles.json = true;
+                    });
+
+                let $help = $(`<div>Format help: <a href="https://api.highcharts.com/highcharts/" target="_blank">Highcharts</a></div>`)
+                    .addClass("powerupHelpFooter")
+                    .appendTo($content);
             }
 
-            function changeStory(value) {
-                let story = stories.find(x => x.id == value);
-                chartOptions.dataStory = story ?
-                    JSON.parse(JSON.stringify(story)) :
-                    undefined;
+            function storyContent(content) {
+                let $content = $(content);
 
-                if (chartOptions.dataStory && chartOptions.dataStory.plotBackgroundColor)
-                    chartOptions.chart.plotBackgroundColor;
-                else
-                    delete chartOptions.chart.plotBackgroundColor;
+                const stories = [
+                    {
+                        id: "improvingTrend",
+                        name: "Improving Trend",
+                        example: "Assets/datastory-positive.png",
+                        plotBackgroundColor: "#e1f7dc",
+                        highlightColor: "#2ab06f",
+                        bandColor: "#99dea8"
+                    },
+                    {
+                        id: "degradingTrend",
+                        name: "Degrading Trend",
+                        example: "Assets/datastory-degraded.png",
+                        plotBackgroundColor: "#ffeaea",
+                        highlightColor: "#c41425",
+                        bandColor: "#f28289"
+                    },
+                    {
+                        id: "interestingEvent",
+                        name: "Interesting Event",
+                        example: "Assets/datastory-interesting.png",
+                        plotBackgroundColor: "#f8f8f8",
+                        highlightColor: "#f5d30f",
+                        bandColor: "#ffee7c"
+                    }
+                ]
 
-                chartOptions.powerupStyles.dataStory = value;
+                buildRadioOption("none", "None", "", changeStory);
+                stories.forEach(s => buildRadioOption(s.id, s.name, s.example, changeStory));
+                /*buildRadioOption("improvingTrend", "Improving Trend", "Assets/story-mock1.png", changeStory);
+                buildRadioOption("degradingTrend", "Degrading Trend", "Assets/story-mock7.png", changeStory);
+                //buildRadioOption("positiveImpact", "Positive Impact", "Assets/story-mock2.png");
+                //buildRadioOption("negativeImpact", "Negative Impact", "Assets/story-mock3.png");
+                buildRadioOption("interestingEvent", "Interesting Event", "Assets/story-mock6.png", changeStory);
+                //buildRadioOption("recommendation", "Recommendation", "Assets/story-mock4.png");*/
+
+                addRefreshButton($content);
+
+                function buildRadioOption(value, text, img, callback = notYetImplemented) {
+                    let $div, $radio, $right, $img, $span;
+                    $div = $(`<div>`)
+                        .addClass('powerupRadioOption')
+                        .appendTo($content);
+                    $radio = $(`<input type="radio" value="${value}" name="preset">`)
+                        .appendTo($div)
+                        .attr('checked', (chartOptions.dataStory && chartOptions.dataStory.id == value))
+                        .on('click', () => { callback(value) });
+                    $right = $(`<div>`)
+                        .appendTo($div);
+                    $span = $(`<label>`)
+                        .text(text)
+                        .on('click', () => { $radio.trigger('click') })
+                        .appendTo($right);
+                    $img = $(`<img>`)
+                        .on('click', () => { $radio.trigger('click') })
+                        .appendTo($right);
+                    if (img && img.length)
+                        $img.attr('src', DashboardPowerups.POWERUP_EXT_URL + img);
+                }
+
+                function changeStory(value) {
+                    let story = stories.find(x => x.id == value);
+                    chartOptions.dataStory = story ?
+                        JSON.parse(JSON.stringify(story)) :
+                        undefined;
+
+                    if (chartOptions.dataStory && chartOptions.dataStory.plotBackgroundColor)
+                        chartOptions.chart.plotBackgroundColor;
+                    else
+                        delete chartOptions.chart.plotBackgroundColor;
+
+                    chartOptions.powerupStyles.dataStory = value;
+                }
             }
-        }
 
-        function foregroundContent(content) {
-            let $content = $(content)
-                .addClass('powerupNoFlex');
-            let $table = $(`<table>`)
-                .appendTo($content);
-            let $header = $(`<tr><th>Series</th></tr>`)
-                .appendTo($table);
-            let $fgheader = $(`<th><a>Foreground</a></th>`)
-                .addClass('powerupClickableHeader')
-                .appendTo($header)
-                .on('click', (e) => {
-                    $table.find(`input[type=radio][value="fg"]`)
-                        .trigger('click');
-                });
-            let $bgheader = $(`<th><a>Background</a></th>`)
-                .addClass('powerupClickableHeader')
-                .appendTo($header)
-                .on('click', (e) => {
-                    $table.find(`input[type=radio][value="bg"]`)
-                        .trigger('click');
-                });
-            let $storyheader = !chartOptions.dataStory || !chartOptions.dataStory.highlightColor ?
-                undefined :
-                $(`<th><a>DataStory</a></th>`)
-                    //.addClass('powerupClickableHeader')
-                    .appendTo($header);
-
-
-            chartOptions.series.forEach((s, s_idx) => {
-                let name = seriesName(s);
-                let color = s.color;
-                let bgcolor = desaturate(color);
-                let fgcolor = saturate(color);
-                let storycolor = chartOptions.dataStory && chartOptions.dataStory.highlightColor ?
-                    chartOptions.dataStory.highlightColor : undefined;
-
-                let $row = $(`<tr>`);
-                let $series = $(`<td>`)
-                    .text(name)
-                    .appendTo($row);
-                let $fg = $(`<td>`)
-                    .appendTo($row);
-                let $bg = $(`<td>`)
-                    .appendTo($row);
-                let $fg_button = $(`<input type="radio" name="${s_idx}" value="fg">`)
-                    .appendTo($fg)
+            function foregroundContent(content) {
+                let $content = $(content)
+                    .addClass('powerupNoFlex');
+                let $table = $(`<table>`)
+                    .appendTo($content);
+                let $header = $(`<tr><th>Series</th></tr>`)
+                    .appendTo($table);
+                let $fgheader = $(`<th><a>Foreground</a></th>`)
+                    .addClass('powerupClickableHeader')
+                    .appendTo($header)
                     .on('click', (e) => {
-                        chartOptions.series[s_idx].color = fgcolor;
-                        chartOptions.series[s_idx].zIndex = 4;
-                        chartOptions.series[s_idx].shadow = true;
-                        chartOptions.powerupStyles.foreground = true;
+                        $table.find(`input[type=radio][value="fg"]`)
+                            .trigger('click');
                     });
-                let $bg_button = $(`<input type="radio" name="${s_idx}" value="bg">`)
-                    .appendTo($bg)
+                let $bgheader = $(`<th><a>Background</a></th>`)
+                    .addClass('powerupClickableHeader')
+                    .appendTo($header)
                     .on('click', (e) => {
-                        chartOptions.series[s_idx].color = bgcolor;
-                        chartOptions.series[s_idx].zIndex = 2;
-                        chartOptions.series[s_idx].shadow = false;
-                        chartOptions.powerupStyles.background = true;
+                        $table.find(`input[type=radio][value="bg"]`)
+                            .trigger('click');
                     });
-                let $fg_color = $(`<div>`)
-                    .addClass('powerupColorPreview')
-                    .html(`&nbsp;`)
-                    .css('background-color', fgcolor)
-                    .appendTo($fg)
-                    .on('click', () => { $fg_button.trigger('click') });
-                let $bg_color = $(`<div>`)
-                    .addClass('powerupColorPreview')
-                    .html(`&nbsp;`)
-                    .css('background-color', bgcolor)
-                    .appendTo($bg)
-                    .on('click', () => { $bg_button.trigger('click') });
-                $row.appendTo($table);
+                let $storyheader = !chartOptions.dataStory || !chartOptions.dataStory.highlightColor ?
+                    undefined :
+                    $(`<th><a>DataStory</a></th>`)
+                        //.addClass('powerupClickableHeader')
+                        .appendTo($header);
 
-                if (storycolor) {
-                    let $ds = $(`<td>`)
+
+                chartOptions.series.forEach((s, s_idx) => {
+                    let name = seriesName(s);
+                    let color = s.color;
+                    let bgcolor = desaturate(color);
+                    let fgcolor = saturate(color);
+                    let storycolor = chartOptions.dataStory && chartOptions.dataStory.highlightColor ?
+                        chartOptions.dataStory.highlightColor : undefined;
+
+                    let $row = $(`<tr>`);
+                    let $series = $(`<td>`)
+                        .text(name)
                         .appendTo($row);
-                    let $ds_button = $(`<input type="radio" name="${s_idx}" value="ds">`)
-                        .appendTo($ds)
+                    let $fg = $(`<td>`)
+                        .appendTo($row);
+                    let $bg = $(`<td>`)
+                        .appendTo($row);
+                    let $fg_button = $(`<input type="radio" name="${s_idx}" value="fg">`)
+                        .appendTo($fg)
                         .on('click', (e) => {
-                            chartOptions.series[s_idx].color = storycolor;
+                            chartOptions.series[s_idx].color = fgcolor;
                             chartOptions.series[s_idx].zIndex = 4;
                             chartOptions.series[s_idx].shadow = true;
-                            chartOptions.powerupStyles.seriesStoryColor = true;
+                            chartOptions.powerupStyles.foreground = true;
                         });
-                    let $ds_color = $(`<div>`)
+                    let $bg_button = $(`<input type="radio" name="${s_idx}" value="bg">`)
+                        .appendTo($bg)
+                        .on('click', (e) => {
+                            chartOptions.series[s_idx].color = bgcolor;
+                            chartOptions.series[s_idx].zIndex = 2;
+                            chartOptions.series[s_idx].shadow = false;
+                            chartOptions.powerupStyles.background = true;
+                        });
+                    let $fg_color = $(`<div>`)
                         .addClass('powerupColorPreview')
                         .html(`&nbsp;`)
-                        .css('background-color', storycolor)
-                        .appendTo($ds)
-                        .on('click', () => { $ds_button.trigger('click') });
-                }
-            });
-            addRefreshButton($content);
-        }
+                        .css('background-color', fgcolor)
+                        .appendTo($fg)
+                        .on('click', () => { $fg_button.trigger('click') });
+                    let $bg_color = $(`<div>`)
+                        .addClass('powerupColorPreview')
+                        .html(`&nbsp;`)
+                        .css('background-color', bgcolor)
+                        .appendTo($bg)
+                        .on('click', () => { $bg_button.trigger('click') });
+                    $row.appendTo($table);
 
-        function declutterContent(content) {
-            if (typeof (chartOptions) != "object" || !Object.keys(chartOptions).length) return false; //crash prevention
-            let $content = $(content)
-                .addClass('powerupNoFlex');
-            let $table = $(`<table>`)
-                .appendTo($content);
-            let $header = $(`<tr><th>Visual</th></tr>`)
-                .appendTo($table);
-            let $enabledheader = $(`<th><a>Enabled</a></th>`)
-                .addClass('powerupClickableHeader')
-                .on('click', () => { $content.find(`input[type=radio][value="enable"]`).trigger('click') })
-                .appendTo($header);
-            let $disabledheader = $(`<th><a>Disabled</a></th>`)
-                .addClass('powerupClickableHeader')
-                .on('click', () => { $content.find(`input[type=radio][value="disable"]`).trigger('click') })
-                .appendTo($header);
-
-            //chart title
-            if (typeof (chartOptions.title) != "object") chartOptions.title = {};
-            buildTextRow("Chart Title", chartOptions.title.text, function (e) {
-                let val = $(this).val();
-                if (val && val.length) {
-                    chartOptions.title.text = val;
-                } else {
-                    chartOptions.title.text = undefined;
-                }
-            });
-
-            //plot background color
-            if (typeof (chartOptions.chart.plotBackgroundColor) == "undefined") chartOptions.chart.plotBackgroundColor = "#f2f2f2";
-            buildColorRow("Plot Background", chartOptions.chart.plotBackgroundColor, function (e) {
-                let val = $(this).val();
-                if (val && val.length) {
-                    chartOptions.chart.plotBackgroundColor = val;
-                } else {
-                    chartOptions.chart.plotBackgroundColor = undefined;
-                }
-            });
-
-            //chart border
-            if (typeof (chartOptions.chart.borderWidth) == "undefined") chartOptions.chart.borderWidth = 0;
-            buildRadioRow(
-                "Chart Border", chartOptions.chart.borderWidth,
-                () => {
-                    chartOptions.chart.borderWidth = 1;
-                    chartOptions.xAxis.gridLineColor = "#b7b7b7";
-                    if (!chartOptions.chart.spacingBottom) chartOptions.chart.spacingBottom = 5;
-                    if (!chartOptions.chart.spacingLeft) chartOptions.chart.spacingLeft = 5;
-                    if (!chartOptions.chart.spacingRight) chartOptions.chart.spacingRight = 5;
-                },
-                () => { chartOptions.chart.borderWidth = 0 },
-            );
-
-            //plot border
-            if (typeof (chartOptions.chart.plotBorderWidth) == "undefined") chartOptions.chart.plotBorderWidth = 0;
-            buildRadioRow(
-                "Plot Border", chartOptions.chart.plotBorderWidth,
-                () => {
-                    chartOptions.chart.plotBorderWidth = 1;
-                    chartOptions.xAxis.gridLineColor = "#b7b7b7";
-                },
-                () => { chartOptions.chart.plotBorderWidth = 0 },
-            );
-
-            //xAxis title
-            if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
-            if (typeof (chartOptions.xAxis.title) != "object") chartOptions.xAxis.title = {};
-            buildTextRow("xAxis Title", chartOptions.xAxis.title.text, function (e) {
-                let val = $(this).val();
-                if (val && val.length) {
-                    chartOptions.xAxis.title.text = val;
-                    chartOptions.xAxis.title.enabled = true
-                } else {
-                    chartOptions.xAxis.title.text = undefined;
-                    chartOptions.xAxis.title.enabled = false
-                }
-            });
-
-            //xAxis labels
-            if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
-            if (typeof (chartOptions.xAxis.labels) != "object") chartOptions.xAxis.labels = {};
-            buildRadioRow(
-                "xAxis Labels",
-                chartOptions.xAxis.labels.enabled,
-                () => { chartOptions.xAxis.labels.enabled = true },
-                () => { chartOptions.xAxis.labels.enabled = false },
-            );
-
-            //xAxis gridlines
-            if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
-            buildRadioRow(
-                "xAxis Gridlines",
-                chartOptions.xAxis.gridLineWidth > 0,
-                () => {
-                    chartOptions.xAxis.gridLineWidth = 1;
-                    chartOptions.xAxis.gridLineColor = "#b7b7b7";
-                },
-                () => { chartOptions.xAxis.gridLineWidth = 0 },
-            );
-
-            //legend
-            if (typeof (chartOptions.legend) != "object") chartOptions.legend = {};
-            if (typeof (chartOptions.legend.itemStyle) != "object") chartOptions.legend.itemStyle = {};
-            buildRadioRow(
-                "Legend",
-                chartOptions.legend.enabled,
-                () => {
-                    chartOptions.series.forEach(s => {
-                        s.prettyName = seriesName(s);
-                    });
-                    chartOptions.legend = {
-                        enabled: true,
-                        align: 'right',
-                        layout: 'proximate',
-                        width: 250,
-                        labelFormatter: function () {
-                            return this.options.prettyName
-                        },
-                        itemStyle: {
-                            fontSize: "10px"
-                        },
-                    };
-                    if (!chartOptions.chart.originalWidth) {
-                        chartOptions.chart.originalWidth = chartOptions.chart.width;
-                        chartOptions.chart.width += 250;
+                    if (storycolor) {
+                        let $ds = $(`<td>`)
+                            .appendTo($row);
+                        let $ds_button = $(`<input type="radio" name="${s_idx}" value="ds">`)
+                            .appendTo($ds)
+                            .on('click', (e) => {
+                                chartOptions.series[s_idx].color = storycolor;
+                                chartOptions.series[s_idx].zIndex = 4;
+                                chartOptions.series[s_idx].shadow = true;
+                                chartOptions.powerupStyles.seriesStoryColor = true;
+                            });
+                        let $ds_color = $(`<div>`)
+                            .addClass('powerupColorPreview')
+                            .html(`&nbsp;`)
+                            .css('background-color', storycolor)
+                            .appendTo($ds)
+                            .on('click', () => { $ds_button.trigger('click') });
                     }
-                },
-                () => { chartOptions.legend.enabled = false },
-            );
-
-            //yAxes titles & labels
-            if (Array.isArray(chartOptions.yAxis)) {
-                chartOptions.yAxis.forEach((yAxis, axisNum) => {
-                    if (!pub.activeChart.yAxis[axisNum].visible) return;
-                    if (typeof (yAxis.title) != "object") yAxis.title = {};
-                    buildTextRow(`yAxis(${axisNum}) Title`, chartOptions.xAxis.title.text, function (e) {
-                        let val = $(this).val();
-                        if (val && val.length) {
-                            yAxis.title.text = val;
-                            yAxis.title.enabled = true
-                        } else {
-                            yAxis.title.text = undefined;
-                            yAxis.title.enabled = false
-                        }
-                    });
-                    if (typeof (yAxis.labels) != "object") yAxis.labels = {};
-                    buildRadioRow(
-                        `yAxis(${axisNum}) Labels`,
-                        yAxis.labels.enabled,
-                        () => { yAxis.labels.enabled = true },
-                        () => { yAxis.labels.enabled = false },
-                    );
-                    buildRadioRow(
-                        `yAxis(${axisNum}) Gridlines`,
-                        yAxis.gridLineWidth > 0,
-                        () => {
-                            yAxis.gridLineWidth = 1;
-                            yAxis.gridLineColor = "#b7b7b7";
-                        },
-                        () => { yAxis.gridLineWidth = 0 },
-                    );
-                })
-            }
-
-            //series data labels & markers
-            if (Array.isArray(chartOptions.series)) {
-                chartOptions.series.forEach((serie, s_idx) => {
-                    let name = seriesName(serie);
-                    if (typeof (serie.dataLabels) != "object") serie.dataLabels = {};
-                    buildRadioRow(
-                        `Series (${s_idx} - ${name}) Data Labels`,
-                        serie.dataLabels.enabled,
-                        () => { serie.dataLabels.enabled = true },
-                        () => { serie.dataLabels.enabled = false },
-                    );
-                    if (typeof (serie.marker) != "object") serie.marker = {};
-                    buildRadioRow(
-                        `Series (${s_idx} - ${name}) Data Markers`,
-                        serie.marker.enabled,
-                        () => { serie.marker.enabled = true },
-                        () => { serie.marker.enabled = false },
-                    );
-                })
-            }
-
-            $content.find(`input`).on('click', () => { chartOptions.powerupStyles.declutter = true; });
-            addRefreshButton($content);
-
-            function buildRadioRow(name, enabled, enableCallback, disableCallback) {
-                let $row = $(`<tr>`);
-                let $name = $(`<td>`)
-                    .text(name)
-                    .appendTo($row);
-                let $enable = $(`<td>`)
-                    .appendTo($row);
-                let $disable = $(`<td>`)
-                    .appendTo($row);
-                let $enable_button = $(`<input type="radio" value="enable">`)
-                    .attr('name', name)
-                    .attr('checked', enabled)
-                    .appendTo($enable)
-                    .on('click', enableCallback);
-                let $disable_button = $(`<input type="radio" value="disable">`)
-                    .attr('name', name)
-                    .attr('checked', !enabled)
-                    .appendTo($disable)
-                    .on('click', disableCallback);
-
-                $row.appendTo($table);
-            }
-
-            function buildTextRow(name, value, editCallback) {
-                let $row = $(`<tr>`);
-                let $name = $(`<td>`)
-                    .text(name)
-                    .appendTo($row);
-                let $text = $(`<td colspan=2>`)
-                    .appendTo($row);
-                let $input = $(`<input type="text">`)
-                    .attr('name', name)
-                    .val(value)
-                    .appendTo($text)
-                    .on('change', editCallback);
-
-                $row.appendTo($table);
-            }
-
-
-            function buildColorRow(name, value, editCallback) {
-                let $row = $(`<tr>`);
-                let $name = $(`<td>`)
-                    .text(name)
-                    .appendTo($row);
-                let $color = $(`<td colspan=2>`)
-                    .appendTo($row);
-                let $input = $(`<input type="color">`)
-                    .attr('name', name)
-                    .val(value)
-                    .appendTo($color)
-                    .on('change', editCallback);
-
-                $row.appendTo($table);
-            }
-        }
-
-        function narrativeContent(content) {
-            let $content = $(content);
-
-            let $textarea = $(`<textarea>`)
-                .addClass('powerupPreviewOptions')
-                .appendTo($content);
-
-            if (chartOptions.customNarrative && chartOptions.customNarrative.text)
-                $textarea.val(chartOptions.customNarrative.text);
-
-            $textarea.on('keydown paste', debounce(
-                () => {
-                    chartOptions.customNarrative.text = $textarea.val();
-                    chartOptions.powerupStyles.narrative = true;
-                },
-                100));
-
-            if (chartOptions.dataStory && chartOptions.dataStory.highlightColor) {
-                $(`<p>Add data story highlighting by wrapping with **</p>`).appendTo($content);
-            }
-
-            addRefreshButton($content, () => {
-                setNarrativeOptions(chartOptions);
-            });
-        }
-
-        function bandsAndLinesContent(content) {
-            let $content = $(content);
-            let $buttons = $(`<div>`)
-                .appendTo($content)
-                .addClass('powerupNoFlex');
-            let $linesAndBands = $(`<div>`)
-                .appendTo($content)
-                .addClass('powerupNoFlex');
-            let $addLine = $(`<button>`)
-                .addClass('powerupButton')
-                .text(`+ Line`)
-                .on(`click`, () => { addLine() })
-                .appendTo($buttons);
-            let $addBand = $(`<button>`)
-                .addClass('powerupButton')
-                .text(`+ Band`)
-                .on(`click`, () => { addBand() })
-                .appendTo($buttons);
-
-
-            drawExistingPlotLines();
-            drawExistingPlotBands();
-            addRefreshButton($content);
-
-
-            ///////////////
-            function drawExistingPlotLines() {
-                if (Array.isArray(chartOptions.xAxis)) {
-                    chartOptions.xAxis.forEach((x, xIdx) => {
-                        if (Array.isArray(x.plotLines) && x.plotLines.length)
-                            x.plotLines.forEach(pl => { addLine(pl) })
-                    });
-                } else if (typeof (chartOptions.xAxis) == "object") {
-                    if (Array.isArray(chartOptions.xAxis.plotLines) && chartOptions.xAxis.plotLines.length)
-                        chartOptions.xAxis.plotLines.forEach(pl => { addLine(pl) })
-                }
-                if (Array.isArray(chartOptions.yAxis)) {
-                    chartOptions.yAxis.forEach((y, yIdx) => {
-                        if (Array.isArray(y.plotLines) && y.plotLines.length)
-                            y.plotLines.forEach(pl => { addLine(pl) })
-                    });
-                }
-            }
-
-            function drawExistingPlotBands() {
-                if (Array.isArray(chartOptions.xAxis)) {
-                    chartOptions.xAxis.forEach((x, xIdx) => {
-                        if (Array.isArray(x.plotBands) && x.plotBands.length)
-                            x.plotBands.forEach(pl => { addBand(pl) })
-                    });
-                } else if (typeof (chartOptions.xAxis) == "object") {
-                    if (Array.isArray(chartOptions.xAxis.plotBands) && chartOptions.xAxis.plotBands.length)
-                        chartOptions.xAxis.plotBands.forEach(pl => { addBand(pl) })
-                }
-                if (Array.isArray(chartOptions.yAxis)) {
-                    chartOptions.yAxis.forEach((y, yIdx) => {
-                        if (Array.isArray(y.plotBands) && y.plotBands.length)
-                            y.plotBands.forEach(pl => { addBand(pl) })
-                    });
-                }
-            }
-
-            function removeLineFromOptions(line) {
-                if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
-                    chartOptions.xAxis.forEach(axis => {
-                        if (Array.isArray(axis.plotLines)) {
-                            axis.plotLines = axis.plotLines.filter(x => x != line);
-                        }
-                    })
-                } else if (chartOptions.xAxis && typeof (chartOptions.xAxis) == "object") {
-                    let axis = chartOptions.xAxis;
-                    if (Array.isArray(axis.plotLines)) {
-                        axis.plotLines = axis.plotLines.filter(x => x != line);
-                    }
-                }
-                if (chartOptions.yAxis && Array.isArray(chartOptions.yAxis)) {
-                    chartOptions.yAxis.forEach(axis => {
-                        if (Array.isArray(axis.plotLines)) {
-                            axis.plotLines = axis.plotLines.filter(x => x != line);
-                        }
-                    })
-                }
-            }
-
-            function addLineToOptions(line) {
-                let axis;
-                if (Array.isArray(chartOptions[line.axis])) { //case: multiple axes
-                    axis = chartOptions[line.axis][line.axisNum];
-                } else if (typeof (chartOptions[line.axis]) == "object") { //case: single axis
-                    axis = chartOptions[line.axis];
-                } else { //case: not in options
-                    chartOptions[line.axis] = [];
-                    axis = {};
-                    chartOptions[line.axis].push(axis);
-                }
-                if (!Array.isArray(axis.plotLines)) axis.plotLines = [];
-                axis.plotLines.push(line);
-            }
-
-            function addLine(line = null) {
-                chartOptions.powerupStyles.plotLine = true;
-                if (line == null) {
-                    line = {
-                        color: "#526cff",
-                        axis: "xAxis",
-                        axisNum: 0,
-                        value: null,
-                        label: {
-                            text: "New Line"
-                        },
-                        width: 2,
-                        zIndex: 2
-                    }
-                }
-                let axis, min, max;
-
-                let $lineDiv = $(`<div>`)
-                    .addClass('powerupLineConfig')
-                    .appendTo($linesAndBands);
-                let $table = $(`<table>`).appendTo($lineDiv);
-                let $header = $(`<tr><th></th><th>Plot line</th></tr>`).appendTo($table);
-
-                //Component: Axis selector
-                let $axisRow = $(`<tr><td>Axis:</td><td></td></tr>`).appendTo($table);
-                let $axisSelector = $(`<select>`).appendTo($axisRow.children().eq(1));
-                pub.activeChart.xAxis.forEach((x, xIdx) => {
-                    if (!x.visible) return;
-                    let $opt = $(`<option>`)
-                        .data('axis', 'xAxis')
-                        .data('axisNum', xIdx)
-                        .text(`xAxis - ${xIdx}`)
-                        .appendTo($axisSelector);
                 });
-                pub.activeChart.yAxis.forEach((y, yIdx) => {
-                    if (!y.visible) return;
-                    let $opt = $(`<option>`)
-                        .data('axis', 'yAxis')
-                        .data('axisNum', yIdx)
-                        .text(`yAxis - ${yIdx}`)
-                        .appendTo($axisSelector);
-                });
+                addRefreshButton($content);
+            }
 
-                let $valueRow = $(`<tr><td>Value:</td><td></td></tr>`).appendTo($table);
-                let $range = $(`<input type="range">`)
-                    .appendTo($valueRow.children().eq(1));
-                let $value = $(`<input type="text">`)
-                    .val(line.value)
-                    .appendTo($valueRow.children().eq(1));
-                $range.on('change', () => {
-                    $value.val($range.val());
-                    $value.trigger('change');
-                });
+            function declutterContent(content) {
+                if (typeof (chartOptions) != "object" || !Object.keys(chartOptions).length) return false; //crash prevention
+                let $content = $(content)
+                    .addClass('powerupNoFlex');
+                let $table = $(`<table>`)
+                    .appendTo($content);
+                let $header = $(`<tr><th>Visual</th></tr>`)
+                    .appendTo($table);
+                let $enabledheader = $(`<th><a>Enabled</a></th>`)
+                    .addClass('powerupClickableHeader')
+                    .on('click', () => { $content.find(`input[type=radio][value="enable"]`).trigger('click') })
+                    .appendTo($header);
+                let $disabledheader = $(`<th><a>Disabled</a></th>`)
+                    .addClass('powerupClickableHeader')
+                    .on('click', () => { $content.find(`input[type=radio][value="disable"]`).trigger('click') })
+                    .appendTo($header);
 
-                let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
-                let $colorPicker = $(`<input type="color">`)
-                    .val(line.color)
-                    .appendTo($colorRow.children().eq(1));
-
-                let $labelRow = $(`<tr><td>Label:</td><td></td></tr>`).appendTo($table);
-                let $label = $(`<input type="text">`)
-                    .val(line.label.text)
-                    .appendTo($labelRow.children().eq(1));
-
-                //vals
-                $axisSelector.on('change', () => {
-                    line.axis = $axisSelector.children(`:selected`).data('axis');
-                    line.axisNum = $axisSelector.children(`:selected`).data('axisNum');
-
-                    axis = pub.activeChart[line.axis][line.axisNum];
-                    min = axis.min;
-                    max = axis.max;
-                    if (line.value == null
-                        || line.value < min
-                        || line.value > max)
-                        line.value = (min + max) / 2;
-
-                    $range
-                        .attr('min', min)
-                        .attr('max', max)
-                        .val(line.value)
-                        .trigger('change');
-
-                    removeLineFromOptions(line);
-                    addLineToOptions(line);
-
-                    if (axis && axis.isDatetimeAxis) {
-                        let $td = $valueRow.children().eq(1)
-                            .addClass('powerupTDTooltip');
-                        let $hover = $(`<div>`)
-                            .addClass('powerupTDTooltipText')
-                            .text(new Date($value.val()).toString())
-                            .appendTo($td);
-                        $value.on('change', () => {
-                            $hover
-                                .text(new Date(Number($value.val())).toString());
-                        })
+                //chart title
+                if (typeof (chartOptions.title) != "object") chartOptions.title = {};
+                buildTextRow("Chart Title", chartOptions.title.text, function (e) {
+                    let val = $(this).val();
+                    if (val && val.length) {
+                        chartOptions.title.text = val;
                     } else {
-                        $valueRow.children().removeClass('powerupTDTooltip');
-                        $valueRow.find(`.powerupTDTooltipText`).remove();
+                        chartOptions.title.text = undefined;
                     }
                 });
-                $axisSelector
-                    .val(`${line.axis} - ${line.axisNum}`)
-                    .trigger('change');
 
-                //update on change
-                $value.on('change', () => { line.value = $value.val() });
-                $colorPicker.on('change', () => { line.color = $colorPicker.val() });
-                $label.on('change', () => { line.label.text = $label.val() });
-
-                //delete button
-                let $remove = $(`<button>`)
-                    .addClass('powerupButton')
-                    .addClass('powerupCloseButton')
-                    .text('x')
-                    .appendTo($lineDiv)
-                    .on('click', () => {
-                        removeLineFromOptions(line);
-                        $lineDiv.remove();
-                    })
-
-                return line;
-            }
-
-            function removeBandFromOptions(band) {
-                if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
-                    chartOptions.xAxis.forEach(axis => {
-                        if (Array.isArray(axis.plotBands)) {
-                            axis.plotBands = axis.plotBands.filter(x => x != band);
-                        }
-                    })
-                } else if (chartOptions.xAxis && typeof (chartOptions.xAxis) == "object") {
-                    let axis = chartOptions.xAxis;
-                    if (Array.isArray(axis.plotBands)) {
-                        axis.plotBands = axis.plotBands.filter(x => x != band);
-                    }
-                }
-                if (chartOptions.yAxis && Array.isArray(chartOptions.yAxis)) {
-                    chartOptions.yAxis.forEach(axis => {
-                        if (Array.isArray(axis.plotBands)) {
-                            axis.plotBands = axis.plotBands.filter(x => x != band);
-                        }
-                    })
-                }
-            }
-
-            function addBandToOptions(band) {
-                let axis;
-                if (Array.isArray(chartOptions[band.axis])) { //case: multiple axes
-                    axis = chartOptions[band.axis][band.axisNum];
-                } else if (typeof (chartOptions[band.axis]) == "object") { //case: single axis
-                    axis = chartOptions[band.axis];
-                } else { //case: not in options
-                    chartOptions[band.axis] = [];
-                    axis = {};
-                    chartOptions[band.axis].push(axis);
-                }
-                if (!Array.isArray(axis.plotBands)) axis.plotBands = [];
-                axis.plotBands.push(band);
-            }
-
-            function addBand(band = null) {
-                chartOptions.powerupStyles.plotBand = true;
-                if (band == null) {
-                    band = {
-                        color: null,
-                        axis: "xAxis",
-                        axisNum: 0,
-                        from: null,
-                        to: null,
-                        label: {
-                            text: "New Band"
-                        },
-                        zIndex: 0
-                    }
-                }
-                let axis, min, max;
-
-                let $bandDiv = $(`<div>`)
-                    .addClass('powerupBandConfig')
-                    .appendTo($linesAndBands);
-                let $table = $(`<table>`).appendTo($bandDiv);
-                let $header = $(`<tr><th></th><th>Plot band</th></tr>`).appendTo($table);
-
-                //Component: Axis selector
-                let $axisRow = $(`<tr><td>Axis:</td><td></td></tr>`).appendTo($table);
-                let $axisSelector = $(`<select>`).appendTo($axisRow.children().eq(1));
-                pub.activeChart.xAxis.forEach((x, xIdx) => {
-                    if (!x.visible) return;
-                    let $opt = $(`<option>`)
-                        .data('axis', 'xAxis')
-                        .data('axisNum', xIdx)
-                        .text(`xAxis - ${xIdx}`)
-                        .appendTo($axisSelector);
-                });
-                pub.activeChart.yAxis.forEach((y, yIdx) => {
-                    if (!y.visible) return;
-                    let $opt = $(`<option>`)
-                        .data('axis', 'yAxis')
-                        .data('axisNum', yIdx)
-                        .text(`yAxis - ${yIdx}`)
-                        .appendTo($axisSelector);
-                });
-
-                let $fromRow = $(`<tr><td>From:</td><td></td></tr>`).appendTo($table);
-                let $fromRange = $(`<input type="range">`)
-                    .appendTo($fromRow.children().eq(1));
-                let $from = $(`<input type="text">`)
-                    .val(band.from)
-                    .appendTo($fromRow.children().eq(1));
-                $fromRange.on('change', () => {
-                    $from.val($fromRange.val());
-                    $from.trigger('change');
-                });
-
-                let $toRow = $(`<tr><td>To:</td><td></td></tr>`).appendTo($table);
-                let $toRange = $(`<input type="range">`)
-                    .appendTo($toRow.children().eq(1));
-                let $to = $(`<input type="text">`)
-                    .val(band.to)
-                    .appendTo($toRow.children().eq(1));
-                $toRange.on('change', () => {
-                    $to.val($toRange.val());
-                    $to.trigger('change');
-                });
-
-                if (!band.color)
-                    band.color = (chartOptions.dataStory && chartOptions.dataStory.bandColor) || "#fff5e4";
-                let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
-                let $colorPicker = $(`<input type="color">`)
-                    .val(band.color)
-                    .appendTo($colorRow.children().eq(1));
-
-                let $labelRow = $(`<tr><td>Label:</td><td></td></tr>`).appendTo($table);
-                let $label = $(`<input type="text">`)
-                    .val(band.label.text)
-                    .appendTo($labelRow.children().eq(1));
-
-                //vals
-                $axisSelector.on('change', () => {
-                    band.axis = $axisSelector.children(`:selected`).data('axis');
-                    band.axisNum = $axisSelector.children(`:selected`).data('axisNum');
-
-                    axis = pub.activeChart[band.axis][band.axisNum];
-                    min = axis.min;
-                    max = axis.max;
-                    if (band.from == null
-                        || band.from < min
-                        || band.from > max)
-                        band.from = min + ((max - min) / 4);
-                    if (band.to == null
-                        || band.to < min
-                        || band.to > max)
-                        band.to = max - ((max - min) / 4);
-
-                    $fromRange
-                        .attr('min', min)
-                        .attr('max', max)
-                        .val(band.from)
-                        .trigger('change');
-                    $toRange
-                        .attr('min', min)
-                        .attr('max', max)
-                        .val(band.to)
-                        .trigger('change');
-
-                    removeBandFromOptions(band);
-                    addBandToOptions(band);
-
-                    if (axis && axis.isDatetimeAxis) {
-                        let $fromtd = $fromRow.children().eq(1)
-                            .addClass('powerupTDTooltip');
-                        let $fromhover = $(`<div>`)
-                            .addClass('powerupTDTooltipText')
-                            .text(new Date($from.val()).toString())
-                            .appendTo($fromtd);
-                        $from.on('change', () => {
-                            band.from = Number($from.val());
-                            let date = new Date(band.from).toString();
-                            $fromhover.text(date);
-                        })
-
-                        let $totd = $toRow.children().eq(1)
-                            .addClass('powerupTDTooltip');
-                        let $tohover = $(`<div>`)
-                            .addClass('powerupTDTooltipText')
-                            .text(Date($to.val()).toString())
-                            .appendTo($totd);
-                        $to.on('change', () => {
-                            band.to = Number($to.val());
-                            let date = new Date(band.to).toString();
-                            $tohover.text(date);
-                        })
+                //plot background color
+                if (typeof (chartOptions.chart.plotBackgroundColor) == "undefined") chartOptions.chart.plotBackgroundColor = "#f2f2f2";
+                buildColorRow("Plot Background", chartOptions.chart.plotBackgroundColor, function (e) {
+                    let val = $(this).val();
+                    if (val && val.length) {
+                        chartOptions.chart.plotBackgroundColor = val;
                     } else {
-                        $fromRow.children().removeClass('powerupTDTooltip');
-                        $fromRow.find(`.powerupTDTooltipText`).remove();
-                        $toRow.children().removeClass('powerupTDTooltip');
-                        $toRow.find(`.powerupTDTooltipText`).remove();
+                        chartOptions.chart.plotBackgroundColor = undefined;
                     }
                 });
-                $axisSelector
-                    .val(`${band.axis} - ${band.axisNum}`)
-                    .trigger('change');
 
-                //update on change
-                $from.on('change', () => { band.from = $from.val() });
-                $to.on('change', () => { band.to = $to.val() });
-                $colorPicker.on('change', () => { band.color = $colorPicker.val() });
-                $label.on('change', () => { band.label.text = $label.val() });
+                //chart border
+                if (typeof (chartOptions.chart.borderWidth) == "undefined") chartOptions.chart.borderWidth = 0;
+                buildRadioRow(
+                    "Chart Border", chartOptions.chart.borderWidth,
+                    () => {
+                        chartOptions.chart.borderWidth = 1;
+                        chartOptions.xAxis.gridLineColor = "#b7b7b7";
+                        if (!chartOptions.chart.spacingBottom) chartOptions.chart.spacingBottom = 5;
+                        if (!chartOptions.chart.spacingLeft) chartOptions.chart.spacingLeft = 5;
+                        if (!chartOptions.chart.spacingRight) chartOptions.chart.spacingRight = 5;
+                    },
+                    () => { chartOptions.chart.borderWidth = 0 },
+                );
 
-                //delete button
-                let $remove = $(`<button>`)
-                    .addClass('powerupButton')
-                    .addClass('powerupCloseButton')
-                    .text('x')
-                    .appendTo($bandDiv)
-                    .on('click', () => {
-                        removeBandFromOptions(band);
-                        $bandDiv.remove();
+                //plot border
+                if (typeof (chartOptions.chart.plotBorderWidth) == "undefined") chartOptions.chart.plotBorderWidth = 0;
+                buildRadioRow(
+                    "Plot Border", chartOptions.chart.plotBorderWidth,
+                    () => {
+                        chartOptions.chart.plotBorderWidth = 1;
+                        chartOptions.xAxis.gridLineColor = "#b7b7b7";
+                    },
+                    () => { chartOptions.chart.plotBorderWidth = 0 },
+                );
+
+                //xAxis title
+                if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
+                if (typeof (chartOptions.xAxis.title) != "object") chartOptions.xAxis.title = {};
+                buildTextRow("xAxis Title", chartOptions.xAxis.title.text, function (e) {
+                    let val = $(this).val();
+                    if (val && val.length) {
+                        chartOptions.xAxis.title.text = val;
+                        chartOptions.xAxis.title.enabled = true
+                    } else {
+                        chartOptions.xAxis.title.text = undefined;
+                        chartOptions.xAxis.title.enabled = false
+                    }
+                });
+
+                //xAxis labels
+                if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
+                if (typeof (chartOptions.xAxis.labels) != "object") chartOptions.xAxis.labels = {};
+                buildRadioRow(
+                    "xAxis Labels",
+                    chartOptions.xAxis.labels.enabled,
+                    () => { chartOptions.xAxis.labels.enabled = true },
+                    () => { chartOptions.xAxis.labels.enabled = false },
+                );
+
+                //xAxis gridlines
+                if (typeof (chartOptions.xAxis) != "object") chartOptions.xAxis = {};
+                buildRadioRow(
+                    "xAxis Gridlines",
+                    chartOptions.xAxis.gridLineWidth > 0,
+                    () => {
+                        chartOptions.xAxis.gridLineWidth = 1;
+                        chartOptions.xAxis.gridLineColor = "#b7b7b7";
+                    },
+                    () => { chartOptions.xAxis.gridLineWidth = 0 },
+                );
+
+                //legend
+                if (typeof (chartOptions.legend) != "object") chartOptions.legend = {};
+                if (typeof (chartOptions.legend.itemStyle) != "object") chartOptions.legend.itemStyle = {};
+                buildRadioRow(
+                    "Legend",
+                    chartOptions.legend.enabled,
+                    () => {
+                        chartOptions.series.forEach(s => {
+                            s.prettyName = seriesName(s);
+                        });
+                        chartOptions.legend = {
+                            enabled: true,
+                            align: 'right',
+                            layout: 'proximate',
+                            width: 250,
+                            labelFormatter: function () {
+                                return this.options.prettyName
+                            },
+                            itemStyle: {
+                                fontSize: "10px"
+                            },
+                        };
+                        if (!chartOptions.chart.originalWidth) {
+                            chartOptions.chart.originalWidth = chartOptions.chart.width;
+                            chartOptions.chart.width += 250;
+                        }
+                    },
+                    () => { chartOptions.legend.enabled = false },
+                );
+
+                //yAxes titles & labels
+                if (Array.isArray(chartOptions.yAxis)) {
+                    chartOptions.yAxis.forEach((yAxis, axisNum) => {
+                        if (!pub.activeChart.yAxis[axisNum].visible) return;
+                        if (typeof (yAxis.title) != "object") yAxis.title = {};
+                        buildTextRow(`yAxis(${axisNum}) Title`, chartOptions.xAxis.title.text, function (e) {
+                            let val = $(this).val();
+                            if (val && val.length) {
+                                yAxis.title.text = val;
+                                yAxis.title.enabled = true
+                            } else {
+                                yAxis.title.text = undefined;
+                                yAxis.title.enabled = false
+                            }
+                        });
+                        if (typeof (yAxis.labels) != "object") yAxis.labels = {};
+                        buildRadioRow(
+                            `yAxis(${axisNum}) Labels`,
+                            yAxis.labels.enabled,
+                            () => { yAxis.labels.enabled = true },
+                            () => { yAxis.labels.enabled = false },
+                        );
+                        buildRadioRow(
+                            `yAxis(${axisNum}) Gridlines`,
+                            yAxis.gridLineWidth > 0,
+                            () => {
+                                yAxis.gridLineWidth = 1;
+                                yAxis.gridLineColor = "#b7b7b7";
+                            },
+                            () => { yAxis.gridLineWidth = 0 },
+                        );
                     })
+                }
 
-                return band;
-            }
-        }
-
-        function highlightContent(content) {
-            let $content = $(content);
-            let $buttons = $(`<div>`)
-                .appendTo($content)
-                .addClass('powerupOptionsButtonBar');
-            let $highlights = $(`<div>`)
-                .appendTo($content)
-                .addClass('powerupNoFlex');
-            let $addHighlight = $(`<button>`)
-                .addClass('powerupButton')
-                .text(`+ Highlight`)
-                .on(`click`, () => { addHighlight() })
-                .appendTo($buttons);
-
-
-
-            drawExistingHighlights();
-            addRefreshButton($content);
-
-
-            function drawExistingHighlights() {
+                //series data labels & markers
                 if (Array.isArray(chartOptions.series)) {
-                    chartOptions.series.forEach((s, sIdx) => {
-                        if (Array.isArray(s.highlights)) {
-                            s.highlights.forEach(h => addHighlight(h))
-                        }
+                    chartOptions.series.forEach((serie, s_idx) => {
+                        let name = seriesName(serie);
+                        if (typeof (serie.dataLabels) != "object") serie.dataLabels = {};
+                        buildRadioRow(
+                            `Series (${s_idx} - ${name}) Data Labels`,
+                            serie.dataLabels.enabled,
+                            () => { serie.dataLabels.enabled = true },
+                            () => { serie.dataLabels.enabled = false },
+                        );
+                        if (typeof (serie.marker) != "object") serie.marker = {};
+                        buildRadioRow(
+                            `Series (${s_idx} - ${name}) Data Markers`,
+                            serie.marker.enabled,
+                            () => { serie.marker.enabled = true },
+                            () => { serie.marker.enabled = false },
+                        );
                     })
+                }
+
+                $content.find(`input`).on('click', () => { chartOptions.powerupStyles.declutter = true; });
+                addRefreshButton($content);
+
+                function buildRadioRow(name, enabled, enableCallback, disableCallback) {
+                    let $row = $(`<tr>`);
+                    let $name = $(`<td>`)
+                        .text(name)
+                        .appendTo($row);
+                    let $enable = $(`<td>`)
+                        .appendTo($row);
+                    let $disable = $(`<td>`)
+                        .appendTo($row);
+                    let $enable_button = $(`<input type="radio" value="enable">`)
+                        .attr('name', name)
+                        .attr('checked', enabled)
+                        .appendTo($enable)
+                        .on('click', enableCallback);
+                    let $disable_button = $(`<input type="radio" value="disable">`)
+                        .attr('name', name)
+                        .attr('checked', !enabled)
+                        .appendTo($disable)
+                        .on('click', disableCallback);
+
+                    $row.appendTo($table);
+                }
+
+                function buildTextRow(name, value, editCallback) {
+                    let $row = $(`<tr>`);
+                    let $name = $(`<td>`)
+                        .text(name)
+                        .appendTo($row);
+                    let $text = $(`<td colspan=2>`)
+                        .appendTo($row);
+                    let $input = $(`<input type="text">`)
+                        .attr('name', name)
+                        .val(value)
+                        .appendTo($text)
+                        .on('change', editCallback);
+
+                    $row.appendTo($table);
+                }
+
+
+                function buildColorRow(name, value, editCallback) {
+                    let $row = $(`<tr>`);
+                    let $name = $(`<td>`)
+                        .text(name)
+                        .appendTo($row);
+                    let $color = $(`<td colspan=2>`)
+                        .appendTo($row);
+                    let $input = $(`<input type="color">`)
+                        .attr('name', name)
+                        .val(value)
+                        .appendTo($color)
+                        .on('change', editCallback);
+
+                    $row.appendTo($table);
                 }
             }
 
-            function removeHighlightFromOptions(highlight) {
-                let series = chartOptions.series[highlight.seriesNum];
-                if (Array.isArray(series.highlights)) {
-                    series.highlights = series.highlights.filter(x => x != highlight);
+            function narrativeContent(content) {
+                let $content = $(content);
 
-                    if (series.originalColor) {
-                        series.color = series.originalColor;
-                        delete series.originalColor;
-                        series.data.forEach((d, dIdx) => { //delete only matching, in case there's other highlights
-                            if (typeof (d.x) != "undefined") {
-                                if (d.x >= highlight.from && d.x <= highlight.to) {
-                                    delete d.color;
-                                    //delete d.marker;
-                                }
+                let $textarea = $(`<textarea>`)
+                    .addClass('powerupPreviewOptions')
+                    .appendTo($content);
+
+                if (chartOptions.customNarrative && chartOptions.customNarrative.text)
+                    $textarea.val(chartOptions.customNarrative.text);
+
+                $textarea.on('keydown paste', debounce(
+                    () => {
+                        chartOptions.customNarrative.text = $textarea.val();
+                        chartOptions.powerupStyles.narrative = true;
+                    },
+                    100));
+
+                if (chartOptions.dataStory && chartOptions.dataStory.highlightColor) {
+                    $(`<p>Add data story highlighting by wrapping with **</p>`).appendTo($content);
+                }
+
+                addRefreshButton($content, () => {
+                    setNarrativeOptions(chartOptions);
+                });
+            }
+
+            function bandsAndLinesContent(content) {
+                let $content = $(content);
+                let $buttons = $(`<div>`)
+                    .appendTo($content)
+                    .addClass('powerupNoFlex');
+                let $linesAndBands = $(`<div>`)
+                    .appendTo($content)
+                    .addClass('powerupNoFlex');
+                let $addLine = $(`<button>`)
+                    .addClass('powerupButton')
+                    .text(`+ Line`)
+                    .on(`click`, () => { addLine() })
+                    .appendTo($buttons);
+                let $addBand = $(`<button>`)
+                    .addClass('powerupButton')
+                    .text(`+ Band`)
+                    .on(`click`, () => { addBand() })
+                    .appendTo($buttons);
+
+
+                drawExistingPlotLines();
+                drawExistingPlotBands();
+                addRefreshButton($content);
+
+
+                ///////////////
+                function drawExistingPlotLines() {
+                    if (Array.isArray(chartOptions.xAxis)) {
+                        chartOptions.xAxis.forEach((x, xIdx) => {
+                            if (Array.isArray(x.plotLines) && x.plotLines.length)
+                                x.plotLines.forEach(pl => { addLine(pl) })
+                        });
+                    } else if (typeof (chartOptions.xAxis) == "object") {
+                        if (Array.isArray(chartOptions.xAxis.plotLines) && chartOptions.xAxis.plotLines.length)
+                            chartOptions.xAxis.plotLines.forEach(pl => { addLine(pl) })
+                    }
+                    if (Array.isArray(chartOptions.yAxis)) {
+                        chartOptions.yAxis.forEach((y, yIdx) => {
+                            if (Array.isArray(y.plotLines) && y.plotLines.length)
+                                y.plotLines.forEach(pl => { addLine(pl) })
+                        });
+                    }
+                }
+
+                function drawExistingPlotBands() {
+                    if (Array.isArray(chartOptions.xAxis)) {
+                        chartOptions.xAxis.forEach((x, xIdx) => {
+                            if (Array.isArray(x.plotBands) && x.plotBands.length)
+                                x.plotBands.forEach(pl => { addBand(pl) })
+                        });
+                    } else if (typeof (chartOptions.xAxis) == "object") {
+                        if (Array.isArray(chartOptions.xAxis.plotBands) && chartOptions.xAxis.plotBands.length)
+                            chartOptions.xAxis.plotBands.forEach(pl => { addBand(pl) })
+                    }
+                    if (Array.isArray(chartOptions.yAxis)) {
+                        chartOptions.yAxis.forEach((y, yIdx) => {
+                            if (Array.isArray(y.plotBands) && y.plotBands.length)
+                                y.plotBands.forEach(pl => { addBand(pl) })
+                        });
+                    }
+                }
+
+                function removeLineFromOptions(line) {
+                    if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
+                        chartOptions.xAxis.forEach(axis => {
+                            if (Array.isArray(axis.plotLines)) {
+                                axis.plotLines = axis.plotLines.filter(x => x != line);
+                            }
+                        })
+                    } else if (chartOptions.xAxis && typeof (chartOptions.xAxis) == "object") {
+                        let axis = chartOptions.xAxis;
+                        if (Array.isArray(axis.plotLines)) {
+                            axis.plotLines = axis.plotLines.filter(x => x != line);
+                        }
+                    }
+                    if (chartOptions.yAxis && Array.isArray(chartOptions.yAxis)) {
+                        chartOptions.yAxis.forEach(axis => {
+                            if (Array.isArray(axis.plotLines)) {
+                                axis.plotLines = axis.plotLines.filter(x => x != line);
                             }
                         })
                     }
-                    if (series.type == "line") {
-                        //delete series.zoneAxis;
-                        if (Array.isArray(series.zones)) {
-                            series.zones = series.zones
-                                .filter(x =>
-                                    x.hlID != highlight.id);
+                }
+
+                function addLineToOptions(line) {
+                    let axis;
+                    if (Array.isArray(chartOptions[line.axis])) { //case: multiple axes
+                        axis = chartOptions[line.axis][line.axisNum];
+                    } else if (typeof (chartOptions[line.axis]) == "object") { //case: single axis
+                        axis = chartOptions[line.axis];
+                    } else { //case: not in options
+                        chartOptions[line.axis] = [];
+                        axis = {};
+                        chartOptions[line.axis].push(axis);
+                    }
+                    if (!Array.isArray(axis.plotLines)) axis.plotLines = [];
+                    axis.plotLines.push(line);
+                }
+
+                function addLine(line = null) {
+                    chartOptions.powerupStyles.plotLine = true;
+                    if (line == null) {
+                        line = {
+                            color: "#526cff",
+                            axis: "xAxis",
+                            axisNum: 0,
+                            value: null,
+                            label: {
+                                text: "New Line"
+                            },
+                            width: 2,
+                            zIndex: 2
                         }
                     }
+                    let axis, min, max;
+
+                    let $lineDiv = $(`<div>`)
+                        .addClass('powerupLineConfig')
+                        .appendTo($linesAndBands);
+                    let $table = $(`<table>`).appendTo($lineDiv);
+                    let $header = $(`<tr><th></th><th>Plot line</th></tr>`).appendTo($table);
+
+                    //Component: Axis selector
+                    let $axisRow = $(`<tr><td>Axis:</td><td></td></tr>`).appendTo($table);
+                    let $axisSelector = $(`<select>`).appendTo($axisRow.children().eq(1));
+                    pub.activeChart.xAxis.forEach((x, xIdx) => {
+                        if (!x.visible) return;
+                        let $opt = $(`<option>`)
+                            .data('axis', 'xAxis')
+                            .data('axisNum', xIdx)
+                            .text(`xAxis - ${xIdx}`)
+                            .appendTo($axisSelector);
+                    });
+                    pub.activeChart.yAxis.forEach((y, yIdx) => {
+                        if (!y.visible) return;
+                        let $opt = $(`<option>`)
+                            .data('axis', 'yAxis')
+                            .data('axisNum', yIdx)
+                            .text(`yAxis - ${yIdx}`)
+                            .appendTo($axisSelector);
+                    });
+
+                    let $valueRow = $(`<tr><td>Value:</td><td></td></tr>`).appendTo($table);
+                    let $range = $(`<input type="range">`)
+                        .appendTo($valueRow.children().eq(1));
+                    let $value = $(`<input type="text">`)
+                        .val(line.value)
+                        .appendTo($valueRow.children().eq(1));
+                    $range.on('change', () => {
+                        $value.val($range.val());
+                        $value.trigger('change');
+                    });
+
+                    let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
+                    let $colorPicker = $(`<input type="color">`)
+                        .val(line.color)
+                        .appendTo($colorRow.children().eq(1));
+
+                    let $labelRow = $(`<tr><td>Label:</td><td></td></tr>`).appendTo($table);
+                    let $label = $(`<input type="text">`)
+                        .val(line.label.text)
+                        .appendTo($labelRow.children().eq(1));
+
+                    //vals
+                    $axisSelector.on('change', () => {
+                        line.axis = $axisSelector.children(`:selected`).data('axis');
+                        line.axisNum = $axisSelector.children(`:selected`).data('axisNum');
+
+                        axis = pub.activeChart[line.axis][line.axisNum];
+                        min = axis.min;
+                        max = axis.max;
+                        if (line.value == null
+                            || line.value < min
+                            || line.value > max)
+                            line.value = (min + max) / 2;
+
+                        $range
+                            .attr('min', min)
+                            .attr('max', max)
+                            .val(line.value)
+                            .trigger('change');
+
+                        removeLineFromOptions(line);
+                        addLineToOptions(line);
+
+                        if (axis && axis.isDatetimeAxis) {
+                            let $td = $valueRow.children().eq(1)
+                                .addClass('powerupTDTooltip');
+                            let $hover = $(`<div>`)
+                                .addClass('powerupTDTooltipText')
+                                .text(new Date($value.val()).toString())
+                                .appendTo($td);
+                            $value.on('change', () => {
+                                $hover
+                                    .text(new Date(Number($value.val())).toString());
+                            })
+                        } else {
+                            $valueRow.children().removeClass('powerupTDTooltip');
+                            $valueRow.find(`.powerupTDTooltipText`).remove();
+                        }
+                    });
+                    $axisSelector
+                        .val(`${line.axis} - ${line.axisNum}`)
+                        .trigger('change');
+
+                    //update on change
+                    $value.on('change', () => { line.value = $value.val() });
+                    $colorPicker.on('change', () => { line.color = $colorPicker.val() });
+                    $label.on('change', () => { line.label.text = $label.val() });
+
+                    //delete button
+                    let $remove = $(`<button>`)
+                        .addClass('powerupButton')
+                        .addClass('powerupCloseButton')
+                        .text('x')
+                        .appendTo($lineDiv)
+                        .on('click', () => {
+                            removeLineFromOptions(line);
+                            $lineDiv.remove();
+                        })
+
+                    return line;
+                }
+
+                function removeBandFromOptions(band) {
+                    if (chartOptions.xAxis && Array.isArray(chartOptions.xAxis)) {
+                        chartOptions.xAxis.forEach(axis => {
+                            if (Array.isArray(axis.plotBands)) {
+                                axis.plotBands = axis.plotBands.filter(x => x != band);
+                            }
+                        })
+                    } else if (chartOptions.xAxis && typeof (chartOptions.xAxis) == "object") {
+                        let axis = chartOptions.xAxis;
+                        if (Array.isArray(axis.plotBands)) {
+                            axis.plotBands = axis.plotBands.filter(x => x != band);
+                        }
+                    }
+                    if (chartOptions.yAxis && Array.isArray(chartOptions.yAxis)) {
+                        chartOptions.yAxis.forEach(axis => {
+                            if (Array.isArray(axis.plotBands)) {
+                                axis.plotBands = axis.plotBands.filter(x => x != band);
+                            }
+                        })
+                    }
+                }
+
+                function addBandToOptions(band) {
+                    let axis;
+                    if (Array.isArray(chartOptions[band.axis])) { //case: multiple axes
+                        axis = chartOptions[band.axis][band.axisNum];
+                    } else if (typeof (chartOptions[band.axis]) == "object") { //case: single axis
+                        axis = chartOptions[band.axis];
+                    } else { //case: not in options
+                        chartOptions[band.axis] = [];
+                        axis = {};
+                        chartOptions[band.axis].push(axis);
+                    }
+                    if (!Array.isArray(axis.plotBands)) axis.plotBands = [];
+                    axis.plotBands.push(band);
+                }
+
+                function addBand(band = null) {
+                    chartOptions.powerupStyles.plotBand = true;
+                    if (band == null) {
+                        band = {
+                            color: null,
+                            axis: "xAxis",
+                            axisNum: 0,
+                            from: null,
+                            to: null,
+                            label: {
+                                text: "New Band"
+                            },
+                            zIndex: 0
+                        }
+                    }
+                    let axis, min, max;
+
+                    let $bandDiv = $(`<div>`)
+                        .addClass('powerupBandConfig')
+                        .appendTo($linesAndBands);
+                    let $table = $(`<table>`).appendTo($bandDiv);
+                    let $header = $(`<tr><th></th><th>Plot band</th></tr>`).appendTo($table);
+
+                    //Component: Axis selector
+                    let $axisRow = $(`<tr><td>Axis:</td><td></td></tr>`).appendTo($table);
+                    let $axisSelector = $(`<select>`).appendTo($axisRow.children().eq(1));
+                    pub.activeChart.xAxis.forEach((x, xIdx) => {
+                        if (!x.visible) return;
+                        let $opt = $(`<option>`)
+                            .data('axis', 'xAxis')
+                            .data('axisNum', xIdx)
+                            .text(`xAxis - ${xIdx}`)
+                            .appendTo($axisSelector);
+                    });
+                    pub.activeChart.yAxis.forEach((y, yIdx) => {
+                        if (!y.visible) return;
+                        let $opt = $(`<option>`)
+                            .data('axis', 'yAxis')
+                            .data('axisNum', yIdx)
+                            .text(`yAxis - ${yIdx}`)
+                            .appendTo($axisSelector);
+                    });
+
+                    let $fromRow = $(`<tr><td>From:</td><td></td></tr>`).appendTo($table);
+                    let $fromRange = $(`<input type="range">`)
+                        .appendTo($fromRow.children().eq(1));
+                    let $from = $(`<input type="text">`)
+                        .val(band.from)
+                        .appendTo($fromRow.children().eq(1));
+                    $fromRange.on('change', () => {
+                        $from.val($fromRange.val());
+                        $from.trigger('change');
+                    });
+
+                    let $toRow = $(`<tr><td>To:</td><td></td></tr>`).appendTo($table);
+                    let $toRange = $(`<input type="range">`)
+                        .appendTo($toRow.children().eq(1));
+                    let $to = $(`<input type="text">`)
+                        .val(band.to)
+                        .appendTo($toRow.children().eq(1));
+                    $toRange.on('change', () => {
+                        $to.val($toRange.val());
+                        $to.trigger('change');
+                    });
+
+                    if (!band.color)
+                        band.color = (chartOptions.dataStory && chartOptions.dataStory.bandColor) || "#fff5e4";
+                    let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
+                    let $colorPicker = $(`<input type="color">`)
+                        .val(band.color)
+                        .appendTo($colorRow.children().eq(1));
+
+                    let $labelRow = $(`<tr><td>Label:</td><td></td></tr>`).appendTo($table);
+                    let $label = $(`<input type="text">`)
+                        .val(band.label.text)
+                        .appendTo($labelRow.children().eq(1));
+
+                    //vals
+                    $axisSelector.on('change', () => {
+                        band.axis = $axisSelector.children(`:selected`).data('axis');
+                        band.axisNum = $axisSelector.children(`:selected`).data('axisNum');
+
+                        axis = pub.activeChart[band.axis][band.axisNum];
+                        min = axis.min;
+                        max = axis.max;
+                        if (band.from == null
+                            || band.from < min
+                            || band.from > max)
+                            band.from = min + ((max - min) / 4);
+                        if (band.to == null
+                            || band.to < min
+                            || band.to > max)
+                            band.to = max - ((max - min) / 4);
+
+                        $fromRange
+                            .attr('min', min)
+                            .attr('max', max)
+                            .val(band.from)
+                            .trigger('change');
+                        $toRange
+                            .attr('min', min)
+                            .attr('max', max)
+                            .val(band.to)
+                            .trigger('change');
+
+                        removeBandFromOptions(band);
+                        addBandToOptions(band);
+
+                        if (axis && axis.isDatetimeAxis) {
+                            let $fromtd = $fromRow.children().eq(1)
+                                .addClass('powerupTDTooltip');
+                            let $fromhover = $(`<div>`)
+                                .addClass('powerupTDTooltipText')
+                                .text(new Date($from.val()).toString())
+                                .appendTo($fromtd);
+                            $from.on('change', () => {
+                                band.from = Number($from.val());
+                                let date = new Date(band.from).toString();
+                                $fromhover.text(date);
+                            })
+
+                            let $totd = $toRow.children().eq(1)
+                                .addClass('powerupTDTooltip');
+                            let $tohover = $(`<div>`)
+                                .addClass('powerupTDTooltipText')
+                                .text(Date($to.val()).toString())
+                                .appendTo($totd);
+                            $to.on('change', () => {
+                                band.to = Number($to.val());
+                                let date = new Date(band.to).toString();
+                                $tohover.text(date);
+                            })
+                        } else {
+                            $fromRow.children().removeClass('powerupTDTooltip');
+                            $fromRow.find(`.powerupTDTooltipText`).remove();
+                            $toRow.children().removeClass('powerupTDTooltip');
+                            $toRow.find(`.powerupTDTooltipText`).remove();
+                        }
+                    });
+                    $axisSelector
+                        .val(`${band.axis} - ${band.axisNum}`)
+                        .trigger('change');
+
+                    //update on change
+                    $from.on('change', () => { band.from = $from.val() });
+                    $to.on('change', () => { band.to = $to.val() });
+                    $colorPicker.on('change', () => { band.color = $colorPicker.val() });
+                    $label.on('change', () => { band.label.text = $label.val() });
+
+                    //delete button
+                    let $remove = $(`<button>`)
+                        .addClass('powerupButton')
+                        .addClass('powerupCloseButton')
+                        .text('x')
+                        .appendTo($bandDiv)
+                        .on('click', () => {
+                            removeBandFromOptions(band);
+                            $bandDiv.remove();
+                        })
+
+                    return band;
                 }
             }
 
-            function addHighlightToOptions(highlight) {
-                let series = chartOptions.series[highlight.seriesNum];
-                if (!Array.isArray(series.highlights)) series.highlights = [];
-                series.highlights.push(highlight);
+            function highlightContent(content) {
+                let $content = $(content);
+                let $buttons = $(`<div>`)
+                    .appendTo($content)
+                    .addClass('powerupOptionsButtonBar');
+                let $highlights = $(`<div>`)
+                    .appendTo($content)
+                    .addClass('powerupNoFlex');
+                let $addHighlight = $(`<button>`)
+                    .addClass('powerupButton')
+                    .text(`+ Highlight`)
+                    .on(`click`, () => { addHighlight() })
+                    .appendTo($buttons);
 
-                let originalColor;
-                if (series.originalColor) {
-                    originalColor = series.originalColor;
-                } else {
-                    originalColor = series.color;
-                    series.originalColor = originalColor;
+
+
+                drawExistingHighlights();
+                addRefreshButton($content);
+
+
+                function drawExistingHighlights() {
+                    if (Array.isArray(chartOptions.series)) {
+                        chartOptions.series.forEach((s, sIdx) => {
+                            if (Array.isArray(s.highlights)) {
+                                s.highlights.forEach(h => addHighlight(h))
+                            }
+                        })
+                    }
                 }
-                series.color = desaturate(originalColor);
-                series.data.forEach((d, dIdx) => {
-                    if (Array.isArray(d) && d.length == 2) { //data type 1: array of 2 element arrays
-                        if (d[0] >= highlight.from && d[0] <= highlight.to) {
+
+                function removeHighlightFromOptions(highlight) {
+                    let series = chartOptions.series[highlight.seriesNum];
+                    if (Array.isArray(series.highlights)) {
+                        series.highlights = series.highlights.filter(x => x != highlight);
+
+                        if (series.originalColor) {
+                            series.color = series.originalColor;
+                            delete series.originalColor;
+                            series.data.forEach((d, dIdx) => { //delete only matching, in case there's other highlights
+                                if (typeof (d.x) != "undefined") {
+                                    if (d.x >= highlight.from && d.x <= highlight.to) {
+                                        delete d.color;
+                                        //delete d.marker;
+                                    }
+                                }
+                            })
+                        }
+                        if (series.type == "line") {
+                            //delete series.zoneAxis;
+                            if (Array.isArray(series.zones)) {
+                                series.zones = series.zones
+                                    .filter(x =>
+                                        x.hlID != highlight.id);
+                            }
+                        }
+                    }
+                }
+
+                function addHighlightToOptions(highlight) {
+                    let series = chartOptions.series[highlight.seriesNum];
+                    if (!Array.isArray(series.highlights)) series.highlights = [];
+                    series.highlights.push(highlight);
+
+                    let originalColor;
+                    if (series.originalColor) {
+                        originalColor = series.originalColor;
+                    } else {
+                        originalColor = series.color;
+                        series.originalColor = originalColor;
+                    }
+                    series.color = desaturate(originalColor);
+                    series.data.forEach((d, dIdx) => {
+                        if (Array.isArray(d) && d.length == 2) { //data type 1: array of 2 element arrays
+                            if (d[0] >= highlight.from && d[0] <= highlight.to) {
+                                let newD = {};
+                                newD.x = d[0];
+                                newD.y = d[1];
+                                newD.color = highlight.color;
+                                //newD.marker = highlight.marker;
+                                series.data[dIdx] = newD; //switch to object
+                            }
+                        } else if (typeof (d) == "object") { //data type 2: object
+                            if (d.x >= highlight.from && d.x <= highlight.to) {
+                                d.color = highlight.color;
+                                //d.marker = highlight.marker;
+                            }
+                        } else if (typeof (d.x) != "undefined") { //data type 3: primitive
                             let newD = {};
-                            newD.x = d[0];
-                            newD.y = d[1];
+                            newD.y = d;
                             newD.color = highlight.color;
                             //newD.marker = highlight.marker;
                             series.data[dIdx] = newD; //switch to object
                         }
-                    } else if (typeof (d) == "object") { //data type 2: object
-                        if (d.x >= highlight.from && d.x <= highlight.to) {
-                            d.color = highlight.color;
-                            //d.marker = highlight.marker;
-                        }
-                    } else if (typeof (d.x) != "undefined") { //data type 3: primitive
-                        let newD = {};
-                        newD.y = d;
-                        newD.color = highlight.color;
-                        //newD.marker = highlight.marker;
-                        series.data[dIdx] = newD; //switch to object
-                    }
-                })
-                if (series.type == "line") {
-                    series.zoneAxis = highlight.axis;
-                    if (!Array.isArray(series.zones)) series.zones = [];
-                    series.zones.push({
-                        value: highlight.from,
-                        hlID: highlight.id
-                    });
-                    series.zones.push({
-                        value: highlight.to,
-                        color: highlight.color,
-                        hlID: highlight.id
-                    });
-                }
-            }
-
-            function addHighlight(highlight = null) {
-                chartOptions.powerupStyles.highlight = true;
-                if (highlight == null) {
-                    highlight = {
-                        id: 'HL' + uniqId(),
-                        color: null,
-                        seriesNum: 0,
-                        axis: "x",
-                        from: null,
-                        to: null,
-                    }
-                }
-                let series, axis, min, max;
-
-                let $highlightDiv = $(`<div>`)
-                    .addClass('powerupLineConfig')
-                    .appendTo($highlights);
-                let $table = $(`<table>`).appendTo($highlightDiv);
-                let $header = $(`<tr><th></th><th>Highlight</th></tr>`).appendTo($table);
-
-
-                //Component: Series selector
-                let $seriesRow = $(`<tr><td>Series:</td><td></td></tr>`).appendTo($table);
-                let $seriesSelector = $(`<select>`).appendTo($seriesRow.children().eq(1));
-                pub.activeChart.series.forEach((s, sIdx) => {
-                    if (!s.visible) return;
-                    let $opt = $(`<option>`)
-                        .data('seriesNum', sIdx)
-                        .val(sIdx)
-                        .text(seriesName(s))
-                        .appendTo($seriesSelector);
-                });
-
-                let $axisRow = $(`<tr><td>Axis:</td><td></td></tr>`).appendTo($table);
-                let $axisSelector = $(`
-                <select>
-                    <option>x</option>
-                    <option>y</option>
-                </select>`)
-                    .val(highlight.axis)
-                    .appendTo($axisRow.children().eq(1));
-
-                let $fromRow = $(`<tr><td>From:</td><td></td></tr>`).appendTo($table);
-                let $fromRange = $(`<input type="range">`)
-                    .appendTo($fromRow.children().eq(1));
-                let $from = $(`<input type="text">`)
-                    .val(highlight.from)
-                    .appendTo($fromRow.children().eq(1));
-                $fromRange.on('change', () => {
-                    $from.val($fromRange.val());
-                    $from.trigger('change');
-                });
-
-                let $toRow = $(`<tr><td>To:</td><td></td></tr>`).appendTo($table);
-                let $toRange = $(`<input type="range">`)
-                    .appendTo($toRow.children().eq(1));
-                let $to = $(`<input type="text">`)
-                    .val(highlight.to)
-                    .appendTo($toRow.children().eq(1));
-                $toRange.on('change', () => {
-                    $to.val($toRange.val());
-                    $to.trigger('change');
-                });
-
-                let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
-                let $colorPicker = $(`<input type="color">`)
-                    //.val(highlight.color)
-                    .appendTo($colorRow.children().eq(1));
-
-
-                //vals
-                $seriesSelector.on('change', () => {
-                    let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
-                    series = pub.activeChart.series[newSeriesNum];
-
-                    //set color
-                    if (highlight.color == null || newSeriesNum != highlight.seriesNum) {
-                        if (chartOptions.dataStory && chartOptions.dataStory.highlightColor) {
-                            highlight.color = chartOptions.dataStory.highlightColor;
-                        } else {
-                            highlight.color = saturate(series.color, "hex");
-                        }
-
-                    }
-                    $colorPicker.val(highlight.color);
-
-                    //add highlight
-                    removeHighlightFromOptions(highlight);
-                    highlight.seriesNum = newSeriesNum;
-
-                    //handle axis
-                    if (!Array.isArray(chartOptions.series[highlight.seriesNum].highlights))
-                        chartOptions.series[highlight.seriesNum].highlights = [];
-                    let existingAxis = chartOptions.series[highlight.seriesNum].highlights
-                        .filter(h => h != highlight)
-                        .map(h => h.axis);
-                    if (Array.isArray(existingAxis) && existingAxis.length) {
-                        $axisSelector
-                            .val(existingAxis[0])
-                            .prop('disabled', true);
-                    } else {
-                        $axisSelector
-                            .prop('disabled', false);
-                    }
-                    $axisSelector.trigger('change');
-                });
-
-                $axisSelector.on('change', () => {
-                    highlight.axis = $axisSelector.val();
-                    //set extremes
-                    if (highlight.axis == "x")
-                        axis = series.xAxis;
-                    else if (highlight.axis == "y")
-                        axis = series.yAxis;
-                    min = axis.min;
-                    max = axis.max;
-                    if (highlight.from == null
-                        || highlight.from < min
-                        || highlight.from > max)
-                        highlight.from = min + ((max - min) / 4);
-                    if (highlight.to == null
-                        || highlight.to < min
-                        || highlight.to > max)
-                        highlight.to = max - ((max - min) / 4);
-
-                    $fromRange
-                        .attr('min', min)
-                        .attr('max', max)
-                        .val(highlight.from)
-                        .trigger('change');
-                    $toRange
-                        .attr('min', min)
-                        .attr('max', max)
-                        .val(highlight.to)
-                        .trigger('change');
-
-                    if (axis && axis.isDatetimeAxis) {
-                        let $fromtd = $fromRow.children().eq(1)
-                            .addClass('powerupTDTooltip');
-                        let $fromhover = $(`<div>`)
-                            .addClass('powerupTDTooltipText')
-                            .text(new Date(Number($from.val())).toString())
-                            .appendTo($fromtd);
-                        $from.on('change', () => {
-                            $fromhover
-                                .text(new Date(Number($from.val())).toString());
-                        })
-
-                        $totd = $toRow.children().eq(1)
-                            .addClass('powerupTDTooltip');
-                        $tohover = $(`<div>`)
-                            .addClass('powerupTDTooltipText')
-                            .text(new Date(Number($totd.val())).toString())
-                            .appendTo($totd);
-                        $to.on('change', () => {
-                            $tohover
-                                .text(new Date(Number($to.val())).toString());
-                        })
-                    } else {
-                        $fromRow.children().removeClass('powerupTDTooltip');
-                        $fromRow.find(`.powerupTDTooltipText`).remove();
-                        $toRow.children().removeClass('powerupTDTooltip');
-                        $toRow.find(`.powerupTDTooltipText`).remove();
-                    }
-
-                    removeHighlightFromOptions(highlight);
-                    addHighlightToOptions(highlight);
-                })
-
-                //initial load
-                $seriesSelector
-                    .val(highlight.seriesNum)
-                    .trigger('change');
-                $axisSelector
-                    .trigger('change');
-
-                //update on change (must readd to chart to update zones)
-                $from.on('change', () => {
-                    let val = $from.val();
-                    let num = Number(val);
-                    highlight.from = (isNaN(num) ? num : val);
-                    removeHighlightFromOptions(highlight);
-                    addHighlightToOptions(highlight);
-                });
-                $to.on('change', () => {
-                    let val = $to.val();
-                    let num = Number(val);
-                    highlight.to = (isNaN(num) ? num : val);
-                    removeHighlightFromOptions(highlight);
-                    addHighlightToOptions(highlight);
-                });
-                $colorPicker.on('change', () => {
-                    highlight.color = $colorPicker.val();
-                    removeHighlightFromOptions(highlight);
-                    addHighlightToOptions(highlight);
-                });
-
-                //delete button
-                let $remove = $(`<button>`)
-                    .addClass('powerupButton')
-                    .addClass('powerupCloseButton')
-                    .text('x')
-                    .appendTo($highlightDiv)
-                    .on('click', () => {
-                        removeHighlightFromOptions(highlight);
-                        $highlightDiv.remove();
                     })
-
-                return highlight;
-            }
-        }
-
-        function annotationContent(content) {
-            let $content = $(content);
-            let $buttons = $(`<div>`)
-                .appendTo($content)
-                .addClass('powerupOptionsButtonBar');
-            let $annotations = $(`<div>`)
-                .appendTo($content)
-                .addClass('powerupNoFlex');
-            let $addAnnotation = $(`<button>`)
-                .addClass('powerupButton')
-                .text(`+ Annotation`)
-                .on(`click`, () => { addAnnotation() })
-                .appendTo($buttons);
-
-
-
-            drawExistingAnnotations();
-            addRefreshButton($content);
-
-
-            function drawExistingAnnotations() {
-                if (Array.isArray(chartOptions.annotations)) {
-                    chartOptions.annotations.forEach((a, aIdx) => addAnnotation(a));
-                }
-            }
-
-            function removeAnnotationFromOptions(annotation) {
-                if (Array.isArray(chartOptions.annotations)) {
-                    chartOptions.annotations = chartOptions.annotations.filter(x => x != annotation);
-                }
-            }
-
-            function addAnnotationToOptions(annotation) {
-                if (!Array.isArray(chartOptions.annotations)) chartOptions.annotations = [];
-                if (!chartOptions.annotations.includes(annotation))
-                    chartOptions.annotations.push(annotation);
-            }
-
-            function addAnnotation(annotation = null) {
-                chartOptions.powerupStyles.annotation = true;
-                if (annotation == null) {
-                    annotation = {
-                        id: 'a' + uniqId(),
-                        seriesNum: 0,
-                        labels: [{
-                            point: {
-                                xAxis: 0,
-                                yAxis: 0,
-                                x: null,
-                                y: null
-                            },
-                            text: 'x: {x}<br/>y: {y}',
-                            backgroundColor: 'rgba(255,249,213,0.5)'
-                        }]
+                    if (series.type == "line") {
+                        series.zoneAxis = highlight.axis;
+                        if (!Array.isArray(series.zones)) series.zones = [];
+                        series.zones.push({
+                            value: highlight.from,
+                            hlID: highlight.id
+                        });
+                        series.zones.push({
+                            value: highlight.to,
+                            color: highlight.color,
+                            hlID: highlight.id
+                        });
                     }
                 }
-                let series, axis, xmin, xmax, ymin, ymax,
-                    point = annotation.labels[0].point;
 
-                let $annotationDiv = $(`<div>`)
-                    .addClass('powerupLineConfig')
-                    .appendTo($annotations);
-                let $table = $(`<table>`).appendTo($annotationDiv);
-                let $header = $(`<tr><th></th><th>Annotation</th></tr>`).appendTo($table);
-
-
-                //Component: Series selector
-                let $seriesRow = $(`<tr><td>Series:</td><td></td></tr>`).appendTo($table);
-                let $seriesSelector = $(`<select>`).appendTo($seriesRow.children().eq(1));
-                pub.activeChart.series.forEach((s, sIdx) => {
-                    if (!s.visible) return;
-                    let $opt = $(`<option>`)
-                        .data('seriesNum', sIdx)
-                        .val(sIdx)
-                        .text(seriesName(s))
-                        .appendTo($seriesSelector);
-                });
-
-                let $xRow = $(`<tr><td>X:</td><td></td></tr>`).appendTo($table);
-                let $xRange = $(`<input type="range">`)
-                    .appendTo($xRow.children().eq(1));
-                let $x = $(`<input type="text">`)
-                    .val(point.x)
-                    .appendTo($xRow.children().eq(1));
-                $xRange.on('change', () => {
-                    $x.val($xRange.val());
-                    $x.trigger('change');
-                });
-
-                let $yRow = $(`<tr><td>Y:</td><td></td></tr>`).appendTo($table);
-                let $yRange = $(`<input type="range">`)
-                    .appendTo($yRow.children().eq(1));
-                let $y = $(`<input type="text">`)
-                    .val(point.y)
-                    .appendTo($yRow.children().eq(1));
-                $yRange.on('change', () => {
-                    $y.val($yRange.val());
-                    $y.trigger('change');
-                });
-
-                let $colorRow = $(`<tr><td>Background:</td><td></td></tr>`).appendTo($table);
-                let $colorPicker = $(`<input type="color">`)
-                    .val(colorToHex(annotation.labels[0].backgroundColor))
-                    .appendTo($colorRow.children().eq(1));
-
-                let $textRow = $(`<tr><td>Text:</td><td></td></tr>`).appendTo($table);
-                let $text = $(`<input type="text">`)
-                    .val(annotation.labels[0].text)
-                    .appendTo($textRow.children().eq(1));
-
-                //vals
-                $seriesSelector.on('change', () => {
-                    let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
-                    series = pub.activeChart.series[newSeriesNum];
-                    annotation.seriesNum = newSeriesNum;
-
-                    //add annotation
-                    axis = series.xAxis;
-                    xmin = axis.min;
-                    xmax = axis.max;
-                    ymin = series.yAxis.min;
-                    ymax = series.yAxis.max;
-                    if (point.x == null
-                        || point.x < xmin
-                        || point.x > xmax) {
-                        let goal = xmin + ((xmax - xmin) / 2);
-                        let dataPoint = series.data //find closest point
-                            .reduce((prev, curr) => Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
-                        point.x = dataPoint.x;
-                        point.y = dataPoint.y;
-                    }
-
-
-                    $xRange
-                        .attr('min', xmin)
-                        .attr('max', xmax)
-                        .val(point.x)
-                        .trigger('change');
-                    $yRange
-                        .attr('min', ymin)
-                        .attr('max', ymax)
-                        .val(point.y)
-                        .trigger('change');
-
-                    if (axis && axis.isDatetimeAxis) {
-                        let $xtd = $xRow.children().eq(1)
-                            .addClass('powerupTDTooltip');
-                        let $xhover = $(`<div>`)
-                            .addClass('powerupTDTooltipText')
-                            .text(new Date(Number($x.val())).toString())
-                            .appendTo($xtd);
-                        $x.on('change', () => {
-                            $xhover
-                                .text(new Date(Number($x.val())).toString());
-                        })
-                    } else {
-                        $xRow.children().removeClass('powerupTDTooltip');
-                        $xRow.find(`.powerupTDTooltipText`).remove();
-                    }
-
-                    if (series.yAxis && series.yAxis.isDatetimeAxis) {
-                        $ytd = $yRow.children().eq(1)
-                            .addClass('powerupTDTooltip');
-                        $yhover = $(`<div>`)
-                            .addClass('powerupTDTooltipText')
-                            .text(Date($y.val()).toString())
-                            .appendTo($ytd);
-                        $y.on('change', () => {
-                            $yhover
-                                .text(new Date(Number($y.val())).toString());
-                        })
-                    } else {
-                        $yRow.children().removeClass('powerupTDTooltip');
-                        $yRow.find(`.powerupTDTooltipText`).remove();
-                    }
-
-                    addAnnotationToOptions(annotation);
-                });
-
-
-
-                //initial load
-                $seriesSelector
-                    .val(annotation.seriesNum)
-                    .trigger('change');
-
-                //update on change 
-                $x.on('change', () => {
-                    let val = $x.val();
-                    let goal = Number(val);
-                    if (isNaN(goal)) {
-                        point.x = goal;
-                    } else {
-                        let dataPoint = series.data //find closest point
-                            .reduce((prev, curr) => Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
-                        point.x = dataPoint.x;
-                        point.y = dataPoint.y;
-                        $x.val(point.x);
-
-                        $yRange
-                            .val(point.y)
-                            .trigger('change');
-                    }
-                });
-                $y.on('change', () => {
-                    let val = $y.val();
-                    let num = Number(val);
-                    point.y = (isNaN(num) ? num : val);
-                });
-                $colorPicker.on('change', () => {
-                    let color = $colorPicker.val();
-                    let rgb = d3.rgb(color);
-                    annotation.labels[0].backgroundColor = `rgba(${rgb.r},${rgb.g},${rgb.b},0.5)`;
-                });
-                $text.on('change', () => {
-                    annotation.labels[0].text = $text.val();
-                })
-
-                //delete button
-                let $remove = $(`<button>`)
-                    .addClass('powerupButton')
-                    .addClass('powerupCloseButton')
-                    .text('x')
-                    .appendTo($annotationDiv)
-                    .on('click', () => {
-                        removeAnnotationFromOptions(annotation);
-                        $annotationDiv.remove();
-                    })
-
-                return annotation;
-            }
-        }
-
-        function trendlineContent(content) {
-            let $content = $(content);
-            let $buttons = $(`<div>`)
-                .appendTo($content)
-                .addClass('powerupOptionsButtonBar');
-            let $trendlines = $(`<div>`)
-                .appendTo($content)
-                .addClass('powerupNoFlex');
-            let $addTrendline = $(`<button>`)
-                .addClass('powerupButton')
-                .text(`+ Trendline`)
-                .on(`click`, () => { addTrendline() })
-                .appendTo($buttons);
-
-
-
-            drawExistingTrendlines();
-            addRefreshButton($content);
-
-
-            function drawExistingTrendlines() {
-                if (Array.isArray(chartOptions.trendlines)) {
-                    chartOptions.trendlines.forEach((a, aIdx) => addTrendline(a));
-                }
-            }
-
-            function removeTrendlineFromOptions(trendline) {
-                if (Array.isArray(chartOptions.trendlines)) {
-                    chartOptions.trendlines = chartOptions.trendlines.filter(x => x != trendline);
-                }
-                removeTrendlineFromSeries(trendline);
-                removeR2(trendline);
-            }
-
-            function addTrendlineToOptions(trendline) {
-                if (!Array.isArray(chartOptions.trendlines)) chartOptions.trendlines = [];
-                if (!chartOptions.trendlines.includes(trendline)) {
-                    chartOptions.trendlines.push(trendline);
-
-                    addTrendlineToSeries(trendline);
-                    if (trendline.showR2) addR2(trendline);
-                }
-
-            }
-
-            function addTrendlineToSeries(trendline) {
-                let series = pub.activeChart.series[trendline.seriesNum];
-
-                switch (trendline.type) {
-                    case "linear":
-                    default:
-                        trendline.reg = linearRegression(series.data);
-                }
-
-                let newSeries = {
-                    type: 'line',
-                    name: `${trendline.type}-${trendline.seriesNum}`,
-                    id: `tl-${trendline.id}`,
-                    originalSeriesNum: trendline.seriesNum,
-                    data: trendline.reg.data,
-                    color: trendline.color,
-                    visible: true,
-                    powerupTrendline: true
-                }
-                chartOptions.series.push(newSeries);
-                pub.activeChart.addSeries(newSeries, false);
-            }
-
-            function addR2(trendline) {
-                let last, x, y;
-                if (trendline.reg.data) last = trendline.reg.data[trendline.reg.data.length - 1];
-                else return;
-                if (Array.isArray(last)) {
-                    x = last[0];
-                    y = last[1];
-                } else if (typeof (last) == "object") {
-                    x = last.x;
-                    y = last.y;
-                }
-                let annotation = {
-                    id: `a-${trendline.id}`,
-                    seriesNum: trendline.seriesNum,
-                    forTrendline: true,
-                    labels: [{
-                        point: {
-                            xAxis: 0,
-                            yAxis: 0,
-                            x: x,
-                            y: y
-                        },
-                        text: `r^2: ${trendline.reg.r2.toFixed(2)}`,
-                        backgroundColor: 'rgba(0,0,0,0)',
-                        borderWidth: 0,
-                        style: {
-                            color: 'black',
-                            fontSize: '8px'
+                function addHighlight(highlight = null) {
+                    chartOptions.powerupStyles.highlight = true;
+                    if (highlight == null) {
+                        highlight = {
+                            id: 'HL' + uniqId(),
+                            color: null,
+                            seriesNum: 0,
+                            axis: "x",
+                            from: null,
+                            to: null,
                         }
-                    }]
-                }
-                if (!Array.isArray(chartOptions.annotations)) chartOptions.annotations = [];
-                if (!chartOptions.annotations.includes(annotation))
-                    chartOptions.annotations.push(annotation);
-            }
-
-            function removeR2(trendline) {
-                if (Array.isArray(chartOptions.annotations)) {
-                    chartOptions.annotations = chartOptions.annotations
-                        .filter(a => a.id != `a-${trendline.id}`);
-                }
-            }
-
-            function removeTrendlineFromSeries(trendline) {
-                chartOptions.series = chartOptions.series
-                    .filter(s => !(s.powerupTrendline && s.originalSeriesNum == trendline.seriesNum))
-
-                let activeSeries = pub.activeChart.get(`tl-${trendline.id}`);
-                if (activeSeries)
-                    activeSeries.remove();
-            }
-
-            function addTrendline(trendline = null) {
-                chartOptions.powerupStyles.trendline = true;
-                if (trendline == null) {
-                    trendline = {
-                        id: 'tl' + uniqId(),
-                        seriesNum: 0,
-                        color: null,
-                        type: "linear",
-                        showR2: true
                     }
-                }
-                let series;
+                    let series, axis, min, max;
 
-                let $trendlineDiv = $(`<div>`)
-                    .addClass('powerupLineConfig')
-                    .appendTo($trendlines);
-                let $table = $(`<table>`).appendTo($trendlineDiv);
-                let $header = $(`<tr><th></th><th>Trendline</th></tr>`).appendTo($table);
+                    let $highlightDiv = $(`<div>`)
+                        .addClass('powerupLineConfig')
+                        .appendTo($highlights);
+                    let $table = $(`<table>`).appendTo($highlightDiv);
+                    let $header = $(`<tr><th></th><th>Highlight</th></tr>`).appendTo($table);
 
 
-                //Component: Series selector
-                let $seriesRow = $(`<tr><td>Series:</td><td></td></tr>`).appendTo($table);
-                let $seriesSelector = $(`<select>`).appendTo($seriesRow.children().eq(1));
-                pub.activeChart.series
-                    .filter(s => !s.powerupTrendline)
-                    .forEach((s, sIdx) => {
+                    //Component: Series selector
+                    let $seriesRow = $(`<tr><td>Series:</td><td></td></tr>`).appendTo($table);
+                    let $seriesSelector = $(`<select>`).appendTo($seriesRow.children().eq(1));
+                    pub.activeChart.series.forEach((s, sIdx) => {
                         if (!s.visible) return;
                         let $opt = $(`<option>`)
                             .data('seriesNum', sIdx)
@@ -2402,107 +1832,678 @@ var PowerupReporting = (function () {
                             .appendTo($seriesSelector);
                     });
 
-                let $typeRow = $(`<tr><td>Type:</td><td></td></tr>`).appendTo($table);
-                let $typeSelector = $(
-                    `<select>
-                            <option selected>linear</option>
-                        </select>`)
-                    .appendTo($typeRow.children().eq(1));
+                    let $axisRow = $(`<tr><td>Axis:</td><td></td></tr>`).appendTo($table);
+                    let $axisSelector = $(`
+                <select>
+                    <option>x</option>
+                    <option>y</option>
+                </select>`)
+                        .val(highlight.axis)
+                        .appendTo($axisRow.children().eq(1));
 
-                let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
-                let $colorPicker = $(`<input type="color">`)
-                    .val(colorToHex(trendline.color))
-                    .appendTo($colorRow.children().eq(1));
+                    let $fromRow = $(`<tr><td>From:</td><td></td></tr>`).appendTo($table);
+                    let $fromRange = $(`<input type="range">`)
+                        .appendTo($fromRow.children().eq(1));
+                    let $from = $(`<input type="text">`)
+                        .val(highlight.from)
+                        .appendTo($fromRow.children().eq(1));
+                    $fromRange.on('change', () => {
+                        $from.val($fromRange.val());
+                        $from.trigger('change');
+                    });
 
-                let $r2Row = $(`<tr><td>Show r<sup>2</sup>:</td><td></td></tr>`).appendTo($table);
-                let $r2 = $(`<input type="checkbox">`)
-                    .prop('checked', trendline.showR2)
-                    .appendTo($r2Row.children().eq(1));
+                    let $toRow = $(`<tr><td>To:</td><td></td></tr>`).appendTo($table);
+                    let $toRange = $(`<input type="range">`)
+                        .appendTo($toRow.children().eq(1));
+                    let $to = $(`<input type="text">`)
+                        .val(highlight.to)
+                        .appendTo($toRow.children().eq(1));
+                    $toRange.on('change', () => {
+                        $to.val($toRange.val());
+                        $to.trigger('change');
+                    });
 
-                //vals
-                $seriesSelector.on('change', () => {
-                    let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
-                    series = pub.activeChart.series[newSeriesNum];
+                    let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
+                    let $colorPicker = $(`<input type="color">`)
+                        //.val(highlight.color)
+                        .appendTo($colorRow.children().eq(1));
 
-                    //set color
-                    if (trendline.color == null || newSeriesNum != trendline.seriesNum) {
-                        if (chartOptions.dataStory && chartOptions.dataStory.highlightColor) {
-                            trendline.color = chartOptions.dataStory.highlightColor;
+
+                    //vals
+                    $seriesSelector.on('change', () => {
+                        let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
+                        series = pub.activeChart.series[newSeriesNum];
+
+                        //set color
+                        if (highlight.color == null || newSeriesNum != highlight.seriesNum) {
+                            if (chartOptions.dataStory && chartOptions.dataStory.highlightColor) {
+                                highlight.color = chartOptions.dataStory.highlightColor;
+                            } else {
+                                highlight.color = saturate(series.color, "hex");
+                            }
+
+                        }
+                        $colorPicker.val(highlight.color);
+
+                        //add highlight
+                        removeHighlightFromOptions(highlight);
+                        highlight.seriesNum = newSeriesNum;
+
+                        //handle axis
+                        if (!Array.isArray(chartOptions.series[highlight.seriesNum].highlights))
+                            chartOptions.series[highlight.seriesNum].highlights = [];
+                        let existingAxis = chartOptions.series[highlight.seriesNum].highlights
+                            .filter(h => h != highlight)
+                            .map(h => h.axis);
+                        if (Array.isArray(existingAxis) && existingAxis.length) {
+                            $axisSelector
+                                .val(existingAxis[0])
+                                .prop('disabled', true);
                         } else {
-                            trendline.color = saturate(series.color, "hex");
+                            $axisSelector
+                                .prop('disabled', false);
+                        }
+                        $axisSelector.trigger('change');
+                    });
+
+                    $axisSelector.on('change', () => {
+                        highlight.axis = $axisSelector.val();
+                        //set extremes
+                        if (highlight.axis == "x")
+                            axis = series.xAxis;
+                        else if (highlight.axis == "y")
+                            axis = series.yAxis;
+                        min = axis.min;
+                        max = axis.max;
+                        if (highlight.from == null
+                            || highlight.from < min
+                            || highlight.from > max)
+                            highlight.from = min + ((max - min) / 4);
+                        if (highlight.to == null
+                            || highlight.to < min
+                            || highlight.to > max)
+                            highlight.to = max - ((max - min) / 4);
+
+                        $fromRange
+                            .attr('min', min)
+                            .attr('max', max)
+                            .val(highlight.from)
+                            .trigger('change');
+                        $toRange
+                            .attr('min', min)
+                            .attr('max', max)
+                            .val(highlight.to)
+                            .trigger('change');
+
+                        if (axis && axis.isDatetimeAxis) {
+                            let $fromtd = $fromRow.children().eq(1)
+                                .addClass('powerupTDTooltip');
+                            let $fromhover = $(`<div>`)
+                                .addClass('powerupTDTooltipText')
+                                .text(new Date(Number($from.val())).toString())
+                                .appendTo($fromtd);
+                            $from.on('change', () => {
+                                $fromhover
+                                    .text(new Date(Number($from.val())).toString());
+                            })
+
+                            $totd = $toRow.children().eq(1)
+                                .addClass('powerupTDTooltip');
+                            $tohover = $(`<div>`)
+                                .addClass('powerupTDTooltipText')
+                                .text(new Date(Number($totd.val())).toString())
+                                .appendTo($totd);
+                            $to.on('change', () => {
+                                $tohover
+                                    .text(new Date(Number($to.val())).toString());
+                            })
+                        } else {
+                            $fromRow.children().removeClass('powerupTDTooltip');
+                            $fromRow.find(`.powerupTDTooltipText`).remove();
+                            $toRow.children().removeClass('powerupTDTooltip');
+                            $toRow.find(`.powerupTDTooltipText`).remove();
                         }
 
-                    }
-                    $colorPicker.val(trendline.color);
-
-                    removeTrendlineFromOptions(trendline);
-                    trendline.seriesNum = newSeriesNum;
-                    addTrendlineToOptions(trendline);
-                });
-
-                //initial load
-                $seriesSelector
-                    .val(trendline.seriesNum)
-                    .trigger('change');
-
-                //changes
-                $typeSelector.on('change', () => {
-                    trendline.type = $typeSelector.val();
-                });
-                $colorPicker.on('change', () => {
-                    trendline.color = $colorPicker.val();
-                });
-                $r2.on('click', () => {
-                    trendline.showR2 = $r2.prop('checked');
-                });
-
-                //delete button
-                let $remove = $(`<button>`)
-                    .addClass('powerupButton')
-                    .addClass('powerupCloseButton')
-                    .text('x')
-                    .appendTo($trendlineDiv)
-                    .on('click', () => {
-                        removeTrendlineFromOptions(trendline);
-                        $trendlineDiv.remove();
+                        removeHighlightFromOptions(highlight);
+                        addHighlightToOptions(highlight);
                     })
 
-                return trendline;
+                    //initial load
+                    $seriesSelector
+                        .val(highlight.seriesNum)
+                        .trigger('change');
+                    $axisSelector
+                        .trigger('change');
+
+                    //update on change (must readd to chart to update zones)
+                    $from.on('change', () => {
+                        let val = $from.val();
+                        let num = Number(val);
+                        highlight.from = (isNaN(num) ? num : val);
+                        removeHighlightFromOptions(highlight);
+                        addHighlightToOptions(highlight);
+                    });
+                    $to.on('change', () => {
+                        let val = $to.val();
+                        let num = Number(val);
+                        highlight.to = (isNaN(num) ? num : val);
+                        removeHighlightFromOptions(highlight);
+                        addHighlightToOptions(highlight);
+                    });
+                    $colorPicker.on('change', () => {
+                        highlight.color = $colorPicker.val();
+                        removeHighlightFromOptions(highlight);
+                        addHighlightToOptions(highlight);
+                    });
+
+                    //delete button
+                    let $remove = $(`<button>`)
+                        .addClass('powerupButton')
+                        .addClass('powerupCloseButton')
+                        .text('x')
+                        .appendTo($highlightDiv)
+                        .on('click', () => {
+                            removeHighlightFromOptions(highlight);
+                            $highlightDiv.remove();
+                        })
+
+                    return highlight;
+                }
             }
-        }
 
-        function notYetImplemented() {
-            alert(`Not yet implemented...`);
-        }
+            function annotationContent(content) {
+                let $content = $(content);
+                let $buttons = $(`<div>`)
+                    .appendTo($content)
+                    .addClass('powerupOptionsButtonBar');
+                let $annotations = $(`<div>`)
+                    .appendTo($content)
+                    .addClass('powerupNoFlex');
+                let $addAnnotation = $(`<button>`)
+                    .addClass('powerupButton')
+                    .text(`+ Annotation`)
+                    .on(`click`, () => { addAnnotation() })
+                    .appendTo($buttons);
 
-        function addRefreshButton(target = "#PowerupReportGeneratorButtonBar", refreshCallback = () => { }) {
-            let $target = $(target);
-            let id = $(`section.powerupOptionsOpen`).attr('id');
-            let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
-                .on('click', (e) => {
-                    try {
-                        refreshCallback();
-                    } catch (err) {
-                        let $err = $target.find(`.powerupErrorBar`);
-                        if (!$err.length)
-                            $err = $(`<span>`)
-                                .addClass("powerupErrorBar")
-                                .appendTo($target);
-                        $err.text(err);
-                        return (false);
+
+
+                drawExistingAnnotations();
+                addRefreshButton($content);
+
+
+                function drawExistingAnnotations() {
+                    if (Array.isArray(chartOptions.annotations)) {
+                        chartOptions.annotations.forEach((a, aIdx) => addAnnotation(a));
+                    }
+                }
+
+                function removeAnnotationFromOptions(annotation) {
+                    if (Array.isArray(chartOptions.annotations)) {
+                        chartOptions.annotations = chartOptions.annotations.filter(x => x != annotation);
+                    }
+                }
+
+                function addAnnotationToOptions(annotation) {
+                    if (!Array.isArray(chartOptions.annotations)) chartOptions.annotations = [];
+                    if (!chartOptions.annotations.includes(annotation))
+                        chartOptions.annotations.push(annotation);
+                }
+
+                function addAnnotation(annotation = null) {
+                    chartOptions.powerupStyles.annotation = true;
+                    if (annotation == null) {
+                        annotation = {
+                            id: 'a' + uniqId(),
+                            seriesNum: 0,
+                            labels: [{
+                                point: {
+                                    xAxis: 0,
+                                    yAxis: 0,
+                                    x: null,
+                                    y: null
+                                },
+                                text: 'x: {x}<br/>y: {y}',
+                                backgroundColor: 'rgba(255,249,213,0.5)'
+                            }]
+                        }
+                    }
+                    let series, axis, xmin, xmax, ymin, ymax,
+                        point = annotation.labels[0].point;
+
+                    let $annotationDiv = $(`<div>`)
+                        .addClass('powerupLineConfig')
+                        .appendTo($annotations);
+                    let $table = $(`<table>`).appendTo($annotationDiv);
+                    let $header = $(`<tr><th></th><th>Annotation</th></tr>`).appendTo($table);
+
+
+                    //Component: Series selector
+                    let $seriesRow = $(`<tr><td>Series:</td><td></td></tr>`).appendTo($table);
+                    let $seriesSelector = $(`<select>`).appendTo($seriesRow.children().eq(1));
+                    pub.activeChart.series.forEach((s, sIdx) => {
+                        if (!s.visible) return;
+                        let $opt = $(`<option>`)
+                            .data('seriesNum', sIdx)
+                            .val(sIdx)
+                            .text(seriesName(s))
+                            .appendTo($seriesSelector);
+                    });
+
+                    let $xRow = $(`<tr><td>X:</td><td></td></tr>`).appendTo($table);
+                    let $xRange = $(`<input type="range">`)
+                        .appendTo($xRow.children().eq(1));
+                    let $x = $(`<input type="text">`)
+                        .val(point.x)
+                        .appendTo($xRow.children().eq(1));
+                    $xRange.on('change', () => {
+                        $x.val($xRange.val());
+                        $x.trigger('change');
+                    });
+
+                    let $yRow = $(`<tr><td>Y:</td><td></td></tr>`).appendTo($table);
+                    let $yRange = $(`<input type="range">`)
+                        .appendTo($yRow.children().eq(1));
+                    let $y = $(`<input type="text">`)
+                        .val(point.y)
+                        .appendTo($yRow.children().eq(1));
+                    $yRange.on('change', () => {
+                        $y.val($yRange.val());
+                        $y.trigger('change');
+                    });
+
+                    let $colorRow = $(`<tr><td>Background:</td><td></td></tr>`).appendTo($table);
+                    let $colorPicker = $(`<input type="color">`)
+                        .val(colorToHex(annotation.labels[0].backgroundColor))
+                        .appendTo($colorRow.children().eq(1));
+
+                    let $textRow = $(`<tr><td>Text:</td><td></td></tr>`).appendTo($table);
+                    let $text = $(`<input type="text">`)
+                        .val(annotation.labels[0].text)
+                        .appendTo($textRow.children().eq(1));
+
+                    //vals
+                    $seriesSelector.on('change', () => {
+                        let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
+                        series = pub.activeChart.series[newSeriesNum];
+                        annotation.seriesNum = newSeriesNum;
+
+                        //add annotation
+                        axis = series.xAxis;
+                        xmin = axis.min;
+                        xmax = axis.max;
+                        ymin = series.yAxis.min;
+                        ymax = series.yAxis.max;
+                        if (point.x == null
+                            || point.x < xmin
+                            || point.x > xmax) {
+                            let goal = xmin + ((xmax - xmin) / 2);
+                            let dataPoint = series.data //find closest point
+                                .reduce((prev, curr) => Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
+                            point.x = dataPoint.x;
+                            point.y = dataPoint.y;
+                        }
+
+
+                        $xRange
+                            .attr('min', xmin)
+                            .attr('max', xmax)
+                            .val(point.x)
+                            .trigger('change');
+                        $yRange
+                            .attr('min', ymin)
+                            .attr('max', ymax)
+                            .val(point.y)
+                            .trigger('change');
+
+                        if (axis && axis.isDatetimeAxis) {
+                            let $xtd = $xRow.children().eq(1)
+                                .addClass('powerupTDTooltip');
+                            let $xhover = $(`<div>`)
+                                .addClass('powerupTDTooltipText')
+                                .text(new Date(Number($x.val())).toString())
+                                .appendTo($xtd);
+                            $x.on('change', () => {
+                                $xhover
+                                    .text(new Date(Number($x.val())).toString());
+                            })
+                        } else {
+                            $xRow.children().removeClass('powerupTDTooltip');
+                            $xRow.find(`.powerupTDTooltipText`).remove();
+                        }
+
+                        if (series.yAxis && series.yAxis.isDatetimeAxis) {
+                            $ytd = $yRow.children().eq(1)
+                                .addClass('powerupTDTooltip');
+                            $yhover = $(`<div>`)
+                                .addClass('powerupTDTooltipText')
+                                .text(Date($y.val()).toString())
+                                .appendTo($ytd);
+                            $y.on('change', () => {
+                                $yhover
+                                    .text(new Date(Number($y.val())).toString());
+                            })
+                        } else {
+                            $yRow.children().removeClass('powerupTDTooltip');
+                            $yRow.find(`.powerupTDTooltipText`).remove();
+                        }
+
+                        addAnnotationToOptions(annotation);
+                    });
+
+
+
+                    //initial load
+                    $seriesSelector
+                        .val(annotation.seriesNum)
+                        .trigger('change');
+
+                    //update on change 
+                    $x.on('change', () => {
+                        let val = $x.val();
+                        let goal = Number(val);
+                        if (isNaN(goal)) {
+                            point.x = goal;
+                        } else {
+                            let dataPoint = series.data //find closest point
+                                .reduce((prev, curr) => Math.abs(curr.x - goal) < Math.abs(prev.x - goal) ? curr : prev);
+                            point.x = dataPoint.x;
+                            point.y = dataPoint.y;
+                            $x.val(point.x);
+
+                            $yRange
+                                .val(point.y)
+                                .trigger('change');
+                        }
+                    });
+                    $y.on('change', () => {
+                        let val = $y.val();
+                        let num = Number(val);
+                        point.y = (isNaN(num) ? num : val);
+                    });
+                    $colorPicker.on('change', () => {
+                        let color = $colorPicker.val();
+                        let rgb = d3.rgb(color);
+                        annotation.labels[0].backgroundColor = `rgba(${rgb.r},${rgb.g},${rgb.b},0.5)`;
+                    });
+                    $text.on('change', () => {
+                        annotation.labels[0].text = $text.val();
+                    })
+
+                    //delete button
+                    let $remove = $(`<button>`)
+                        .addClass('powerupButton')
+                        .addClass('powerupCloseButton')
+                        .text('x')
+                        .appendTo($annotationDiv)
+                        .on('click', () => {
+                            removeAnnotationFromOptions(annotation);
+                            $annotationDiv.remove();
+                        })
+
+                    return annotation;
+                }
+            }
+
+            function trendlineContent(content) {
+                let $content = $(content);
+                let $buttons = $(`<div>`)
+                    .appendTo($content)
+                    .addClass('powerupOptionsButtonBar');
+                let $trendlines = $(`<div>`)
+                    .appendTo($content)
+                    .addClass('powerupNoFlex');
+                let $addTrendline = $(`<button>`)
+                    .addClass('powerupButton')
+                    .text(`+ Trendline`)
+                    .on(`click`, () => { addTrendline() })
+                    .appendTo($buttons);
+
+
+
+                drawExistingTrendlines();
+                addRefreshButton($content);
+
+
+                function drawExistingTrendlines() {
+                    if (Array.isArray(chartOptions.trendlines)) {
+                        chartOptions.trendlines.forEach((a, aIdx) => addTrendline(a));
+                    }
+                }
+
+                function removeTrendlineFromOptions(trendline) {
+                    if (Array.isArray(chartOptions.trendlines)) {
+                        chartOptions.trendlines = chartOptions.trendlines.filter(x => x != trendline);
+                    }
+                    removeTrendlineFromSeries(trendline);
+                    removeR2(trendline);
+                }
+
+                function addTrendlineToOptions(trendline) {
+                    if (!Array.isArray(chartOptions.trendlines)) chartOptions.trendlines = [];
+                    if (!chartOptions.trendlines.includes(trendline)) {
+                        chartOptions.trendlines.push(trendline);
+
+                        addTrendlineToSeries(trendline);
+                        if (trendline.showR2) addR2(trendline);
                     }
 
-                    $(`#generateReportRefreshButton`).remove();
-                    promise.resolve({
-                        refresh: true,
-                        id: id
-                    });
-                })
-                .text("Refresh")
-                .addClass("powerupButton")
-                .appendTo($target);
+                }
 
-            return $refresh;
+                function addTrendlineToSeries(trendline) {
+                    let series = pub.activeChart.series[trendline.seriesNum];
+
+                    switch (trendline.type) {
+                        case "linear":
+                        default:
+                            trendline.reg = linearRegression(series.data);
+                    }
+
+                    let newSeries = {
+                        type: 'line',
+                        name: `${trendline.type}-${trendline.seriesNum}`,
+                        id: `tl-${trendline.id}`,
+                        originalSeriesNum: trendline.seriesNum,
+                        data: trendline.reg.data,
+                        color: trendline.color,
+                        visible: true,
+                        powerupTrendline: true
+                    }
+                    chartOptions.series.push(newSeries);
+                    pub.activeChart.addSeries(newSeries, false);
+                }
+
+                function addR2(trendline) {
+                    let last, x, y;
+                    if (trendline.reg.data) last = trendline.reg.data[trendline.reg.data.length - 1];
+                    else return;
+                    if (Array.isArray(last)) {
+                        x = last[0];
+                        y = last[1];
+                    } else if (typeof (last) == "object") {
+                        x = last.x;
+                        y = last.y;
+                    }
+                    let annotation = {
+                        id: `a-${trendline.id}`,
+                        seriesNum: trendline.seriesNum,
+                        forTrendline: true,
+                        labels: [{
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: x,
+                                y: y
+                            },
+                            text: `r^2: ${trendline.reg.r2.toFixed(2)}`,
+                            backgroundColor: 'rgba(0,0,0,0)',
+                            borderWidth: 0,
+                            style: {
+                                color: 'black',
+                                fontSize: '8px'
+                            }
+                        }]
+                    }
+                    if (!Array.isArray(chartOptions.annotations)) chartOptions.annotations = [];
+                    if (!chartOptions.annotations.includes(annotation))
+                        chartOptions.annotations.push(annotation);
+                }
+
+                function removeR2(trendline) {
+                    if (Array.isArray(chartOptions.annotations)) {
+                        chartOptions.annotations = chartOptions.annotations
+                            .filter(a => a.id != `a-${trendline.id}`);
+                    }
+                }
+
+                function removeTrendlineFromSeries(trendline) {
+                    chartOptions.series = chartOptions.series
+                        .filter(s => !(s.powerupTrendline && s.originalSeriesNum == trendline.seriesNum))
+
+                    let activeSeries = pub.activeChart.get(`tl-${trendline.id}`);
+                    if (activeSeries)
+                        activeSeries.remove();
+                }
+
+                function addTrendline(trendline = null) {
+                    chartOptions.powerupStyles.trendline = true;
+                    if (trendline == null) {
+                        trendline = {
+                            id: 'tl' + uniqId(),
+                            seriesNum: 0,
+                            color: null,
+                            type: "linear",
+                            showR2: true
+                        }
+                    }
+                    let series;
+
+                    let $trendlineDiv = $(`<div>`)
+                        .addClass('powerupLineConfig')
+                        .appendTo($trendlines);
+                    let $table = $(`<table>`).appendTo($trendlineDiv);
+                    let $header = $(`<tr><th></th><th>Trendline</th></tr>`).appendTo($table);
+
+
+                    //Component: Series selector
+                    let $seriesRow = $(`<tr><td>Series:</td><td></td></tr>`).appendTo($table);
+                    let $seriesSelector = $(`<select>`).appendTo($seriesRow.children().eq(1));
+                    pub.activeChart.series
+                        .filter(s => !s.powerupTrendline)
+                        .forEach((s, sIdx) => {
+                            if (!s.visible) return;
+                            let $opt = $(`<option>`)
+                                .data('seriesNum', sIdx)
+                                .val(sIdx)
+                                .text(seriesName(s))
+                                .appendTo($seriesSelector);
+                        });
+
+                    let $typeRow = $(`<tr><td>Type:</td><td></td></tr>`).appendTo($table);
+                    let $typeSelector = $(
+                        `<select>
+                            <option selected>linear</option>
+                        </select>`)
+                        .appendTo($typeRow.children().eq(1));
+
+                    let $colorRow = $(`<tr><td>Color:</td><td></td></tr>`).appendTo($table);
+                    let $colorPicker = $(`<input type="color">`)
+                        .val(colorToHex(trendline.color))
+                        .appendTo($colorRow.children().eq(1));
+
+                    let $r2Row = $(`<tr><td>Show r<sup>2</sup>:</td><td></td></tr>`).appendTo($table);
+                    let $r2 = $(`<input type="checkbox">`)
+                        .prop('checked', trendline.showR2)
+                        .appendTo($r2Row.children().eq(1));
+
+                    //vals
+                    $seriesSelector.on('change', () => {
+                        let newSeriesNum = $seriesSelector.children(`:selected`).data('seriesNum');
+                        series = pub.activeChart.series[newSeriesNum];
+
+                        //set color
+                        if (trendline.color == null || newSeriesNum != trendline.seriesNum) {
+                            if (chartOptions.dataStory && chartOptions.dataStory.highlightColor) {
+                                trendline.color = chartOptions.dataStory.highlightColor;
+                            } else {
+                                trendline.color = saturate(series.color, "hex");
+                            }
+
+                        }
+                        $colorPicker.val(trendline.color);
+
+                        removeTrendlineFromOptions(trendline);
+                        trendline.seriesNum = newSeriesNum;
+                        addTrendlineToOptions(trendline);
+                    });
+
+                    //initial load
+                    $seriesSelector
+                        .val(trendline.seriesNum)
+                        .trigger('change');
+
+                    //changes
+                    $typeSelector.on('change', () => {
+                        trendline.type = $typeSelector.val();
+                    });
+                    $colorPicker.on('change', () => {
+                        trendline.color = $colorPicker.val();
+                    });
+                    $r2.on('click', () => {
+                        trendline.showR2 = $r2.prop('checked');
+                    });
+
+                    //delete button
+                    let $remove = $(`<button>`)
+                        .addClass('powerupButton')
+                        .addClass('powerupCloseButton')
+                        .text('x')
+                        .appendTo($trendlineDiv)
+                        .on('click', () => {
+                            removeTrendlineFromOptions(trendline);
+                            $trendlineDiv.remove();
+                        })
+
+                    return trendline;
+                }
+            }
+
+            function notYetImplemented() {
+                alert(`Not yet implemented...`);
+            }
+
+            function addRefreshButton(target = "#PowerupReportGeneratorButtonBar", refreshCallback = () => { }) {
+                let $target = $(target);
+                let id = $(`section.powerupOptionsOpen`).attr('id');
+                let $refresh = $(`<button type="button" id="generateReportRefreshButton">`)
+                    .on('click', (e) => {
+                        try {
+                            refreshCallback();
+                        } catch (err) {
+                            let $err = $target.find(`.powerupErrorBar`);
+                            if (!$err.length)
+                                $err = $(`<span>`)
+                                    .addClass("powerupErrorBar")
+                                    .appendTo($target);
+                            $err.text(err);
+                            return (false);
+                        }
+
+                        $(`#generateReportRefreshButton`).remove();
+                        promise.resolve({
+                            refresh: true,
+                            id: id
+                        });
+                    })
+                    .text("Refresh")
+                    .addClass("powerupButton")
+                    .appendTo($target);
+
+                return $refresh;
+            }
+
+        } catch (err) {
+            console.warn(err);
+            crashBeacon(err);
         }
     }
 
