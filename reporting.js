@@ -620,7 +620,6 @@ var PowerupReporting = (function () {
                                         let p_result = await previewSVG(svg, i, chartOptions, result);
                                         pub.activeChart = null; //don't leak chart
                                         if (p_result && p_result.refresh) {
-                                            testCrashBeacon();
                                             return exportChart(i, chartOptions, p_result);
                                         } else {
                                             if (p_result && p_result.include) {
