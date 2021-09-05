@@ -35,6 +35,7 @@ var PowerupReporting = (function () {
         )[1];
 
         return {
+            name: name,
             tenantId: tenantId,
             host: location.host,
             //dashboardID: (location.hash.match(/id=([0-9a-f-]+)/) || [])[1],
@@ -65,7 +66,7 @@ var PowerupReporting = (function () {
                 manufacturer: 'Chrome',
                 modelId: (navigator.userAgent.match(/Chrome\/([^ ]+)/) || [])[1],
                 screenResolution: [window.innerWidth, window.innerHeight],
-                name: name,
+                name: vals.name,
                 vals: vals
             }, "*");
     }
