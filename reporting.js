@@ -616,17 +616,22 @@ var PowerupReporting = (function () {
                                 charts[i].getSVGForLocalExport(options, chartOptions, function () {
                                     console.log("Powerup: getSVGForLocalExport Failed to get SVG");
                                 }, async function (svg) {
-                                    let p_result = await previewSVG(svg, i, chartOptions, result);
-                                    pub.activeChart = null; //don't leak chart
-                                    if (p_result && p_result.refresh) {
-                                        testCrashBeacon();
-                                        return exportChart(i, chartOptions, p_result);
-                                    } else {
-                                        if (p_result && p_result.include) {
-                                            addSVG(svg, i);
-                                            usedReportStyles.push(JSON.parse(JSON.stringify(chartOptions.powerupStyles)));
+                                    try {
+                                        let p_result = await previewSVG(svg, i, chartOptions, result);
+                                        pub.activeChart = null; //don't leak chart
+                                        if (p_result && p_result.refresh) {
+                                            testCrashBeacon();
+                                            return exportChart(i, chartOptions, p_result);
+                                        } else {
+                                            if (p_result && p_result.include) {
+                                                addSVG(svg, i);
+                                                usedReportStyles.push(JSON.parse(JSON.stringify(chartOptions.powerupStyles)));
+                                            }
+                                            return exportChart(i + 1); // Export next only when this SVG is received
                                         }
-                                        return exportChart(i + 1); // Export next only when this SVG is received
+                                    } catch (err) {
+                                        console.warn(err);
+                                        crashBeacon(err);
                                     }
                                 });
                             };
