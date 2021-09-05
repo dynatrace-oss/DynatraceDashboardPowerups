@@ -98,6 +98,10 @@ function listenForBeaconMessages() {
                         errorBeacon(request);
                         sendResponse({ beacon_status: "sent" });
                         break;
+                    case "report_usage":
+                        reportUsage(request);
+                        sendResponse({ beacon_status: "sent" });
+                        break;
                 }
                 switch (request.PowerUp) {
                     case "PU_BACKGROUND":
@@ -202,7 +206,7 @@ function endBeacon(request) { //ends user action & triggers MINT, does not close
             let payload = createMetricPayload({ ...request.vals, ...openKitAction.vals });
             if (payload && payload.length) sendMetricToDT(payload);
         } else if(request.OpenKit == "end_beacon"){
-            //TODO: create a report payload here
+            //do not create a report payload here, instead reportUsage()
         }
         
     }
@@ -242,7 +246,8 @@ function createMetricPayload(vals) { //TODO: refactor for readability
     return payload;
 }
 
-/*function createReportMetricPayload(vals) {
+function reportUsage(request) {
+    let vals = request.metadata;
     let payload = "";
     let line = `${BG_ENV.METRIC_REPORT_DETAIL},dt.entity.custom_application=${BG_ENV.ENT_ID},`;
 
@@ -259,22 +264,22 @@ function createMetricPayload(vals) { //TODO: refactor for readability
 
     let re = new RegExp(`^${BG_ENV.METRIC_REPORT_DETAIL},`);
     let summaryLine = line.replace(re, `${BG_ENV.METRIC_REPORTS},`);
-    if (vals && Object.keys(vals).length) {
-        let powerups = Object.keys(vals).filter(x => x.startsWith('PU_'));
-        powerups.forEach(x => {
-            payload += line + `powerup=${x} ${vals[x]}\n`;
+    if (request.aggUsage && Object.keys(request.aggUsage).length) {
+        let styles = Object.keys(request.aggUsage);
+        styles.forEach(x => {
+            payload += line + `style=${x} ${request.aggUsage[x]}\n`;
         });
-        if (powerups.length)
-            payload += summaryLine + `poweredup=true 1\n`;
+        if (styles.length)
+            payload += summaryLine + `styles=true 1\n`;
         else
-            payload = summaryLine + `poweredup=false 1\n`;
+            payload = summaryLine + `styles=false 1\n`;
     } else {
         console.log("POWERUP: unable to send beacon, vals empty!");
         return undefined;
     }
 
-    return payload;
-}*/
+    sendMetricToDT(payload);
+}
 
 function sendMetricToDT(payload) {
     let settings = {

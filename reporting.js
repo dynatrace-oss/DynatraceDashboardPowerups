@@ -17,10 +17,7 @@ var PowerupReporting = (function () {
     })();
     let usedReportStyles = [];
 
-    function startReportBeacon(action) {
-        if (DashboardPowerups.config.Powerups.BeaconOptOut) return false;
-        if (DashboardPowerups.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
-
+    function gatherMetadata() {
         //send message to background.js instead to avoid CSP issues
         let email = $(`[debugid="userEmail"]`).text();
         let name = (email > "" ? email : $(`[debugid="userName"]`).text());
@@ -37,7 +34,7 @@ var PowerupReporting = (function () {
                 .match(/Search Dynatrace (.+).../) || []
         )[1];
 
-        let vals = {
+        return {
             tenantId: tenantId,
             host: location.host,
             //dashboardID: (location.hash.match(/id=([0-9a-f-]+)/) || [])[1],
@@ -50,6 +47,13 @@ var PowerupReporting = (function () {
             libLocation: DashboardPowerups.config.Powerups.libLocation,
             uuid: DashboardPowerups.config.Powerups.uuid
         };
+    }
+
+    function startReportBeacon(action) {
+        if (DashboardPowerups.config.Powerups.BeaconOptOut) return false;
+        if (DashboardPowerups.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit start beacon");
+
+        let vals = gatherMetadata();
         window.postMessage(
             {
                 OpenKit: "start_report_beacon",
@@ -108,7 +112,7 @@ var PowerupReporting = (function () {
         if (DashboardPowerups.config.Powerups.BeaconOptOut) return false;
         if (DashboardPowerups.config.Powerups.debug) console.log("POWERUP: DEBUG - OpenKit crash beacon");
 
-        
+        let metadata = gatherMetadata();
         let aggUsage = usedReportStyles
             .reduce((acc, cv) => {
                 Object.keys(cv).forEach(key => {
@@ -122,20 +126,21 @@ var PowerupReporting = (function () {
                             break;
                         case "string":
                             let keyval = key + '_' + cv[key];
-                            if(!acc[keyval])
+                            if (!acc[keyval])
                                 acc[keyval] = 1;
                             else acc[keyval]++;
                             break;
                     }
                 }, {})
-            })
+            });
 
-            window.postMessage(
-                {
-                    OpenKit: "report_usage",
-                    context: "clientside",
-                    vals: aggUsage
-                }, "*");
+        window.postMessage(
+            {
+                OpenKit: "report_usage",
+                context: "clientside",
+                metadata: metadata,
+                aggUsage: aggUsage
+            }, "*");
     }
 
     //Public methods
@@ -558,7 +563,7 @@ var PowerupReporting = (function () {
                                 let combinedSVG = '<svg height="' + top + '" width="' + width +
                                     '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
 
-                                //display combined SVG (as an img for copy-paste)
+                                //displaying combined SVG (as an img for copy-paste) does NOT work
                                 $previewTitle.text(`Download:  `);
                                 $previewContent
                                     .html(combinedSVG)
@@ -631,6 +636,7 @@ var PowerupReporting = (function () {
                 // Get SVG asynchronously and then download the resulting SVG
                 getSVG(charts, options, function (combinedsvg) {
                     //callback for when everything is built
+                    reportUsage();
                 });
 
             },
