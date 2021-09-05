@@ -198,224 +198,204 @@ var PowerupReporting = (function () {
         let $buttonBar = $(`#PowerupReportGeneratorButtonBar`);
         let $copies = $(`#PowerupReportGeneratorHiddenCopy`);
 
-        (function (H) {
-            // adapted from https://jsfiddle.net/gh/get/library/pure/H/H/tree/master/samples/H/exporting/multiple-charts-offline/
+        try {
+            (function (H) {
+                // adapted from https://jsfiddle.net/gh/get/library/pure/H/H/tree/master/samples/H/exporting/multiple-charts-offline/
 
-            let copyChart = function (chart, chartOptions, containerContainer) {
-                if (!Object.keys(chart).length) return null;
-                let chartCopy,
-                    sandbox,
-                    svg,
-                    seriesOptions,
-                    sourceWidth,
-                    sourceHeight,
-                    cssWidth,
-                    cssHeight,
-                    allOptions = H.merge(chart.options);
-                // Copy the options and add extra options
-                options = H.merge(chart.userOptions, chartOptions);
+                let copyChart = function (chart, chartOptions, containerContainer) {
+                    if (!Object.keys(chart).length) return null;
+                    let chartCopy,
+                        sandbox,
+                        svg,
+                        seriesOptions,
+                        sourceWidth,
+                        sourceHeight,
+                        cssWidth,
+                        cssHeight,
+                        allOptions = H.merge(chart.options);
+                    // Copy the options and add extra options
+                    options = H.merge(chart.userOptions, chartOptions);
 
-                // create a sandbox where a new chart will be generated
-                sandbox = H.createElement('div', null, {
-                    position: 'absolute',
-                    top: '-9999em',
-                    width: chart.chartWidth + 'px',
-                    height: chart.chartHeight + 'px'
-                }, containerContainer);
+                    // create a sandbox where a new chart will be generated
+                    sandbox = H.createElement('div', null, {
+                        position: 'absolute',
+                        top: '-9999em',
+                        width: chart.chartWidth + 'px',
+                        height: chart.chartHeight + 'px'
+                    }, containerContainer);
 
-                // get the source size
-                cssWidth = chart.renderTo.style.width;
-                cssHeight = chart.renderTo.style.height;
-                sourceWidth = allOptions.exporting.sourceWidth ||
-                    options.chart.width ||
-                    allOptions.chart.width ||
-                    (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
-                    600;
-                sourceHeight = allOptions.exporting.sourceHeight ||
-                    options.chart.height ||
-                    allOptions.chart.height ||
-                    (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
-                    400;
+                    // get the source size
+                    cssWidth = chart.renderTo.style.width;
+                    cssHeight = chart.renderTo.style.height;
+                    sourceWidth = allOptions.exporting.sourceWidth ||
+                        options.chart.width ||
+                        allOptions.chart.width ||
+                        (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
+                        600;
+                    sourceHeight = allOptions.exporting.sourceHeight ||
+                        options.chart.height ||
+                        allOptions.chart.height ||
+                        (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
+                        400;
 
-                // override some options
-                H.extend(options.chart, {
-                    animation: false,
-                    renderTo: sandbox,
-                    forExport: true,
-                    renderer: 'SVGRenderer',
-                    width: sourceWidth,
-                    height: sourceHeight
-                });
-                options.exporting = { enabled: false }// hide buttons in print
-                delete options.data; // #3004
-                if (typeof (options.tooltip) == "undefined") options.tooltip = {};
-                options.tooltip.userOptions = null; //prevent crash
-                options.tooltip.enabled = false;
-
-                // prepare for replicating the chart
-                options.series = [];
-                H.each(chart.series, function (serie) {
-                    seriesOptions = H.merge(serie.userOptions, { // #4912
-                        animation: false, // turn off animation
-                        enableMouseTracking: false,
-                        showCheckbox: false,
-                        visible: serie.visible
+                    // override some options
+                    H.extend(options.chart, {
+                        animation: false,
+                        renderTo: sandbox,
+                        forExport: true,
+                        renderer: 'SVGRenderer',
+                        width: sourceWidth,
+                        height: sourceHeight
                     });
+                    options.exporting = { enabled: false }// hide buttons in print
+                    delete options.data; // #3004
+                    if (typeof (options.tooltip) == "undefined") options.tooltip = {};
+                    options.tooltip.userOptions = null; //prevent crash
+                    options.tooltip.enabled = false;
 
-                    // Used for the navigator series that has its own option set
-                    if (!seriesOptions.isInternal) {
-                        options.series.push(seriesOptions);
-                    }
-
-                    //troubleshooting crash from pies
-                    if (options.series.filter(s => s.type == "pie").length) {
-                        //console.log(`Powerup: DEBUG - reporting proactively disabling legend for pie chart.`);
-                        //options.legend.enabled = false;
-                        if (options.legend.itemStyle) {
-                            delete options.legend.itemStyle.lineHeight;
-                        }
-                    }
-
-                });
-
-                // Assign an internal key to ensure a one-to-one mapping (#5924)
-                H.each(chart.axes, function (axis) {
-                    if (!axis.userOptions.internalKey) { // #6444
-                        axis.userOptions.internalKey = H.uniqueKey();
-                    }
-                });
-
-                // Add support for narrative
-                narrativeSupport(options);
-
-                // generate the chart copy
-                try {
-                    chartCopy = new H.Chart(options, chart.callback);
-                } catch (err) {
-                    console.log(`Powerup: reporting - failed to copy chart`)
-                    console.warn(err);
-                    console.log(options);
-                    return null;
-                }
-
-
-                // Axis options and series options  (#2022, #3900, #5982)
-                if (chartOptions) {
-                    H.each(['xAxis', 'yAxis', 'series'], function (coll) {
-                        var collOptions = {};
-                        if (chartOptions[coll]) {
-                            collOptions[coll] = chartOptions[coll];
-                            chartCopy.update(collOptions);
-                        }
-                    });
-                }
-
-                // Reflect axis extremes in the export (#5924)
-                H.each(chart.axes, function (axis) {
-                    var axisCopy = H.find(chartCopy.axes, function (copy) {
-                        return copy.options.internalKey ===
-                            axis.userOptions.internalKey;
-                    }),
-                        extremes = axis.getExtremes(),
-                        userMin = extremes.userMin,
-                        userMax = extremes.userMax;
-
-                    if (
-                        axisCopy &&
-                        (
-                            (userMin !== undefined && userMin !== axisCopy.min) ||
-                            (userMax !== undefined && userMax !== axisCopy.max)
-                        )
-                    ) {
-                        axisCopy.setExtremes(userMin, userMax, true, false);
-                    }
-                });
-
-                return chartCopy;
-            },
-                rebuildAndAddToplist = function (charts) {
-                    $(DashboardPowerups.SELECTORS.TOPLIST_SELECTOR).each((i, el) => {
-                        let data = [], categories = [];
-                        let $toplist = $(el);
-                        let $tile = $toplist.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
-                        let $left = $toplist.children().first();
-                        let $right = $toplist.children().eq(1);
-                        $right.find(DashboardPowerups.SELECTORS.TOPLIST_BAR_SELECTOR).each((b_idx, bar) => {
-                            let $bar = $(bar);
-                            let color = $bar.css('background-color');
-                            let percent = $bar.attr('style').match(/width:([0-9.]+)%/);
-                            percent = (Array.isArray(percent) && percent.length > 1) ? Number(percent[1]) : 0;
-                            let name = $bar.next().text();
-                            let val = $left.children().eq(b_idx).text();
-
-                            data.push({
-                                longName: name,
-                                color: color,
-                                y: percent
-                            });
-                            categories.push(val);
+                    // prepare for replicating the chart
+                    options.series = [];
+                    H.each(chart.series, function (serie) {
+                        seriesOptions = H.merge(serie.userOptions, { // #4912
+                            animation: false, // turn off animation
+                            enableMouseTracking: false,
+                            showCheckbox: false,
+                            visible: serie.visible
                         });
-                        let $container = $("<div>").appendTo($copies);
-                        let options = {
-                            chart: {
-                                plotBackgroundColor: "#f2f2f2"
-                            },
-                            credits: {
-                                enabled: false
-                            },
-                            legend: {
-                                enabled: false
-                            },
-                            series: [{
-                                type: "bar",
-                                data: data,
-                                dataLabels: {
-                                    enabled: true,
-                                    formatter: function () { return this.point.longName },
-                                    align: "left",
-                                    inside: true,
-                                    style: {
-                                        fontSize: "10px",
-                                        //color: "black",
-                                        fontWeight: "",
-                                        textOutline: ""
-                                    }
-                                },
-                            }],
-                            title: getTitleOpt(null, $tile[0]),
-                            xAxis: {
-                                categories: categories
-                            },
-                            yAxis: {
-                                title: {
-                                    enabled: false
-                                }
+
+                        // Used for the navigator series that has its own option set
+                        if (!seriesOptions.isInternal) {
+                            options.series.push(seriesOptions);
+                        }
+
+                        //troubleshooting crash from pies
+                        if (options.series.filter(s => s.type == "pie").length) {
+                            //console.log(`Powerup: DEBUG - reporting proactively disabling legend for pie chart.`);
+                            //options.legend.enabled = false;
+                            if (options.legend.itemStyle) {
+                                delete options.legend.itemStyle.lineHeight;
                             }
-                        };
-                        narrativeSupport(options);
+                        }
 
-                        let newChart = H.chart($container[0], options);
-
-                        //get the original coordinates and safe store for sorting
-                        let rect = $tile[0].getBoundingClientRect();
-                        newChart.originalRect = rect;
-
-                        charts.push(newChart);
                     });
+
+                    // Assign an internal key to ensure a one-to-one mapping (#5924)
+                    H.each(chart.axes, function (axis) {
+                        if (!axis.userOptions.internalKey) { // #6444
+                            axis.userOptions.internalKey = H.uniqueKey();
+                        }
+                    });
+
+                    // Add support for narrative
+                    narrativeSupport(options);
+
+                    // generate the chart copy
+                    try {
+                        chartCopy = new H.Chart(options, chart.callback);
+                    } catch (err) {
+                        console.log(`Powerup: reporting - failed to copy chart`)
+                        console.warn(err);
+                        console.log(options);
+                        return null;
+                    }
+
+
+                    // Axis options and series options  (#2022, #3900, #5982)
+                    if (chartOptions) {
+                        H.each(['xAxis', 'yAxis', 'series'], function (coll) {
+                            var collOptions = {};
+                            if (chartOptions[coll]) {
+                                collOptions[coll] = chartOptions[coll];
+                                chartCopy.update(collOptions);
+                            }
+                        });
+                    }
+
+                    // Reflect axis extremes in the export (#5924)
+                    H.each(chart.axes, function (axis) {
+                        var axisCopy = H.find(chartCopy.axes, function (copy) {
+                            return copy.options.internalKey ===
+                                axis.userOptions.internalKey;
+                        }),
+                            extremes = axis.getExtremes(),
+                            userMin = extremes.userMin,
+                            userMax = extremes.userMax;
+
+                        if (
+                            axisCopy &&
+                            (
+                                (userMin !== undefined && userMin !== axisCopy.min) ||
+                                (userMax !== undefined && userMax !== axisCopy.max)
+                            )
+                        ) {
+                            axisCopy.setExtremes(userMin, userMax, true, false);
+                        }
+                    });
+
+                    return chartCopy;
                 },
-                copyCharts = function () {
-                    //get all the charts and export as PDF
-                    let charts = [];
-                    //Copy all charts for safe keeping
-                    H.charts
-                        .filter(x => typeof (x) != "undefined")
-                        .filter(x => typeof (x.container) != "undefined")
-                        .forEach(chart => {
-                            let opts = {};
-                            let $chart = $(chart.container);
-                            let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
-                            opts.title = getTitleOpt(chart, $tile[0]);
-                            let newChart = copyChart(chart, opts, $copies[0]);
+                    rebuildAndAddToplist = function (charts) {
+                        $(DashboardPowerups.SELECTORS.TOPLIST_SELECTOR).each((i, el) => {
+                            let data = [], categories = [];
+                            let $toplist = $(el);
+                            let $tile = $toplist.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                            let $left = $toplist.children().first();
+                            let $right = $toplist.children().eq(1);
+                            $right.find(DashboardPowerups.SELECTORS.TOPLIST_BAR_SELECTOR).each((b_idx, bar) => {
+                                let $bar = $(bar);
+                                let color = $bar.css('background-color');
+                                let percent = $bar.attr('style').match(/width:([0-9.]+)%/);
+                                percent = (Array.isArray(percent) && percent.length > 1) ? Number(percent[1]) : 0;
+                                let name = $bar.next().text();
+                                let val = $left.children().eq(b_idx).text();
+
+                                data.push({
+                                    longName: name,
+                                    color: color,
+                                    y: percent
+                                });
+                                categories.push(val);
+                            });
+                            let $container = $("<div>").appendTo($copies);
+                            let options = {
+                                chart: {
+                                    plotBackgroundColor: "#f2f2f2"
+                                },
+                                credits: {
+                                    enabled: false
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                series: [{
+                                    type: "bar",
+                                    data: data,
+                                    dataLabels: {
+                                        enabled: true,
+                                        formatter: function () { return this.point.longName },
+                                        align: "left",
+                                        inside: true,
+                                        style: {
+                                            fontSize: "10px",
+                                            //color: "black",
+                                            fontWeight: "",
+                                            textOutline: ""
+                                        }
+                                    },
+                                }],
+                                title: getTitleOpt(null, $tile[0]),
+                                xAxis: {
+                                    categories: categories
+                                },
+                                yAxis: {
+                                    title: {
+                                        enabled: false
+                                    }
+                                }
+                            };
+                            narrativeSupport(options);
+
+                            let newChart = H.chart($container[0], options);
 
                             //get the original coordinates and safe store for sorting
                             let rect = $tile[0].getBoundingClientRect();
@@ -423,313 +403,344 @@ var PowerupReporting = (function () {
 
                             charts.push(newChart);
                         });
-                    return charts;
-                },
-                getTitleOpt = function (chart = null, tile = null) {  //Dynatrace charts don't set the title, get it and set it
-                    let $chart, $tile;
-                    if (chart != null) {
-                        $chart = $(chart.container);
-                        $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
-                    } else if (tile != null) {
-                        $tile = $(tile);
-                    } else return null;
+                    },
+                    copyCharts = function () {
+                        //get all the charts and export as PDF
+                        let charts = [];
+                        //Copy all charts for safe keeping
+                        H.charts
+                            .filter(x => typeof (x) != "undefined")
+                            .filter(x => typeof (x.container) != "undefined")
+                            .forEach(chart => {
+                                let opts = {};
+                                let $chart = $(chart.container);
+                                let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                                opts.title = getTitleOpt(chart, $tile[0]);
+                                let newChart = copyChart(chart, opts, $copies[0]);
 
-                    let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
-                    let title = $title.text();
-                    let idx = title.length;
+                                //get the original coordinates and safe store for sorting
+                                let rect = $tile[0].getBoundingClientRect();
+                                newChart.originalRect = rect;
 
-                    //remove markers from title using string manipulation instead of regex to avoid excessive escaping
-                    idx = DashboardPowerups.MARKERS.reduce((acc, marker) =>
-                    (title.includes(marker) ?
-                        Math.min(title.indexOf(marker), acc) :
-                        Math.min(acc, idx))
-                        , idx);
-                    title = title.substring(0, idx)
-
-                    if (typeof (title) != "undefined" && title.length)
-                        return {
-                            text: title,
-                            align: "left",
-                            style: {
-                                color: "#454646",
-                                fontSize: "12px"
-                            }
-                        }
-                    else return null;
-                },
-                getSVG = function (charts, options, callback) {
-                    const space = 10;
-                    let svgArr = [],
-                        top = 0,
-                        width = 0,
-                        fastForward = false,
-                        addSVG = function (svgres, i) {
-                            // Grab width/height from exported chart
-                            let svgWidth = +svgres.match(
-                                /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
-                            )[1],
-                                svgHeight = +svgres.match(
-                                    /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
-                                )[1],
-                                // Offset the position of this chart in the final SVG
-                                svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
-                            svg = svg.replace('</svg>', '</g>');
-                            top += svgHeight + (i + 1 === charts.length ? 0 : space);
-                            width = Math.max(width, svgWidth);
-                            svgArr.push(svg);
-                        },
-                        previewSVG = function (svg, i, chartOptions, result = null) {
-                            let p = $.Deferred();  //expecting {refresh: bool, id: string}
-                            pub.activeChart = charts[i];
-                            pub.chartOptions = chartOptions;
-                            if (!chartOptions.powerupStyles) chartOptions.powerupStyles = {};
-
-                            if (!fastForward) {
-                                startReportBeacon(`Preview SVG - ${i}`
-                                    + (result && result.id ? ` - ${result.id}` : ''));
-
-                                $previewTitle.html(`<h4>Chart ${i}:</h4>`);
-                                $previewContent.html(svg);
-                                let id = (result != null && result.id) ? result.id : null;
-                                buildOptions(chartOptions, p, id);
-
-                                //next button
-                                $(`#generateReportNextButton`).remove();
-                                let $next = $(`<button type="button" id="generateReportNextButton">`)
-                                    .on('click', gotoNext)
-                                    .text("Next")
-                                    .addClass("powerupButton")
-                                    .addClass("powerupButtonDefault")
-                                    .appendTo($buttonBar);
-
-                                //fast forward button
-                                $(`#generateReportFFButton`).remove();
-                                let $ff = $(`<button type="button" id="generateReportFFButton">`)
-                                    .on('click', (e) => {
-                                        fastForward = true;
-                                        gotoNext(e);
-                                    })
-                                    .text(" >> ")
-                                    .addClass("powerupButton")
-                                    .appendTo($buttonBar);
-                                endReportBeacon(chartOptions.powerupStyles);
-                            } else {
-                                p.resolve({
-                                    refresh: false,
-                                    include: true
-                                });
-                            }
-                            return (p);
-
-                            function gotoNext(e) {
-                                let checked = $(`#includeChart`).is(":checked");
-                                $previewTitle.text(``);
-                                $previewContent.html(``);
-                                $previewOptions.html(``);
-                                $(`#generateReportRefreshButton, #generateReportNextButton, #generateReportFFButton`).remove();
-                                p.resolve({
-                                    refresh: false,
-                                    include: checked
-                                });
-                            }
-                        },
-                        getTitle = function (i, chartOptions = {}) {
-                            //Dynatrace charts don't set the title, get it and set it
-                            let $chart = $(charts[i].container);
-                            let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
-                            let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
-                            let title = $title.text();
-                            let idx = title.length;
-
-                            //remove markers from title using string manipulation instead of regex to avoid excessive escaping
-                            idx = DashboardPowerups.MARKERS.reduce((acc, marker) =>
-                            (title.includes(marker) ?
-                                Math.min(title.indexOf(marker), acc) :
-                                Math.min(acc, idx))
-                                , idx);
-                            title = title.substring(0, idx)
-
-                            if (typeof (title) != "undefined" && title.length)
-                                chartOptions.title = {
-                                    text: title,
-                                    align: "left",
-                                    style: {
-                                        color: "#454646",
-                                        fontSize: "12px"
-                                    }
-                                }
-                            return title; //in case we need the actual title string, use chartOptions by ref
-                        },
-                        exportChart = function (i, chartOptions = null, result = null) {
-                            if (i === charts.length) { //when done, combine everything
-                                let combinedSVG = '<svg height="' + top + '" width="' + width +
-                                    '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
-
-                                //displaying combined SVG (as an img for copy-paste) does NOT work
-                                $previewTitle.text(`Download:  `);
-                                $previewContent
-                                    .html(combinedSVG)
-                                    .addClass('powerupBordered');
-                                let $svgButton = $(`<button>`)
-                                    .text("SVG")
-                                    .addClass("powerupButton")
-                                    .appendTo($previewTitle)
-                                    .on('click', () => {
-                                        startReportBeacon("Download SVG");
-
-                                        let svgOptions = JSON.parse(JSON.stringify(options));
-                                        svgOptions.type = 'image/svg+xml';
-                                        H.downloadSVGLocal(combinedSVG, svgOptions, function () {
-                                            console.log("Failed to export SVG on client side");
-                                        });
-                                        endReportBeacon();
-                                    })
-                                let $pdfButton = $(`<button>`)
-                                    .text("PDF")
-                                    .addClass("powerupButton")
-                                    .addClass("powerupButtonDefault")
-                                    .appendTo($previewTitle)
-                                    .on('click', () => {
-                                        startReportBeacon("Download PDF");
-
-                                        let pdfOptions = JSON.parse(JSON.stringify(options));
-                                        pdfOptions.type = 'application/pdf';
-                                        H.downloadSVGLocal(combinedSVG, pdfOptions, function () {
-                                            console.log("Failed to export PDF on client side");
-                                        });
-                                        endReportBeacon();
-                                    })
-                                $(`#cancelReportButton`).text('Close');
-                                $previewTitle.append(`<h3>Combined</h3>`);
-                                return callback(combinedSVG);
-                            }
-
-                            if (charts[i] == null
-                                || typeof (charts[i].userOptions) == "undefined") { //null chart, skip it
-                                return exportChart(i + 1);
-                            }
-
-                            if (chartOptions == null)
-                                chartOptions = charts[i].userOptions;
-
-                            charts[i].getSVGForLocalExport(options, chartOptions, function () {
-                                console.log("Powerup: getSVGForLocalExport Failed to get SVG");
-                            }, async function (svg) {
-                                let p_result = await previewSVG(svg, i, chartOptions, result);
-                                pub.activeChart = null; //don't leak chart
-                                if (p_result && p_result.refresh) {
-                                    return exportChart(i, chartOptions, p_result);
-                                } else {
-                                    if (p_result && p_result.include) {
-                                        addSVG(svg, i);
-                                        usedReportStyles.push(JSON.parse(JSON.stringify(chartOptions.powerupStyles)));
-                                    }
-                                    return exportChart(i + 1); // Export next only when this SVG is received
-                                }
+                                charts.push(newChart);
                             });
-                        };
+                        return charts;
+                    },
+                    getTitleOpt = function (chart = null, tile = null) {  //Dynatrace charts don't set the title, get it and set it
+                        let $chart, $tile;
+                        if (chart != null) {
+                            $chart = $(chart.container);
+                            $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                        } else if (tile != null) {
+                            $tile = $(tile);
+                        } else return null;
 
-                    exportChart(0);
-                };
+                        let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
+                        let title = $title.text();
+                        let idx = title.length;
 
-            let exportCharts = function (charts, options) {
-                options = H.merge(H.getOptions().exporting, options);
+                        //remove markers from title using string manipulation instead of regex to avoid excessive escaping
+                        idx = DashboardPowerups.MARKERS.reduce((acc, marker) =>
+                        (title.includes(marker) ?
+                            Math.min(title.indexOf(marker), acc) :
+                            Math.min(acc, idx))
+                            , idx);
+                        title = title.substring(0, idx)
 
-                // Get SVG asynchronously and then download the resulting SVG
-                getSVG(charts, options, function (combinedsvg) {
-                    //callback for when everything is built
-                    reportUsage();
-                });
-
-            },
-                sortCharts = (inCharts) => { //sort based on originalRect coordinates
-                    let sortedCharts = inCharts.sort((a, b) => {
-                        if (typeof (a.originalRect) != "object"
-                            || typeof (a.originalRect.x) == "undefined"
-                            || typeof (a.originalRect.y) == "undefined"
-                            || typeof (b.originalRect) != "object"
-                            || typeof (b.originalRect.x) == "undefined"
-                            || typeof (b.originalRect.y) == "undefined") {
-                            console.warn("Powerup: chart copy missing originalRect");
-                            return false;
-                        }
-                        if (a.originalRect.y < b.originalRect.y) {
-                            return -1;
-                        } else if (a.originalRect.y > b.originalRect.y) {
-                            return 1;
-                        } else if (a.originalRect.y == b.originalRect.y) {
-                            if (a.originalRect.x < b.originalRect.x) {
-                                return -1;
-                            } else if (a.originalRect.x > b.originalRect.x) {
-                                return 1;
-                            } else if (a.originalRect.x == b.originalRect.x) {
-                                return 0;
+                        if (typeof (title) != "undefined" && title.length)
+                            return {
+                                text: title,
+                                align: "left",
+                                style: {
+                                    color: "#454646",
+                                    fontSize: "12px"
+                                }
                             }
-                        }
-                    })
-                    return sortedCharts;
+                        else return null;
+                    },
+                    getSVG = function (charts, options, callback) {
+                        const space = 10;
+                        let svgArr = [],
+                            top = 0,
+                            width = 0,
+                            fastForward = false,
+                            addSVG = function (svgres, i) {
+                                // Grab width/height from exported chart
+                                let svgWidth = +svgres.match(
+                                    /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
+                                )[1],
+                                    svgHeight = +svgres.match(
+                                        /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
+                                    )[1],
+                                    // Offset the position of this chart in the final SVG
+                                    svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+                                svg = svg.replace('</svg>', '</g>');
+                                top += svgHeight + (i + 1 === charts.length ? 0 : space);
+                                width = Math.max(width, svgWidth);
+                                svgArr.push(svg);
+                            },
+                            previewSVG = function (svg, i, chartOptions, result = null) {
+                                let p = $.Deferred();  //expecting {refresh: bool, id: string}
+                                pub.activeChart = charts[i];
+                                pub.chartOptions = chartOptions;
+                                if (!chartOptions.powerupStyles) chartOptions.powerupStyles = {};
+
+                                if (!fastForward) {
+                                    startReportBeacon(`Preview SVG - ${i}`
+                                        + (result && result.id ? ` - ${result.id}` : ''));
+
+                                    $previewTitle.html(`<h4>Chart ${i}:</h4>`);
+                                    $previewContent.html(svg);
+                                    let id = (result != null && result.id) ? result.id : null;
+                                    buildOptions(chartOptions, p, id);
+
+                                    //next button
+                                    $(`#generateReportNextButton`).remove();
+                                    let $next = $(`<button type="button" id="generateReportNextButton">`)
+                                        .on('click', gotoNext)
+                                        .text("Next")
+                                        .addClass("powerupButton")
+                                        .addClass("powerupButtonDefault")
+                                        .appendTo($buttonBar);
+
+                                    //fast forward button
+                                    $(`#generateReportFFButton`).remove();
+                                    let $ff = $(`<button type="button" id="generateReportFFButton">`)
+                                        .on('click', (e) => {
+                                            fastForward = true;
+                                            gotoNext(e);
+                                        })
+                                        .text(" >> ")
+                                        .addClass("powerupButton")
+                                        .appendTo($buttonBar);
+                                    endReportBeacon(chartOptions.powerupStyles);
+                                } else {
+                                    p.resolve({
+                                        refresh: false,
+                                        include: true
+                                    });
+                                }
+                                return (p);
+
+                                function gotoNext(e) {
+                                    let checked = $(`#includeChart`).is(":checked");
+                                    $previewTitle.text(``);
+                                    $previewContent.html(``);
+                                    $previewOptions.html(``);
+                                    $(`#generateReportRefreshButton, #generateReportNextButton, #generateReportFFButton`).remove();
+                                    p.resolve({
+                                        refresh: false,
+                                        include: checked
+                                    });
+                                }
+                            },
+                            getTitle = function (i, chartOptions = {}) {
+                                //Dynatrace charts don't set the title, get it and set it
+                                let $chart = $(charts[i].container);
+                                let $tile = $chart.parents(DashboardPowerups.SELECTORS.TILE_SELECTOR);
+                                let $title = $tile.find(DashboardPowerups.SELECTORS.TITLE_SELECTOR);
+                                let title = $title.text();
+                                let idx = title.length;
+
+                                //remove markers from title using string manipulation instead of regex to avoid excessive escaping
+                                idx = DashboardPowerups.MARKERS.reduce((acc, marker) =>
+                                (title.includes(marker) ?
+                                    Math.min(title.indexOf(marker), acc) :
+                                    Math.min(acc, idx))
+                                    , idx);
+                                title = title.substring(0, idx)
+
+                                if (typeof (title) != "undefined" && title.length)
+                                    chartOptions.title = {
+                                        text: title,
+                                        align: "left",
+                                        style: {
+                                            color: "#454646",
+                                            fontSize: "12px"
+                                        }
+                                    }
+                                return title; //in case we need the actual title string, use chartOptions by ref
+                            },
+                            exportChart = function (i, chartOptions = null, result = null) {
+                                if (i === charts.length) { //when done, combine everything
+                                    let combinedSVG = '<svg height="' + top + '" width="' + width +
+                                        '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
+
+                                    //displaying combined SVG (as an img for copy-paste) does NOT work
+                                    $previewTitle.text(`Download:  `);
+                                    $previewContent
+                                        .html(combinedSVG)
+                                        .addClass('powerupBordered');
+                                    let $svgButton = $(`<button>`)
+                                        .text("SVG")
+                                        .addClass("powerupButton")
+                                        .appendTo($previewTitle)
+                                        .on('click', () => {
+                                            startReportBeacon("Download SVG");
+
+                                            let svgOptions = JSON.parse(JSON.stringify(options));
+                                            svgOptions.type = 'image/svg+xml';
+                                            H.downloadSVGLocal(combinedSVG, svgOptions, function () {
+                                                console.log("Failed to export SVG on client side");
+                                            });
+                                            endReportBeacon();
+                                        })
+                                    let $pdfButton = $(`<button>`)
+                                        .text("PDF")
+                                        .addClass("powerupButton")
+                                        .addClass("powerupButtonDefault")
+                                        .appendTo($previewTitle)
+                                        .on('click', () => {
+                                            startReportBeacon("Download PDF");
+
+                                            let pdfOptions = JSON.parse(JSON.stringify(options));
+                                            pdfOptions.type = 'application/pdf';
+                                            H.downloadSVGLocal(combinedSVG, pdfOptions, function () {
+                                                console.log("Failed to export PDF on client side");
+                                            });
+                                            endReportBeacon();
+                                        })
+                                    $(`#cancelReportButton`).text('Close');
+                                    $previewTitle.append(`<h3>Combined</h3>`);
+                                    return callback(combinedSVG);
+                                }
+
+                                if (charts[i] == null
+                                    || typeof (charts[i].userOptions) == "undefined") { //null chart, skip it
+                                    return exportChart(i + 1);
+                                }
+
+                                if (chartOptions == null)
+                                    chartOptions = charts[i].userOptions;
+
+                                charts[i].getSVGForLocalExport(options, chartOptions, function () {
+                                    console.log("Powerup: getSVGForLocalExport Failed to get SVG");
+                                }, async function (svg) {
+                                    let p_result = await previewSVG(svg, i, chartOptions, result);
+                                    pub.activeChart = null; //don't leak chart
+                                    if (p_result && p_result.refresh) {
+                                        testCrashBeacon();
+                                        return exportChart(i, chartOptions, p_result);
+                                    } else {
+                                        if (p_result && p_result.include) {
+                                            addSVG(svg, i);
+                                            usedReportStyles.push(JSON.parse(JSON.stringify(chartOptions.powerupStyles)));
+                                        }
+                                        return exportChart(i + 1); // Export next only when this SVG is received
+                                    }
+                                });
+                            };
+
+                        exportChart(0);
+                    };
+
+                let exportCharts = function (charts, options) {
+                    options = H.merge(H.getOptions().exporting, options);
+
+                    // Get SVG asynchronously and then download the resulting SVG
+                    getSVG(charts, options, function (combinedsvg) {
+                        //callback for when everything is built
+                        reportUsage();
+                    });
+
                 },
-                cleanup = function (charts) {
-                    charts.forEach((chart, cIdx) => {
-                        if (chart && typeof (chart.destroy) == "function") {
-                            if (typeof (chart.renderer) != "object") chart.renderer = {}; //crash prevention
-                            try {
-                                chart.destroy();
-                            } catch (e) {
+                    sortCharts = (inCharts) => { //sort based on originalRect coordinates
+                        let sortedCharts = inCharts.sort((a, b) => {
+                            if (typeof (a.originalRect) != "object"
+                                || typeof (a.originalRect.x) == "undefined"
+                                || typeof (a.originalRect.y) == "undefined"
+                                || typeof (b.originalRect) != "object"
+                                || typeof (b.originalRect.x) == "undefined"
+                                || typeof (b.originalRect.y) == "undefined") {
+                                console.warn("Powerup: chart copy missing originalRect");
+                                return false;
+                            }
+                            if (a.originalRect.y < b.originalRect.y) {
+                                return -1;
+                            } else if (a.originalRect.y > b.originalRect.y) {
+                                return 1;
+                            } else if (a.originalRect.y == b.originalRect.y) {
+                                if (a.originalRect.x < b.originalRect.x) {
+                                    return -1;
+                                } else if (a.originalRect.x > b.originalRect.x) {
+                                    return 1;
+                                } else if (a.originalRect.x == b.originalRect.x) {
+                                    return 0;
+                                }
+                            }
+                        })
+                        return sortedCharts;
+                    },
+                    cleanup = function (charts) {
+                        charts.forEach((chart, cIdx) => {
+                            if (chart && typeof (chart.destroy) == "function") {
+                                if (typeof (chart.renderer) != "object") chart.renderer = {}; //crash prevention
+                                try {
+                                    chart.destroy();
+                                } catch (e) {
+                                    charts[cIdx] = null;
+                                    let hIdx = H.charts.findIndex(x => x == chart);
+                                    if (hIdx > -1) H.charts[hIdx] = undefined;
+                                }
+                            } else {
                                 charts[cIdx] = null;
                                 let hIdx = H.charts.findIndex(x => x == chart);
-                                if (hIdx > -1) H.charts[hIdx] = undefined;
+                                if (chart != undefined && hIdx > -1) H.charts[hIdx] = undefined;
                             }
-                        } else {
-                            charts[cIdx] = null;
-                            let hIdx = H.charts.findIndex(x => x == chart);
-                            if (chart != undefined && hIdx > -1) H.charts[hIdx] = undefined;
-                        }
-                    });
-                    charts = charts.filter(x => x != null);
-                };
+                        });
+                        charts = charts.filter(x => x != null);
+                    };
 
-            // Set global default options for all charts
-            H.setOptions({
-                exporting: {
-                    fallbackToExportServer: false // Ensure the export happens on the client side or not at all
-                }
-            });
+                // Set global default options for all charts
+                H.setOptions({
+                    exporting: {
+                        fallbackToExportServer: false // Ensure the export happens on the client side or not at all
+                    }
+                });
 
-            startReportBeacon("Generate report");
-            let reportName = $(DashboardPowerups.SELECTORS.BANNER_SELECTOR).text();
-            let charts = copyCharts();
-            rebuildAndAddToplist(charts);
-            charts = sortCharts(charts);
-            $(`#cancelReportButton`).on('click', () => { cleanup(charts) }); //don't leak charts, if cancelling early
-            exportCharts(charts,
-                {
-                    filename: reportName,
-                    type: 'application/pdf',
-                    libURL: DashboardPowerups.POWERUP_EXT_URL + '3rdParty/Highcharts/lib'
-                })
-            endReportBeacon(); //should fire before all of the nested callbacks
-        }(Highcharts));
+                startReportBeacon("Generate report");
+                let reportName = $(DashboardPowerups.SELECTORS.BANNER_SELECTOR).text();
+                let charts = copyCharts();
+                rebuildAndAddToplist(charts);
+                charts = sortCharts(charts);
+                $(`#cancelReportButton`).on('click', () => { cleanup(charts) }); //don't leak charts, if cancelling early
+                exportCharts(charts,
+                    {
+                        filename: reportName,
+                        type: 'application/pdf',
+                        libURL: DashboardPowerups.POWERUP_EXT_URL + '3rdParty/Highcharts/lib'
+                    })
+                endReportBeacon(); //should fire before all of the nested callbacks
+            }(Highcharts));
+        } catch (err) {
+            console.warn(err);
+            crashBeacon(err);
+        }
     }
 
     function buildOptions(chartOptions, promise, open = null) {
-        if (!chartOptions.powerupStyles) chartOptions.powerupStyles = {};
-        let $optionsBlock = $(`#PowerupReportGeneratorPreviewOptions`)
-            .html('<h4>Options:</h4>')
-            .addClass('generated');
+        try {
+            if (!chartOptions.powerupStyles) chartOptions.powerupStyles = {};
+            let $optionsBlock = $(`#PowerupReportGeneratorPreviewOptions`)
+                .html('<h4>Options:</h4>')
+                .addClass('generated');
 
-        drawIncludeOptions();
-        //draw options sections closed, fill in after click
-        let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)", storyContent));
-        let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background", foregroundContent));
-        let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments", highlightContent));
-        let $trends = $(createSection("PowerupReportOptionsTrends", "Trendlines", trendlineContent));
-        let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines", bandsAndLinesContent));
-        let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations", annotationContent));
-        let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative", narrativeContent));
-        let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter", declutterContent));
-        let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert mode)", jsonContent));
+            drawIncludeOptions();
+            //draw options sections closed, fill in after click
+            let $story = $(createSection("PowerupReportOptionsStory", "Data Story (presets)", storyContent));
+            let $foreground = $(createSection("PowerupReportOptionsForeground", "Foreground/Background", foregroundContent));
+            let $segments = $(createSection("PowerupReportOptionsSegments", "Highlight Segments", highlightContent));
+            let $trends = $(createSection("PowerupReportOptionsTrends", "Trendlines", trendlineContent));
+            let $bands = $(createSection("PowerupReportOptionsBands", "Plot Bands / Lines", bandsAndLinesContent));
+            let $annotations = $(createSection("PowerupReportOptionsAnnotations", "Annotations", annotationContent));
+            let $narrative = $(createSection("PowerupReportOptionsNarrative", "Narrative", narrativeContent));
+            let $declutter = $(createSection("PowerupReportOptionsDeclutter", "Declutter", declutterContent));
+            let $json = $(createSection("PowerupReportOptionsJSON", "JSON (expert mode)", jsonContent));
 
+        } catch (err) {
+            console.warn(err);
+            crashBeacon(err);
+        }
         ///////////////////////////////
         function drawIncludeOptions() {
             let $include = $(`
