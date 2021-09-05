@@ -131,8 +131,8 @@ var PowerupReporting = (function () {
                             else acc[keyval]++;
                             break;
                     }
-                }, {})
-            });
+                })
+            }, {});
 
         window.postMessage(
             {
