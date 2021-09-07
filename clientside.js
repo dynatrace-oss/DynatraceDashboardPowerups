@@ -2383,6 +2383,7 @@ var DashboardPowerups = (function () {
                 function buildTouples(filteredTable) {
                     let touples = [];
                     filteredTable.forEach(row => {
+                        let touplesInRow = []; //use to prevent duplicate crash counting etc
                         if (!Array.isArray(row.filtered)) return false;
                         for (let k = 0; k < row.filtered.length - 1; k++) { //useraction.name (or possibly useraction.matchingConversionGoals)
                             let touple = {
@@ -2409,9 +2410,16 @@ var DashboardPowerups = (function () {
                             }
 
                             touple.weight++;
-                            if (row.hasCrash == "true") touple.crashes++;
+                            if(row.hasCrash == "true"
+                                && ! touplesInRow.includes(touple)){  //count crashes per touple, but only once within a row
+                                touple.crashes++;
+                            } 
+
+                            if(! touplesInRow.includes(touple))
+                                touplesInRow.push(touple);
                         }
                     });
+
                     return touples;
                 }
 
