@@ -1458,7 +1458,7 @@ var DashboardPowerups = (function () {
 
         const container = e.currentTarget;
         const charts = Highcharts.charts
-            .filter(x => typeof (x) != "undefined" && typeof (x.options) != "undefined")  
+            .filter(x => typeof (x) != "undefined" && typeof (x.options) != "undefined")
             .filter(x => x.options.type != 'sankey' && x.options.type != 'heatmap');
         const chartIndex = charts.findIndex(chart => chart.container === container);
 
@@ -1504,7 +1504,7 @@ var DashboardPowerups = (function () {
     pub.removeHighlightPointsInOtherCharts = function (e) {
         const charts = Highcharts.charts.filter(x => typeof (x) != "undefined");
         for (let i = 0; i < charts.length; i++) {
-            if(Array.isArray(charts[i].xAxis))
+            if (Array.isArray(charts[i].xAxis))
                 charts[i].xAxis[0].hideCrosshair();
         }
     }
@@ -2762,12 +2762,17 @@ var DashboardPowerups = (function () {
                             let actionName = arr[k];
                             let apdexIdx = apdexList.findIndex(x => x.actionName == actionName);
 
-                            if (apdexIdx > -1) {
-                                if (typeof (apdexList[apdexIdx].crashes) == "undefined")
-                                    apdexList[apdexIdx].crashes = 0;
+                            //look back through arr to prevent duplicate counting
+                            let lookbackIdx = arr.findIndex(x => x == actionName);
+                            if (lookbackIdx >= k) {
+                                //add crash to per node list
+                                if (apdexIdx > -1) {
+                                    if (typeof (apdexList[apdexIdx].crashes) == "undefined")
+                                        apdexList[apdexIdx].crashes = 0;
 
-                                if (crash === "true") {
-                                    apdexList[apdexIdx].crashes++;
+                                    if (crash === "true") {
+                                        apdexList[apdexIdx].crashes++;
+                                    }
                                 }
                             }
                         }
