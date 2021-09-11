@@ -81,12 +81,13 @@ var DashboardPowerups = (function () {
     const PU_HONEYCOMB = '!PU(honeycomb):';
     const PU_AUTOHIDE = '!PU(autohide):';
     const PU_TREEMAP = '!PU(treemap):';
+    const PU_TIMEONPAGE = '!PU(timeonpage):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE
     ];
 
     const COLOR_RED = "#c41425";
@@ -2410,12 +2411,12 @@ var DashboardPowerups = (function () {
                             }
 
                             touple.weight++;
-                            if(row.hasCrash == "true"
-                                && ! touplesInRow.includes(touple)){  //count crashes per touple, but only once within a row
+                            if (row.hasCrash == "true"
+                                && !touplesInRow.includes(touple)) {  //count crashes per touple, but only once within a row
                                 touple.crashes++;
-                            } 
+                            }
 
-                            if(! touplesInRow.includes(touple))
+                            if (!touplesInRow.includes(touple))
                                 touplesInRow.push(touple);
                         }
                     });
@@ -5757,8 +5758,6 @@ var DashboardPowerups = (function () {
 
             if (title.includes(PU_TABLE)) {
                 let $table = $tile.find(TABLE_SELECTOR);
-                //let argstring = title.split(PU_TABLE)[1].split(/[!\n]/)[0];
-                //let args = argstring.split(";").map(x => x.split("="));
                 let args = argsplit(title, PU_TABLE);
 
                 title = title.split(PU_TABLE)[0].trim();  //for use in filenames etc
@@ -5771,7 +5770,7 @@ var DashboardPowerups = (function () {
                     .prependTo($tile.find(`[uitestid="gwt-debug-DTAQL"]`));
 
                 //read the table
-                let dataTable = readTableData($tile, false); // maybe make it sortable etc later
+                let dataTable = readTableData($tile, false);
 
                 //build menu
                 let $menu = $("<div>")
@@ -6687,6 +6686,26 @@ var DashboardPowerups = (function () {
                 powerupsFired['PU_GRID'] ? powerupsFired['PU_GRID']++ : powerupsFired['PU_GRID'] = 1;
             }
         })
+    }
+
+    pub.puTimeOnPage = function () {
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let $tile = $title.parents(TILE_SELECTOR);
+            let title = $title.text();
+
+            if (title.includes(PU_TIMEONPAGE)) {
+                let $table = $tile.find(TABLE_SELECTOR);
+                let args = argsplit(title, PU_TABLE);
+
+                //read the table
+                let dataTable = readTableData($tile, false); 
+
+                if(dataTable.keys.includes("start")
+                    && dataTable.keys.includes("end"))
+                    asdf;
+            }
+        });
     }
 
     pub.fireAllPowerUps = function (update = false) {
