@@ -6703,7 +6703,7 @@ var DashboardPowerups = (function () {
 
                 if(dataTable.keys.includes("start")
                     && dataTable.keys.includes("end"))
-                    asdf;
+                    console.log(dataTable);
             }
         });
     }
@@ -6716,6 +6716,7 @@ var DashboardPowerups = (function () {
 
         try {
             //data gathering operations
+            promises.push(pub.puTimeOnPage());
             promises.push(pub.PUvlookup());
             promises.push(pub.PUstdev());
 
