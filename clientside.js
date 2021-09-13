@@ -359,18 +359,24 @@ var DashboardPowerups = (function () {
         return ({ keys: keys, normalTable: normalTable })
     }
 
-    function parseUSQLField(row,colName=""){
+    function parseUSQLField(row, colName = "", tryJSON = true) {
         const re = /\/\d+(\/.*)?$/;
         let arr = [];
         if (row.substring(0, 1) != '[' || row.substr(-1) != ']') { //old error handling, need to remove to allow for session level data
             return row;
         } else {
-            try {
-                arr = JSON.parse(row);
-            } catch (e) { //Sometimes it's not valid JSON...
+            if (tryJSON) {
+                try {
+                    arr = JSON.parse(row);
+                } catch (e) { //Sometimes it's not valid JSON...
+
+                };
+            }
+
+            if (!arr.length) {
                 arr = row.substr(1, row.length - 2)
                     .split(', ');
-            };
+            }
 
             try {
                 switch (colName) {
@@ -2258,7 +2264,7 @@ var DashboardPowerups = (function () {
                                     dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
                                     normalTable[rowIdx][colName] = arr;
                                 }*/
-                                let arr = parseUSQLField(row,colName);
+                                let arr = parseUSQLField(row, colName);
                                 dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
                                 normalTable[rowIdx][colName] = arr;
                             });
@@ -6734,39 +6740,39 @@ var DashboardPowerups = (function () {
                 let args = argsplit(title, PU_TIMEONPAGE);
 
                 //read the table
-                let dataTable = readTableData($tile, false); 
+                let dataTable = readTableData($tile, false);
 
-                if(dataTable.keys.includes("start")
+                if (dataTable.keys.includes("start")
                     && dataTable.keys.includes("end")
-                    && dataTable.keys.includes("name")){
-                        console.log(dataTable);
-                        let timeOnPagePerName = {};
-                        dataTable.normalTable.forEach(session => {
-                            let actions = parseUSQLField(session["name"]);
-                            let starts = parseUSQLField(session["start"]);
-                            let ends = parseUSQLField(session["end"]);
+                    && dataTable.keys.includes("name")) {
+                    console.log(dataTable);
+                    let timeOnPagePerName = {};
+                    dataTable.normalTable.forEach(session => {
+                        let actions = parseUSQLField(session["name"]);
+                        let starts = parseUSQLField(session["start"], "", false);
+                        let ends = parseUSQLField(session["end"], "", false);
 
-                            if(Array.isArray(actions)){
-                                for(let i=0; i<actions.length - 1; i++){
-                                    let name = actions[i];
-                                    let loaded = Number(ends[i].replace(/[ ,]+/g,''));
-                                    let next = Number(starts[i+1].replace(/[ ,]+/g,''));
-                                    if(isNaN(loaded) || isNaN(next)){
-                                        console.warn(`Powerup: WARN - ${PU_TIMEONPAGE} - NaN! loaded:${ends[i]} next:${starts[i+1]}`);
-                                        continue;
-                                    }
-                                    let onpage = next - loaded;
-
-                                    if(!timeOnPagePerName.hasOwnProperty(name)) timeOnPagePerName[name] = [];
-
-                                    timeOnPagePerName[name].push(onpage);
+                        if (Array.isArray(actions)) {
+                            for (let i = 0; i < actions.length - 1; i++) {
+                                let name = actions[i];
+                                let loaded = Number(ends[i].replace(/[ ,]+/g, ''));
+                                let next = Number(starts[i + 1].replace(/[ ,]+/g, ''));
+                                if (isNaN(loaded) || isNaN(next)) {
+                                    console.warn(`Powerup: WARN - ${PU_TIMEONPAGE} - NaN! loaded:${ends[i]} next:${starts[i + 1]}`);
+                                    continue;
                                 }
+                                let onpage = next - loaded;
+
+                                if (!timeOnPagePerName.hasOwnProperty(name)) timeOnPagePerName[name] = [];
+
+                                timeOnPagePerName[name].push(onpage);
                             }
-                            
-                        });
-                        console.log(timeOnPagePerName);
-                    }
-                    
+                        }
+
+                    });
+                    console.log(timeOnPagePerName);
+                }
+
             }
         });
     }
