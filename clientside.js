@@ -359,6 +359,37 @@ var DashboardPowerups = (function () {
         return ({ keys: keys, normalTable: normalTable })
     }
 
+    function parseUSQLField(row,colName=""){
+        let arr = [];
+        if (row.substring(0, 1) != '[' || row.substr(-1) != ']') { //old error handling, need to remove to allow for session level data
+            return row;
+        } else {
+            try {
+                arr = JSON.parse(row);
+            } catch (e) { //Sometimes it's not valid JSON...
+                arr = row.substr(1, row.length - 2)
+                    .split(', ');
+            };
+
+            try {
+                switch (colName) {
+                    case "useraction.matchingConversionGoals":
+                        arr = arr
+                            .map(x => Array.isArray(x) ? x.join(', ') : x);
+                    default:
+                }
+                arr = arr
+                    //.map(x => Array.isArray(x) ? x.join(', ') : x) //why are we doing this in the first place?
+                    //.map(x => typeof (x) != "string" ? x.toString() : x) //consider correctly handling types later
+                    .map(x => typeof (x) == "string" ? x.trim() : x)
+                    .map(x => typeof (x) == "string" ? x.replace(re, '/*$1') : x);//clean up strings
+            } catch (e) {
+                console.warn([e, row]);
+            }
+            return arr;
+        }
+    }
+
     function columnSorterAsc(a, b, key) {
         switch (typeof (a[key])) {
             case "number":
@@ -2196,7 +2227,7 @@ var DashboardPowerups = (function () {
                                 if (typeof (dataTable[colIdx][rowIdx]) == "undefined") dataTable[colIdx][rowIdx] = [];
                                 if (typeof (normalTable[rowIdx]) == "undefined") normalTable[rowIdx] = {};
                                 let row = $(rowEl).text();
-                                let arr = [];
+                                /*let arr = [];
                                 if (row.substring(0, 1) != '[' || row.substr(-1) != ']') { //old error handling, need to remove to allow for session level data
                                     normalTable[rowIdx][colName] = row;
                                 } else {
@@ -2225,7 +2256,10 @@ var DashboardPowerups = (function () {
                                     }
                                     dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
                                     normalTable[rowIdx][colName] = arr;
-                                }
+                                }*/
+                                let arr = parseUSQLField(row,colName);
+                                dataTable[colIdx][rowIdx] = arr; //safe-store the dataTable in case we want to manipulate later
+                                normalTable[rowIdx][colName] = arr;
                             });
                         });
                     normalTable.shift();//row 0 was the titles
@@ -6702,8 +6736,36 @@ var DashboardPowerups = (function () {
                 let dataTable = readTableData($tile, false); 
 
                 if(dataTable.keys.includes("start")
-                    && dataTable.keys.includes("end"))
-                    console.log(dataTable);
+                    && dataTable.keys.includes("end")
+                    && dataTable.keys.includes("name")){
+                        console.log(dataTable);
+                        let timeOnPagePerName = {};
+                        dataTable.normalTable.forEach(session => {
+                            let actions = parseUSQLField(session["name"]);
+                            let starts = parseUSQLField(session["start"]);
+                            let ends = parseUSQLField(session["end"]);
+
+                            if(Array.isArray(actions)){
+                                for(let i=0; i<actions.length - 1; i++){
+                                    let name = actions[i];
+                                    let loaded = Number(ends[i].replace(/[ ,]+/g,''));
+                                    let next = Number(starts[i+1].replace(/[ ,]+/g,''));
+                                    if(isNaN(loaded) || isNaN(next)){
+                                        console.warn(`Powerup: WARN - ${PU_TIMEONPAGE} - NaN! loaded:${ends[i]} next:${starts[i+1]}`);
+                                        continue;
+                                    }
+                                    let onpage = next - loaded;
+
+                                    if(!timeOnPagePerName.hasOwnProperty(name)) timeOnPagePerName[name] = [];
+
+                                    timeOnPagePerName[name].push(onpage);
+                                }
+                            }
+                            
+                        });
+                        console.log(timeOnPagePerName);
+                    }
+                    
             }
         });
     }
