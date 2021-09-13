@@ -360,6 +360,7 @@ var DashboardPowerups = (function () {
     }
 
     function parseUSQLField(row,colName=""){
+        const re = /\/\d+(\/.*)?$/;
         let arr = [];
         if (row.substring(0, 1) != '[' || row.substr(-1) != ']') { //old error handling, need to remove to allow for session level data
             return row;
