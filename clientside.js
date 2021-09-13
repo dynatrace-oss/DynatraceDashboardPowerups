@@ -298,7 +298,7 @@ var DashboardPowerups = (function () {
             argObjs.push(args);
         })
         //return first argObj for backwards compatibility, w/ full array as a property
-        let args = argObjs[0];
+        let args = argObjs[0] || {};
         args.argObjs = argObjs;
         return args;
     }
@@ -6696,7 +6696,7 @@ var DashboardPowerups = (function () {
 
             if (title.includes(PU_TIMEONPAGE)) {
                 let $table = $tile.find(TABLE_SELECTOR);
-                let args = argsplit(title, PU_TABLE);
+                let args = argsplit(title, PU_TIMEONPAGE);
 
                 //read the table
                 let dataTable = readTableData($tile, false); 
