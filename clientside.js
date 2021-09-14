@@ -314,9 +314,9 @@ var DashboardPowerups = (function () {
         let links = [];
         let $table = $tabletile.find(TABLE_SELECTOR);
         let $newTable = $tabletile.find(`.powerupNewTable`);
-        if($newTable.length) $table = $newTable;
+        if ($newTable.length) $table = $newTable;
         $table
-            .find(TABLE_COL_SELECTOR.replace(TABLE_SELECTOR,'')) //find cols in table, not cols globally
+            .find(TABLE_COL_SELECTOR.replace(TABLE_SELECTOR, '')) //find cols in table, not cols globally
             .each(function (i, el) {
                 let $el = $(el);
                 $el.children().each(function (j, el2) {
@@ -5803,7 +5803,7 @@ var DashboardPowerups = (function () {
             if (title.includes(PU_TABLE)) {
                 let $table = $tile.find(TABLE_SELECTOR);
                 let $newTable = $tile.find(`.powerupNewTable`);
-                if($newTable.length) $table = $newTable;
+                if ($newTable.length) $table = $newTable;
                 let args = argsplit(title, PU_TABLE);
 
                 title = title.split(PU_TABLE)[0].trim();  //for use in filenames etc
@@ -6813,12 +6813,14 @@ var DashboardPowerups = (function () {
             let $col = $(`<div>`)
                 .addClass('powerupTableCol');
             let $head = $(`<div>`)
-                .text(header)
                 .appendTo($col);
+            $(`<span>`)
+                .text(header)
+                .appendTo($head);
             data.forEach(d => {
                 let $div = $(`<div>`)
                     .appendTo($col);
-                let $span = $(`<span>`)
+                $(`<span>`)
                     .text(d)
                     .appendTo($div);
             });
