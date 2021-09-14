@@ -6791,11 +6791,14 @@ var DashboardPowerups = (function () {
                     let $newTable = $(`<div>`)
                         .addClass('powerupTable')
                         .insertAfter($table);
-                    outputCol($newTable,'Name',keys);
-                    outputCol($newTable,'Min',vals.map(x=>x.min));
-                    outputCol($newTable,'Max',vals.map(x=>x.max));
-                    outputCol($newTable,'Avg',vals.map(x=>x.avg));
-                    outputCol($newTable,'Stdev',vals.map(x=>x.stdev));
+                    let $grid = $(`<div>`)
+                        .addClass('powerupTableGrid')
+                        .appendTo($newTable);
+                    outputCol($grid,'Name',keys);
+                    outputCol($grid,'Min',vals.map(x=>x.min));
+                    outputCol($grid,'Max',vals.map(x=>x.max));
+                    outputCol($grid,'Avg',vals.map(x=>x.avg));
+                    outputCol($grid,'Stdev',vals.map(x=>x.stdev));
                 }
 
             }

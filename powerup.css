@@ -990,3 +990,9 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupBordered {
   border: 1px #e6e6e6 solid;
 }
+
+.powerupTableGrid {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(3, minmax(80px, auto));
+}
