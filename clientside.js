@@ -6747,6 +6747,8 @@ var DashboardPowerups = (function () {
                     && dataTable.keys.includes("name")) {
                     console.log(dataTable);
                     let timeOnPagePerName = {};
+
+                    //parse
                     dataTable.normalTable.forEach(session => {
                         let actions = parseUSQLField(session["name"]);
                         let starts = parseUSQLField(session["start"], "", false);
@@ -6763,18 +6765,55 @@ var DashboardPowerups = (function () {
                                 }
                                 let onpage = next - loaded;
 
-                                if (!timeOnPagePerName.hasOwnProperty(name)) timeOnPagePerName[name] = [];
+                                if (!timeOnPagePerName.hasOwnProperty(name)) timeOnPagePerName[name] = {};
+                                if (!timeOnPagePerName[name].hasOwnProperty(data)) timeOnPagePerName[name].data = [];
 
-                                timeOnPagePerName[name].push(onpage);
+                                timeOnPagePerName[name].data.push(onpage);
                             }
                         }
 
                     });
                     console.log(timeOnPagePerName);
+                    //calculate
+                    let keys = Object.keys(timeOnPagePerName);
+                    let vals = Object.values(timeOnPagePerName);
+                    keys.forEach(action => {
+                        let d = timeOnPagePerName[action];
+                        d.min = Math.min(...d.data);
+                        d.max = Math.max(...d.data);
+                        d.avg = d.data.reduce((pv,cv)=>pv+cv,0) / d.data.length;
+                        d.deltas = d.data.map(x=>x - d.avg);
+                        d.var = d.deltas.reduce((pv,cv)=>pv + cv * cv, 0) / d.deltas.length;
+                        d.stdev = Math.sqrt(d.var);
+                    });
+
+                    $table.hide();
+                    let $newTable = $(`<div>`)
+                        .addClass('powerupTable')
+                        .insertAfter($table);
+                    outputCol($newTable,'Name',names);
+                    outputCol($newTable,'Min',vals.map(x=>x.min));
+                    outputCol($newTable,'Max',vals.map(x=>x.max));
+                    outputCol($newTable,'Avg',vals.map(x=>x.avg));
+                    outputCol($newTable,'Stdev',vals.map(x=>x.stdev));
                 }
 
             }
         });
+
+        function outputCol(target,header,data){
+            let $col = $(`<div>`)
+                .addClass('powerupTableCol');
+            let $head = $(`<div>`)
+                .text(header)
+                .appendTo($col);
+            data.forEach(d => {
+                $(`<div>`)
+                    .text(d)
+                    .appendTo($col);
+            });
+            $col.appendTo($(target));
+        }
     }
 
     pub.fireAllPowerUps = function (update = false) {
