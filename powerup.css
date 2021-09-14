@@ -919,7 +919,8 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   display: block;
 }
 
-.powerupClickableHeader a, .powerupClickableHeader a:visited {
+.powerupClickableHeader a,
+.powerupClickableHeader a:visited {
   color: #00a1b2;
   text-decoration: none;
 }
@@ -930,8 +931,9 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   cursor: pointer;
 }
 
-.powerupLineConfig, .powerupBandConfig {
-  border:rgb(51, 51, 51) 1px solid;
+.powerupLineConfig,
+.powerupBandConfig {
+  border: rgb(51, 51, 51) 1px solid;
   margin: 5px;
   left: 10px;
   position: relative;
@@ -979,7 +981,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color:  #00a1b2 transparent transparent transparent;
+  border-color: #00a1b2 transparent transparent transparent;
 }
 
 .powerupOptionsButtonBar {
@@ -995,4 +997,20 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   display: grid;
   grid-auto-flow: row;
   grid-template-columns: repeat(3, minmax(80px, auto));
+}
+
+.powerupTableGrid > div {
+  overflow: hidden;
+}
+
+.powerupTableGrid > div > div:first-child {
+  border-bottom: 1px solid #454646;
+  line-height: 1.1em;
+  font-size: 0.85em;
+  height: 11px;
+  margin: 15px 0 8px;
+}
+
+.powerupTableGrid > div > div:not(:first-child) {
+  color: #e6e6e6;
 }
