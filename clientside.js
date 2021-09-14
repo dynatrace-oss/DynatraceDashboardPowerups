@@ -352,7 +352,12 @@ var DashboardPowerups = (function () {
                     && dataTable[j][i] != null) {
                     obj[key] = Number(dataTable[j][i].replace(/[,a-z %]/g, ''));
                 } else {
-                    obj[key] = dataTable[j][i] || 0;
+                    //prefer numbers if possible
+                    let num = Number(dataTable[j][i])
+                    if(isNaN(num))
+                        obj[key] = dataTable[j][i] || 0;
+                    else 
+                        obj[key] = num;
                 }
                 if (getColors) obj.color = colors[i];
                 if (getLinks) obj.link = links[i];
