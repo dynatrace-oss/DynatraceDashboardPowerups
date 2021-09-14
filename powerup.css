@@ -1013,6 +1013,8 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 
 .powerupTableGrid > div > div:not(:first-child) {
   color: #e6e6e6;
+  line-height: 1.4em;
+  font-size: 1em;
 }
 
 .powerupTableGrid > div:not(:first-child) {
