@@ -6766,7 +6766,7 @@ var DashboardPowerups = (function () {
                                 let onpage = next - loaded;
 
                                 if (!timeOnPagePerName.hasOwnProperty(name)) timeOnPagePerName[name] = {};
-                                if (!timeOnPagePerName[name].hasOwnProperty(data)) timeOnPagePerName[name].data = [];
+                                if (!timeOnPagePerName[name].hasOwnProperty('data')) timeOnPagePerName[name].data = [];
 
                                 timeOnPagePerName[name].data.push(onpage);
                             }
