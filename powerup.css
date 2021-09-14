@@ -1017,6 +1017,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 
 .powerupTableGrid > div:not(:first-child) {
   text-align: right;
+  font-family: monospace;
 }
 
 .powerupTableGrid > div > div:nth-child(2n + 3) {
