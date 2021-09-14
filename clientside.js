@@ -6809,6 +6809,8 @@ var DashboardPowerups = (function () {
                     outputCol($grid, 'Max', vals.map(x => x.max));
                     outputCol($grid, 'Avg', vals.map(x => x.avg));
                     outputCol($grid, 'Stdev', vals.map(x => x.stdev));
+                    let numCols = $grid.children().length;
+                    $grid.css('grid-template-columns', `repeat(${numCols}, minmax(80px, auto));`)
                 }
 
             }

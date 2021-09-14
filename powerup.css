@@ -996,7 +996,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupTableGrid {
   display: grid;
   grid-auto-flow: row;
-  grid-template-columns: repeat(3, minmax(80px, auto));
+  /*grid-template-columns: repeat(3, minmax(80px, auto));*/
 }
 
 .powerupTableGrid > div {
