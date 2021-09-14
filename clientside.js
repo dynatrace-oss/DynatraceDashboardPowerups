@@ -5886,7 +5886,7 @@ var DashboardPowerups = (function () {
                             .insertAfter($span)
                             .on('click', event => {
                                 if (!dataTable) return false;
-                                let key = dataTable.keys[i].toLowerCase();
+                                let key = dataTable.keys[i];
                                 let sorted;
                                 if ($a.hasClass("powerupTableColAsc")) {
                                     $(".powerupTableColAsc, .powerupTableColDesc").removeClass(["powerupTableColAsc", "powerupTableColDesc"]);
