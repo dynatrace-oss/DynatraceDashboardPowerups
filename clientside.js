@@ -6781,9 +6781,9 @@ var DashboardPowerups = (function () {
                         let d = timeOnPagePerName[action];
                         d.min = Math.min(...d.data);
                         d.max = Math.max(...d.data);
-                        d.avg = d.data.reduce((pv,cv)=>pv+cv,0) / d.data.length;
-                        d.deltas = d.data.map(x=>x - d.avg);
-                        d.var = d.deltas.reduce((pv,cv)=>pv + cv * cv, 0) / d.deltas.length;
+                        d.avg = d.data.reduce((pv, cv) => pv + cv, 0) / d.data.length;
+                        d.deltas = d.data.map(x => x - d.avg);
+                        d.var = d.deltas.reduce((pv, cv) => pv + cv * cv, 0) / d.deltas.length;
                         d.stdev = Math.sqrt(d.var);
                     });
 
@@ -6794,26 +6794,28 @@ var DashboardPowerups = (function () {
                     let $grid = $(`<div>`)
                         .addClass('powerupTableGrid')
                         .appendTo($newTable);
-                    outputCol($grid,'Name',keys);
-                    outputCol($grid,'Min',vals.map(x=>x.min));
-                    outputCol($grid,'Max',vals.map(x=>x.max));
-                    outputCol($grid,'Avg',vals.map(x=>x.avg));
-                    outputCol($grid,'Stdev',vals.map(x=>x.stdev));
+                    outputCol($grid, 'Name', keys);
+                    outputCol($grid, 'Min', vals.map(x => x.min));
+                    outputCol($grid, 'Max', vals.map(x => x.max));
+                    outputCol($grid, 'Avg', vals.map(x => x.avg));
+                    outputCol($grid, 'Stdev', vals.map(x => x.stdev));
                 }
 
             }
         });
 
-        function outputCol(target,header,data){
+        function outputCol(target, header, data) {
             let $col = $(`<div>`)
                 .addClass('powerupTableCol');
             let $head = $(`<div>`)
                 .text(header)
                 .appendTo($col);
             data.forEach(d => {
-                $(`<div>`)
-                    .text(d)
+                let $div = $(`<div>`)
                     .appendTo($col);
+                let $span = $(`<span>`)
+                    .text(d)
+                    .appendTo($div);
             });
             $col.appendTo($(target));
         }

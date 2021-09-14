@@ -1014,3 +1014,15 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupTableGrid > div > div:not(:first-child) {
   color: #e6e6e6;
 }
+
+.powerupTableGrid > div > div:nth-child(2n + 3) {
+  background-color: #454646;
+}
+
+.powerupTableGrid > div > div > span {
+  padding: 0 10px 0 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: .9em;
+}
