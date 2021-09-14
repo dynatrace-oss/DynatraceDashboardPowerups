@@ -22,7 +22,7 @@ var DashboardPowerups = (function () {
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
     const MAPTITLE_SELECTOR = 'span[uitestid="gwt-debug-WorldMapTile"]';
     const TABLE_SELECTOR = '[uitestid="gwt-debug-tablePanel"]';
-    const TABLE_COL_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div, .powerupNewTable > div > div';
+    const TABLE_COL_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div';
     const BANNER_SELECTOR = '[uitestid="gwt-debug-dashboardNameLabel"]';
     const TAG_SELECTOR = '[uitestid="gwt-debug-showMoreTags"] ~ [title]';
     const FUNNEL_SELECTOR = '[uitestid="gwt-debug-funnelPanel"]';
@@ -312,8 +312,11 @@ var DashboardPowerups = (function () {
         let keys = [];
         let colors = [];
         let links = [];
-        $tabletile
-            .find(TABLE_COL_SELECTOR)
+        let $table = $tile.find(TABLE_SELECTOR);
+        let $newTable = $tile.find(`.powerupNewTable`);
+        if($newTable.length) $table = $newTable;
+        $table
+            .find(TABLE_COL_SELECTOR.replace(TABLE_SELECTOR,'')) //find cols in table, not cols globally
             .each(function (i, el) {
                 let $el = $(el);
                 $el.children().each(function (j, el2) {
@@ -5813,7 +5816,7 @@ var DashboardPowerups = (function () {
                     .prependTo($tile.find(`[uitestid="gwt-debug-DTAQL"]`));
 
                 //read the table
-                let dataTable = readTableData($table, false);
+                let dataTable = readTableData($tile, false);
 
                 //build menu
                 let $menu = $("<div>")
