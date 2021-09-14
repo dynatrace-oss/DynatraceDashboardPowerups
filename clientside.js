@@ -5799,6 +5799,8 @@ var DashboardPowerups = (function () {
 
             if (title.includes(PU_TABLE)) {
                 let $table = $tile.find(TABLE_SELECTOR);
+                let $newTable = $tile.find(`.powerupNewTable`);
+                if($newTable.length) $table = $newTable;
                 let args = argsplit(title, PU_TABLE);
 
                 title = title.split(PU_TABLE)[0].trim();  //for use in filenames etc
@@ -6789,7 +6791,7 @@ var DashboardPowerups = (function () {
 
                     $table.hide();
                     let $newTable = $(`<div>`)
-                        .addClass('powerupTable')
+                        .addClass('powerupNewTable')
                         .insertAfter($table);
                     let $grid = $(`<div>`)
                         .addClass('powerupTableGrid')
