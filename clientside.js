@@ -5813,7 +5813,7 @@ var DashboardPowerups = (function () {
                     .prependTo($tile.find(`[uitestid="gwt-debug-DTAQL"]`));
 
                 //read the table
-                let dataTable = readTableData($tile, false);
+                let dataTable = readTableData($table, false);
 
                 //build menu
                 let $menu = $("<div>")
