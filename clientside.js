@@ -6791,7 +6791,7 @@ var DashboardPowerups = (function () {
                     let $newTable = $(`<div>`)
                         .addClass('powerupTable')
                         .insertAfter($table);
-                    outputCol($newTable,'Name',names);
+                    outputCol($newTable,'Name',keys);
                     outputCol($newTable,'Min',vals.map(x=>x.min));
                     outputCol($newTable,'Max',vals.map(x=>x.max));
                     outputCol($newTable,'Avg',vals.map(x=>x.avg));
