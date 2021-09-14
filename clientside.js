@@ -312,8 +312,8 @@ var DashboardPowerups = (function () {
         let keys = [];
         let colors = [];
         let links = [];
-        let $table = $tile.find(TABLE_SELECTOR);
-        let $newTable = $tile.find(`.powerupNewTable`);
+        let $table = $tabletile.find(TABLE_SELECTOR);
+        let $newTable = $tabletile.find(`.powerupNewTable`);
         if($newTable.length) $table = $newTable;
         $table
             .find(TABLE_COL_SELECTOR.replace(TABLE_SELECTOR,'')) //find cols in table, not cols globally
