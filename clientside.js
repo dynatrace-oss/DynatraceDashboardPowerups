@@ -6044,7 +6044,7 @@ var DashboardPowerups = (function () {
                     })
 
                 }
-                if (!dataTable) return false;
+                if (!dataTable) return;
                 console.log(dataTable);
 
                 //swap in a container for our new chart
