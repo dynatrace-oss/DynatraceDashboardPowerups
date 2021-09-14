@@ -22,7 +22,7 @@ var DashboardPowerups = (function () {
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
     const MAPTITLE_SELECTOR = 'span[uitestid="gwt-debug-WorldMapTile"]';
     const TABLE_SELECTOR = '[uitestid="gwt-debug-tablePanel"]';
-    const TABLE_COL_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div';
+    const TABLE_COL_SELECTOR = '[uitestid="gwt-debug-tablePanel"] > div > div, .powerupNewTable > div > div';
     const BANNER_SELECTOR = '[uitestid="gwt-debug-dashboardNameLabel"]';
     const TAG_SELECTOR = '[uitestid="gwt-debug-showMoreTags"] ~ [title]';
     const FUNNEL_SELECTOR = '[uitestid="gwt-debug-funnelPanel"]';
