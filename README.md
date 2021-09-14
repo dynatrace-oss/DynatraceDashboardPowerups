@@ -639,3 +639,15 @@ Explanation:
 
 Example:
 ![treemap](Assets/treemap.png)
+
+### TimeOnPage
+Calculate the time spent on a page, based on when that page's load action ended and the next one started.
+
+Syntax:
+- `Title !PU(timeonpage): !PU(table):`
+
+Required USQL:
+- `select useraction.name AS name, useraction.startTime* 1 AS start, useraction.endTime * 1 as end FROM usersession where useraction.type="Load"`
+
+Example:
+![timeonpage](Assets/timeonpage.png)
