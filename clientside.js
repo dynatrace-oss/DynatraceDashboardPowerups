@@ -408,7 +408,7 @@ var DashboardPowerups = (function () {
     function columnSorterAsc(a, b, key) {
         switch (typeof (a[key])) {
             case "number":
-                return a - b;
+                return a[key] - b[key];
             case "string":
                 if (a[key].match(/^[0-9]/)
                     && b[key].match(/^[0-9]/)) { //likely number as a string
@@ -426,7 +426,7 @@ var DashboardPowerups = (function () {
     function columnSorterDesc(a, b, key) {
         switch (typeof (a[key])) {
             case "number":
-                return b - a;
+                return b[key] - a[key];
             case "string":
                 if (a[key].match(/^[0-9]/)
                     && b[key].match(/^[0-9]/)) { //likely number as a string
