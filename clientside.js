@@ -1866,6 +1866,7 @@ var DashboardPowerups = (function () {
                         if (!multiIcon || multiIcon && iconIdx === 0)
                             $svgcontainer.empty();
                         let $svg = $(svgtext)
+                            .addClass('powerupSVG')
                             .attr("data-args", JSON.stringify(argObj))
                             .appendTo($svgcontainer);
 
@@ -6811,6 +6812,8 @@ var DashboardPowerups = (function () {
                     outputCol($grid, 'Stdev', vals.map(x => Math.round(x.stdev)));
                     let numCols = $grid.children().length;
                     $grid.css('grid-template-columns', `repeat(${numCols}, minmax(80px, auto))`)
+
+                    powerupsFired['PU_TIMEONPAGE'] ? powerupsFired['PU_TIMEONPAGE']++ : powerupsFired['PU_TIMEONPAGE'] = 1;
                 }
 
             }
@@ -6835,6 +6838,24 @@ var DashboardPowerups = (function () {
         }
     }
 
+    pub.pub.cleanupArtifacts = function () {
+        let artifactClasses = [
+            'powerupNewTable',
+            'powerupGrid',
+            'powerupBackground',
+            'powerupStdev',
+            'powerupVlookup',
+            'powerupDate',
+            'powerupMath',
+            'powerupTooltip',
+            'powerupSVG'
+        ];
+        let selector = '.' + artifactClasses.join(', .');
+        let artifacts = $(selector);
+        console.log(`Powerup: INFO - Cleaned-up ${artifacts.length} artifacts`);
+        artifacts.remove();
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -6842,6 +6863,7 @@ var DashboardPowerups = (function () {
         if (!pub.config.beaconOptOut) startBeacon();
 
         try {
+            pub.cleanupArtifacts();
             //data gathering operations
             promises.push(pub.puTimeOnPage());
             promises.push(pub.PUvlookup());
