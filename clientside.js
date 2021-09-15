@@ -6838,7 +6838,7 @@ var DashboardPowerups = (function () {
         }
     }
 
-    pub.pub.cleanupArtifacts = function () {
+    pub.cleanupArtifacts = function () {
         let artifactClasses = [
             'powerupNewTable',
             'powerupGrid',
