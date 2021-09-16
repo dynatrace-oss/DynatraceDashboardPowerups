@@ -292,7 +292,7 @@ var DashboardPowerups = (function () {
         let count = splits.length;
         let argObjs = [];
         splits.forEach(split => {
-            let argstring = split.split(/(!PU)?(\n)/)[0].trim();
+            let argstring = split.split(/(!PU|\n)/)[0].trim();
             let args = argstring.split(";").map(x => x.split("="));
             args.argstring = argstring;
             argObjs.push(args);
