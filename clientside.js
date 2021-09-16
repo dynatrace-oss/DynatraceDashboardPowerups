@@ -5689,7 +5689,7 @@ var DashboardPowerups = (function () {
                 }
 
                 let vlookupVal;
-                let colName = (Number.isNaN(col) ? col : dataTable.keys[col]);
+                let colName = (Number.isNaN(Number(col)) ? col : dataTable.keys[Number(col)]);
                 if (rowIdx < 0) {
                     let error = "POWERUP: WARN - vlookup val not found in table.";
                     console.log(error);
