@@ -1033,3 +1033,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   text-overflow: ellipsis;
   font-size: .9em;
 }
+
+.powerupOverridden {
+  display: none;
+}
