@@ -2046,7 +2046,8 @@ var DashboardPowerups = (function () {
                 if (re.test($linkmd.text())) {
                     let $linktile = $linkmd.parents(".grid-tile");
                     //val = Number($linktile.find(`h1`).text().replace(/\D+/g, ''));
-                    val = $linktile.find(`h1`).text()
+                    //val = $linktile.find(`h1`).text()
+                    val = $linktile.find(VAL_SELECTOR).text();
                 }
             });
         if (typeof val == "undefined") {
