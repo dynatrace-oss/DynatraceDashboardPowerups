@@ -6846,7 +6846,7 @@ var DashboardPowerups = (function () {
         let artifactClasses = [
             'powerupNewTable',
             'powerupGrid',
-            'powerupBackground',
+            //'powerupBackground', //Don't do this one, it deletes the whole dashboard
             'powerupStdev',
             'powerupVlookup',
             'powerupDate',
