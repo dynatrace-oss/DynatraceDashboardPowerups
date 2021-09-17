@@ -7039,12 +7039,14 @@ var DashboardPowerups = (function () {
             'powerupDate',
             'powerupMath',
             'powerupTooltip',
-            'powerupSVG'
+            //'powerupSVG' //Don't do this either, SVGs don't come back
         ];
         let selector = '.' + artifactClasses.join(', .');
         let artifacts = $(selector);
-        console.log(`Powerup: INFO - Cleaned-up ${artifacts.length} artifacts`);
-        artifacts.remove();
+        if(artifacts.length){
+            console.log(`Powerup: INFO - Cleaned-up ${artifacts.length} artifacts`);
+            artifacts.remove();
+        }
     }
 
     pub.fireAllPowerUps = function (update = false) {
