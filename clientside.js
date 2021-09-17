@@ -5104,6 +5104,7 @@ var DashboardPowerups = (function () {
     pub.PUMath = function () {  //example: !PU(math):exp=(x1+x2+x3+x4)/4;scope=x1,x2,x3,x4:link4;color=blue
         if (!pub.config.Powerups.mathPU) return;
 
+        let mathTiles = [];
         //find math PUs
         $(MARKDOWN_SELECTOR).each((i, el) => {
             let $container = $(el);
@@ -5114,6 +5115,21 @@ var DashboardPowerups = (function () {
                 return;
             }
             if (pub.config.Powerups.debug) console.log("Powerup: math power-up found");
+            let prio = 0;
+            if (text.includes("prio=")){
+                let match = text.match(/prio=([0-9]+)/);
+                if(match.length>1) prio = match[2];
+            }
+            $container.data('puMathPrio',prio);
+            mathTiles.push($container);
+        })
+
+        mathTiles.sort((a,b)=> $(b).data('puMathPrio') - $(a).data('puMathPrio'));
+        $(mathTiles).each((i,el) => {
+            let $container = $(el);
+            let $tile = $container.parents(".grid-tile");
+            let text = $container.text();
+
             $container.children(".powerupMath").remove(); //remove old maths before we get started
             $container.children().each((i, el) => { //handle each paragraph individually
                 let $para = $(el);
@@ -5133,6 +5149,7 @@ var DashboardPowerups = (function () {
                 let timeunit = (args.find(x => x[0] == "timeunit") || [])[1] || "ms";
                 let full = (args.find(x => x[0] == "full") || [])[1] == "false" ? false : true;
                 let currency = (args.find(x => x[0] == "currency") || [])[1];
+                let prio = Number((args.find(x => x[0] == "prio") || ["prio",0])[1]);
 
                 let scope = scopeStr.trim().split(',')
                     .map(x => (x.includes(':')
