@@ -282,6 +282,7 @@ var DashboardPowerups = (function () {
             ]
         },
 
+        //Memory/Disk
         {
             name: "bytes",
             unit: "B",
@@ -355,22 +356,258 @@ var DashboardPowerups = (function () {
             ]
         },
 
+        //Rates
+        {
+            name: "bytes per second",
+            unit: "B/s",
+            conversions: [
+                {
+                    unit: "kB/s",
+                    factor: 0.001
+                },
+                {
+                    unit: "MB/s",
+                    factor: 0.000001
+                },
+                {
+                    unit: "GB/s",
+                    factor: 0.000000001
+                }
+            ]
+        },
+        {
+            name: "kilobytes per second",
+            unit: "kB/s",
+            conversions: [
+                {
+                    unit: "B/s",
+                    factor: 1000
+                },
+                {
+                    unit: "MB/s",
+                    factor: 0.001
+                },
+                {
+                    unit: "GB/s",
+                    factor: 0.000001
+                }
+            ]
+        },
+        {
+            name: "megabytes per second",
+            unit: "MB/s",
+            conversions: [
+                {
+                    unit: "B/s",
+                    factor: 1000000
+                },
+                {
+                    unit: "kB/s",
+                    factor: 1000
+                },
+                {
+                    unit: "GB/s",
+                    factor: 0.001
+                }
+            ]
+        },
+        {
+            name: "gigabytes per second",
+            unit: "GB/s",
+            conversions: [
+                {
+                    unit: "B/s",
+                    factor: 1000000000
+                },
+                {
+                    unit: "kB/s",
+                    factor: 1000000
+                },
+                {
+                    unit: "MB/s",
+                    factor: 1000
+                }
+            ]
+        },
+
         ////////TIME
         {
             name: "nanoseconds",
             unit: "ns",
             conversions: [
                 {
+                    unit: "ns",
+                    factor: 1
+                },
+                {
                     unit: "µs",
-                    factor: 1000000000
+                    factor: 1e-3
                 },
                 {
-                    unit: "kB",
-                    factor: 1000000
+                    unit: "ms",
+                    factor: 1e-6
                 },
                 {
-                    unit: "MB",
-                    factor: 1000
+                    unit: "s",
+                    factor: 1e-9
+                },
+                {
+                    unit: "mins",
+                    factor: 1e-9 / 60
+                },
+                {
+                    unit: "hs",
+                    factor: 1e-9 / 60 / 60
+                }
+            ]
+        },
+        {
+            name: "microseconds",
+            unit: "µs",
+            conversions: [
+                {
+                    unit: "ns",
+                    factor: 1e3
+                },
+                {
+                    unit: "µs",
+                    factor: 1
+                },
+                {
+                    unit: "ms",
+                    factor: 1e-3
+                },
+                {
+                    unit: "s",
+                    factor: 1e-6
+                },
+                {
+                    unit: "mins",
+                    factor: 1e-6 / 60
+                },
+                {
+                    unit: "hs",
+                    factor: 1e-6 / 60 / 60
+                }
+            ]
+        },
+        {
+            name: "milliseconds",
+            unit: "ms",
+            conversions: [
+                {
+                    unit: "ns",
+                    factor: 1e6
+                },
+                {
+                    unit: "µs",
+                    factor: 1e3
+                },
+                {
+                    unit: "ms",
+                    factor: 1
+                },
+                {
+                    unit: "s",
+                    factor: 1e-3
+                },
+                {
+                    unit: "mins",
+                    factor: 1e-3 / 60
+                },
+                {
+                    unit: "hs",
+                    factor: 1e-3 / 60 / 60
+                }
+            ]
+        },
+        {
+            name: "seconds",
+            unit: "s",
+            conversions: [
+                {
+                    unit: "ns",
+                    factor: 1e9
+                },
+                {
+                    unit: "µs",
+                    factor: 1e6
+                },
+                {
+                    unit: "ms",
+                    factor: 1e3
+                },
+                {
+                    unit: "s",
+                    factor: 1
+                },
+                {
+                    unit: "mins",
+                    factor: 1 / 60
+                },
+                {
+                    unit: "hs",
+                    factor: 1 / 60 / 60
+                }
+            ]
+        },
+        {
+            name: "minutes",
+            unit: "mins",
+            conversions: [
+                {
+                    unit: "ns",
+                    factor: 1e9 * 60
+                },
+                {
+                    unit: "µs",
+                    factor: 1e6 * 60
+                },
+                {
+                    unit: "ms",
+                    factor: 1e3 * 60
+                },
+                {
+                    unit: "s",
+                    factor: 1 * 60
+                },
+                {
+                    unit: "mins",
+                    factor: 1
+                },
+                {
+                    unit: "hs",
+                    factor: 1 / 60
+                }
+            ]
+        },
+        {
+            name: "hours",
+            unit: "hs",
+            conversions: [
+                {
+                    unit: "ns",
+                    factor: 1e9 * 60 * 60
+                },
+                {
+                    unit: "µs",
+                    factor: 1e6 * 60 * 60
+                },
+                {
+                    unit: "ms",
+                    factor: 1e3 * 60 * 60
+                },
+                {
+                    unit: "s",
+                    factor: 1 * 60 * 60
+                },
+                {
+                    unit: "mins",
+                    factor: 1 * 60
+                },
+                {
+                    unit: "hs",
+                    factor: 1
                 }
             ]
         },
@@ -523,9 +760,9 @@ var DashboardPowerups = (function () {
                 } else {
                     //prefer numbers if possible
                     let num = Number(dataTable[j][i])
-                    if(isNaN(num))
+                    if (isNaN(num))
                         obj[key] = dataTable[j][i] || 0;
-                    else 
+                    else
                         obj[key] = num;
                 }
                 if (getColors) obj.color = colors[i];
@@ -2193,7 +2430,7 @@ var DashboardPowerups = (function () {
         });
     }
 
-    pub.findLinkedVal = function (link, from = "") {
+    pub.findLinkedString = function (link, from = "") {
         //find val
         let link_text = `!PU\\(link\\):` + link;
         let re = new RegExp(link_text + '(?!\\w)');
@@ -2225,33 +2462,51 @@ var DashboardPowerups = (function () {
             errorBeacon(error);
             return undefined;
         } else { //cleanup & return val
-            val = val.trim();
-
-            //check for a plain number string
-            let num_val = Number(val);
-            if (!isNaN(num_val))
-                return num_val;
-
-            //check for a date string
-            if (val.match(/(?:\/)|(?:-.*-)|(?::)/)) { //look for obvious date patterns, Date thinks things like "12,013" are valid dates...
-                let date_val = new Date(val);
-                if (!isNaN(date_val.getTime()))
-                    return date_val.getTime();
-            }
-
-            //check for simple comma grouped number string
-            let comma_val = Number(val.replace(/,/g, ''));
-            if (!isNaN(comma_val))
-                return comma_val;
-
-            //worst case, strip all non-numeric and make it a number
-            let last_val = Number(val.replace(/[^0-9.]/g, ''));
-            if (!isNaN(last_val))
-                return last_val;
-
-            //somehow haven't found a number yet, just return whatever we found
             return val;
         }
+    }
+
+    pub.findLinkedVal = function (link, from = "") {
+        let val = pub.findLinkedString(link, from);
+        if (val == undefined) return val;
+
+        val = val.trim();
+
+        //check for a plain number string
+        let num_val = Number(val);
+        if (!isNaN(num_val))
+            return num_val;
+
+        //check for a date string
+        if (val.match(/(?:\/)|(?:-.*-)|(?::)/)) { //look for obvious date patterns, Date thinks things like "12,013" are valid dates...
+            let date_val = new Date(val);
+            if (!isNaN(date_val.getTime()))
+                return date_val.getTime();
+        }
+
+        //check for simple comma grouped number string
+        let comma_val = Number(val.replace(/,/g, ''));
+        if (!isNaN(comma_val))
+            return comma_val;
+
+        //worst case, strip all non-numeric and make it a number
+        let last_val = Number(val.replace(/[^0-9.]/g, ''));
+        if (!isNaN(last_val))
+            return last_val;
+
+        //somehow haven't found a number yet, just return whatever we found
+        return val;
+
+    }
+
+    pub.findLinkedUnit = function (link, from = "") {
+        let val = pub.findLinkedString(link, from);
+        if (val == undefined) return val;
+
+        let match = val.match(/[0-9]+ *(.*) */);
+        if(match.length >1)
+            return match[1];
+        else return "";
     }
 
     pub.findLinkedTile = function (link, from = "") {
@@ -5285,17 +5540,17 @@ var DashboardPowerups = (function () {
             }
             if (pub.config.Powerups.debug) console.log("Powerup: math power-up found");
             let prio = 0;
-            if (text.includes("prio=")){
+            if (text.includes("prio=")) {
                 let match = text.match(/prio=([0-9]+)/);
-                if(match.length>1) prio = Number(match[1]);
-                if(isNaN(prio)) prio = 0;
+                if (match.length > 1) prio = Number(match[1]);
+                if (isNaN(prio)) prio = 0;
             }
-            $container.data('puMathPrio',prio);
+            $container.data('puMathPrio', prio);
             mathTiles.push($container);
         })
 
-        mathTiles.sort((a,b)=> $(b).data('puMathPrio') - $(a).data('puMathPrio'));
-        $(mathTiles).each((i,el) => {
+        mathTiles.sort((a, b) => $(b).data('puMathPrio') - $(a).data('puMathPrio'));
+        $(mathTiles).each((i, el) => {
             let $container = $(el);
             let $tile = $container.parents(".grid-tile");
             let text = $container.text();
@@ -5319,7 +5574,8 @@ var DashboardPowerups = (function () {
                 let timeunit = (args.find(x => x[0] == "timeunit") || [])[1] || "ms";
                 let full = (args.find(x => x[0] == "full") || [])[1] == "false" ? false : true;
                 let currency = (args.find(x => x[0] == "currency") || [])[1];
-                let prio = Number((args.find(x => x[0] == "prio") || ["prio",0])[1]);
+                let prio = Number((args.find(x => x[0] == "prio") || [])[1]) || 0;
+                let unit = (args.find(x => x[0] == "unit") || [])[1];
 
                 let scope = scopeStr.trim().split(',')
                     .map(x => (x.includes(':')
@@ -5335,6 +5591,9 @@ var DashboardPowerups = (function () {
 
                 scope.forEach(s => {
                     s.val = pub.findLinkedVal(s.link, PU_MATH);
+                    if (unit) {
+                        s.unit = pub.findLinkedUnit(s.link, PU_MATH);
+                    }
                     if (dates) {
                         let tmpdate = new Date(s.val);
                         let tmptime = tmpdate.getTime();
@@ -5344,6 +5603,31 @@ var DashboardPowerups = (function () {
                         console.log(`Powerup: WARN - ${PU_MATH} - NaN: \n\n${JSON.stringify({ exp: exp, scope: scope, val: s.val })}`);
                 });
 
+                //if units are enabled, confirm target and all sources are compatible units, then convert to target units first
+                if(unit){
+                    let targetUnit = UNITS.find(u => u.unit = unit);
+                    if(UNIT){
+                        let convertable = true;
+                        scope.forEach(s => {
+                            let sourceUnit = UNITS.find(u => u.unit == s.unit);
+                            if(!sourceUnit){
+                                convertable = false;
+                            } else {
+                                let factor = sourceUnit.conversions.find(c => c.unit == unit);
+                                if(!factor) convertable = false;
+                            }
+                        });
+                        if(convertable){
+                            scope.forEach(s => {
+                                let sourceUnit = UNITS.find(u => u.unit == s.unit);
+                                let factor = sourceUnit.conversions.find(c => c.unit == unit);
+                                s.val *= factor;
+                            })
+                        } else { //not convertable, disable unit mode
+                            unit = undefined;
+                        }
+                    }
+                }
 
                 //generate weird mexp formats
                 let tokens = scope.map(x => ({
@@ -5399,6 +5683,11 @@ var DashboardPowerups = (function () {
                 else
                     fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format;
                 let sVal = fmt(val);
+
+                //Format with target unit
+                if(unit){
+                    sVal += ` ${unit}`;
+                }
 
                 //swap markdown content
                 let $h1;
@@ -7043,7 +7332,7 @@ var DashboardPowerups = (function () {
         ];
         let selector = '.' + artifactClasses.join(', .');
         let artifacts = $(selector);
-        if(artifacts.length){
+        if (artifacts.length) {
             console.log(`Powerup: INFO - Cleaned-up ${artifacts.length} artifacts`);
             artifacts.remove();
         }
