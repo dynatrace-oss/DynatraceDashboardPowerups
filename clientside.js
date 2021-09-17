@@ -5310,7 +5310,8 @@ var DashboardPowerups = (function () {
                 let $titleormd = $(el);
                 let $tile = $titleormd.parents(".grid-tile");
                 let text = $titleormd.text();
-                let $bignum = $tile.find([BIGNUM_SELECTOR, VLOOKUP_BIGNUM_SELECTOR].join(', '));
+                //let $bignum = $tile.find([BIGNUM_SELECTOR, VLOOKUP_BIGNUM_SELECTOR].join(', '));
+                let $bignum = $tile.find(VAL_SELECTOR);
 
                 if (!text.includes(PU_MCOMPARE)) return;
                 if (pub.config.Powerups.debug) console.log("Powerup: mcompare power-up found");
