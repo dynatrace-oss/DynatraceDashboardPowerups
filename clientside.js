@@ -2504,7 +2504,7 @@ var DashboardPowerups = (function () {
         if (val == undefined) return val;
 
         let match = val.match(/[0-9]+ *(.*) */);
-        if(match.length >1)
+        if (match.length > 1)
             return match[1];
         else return "";
     }
@@ -5604,28 +5604,25 @@ var DashboardPowerups = (function () {
                 });
 
                 //if units are enabled, confirm target and all sources are compatible units, then convert to target units first
-                if(unit){
-                    let targetUnit = UNITS.find(u => u.unit = unit);
-                    if(UNIT){
-                        let convertable = true;
+                if (unit) {
+                    let convertable = true;
+                    scope.forEach(s => {
+                        let sourceUnit = UNITS.find(u => u.unit == s.unit);
+                        if (!sourceUnit) {
+                            convertable = false;
+                        } else {
+                            let factor = sourceUnit.conversions.find(c => c.unit == unit);
+                            if (!factor) convertable = false;
+                        }
+                    });
+                    if (convertable) {
                         scope.forEach(s => {
                             let sourceUnit = UNITS.find(u => u.unit == s.unit);
-                            if(!sourceUnit){
-                                convertable = false;
-                            } else {
-                                let factor = sourceUnit.conversions.find(c => c.unit == unit);
-                                if(!factor) convertable = false;
-                            }
-                        });
-                        if(convertable){
-                            scope.forEach(s => {
-                                let sourceUnit = UNITS.find(u => u.unit == s.unit);
-                                let factor = sourceUnit.conversions.find(c => c.unit == unit);
-                                s.val *= factor;
-                            })
-                        } else { //not convertable, disable unit mode
-                            unit = undefined;
-                        }
+                            let factor = sourceUnit.conversions.find(c => c.unit == unit);
+                            s.val *= factor;
+                        })
+                    } else { //not convertable, disable unit mode
+                        unit = undefined;
                     }
                 }
 
@@ -5685,7 +5682,7 @@ var DashboardPowerups = (function () {
                 let sVal = fmt(val);
 
                 //Format with target unit
-                if(unit){
+                if (unit) {
                     sVal += ` ${unit}`;
                 }
 
