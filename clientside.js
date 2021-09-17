@@ -5234,8 +5234,8 @@ var DashboardPowerups = (function () {
                     $h1.siblings().addClass("powerupMathText");
                     $para.parent().attr("class", "");
                 }
-                $h1.siblings('.powerupMath').addClass('powerupOverridden');
-                $h1.siblings('.powerupVlookup').addClass('powerupOverridden');
+                $h1.parent().siblings('.powerupMath').addClass('powerupOverridden');
+                $h1.parent().siblings('.powerupVlookup').addClass('powerupOverridden');
 
                 //thresholds
                 if (base && !isNaN(warn) && !isNaN(crit)) {
