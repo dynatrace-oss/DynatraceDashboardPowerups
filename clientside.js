@@ -207,6 +207,175 @@ var DashboardPowerups = (function () {
             textOutline: ""
         }
     };
+
+    const UNITS = [
+        {
+            name: "count",
+            unit: "",
+            conversions: [
+                {
+                    unit: "k",
+                    factor: 0.001
+                },
+                {
+                    unit: "mil",
+                    factor: 0.000001
+                },
+                {
+                    unit: "bil",
+                    factor: 0.000000001
+                }
+            ]
+        },
+        {
+            name: "thousands",
+            unit: "k",
+            conversions: [
+                {
+                    unit: "",
+                    factor: 1000
+                },
+                {
+                    unit: "mil",
+                    factor: 0.001
+                },
+                {
+                    unit: "bil",
+                    factor: 0.000001
+                }
+            ]
+        },
+        {
+            name: "millions",
+            unit: "mil",
+            conversions: [
+                {
+                    unit: "",
+                    factor: 1000000
+                },
+                {
+                    unit: "k",
+                    factor: 1000
+                },
+                {
+                    unit: "bil",
+                    factor: 0.001
+                }
+            ]
+        },
+        {
+            name: "billions",
+            unit: "bil",
+            conversions: [
+                {
+                    unit: "",
+                    factor: 1000000000
+                },
+                {
+                    unit: "k",
+                    factor: 1000000
+                },
+                {
+                    unit: "mil",
+                    factor: 1000
+                }
+            ]
+        },
+
+        {
+            name: "bytes",
+            unit: "B",
+            conversions: [
+                {
+                    unit: "kB",
+                    factor: 0.001
+                },
+                {
+                    unit: "MB",
+                    factor: 0.000001
+                },
+                {
+                    unit: "GB",
+                    factor: 0.000000001
+                }
+            ]
+        },
+        {
+            name: "kilobytes",
+            unit: "kB",
+            conversions: [
+                {
+                    unit: "B",
+                    factor: 1000
+                },
+                {
+                    unit: "MB",
+                    factor: 0.001
+                },
+                {
+                    unit: "GB",
+                    factor: 0.000001
+                }
+            ]
+        },
+        {
+            name: "megabytes",
+            unit: "MB",
+            conversions: [
+                {
+                    unit: "B",
+                    factor: 1000000
+                },
+                {
+                    unit: "kB",
+                    factor: 1000
+                },
+                {
+                    unit: "GB",
+                    factor: 0.001
+                }
+            ]
+        },
+        {
+            name: "gigabytes",
+            unit: "GB",
+            conversions: [
+                {
+                    unit: "B",
+                    factor: 1000000000
+                },
+                {
+                    unit: "kB",
+                    factor: 1000000
+                },
+                {
+                    unit: "MB",
+                    factor: 1000
+                }
+            ]
+        },
+
+        ////////TIME
+        {
+            name: "nanoseconds",
+            unit: "ns",
+            conversions: [
+                {
+                    unit: "µs",
+                    factor: 1000000000
+                },
+                {
+                    unit: "kB",
+                    factor: 1000000
+                },
+                {
+                    unit: "MB",
+                    factor: 1000
+                }
+            ]
+        },
+    ]
+
     const MO_CONFIG = { attributes: true, childList: true, subtree: true }; //MutexObserver
     var waits = 0;
     var observers = [];
