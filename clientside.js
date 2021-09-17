@@ -5118,7 +5118,8 @@ var DashboardPowerups = (function () {
             let prio = 0;
             if (text.includes("prio=")){
                 let match = text.match(/prio=([0-9]+)/);
-                if(match.length>1) prio = match[1];
+                if(match.length>1) prio = Number(match[1]);
+                if(isNaN(prio)) prio = 0;
             }
             $container.data('puMathPrio',prio);
             mathTiles.push($container);
