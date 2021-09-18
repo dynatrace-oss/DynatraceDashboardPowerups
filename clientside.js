@@ -2509,7 +2509,7 @@ var DashboardPowerups = (function () {
         if (text == "") return text;
 
         //unit in element
-        if (text.match(/[a-zA-Z]+)/)) {
+        if (text.match(/[a-zA-Z]+/)) {
             let match = val.match(/[0-9]+ *(.*) */);
             if (match.length > 1)
                 return match[1];
