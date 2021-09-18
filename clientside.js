@@ -2430,18 +2430,18 @@ var DashboardPowerups = (function () {
         });
     }
 
-    pub.findLinkedString = function (link, from = "") {
+    pub.findLinkedElement = function (link, from = "") {
         //find val
         let link_text = `!PU\\(link\\):` + link;
         let re = new RegExp(link_text + '(?!\\w)');
-        let val;
+        let el;
         $(TITLE_SELECTOR).each((i_link, el_link) => { //Check in titles first
             let $linktitle = $(el_link);
 
             if (re.test($linktitle.text())) {
                 let $linktile = $linktitle.parents(".grid-tile");
                 //val = Number($linktile.find(VAL_SELECTOR).text().replace(/,/g, ''));
-                val = $linktile.find(VAL_SELECTOR).text();
+                el = $linktile.find(VAL_SELECTOR);
             }
         });
 
@@ -2453,24 +2453,26 @@ var DashboardPowerups = (function () {
                     let $linktile = $linkmd.parents(".grid-tile");
                     //val = Number($linktile.find(`h1`).text().replace(/\D+/g, ''));
                     //val = $linktile.find(`h1`).text()
-                    val = $linktile.find(VAL_SELECTOR).text();
+                    el = $linktile.find(VAL_SELECTOR);
                 }
             });
-        if (typeof val == "undefined") {
+        if (typeof el == "undefined") {
             let error = `Powerup: ERROR - ${from} - unable to match link: ${link_text}`;
             console.log(error);
             errorBeacon(error);
             return undefined;
         } else { //cleanup & return val
-            return val;
+            return el;
         }
     }
 
     pub.findLinkedVal = function (link, from = "") {
-        let val = pub.findLinkedString(link, from);
-        if (val == undefined) return val;
+        let el = pub.findLinkedElement(link, from);
+        if (el == undefined) return undefined;
+        let val = $(el).text();
 
         val = val.trim();
+        if (val == "") return val;
 
         //check for a plain number string
         let num_val = Number(val);
@@ -2500,13 +2502,29 @@ var DashboardPowerups = (function () {
     }
 
     pub.findLinkedUnit = function (link, from = "") {
-        let val = pub.findLinkedString(link, from);
-        if (val == undefined) return val;
+        let el = pub.findLinkedElement(link, from);
+        if (el == undefined) return undefined;
+        let $el = $(el);
+        let text = $el.text().trim();
+        if (text == "") return text;
 
-        let match = val.match(/[0-9]+ *(.*) */);
-        if (match.length > 1)
-            return match[1];
-        else return "";
+        //unit in element
+        if (text.match(/[a-zA-Z]+)/)) {
+            let match = val.match(/[0-9]+ *(.*) */);
+            if (match.length > 1)
+                return match[1];
+            else return "";
+        } else { //unit in sibling
+            let $sib = $el.siblings(`:visible`);
+            if ($sib.length) {
+                text = $sib.text().trim();
+                return text;
+            } else { //no units found
+                return "";
+            }
+        }
+
+
     }
 
     pub.findLinkedTile = function (link, from = "") {
