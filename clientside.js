@@ -5636,8 +5636,8 @@ var DashboardPowerups = (function () {
                     if (convertable) {
                         scope.forEach(s => {
                             let sourceUnit = UNITS.find(u => u.unit == s.unit);
-                            let factor = sourceUnit.conversions.find(c => c.unit == unit);
-                            s.val *= factor;
+                            let conv = sourceUnit.conversions.find(c => c.unit == unit);
+                            s.val *= conv.factor;
                         })
                     } else { //not convertable, disable unit mode
                         unit = undefined;
