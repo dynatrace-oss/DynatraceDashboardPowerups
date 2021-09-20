@@ -12,7 +12,7 @@ var DashboardPowerups = (function () {
     const GRID_SELECTOR = '.grid-dashboard';
     const VIEWPORT_SELECTOR = '.grid-viewport';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
-    const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type, [uitestid="gwt-debug-dexp-visualization-single-value"] span:first-of-type, [uitestid="gwt-debug-visualization-single-value"] span:first-of-type, .powerupVlookup:not(.powerupOverridden) h1, .powerupMath:not(.powerupOverridden) h1';
+    const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type, [uitestid="gwt-debug-dexp-visualization-single-value"] span:first-of-type, [uitestid="gwt-debug-visualization-single-value"] span:first-of-type, .powerupVlookup:not(.powerupOverridden) h1, .powerupMath:not(.powerupOverridden) h1, h1.powerupMath:not(.powerupOverridden)';
     const TILE_SELECTOR = '.grid-tile';
     const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"]';
     const MARKDOWN_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
