@@ -6298,9 +6298,9 @@ var DashboardPowerups = (function () {
                                 a = vlookupVal;
                             //b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
                             if (typeof (compareVlookupVal) == "string")
-                                a = Number(compareVlookupVal.replace(/[,a-zA-Z %]/g, ""));
+                                b = Number(compareVlookupVal.replace(/[,a-zA-Z %]/g, ""));
                             if (typeof (compareVlookupVal) == "number")
-                                a = compareVlookupVal;
+                                b = compareVlookupVal;
                             if (Number.isNaN(a) || Number.isNaN(b)) {
                                 console.log("POWERUP: WARN - vlookup could not compare vals.");
                             } else {
