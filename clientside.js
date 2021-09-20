@@ -214,6 +214,10 @@ var DashboardPowerups = (function () {
             unit: "",
             conversions: [
                 {
+                    unit: "",
+                    factor: 1
+                },
+                {
                     unit: "k",
                     factor: 0.001
                 },
@@ -234,6 +238,10 @@ var DashboardPowerups = (function () {
                 {
                     unit: "",
                     factor: 1000
+                },
+                {
+                    unit: "k",
+                    factor: 1
                 },
                 {
                     unit: "mil",
@@ -258,6 +266,10 @@ var DashboardPowerups = (function () {
                     factor: 1000
                 },
                 {
+                    unit: "mil",
+                    factor: 1
+                },
+                {
                     unit: "bil",
                     factor: 0.001
                 }
@@ -278,7 +290,11 @@ var DashboardPowerups = (function () {
                 {
                     unit: "mil",
                     factor: 1000
-                }
+                },
+                {
+                    unit: "bil",
+                    factor: 1
+                },
             ]
         },
 
@@ -287,6 +303,10 @@ var DashboardPowerups = (function () {
             name: "bytes",
             unit: "B",
             conversions: [
+                {
+                    unit: "B",
+                    factor: 1
+                },
                 {
                     unit: "kB",
                     factor: 0.001
@@ -308,6 +328,10 @@ var DashboardPowerups = (function () {
                 {
                     unit: "B",
                     factor: 1000
+                },
+                {
+                    unit: "kB",
+                    factor: 1
                 },
                 {
                     unit: "MB",
@@ -332,6 +356,10 @@ var DashboardPowerups = (function () {
                     factor: 1000
                 },
                 {
+                    unit: "MB",
+                    factor: 1
+                },
+                {
                     unit: "GB",
                     factor: 0.001
                 }
@@ -352,7 +380,11 @@ var DashboardPowerups = (function () {
                 {
                     unit: "MB",
                     factor: 1000
-                }
+                },
+                {
+                    unit: "GB",
+                    factor: 1
+                },
             ]
         },
 
@@ -361,6 +393,10 @@ var DashboardPowerups = (function () {
             name: "bytes per second",
             unit: "B/s",
             conversions: [
+                {
+                    unit: "B/s",
+                    factor: 1
+                },
                 {
                     unit: "kB/s",
                     factor: 0.001
@@ -382,6 +418,10 @@ var DashboardPowerups = (function () {
                 {
                     unit: "B/s",
                     factor: 1000
+                },
+                {
+                    unit: "kB/s",
+                    factor: 1
                 },
                 {
                     unit: "MB/s",
@@ -406,6 +446,10 @@ var DashboardPowerups = (function () {
                     factor: 1000
                 },
                 {
+                    unit: "MB/s",
+                    factor: 1
+                },
+                {
                     unit: "GB/s",
                     factor: 0.001
                 }
@@ -426,7 +470,11 @@ var DashboardPowerups = (function () {
                 {
                     unit: "MB/s",
                     factor: 1000
-                }
+                },
+                {
+                    unit: "GB/s",
+                    factor: 1
+                },
             ]
         },
 
