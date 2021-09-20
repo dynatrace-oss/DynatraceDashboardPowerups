@@ -6249,7 +6249,7 @@ var DashboardPowerups = (function () {
                         let num = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
                         if(sUnit && !isNaN(num)){
                             sUnit = sUnit.trim();
-                            let sourceUnit = UNITS.find(u => u.unit == s.unit);
+                            let sourceUnit = UNITS.find(u => u.unit == sUnit);
                             if(sourceUnit){
                                 let conv = sourceUnit.conversions.find(c => c.unit == unit);
                                 if(conv && conv.factor){
