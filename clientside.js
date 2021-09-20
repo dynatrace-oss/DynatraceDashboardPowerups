@@ -37,6 +37,7 @@ var DashboardPowerups = (function () {
     const NO_DATA_SELECTOR = 'div.grid-tileContent > div > div:nth-of-type(3) > div:nth-of-type(1), [uitestid="gwt-debug-renderedCustomError"] > div > div:nth-of-type(1)';
     const TILE_CONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:first-of-type';
     const TILE_NOCONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:nth-of-type(3)';
+    const DASHBOARD_MENU_SELECTOR = '[uitestid="gwt-debug-homeContextMenu"]';
 
     const SELECTORS = {
         GRID_SELECTOR: GRID_SELECTOR, VIEWPORT_SELECTOR: VIEWPORT_SELECTOR, TITLE_SELECTOR: TITLE_SELECTOR, VAL_SELECTOR: VAL_SELECTOR,
@@ -7419,6 +7420,25 @@ var DashboardPowerups = (function () {
         }
     }
 
+    pub.addReportButton = function() {
+        let $menu = $(DASHBOARD_MENU_SELECTOR);
+        let $buttonContainer = $menu.find(`> div`);
+        let $buttons = $buttonContainer.find(`> a`);
+        let $reportButton = $buttons.filter(`.powerupReportButton`);
+
+        if(!$reportButton.length){
+            $reportButton = $(`<a>`)
+                .attr('href', "javascript:")
+                .attr('class',
+                    $buttons[0].attr('class'))
+                .appendTo($buttonContainer)
+                .on('click',PowerupReporting.openReportGenerator);
+            let $span = $('<span>')
+                .text('💎 Report')
+                .appendTo($reportButton);
+        }
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -7467,6 +7487,7 @@ var DashboardPowerups = (function () {
 
             //cleanup activities
             pub.loadChartSync();
+            pub.addReportButton();
 
         } catch (e) {
             crashBeacon(e);
