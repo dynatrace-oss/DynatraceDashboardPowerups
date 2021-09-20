@@ -7431,6 +7431,7 @@ var DashboardPowerups = (function () {
                 .attr('href', "javascript:")
                 .attr('class',
                     $buttons.eq(0).attr('class'))
+                .addClass('powerupReportButton')
                 .appendTo($buttonContainer)
                 .on('click',PowerupReporting.openReportGenerator);
             let $span = $('<span>')

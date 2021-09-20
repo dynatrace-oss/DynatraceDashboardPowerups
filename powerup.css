@@ -1037,3 +1037,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupOverridden {
   display: none;
 }
+
+.powerupReportButton {
+  padding-left: 0px;
+}
