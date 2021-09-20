@@ -6206,6 +6206,7 @@ var DashboardPowerups = (function () {
                 let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
                 let notfound = (args.find(x => x[0] == "notfound") || [])[1] || null;
                 let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
+                let unit = (args.find(x => x[0] == "unit") || [1])[1];
 
                 //find the table
                 let tabletile = pub.findLinkedTile(link, PU_VLOOKUP);
@@ -6241,6 +6242,23 @@ var DashboardPowerups = (function () {
                     vlookupVal = notfound;
                 } else {
                     vlookupVal = dataTable.normalTable[rowIdx][colName];
+
+                    //handle unit conversion
+                    if(unit){
+                        let sUnit = (vlookupVal.match(/[^0-9]+$/) || [])[0];
+                        let num = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
+                        if(sUnit && !isNaN(num)){
+                            sUnit = sUnit.trim();
+                            let sourceUnit = UNITS.find(u => u.unit == s.unit);
+                            if(sourceUnit){
+                                let conv = sourceUnit.conversions.find(c => c.unit == unit);
+                                if(conv && conv.factor){
+                                    num *= conv.factor;
+                                    vlookupVal = `${num} ${unit}`;
+                                }    
+                            }
+                        }
+                    }
 
                     //optionally compare to another table value
                     //compareTable=table;compareVal=/easytravel/rest/journeys/;compareCol=2;lt=red;gt=green;eq=yellow
