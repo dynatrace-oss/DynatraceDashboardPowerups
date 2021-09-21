@@ -6574,7 +6574,7 @@ var DashboardPowerups = (function () {
     pub.PUhoneycomb = function () {
         const red = '#C93234';
         const green = '#8EC355';
-        const yellow = '##f5d30f';
+        const yellow = '#f5d30f';
         const gray = '#cccccc';
         const orange = '##fd8232';
 
