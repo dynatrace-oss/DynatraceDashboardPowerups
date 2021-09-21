@@ -6572,6 +6572,12 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUhoneycomb = function () {
+        const red = '#C93234';
+        const green = '#8EC355';
+        const yellow = '##f5d30f';
+        const gray = '#cccccc';
+        const orange = '##fd8232';
+
         $(TITLE_SELECTOR).each((i, el) => {
             let $title = $(el);
             let title = $title.text();
@@ -6657,17 +6663,17 @@ var DashboardPowerups = (function () {
                     }
 
                     if (base === "low") {
-                        if (p.value < warn) p.color = 'green';
-                        else if (p.value >= crit) p.color = 'red';
-                        else p.color = 'yellow';
+                        if (p.value < warn) p.color = green;
+                        else if (p.value >= crit) p.color = red;
+                        else p.color = yellow;
                     } else if (base === "high") {
-                        if (p.value > warn) p.color = 'green';
-                        else if (p.value <= crit) p.color = 'red';
-                        else p.color = 'yellow';
+                        if (p.value > warn) p.color = green;
+                        else if (p.value <= crit) p.color = red;
+                        else p.color = yellow;
                     } else if (point.color != undefined) {
                         p.color = point.color
                     } else {
-                        p.color = '#cccccc';
+                        p.color = gray;
                     }
                     data.push(p);
                 }
@@ -6707,21 +6713,21 @@ var DashboardPowerups = (function () {
                         dataClasses: [{
                             from: 0,
                             to: 50,
-                            color: 'green',
+                            color: green,
                             name: 'green'
                         }, {
                             from: 50,
                             to: 75,
-                            color: 'yellow',
+                            color: yellow,
                             name: 'yellow'
                         }, {
                             from: 75,
                             to: 90,
-                            color: 'orange',
+                            color: orange,
                             name: 'orange'
                         }, {
                             from: 90,
-                            color: 'red',
+                            color: red,
                             name: 'red'
                         }]
                     },
