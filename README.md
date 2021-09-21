@@ -328,7 +328,7 @@ Explanation:
 - `full=false` - (optional) by default take up the full tile. Optionally, `false` to not hide other text in markdown tile. Must be false to support multiple math powerups in a single tile.
 - `currency=` - (optional) display according to an ISO currency code, e.g. `USD`, `EUR`, `CNY`, etc
 - `prio=` - (optional) if you need to ensure the order of which math operations are performed in which order, set to an integer. Higher happens first. Please note: all PU(vlookup) operations happen before all PU(math), but this allows you to reliably reference other math results.
-- `unit=` - (optional) use unit aware calculations, ie look for a unit (e.g. `kB/s`) in linked tiles and convert to target unit (e.g. `MB/s`)
+- `unit=` - (optional) use unit aware calculations, ie look for a unit (e.g. `kB/s`) in linked tiles and convert to target unit (e.g. `MB/s`). See [units](units.md) for supported units and conversions.
 
 Example:
 ![Math](Assets/mathPU.png)
@@ -404,7 +404,7 @@ Options:
 - `row=1` - ignore val and instead lookup value by row number. Starting at 1 from top or -1 from bottom.
 - `notfound=0` - if value isn't found, instead use this value. Defaults to blank. Consider setting to zero if math tiles depend on this tile.
 - `size=14px` - optionally change size of text, defaults to 36px.
-- `unit=s` - optionally convert the unit, for example, if the USQL table returns results in `ms`, `unit=s` will convert to seconds.
+- `unit=s` - optionally convert the unit, for example, if the USQL table returns results in `ms`, `unit=s` will convert to seconds. See [units](units.md) for supported units and conversions.
 
 Optional comparison:
 - `compareTable=table` - reference the table tile, ie put `!PU(link):table` in the title of the USQL tile
