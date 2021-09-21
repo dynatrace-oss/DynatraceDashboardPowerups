@@ -2559,7 +2559,7 @@ var DashboardPowerups = (function () {
 
         //unit in element
         if (text.match(/[a-zA-Z]+/)) {
-            let match = val.match(/[0-9]+ *(.*) */);
+            let match = text.match(/[0-9]+ *(.*) */);
             if (match.length > 1)
                 return match[1];
             else return "";
