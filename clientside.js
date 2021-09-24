@@ -1354,7 +1354,7 @@ var DashboardPowerups = (function () {
         let args = argsplit(title, PU_FORECAST);
 
         let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
-        let zIndex = Number((args.find(x => x[0] == "analysis") || [])[1]);
+        let zIndex = Number((args.find(x => x[0] == "zIndex") || [])[1]);
         if(isNaN(zIndex)) zIndex = undefined;
         let colors = ((args.find(x => x[0] == "colors") || [])[1] || "#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232").split(',');
         let n = (args.find(x => x[0] == "n") || [])[1] || "20%";
