@@ -538,6 +538,7 @@ Explanation:
     - `Linear` - Linear regression of the timeseries
     - `Projection` - (on by default if `p` > 0) Projects the Linear Regression `p` points into the future. Additionally, linear regressions are performed on +/- 1 standard deviation.
 - `colors=#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232` - colors to use for analysis series.
+- `zIndex=2` - (optional) Place forecast series in foreground (2+) or background (1-). Default is background.
 
 Example:
 ![forecast](Assets/forecast.png)
