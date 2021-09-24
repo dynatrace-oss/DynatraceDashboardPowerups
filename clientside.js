@@ -1354,6 +1354,8 @@ var DashboardPowerups = (function () {
         let args = argsplit(title, PU_FORECAST);
 
         let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
+        let zIndex = Number((args.find(x => x[0] == "analysis") || [])[1]);
+        if(isNaN(zIndex)) zIndex = undefined;
         let colors = ((args.find(x => x[0] == "colors") || [])[1] || "#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232").split(',');
         let n = (args.find(x => x[0] == "n") || [])[1] || "20%";
         if (n.includes("%")) {
@@ -1447,7 +1449,8 @@ var DashboardPowerups = (function () {
                 id: "SMA",
                 data: sma,
                 color: nextColor(),
-                visible: analysis.includes("SMA")
+                visible: analysis.includes("SMA"),
+                zIndex: zIndex
             }, false);
         }
 
@@ -1468,7 +1471,8 @@ var DashboardPowerups = (function () {
                 id: "EMA",
                 data: ema,
                 color: nextColor(),
-                visible: analysis.includes("EMA")
+                visible: analysis.includes("EMA"),
+                zIndex: zIndex
             }, false);
 
             return ema;
@@ -1495,7 +1499,8 @@ var DashboardPowerups = (function () {
                 id: "Mean",
                 data: mean,
                 color: nextColor(),
-                visible: analysis.includes("Mean")
+                visible: analysis.includes("Mean"),
+                zIndex: zIndex
             }, false);
             return m;
         }
@@ -1530,7 +1535,8 @@ var DashboardPowerups = (function () {
                 color: chart.get('Mean').color,
                 opacity: 0.3,
                 linkedTo: "Mean",
-                visible: analysis.includes("Mean")
+                visible: analysis.includes("Mean"),
+                zIndex: zIndex
             }, false);
         }
 
@@ -1573,7 +1579,8 @@ var DashboardPowerups = (function () {
                 color: chart.get("EMA").color,
                 opacity: 0.3,
                 linkedTo: "EMA",
-                visible: analysis.includes("EMA")
+                visible: analysis.includes("EMA"),
+                zIndex: zIndex
             }, false);
 
             return stdevs;
@@ -1620,7 +1627,8 @@ var DashboardPowerups = (function () {
                 id: "Linear",
                 data: line.line,
                 color: nextColor(),
-                visible: analysis.includes("Linear")
+                visible: analysis.includes("Linear"),
+                zIndex: zIndex
             }, false);
             return line;
         }
@@ -1648,7 +1656,8 @@ var DashboardPowerups = (function () {
                 id: "Projection",
                 data: newLine,
                 color: nextColor(),
-                dashStyle: "shortDash"
+                dashStyle: "shortDash",
+                zIndex: zIndex
             }, false);
 
             chart.axes.filter(x => x.isXAxis)[0].setExtremes(
@@ -1683,7 +1692,8 @@ var DashboardPowerups = (function () {
                 color: nextColor(),
                 type: 'arearange',
                 linkedTo: "Projection",
-                opacity: 0.3
+                opacity: 0.3,
+                zIndex: zIndex
             }, false);
 
             chart.axes.filter(x => x.isXAxis)[0].setExtremes(
