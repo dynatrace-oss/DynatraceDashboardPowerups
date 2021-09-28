@@ -52,6 +52,7 @@ var DashboardPowerups = (function () {
     const TILE_CONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:first-of-type';
     const TILE_NOCONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:nth-of-type(3)';
     const DASHBOARD_MENU_SELECTOR = '[uitestid="gwt-debug-homeContextMenu"]';
+    const USQL_SELECTOR = '[uitestid="gwt-debug-dtaqlTile"]'; //CAUTION: this is sometime repeated within the DOM heirarchy for a tile
 
     const SELECTORS = {
         GRID_SELECTOR: GRID_SELECTOR, VIEWPORT_SELECTOR: VIEWPORT_SELECTOR, TITLE_SELECTOR: TITLE_SELECTOR, VAL_SELECTOR: VAL_SELECTOR,
@@ -62,7 +63,7 @@ var DashboardPowerups = (function () {
         SVT_METRIC_SELECTOR: SVT_METRIC_SELECTOR, SVT_UNITS_SELECTOR: SVT_UNITS_SELECTOR, COLUMN_SELECTOR: COLUMN_SELECTOR,
         MENU_ICON_SELECTOR: MENU_ICON_SELECTOR, MENU_POPUP_SELECTOR: MENU_POPUP_SELECTOR, TOPLIST_SELECTOR: TOPLIST_SELECTOR,
         TOPLIST_BAR_SELECTOR: TOPLIST_BAR_SELECTOR, NO_DATA_SELECTOR: NO_DATA_SELECTOR, TILE_CONTENT_SELECTOR: TILE_CONTENT_SELECTOR,
-        TILE_NOCONTENT_SELECTOR: TILE_NOCONTENT_SELECTOR
+        TILE_NOCONTENT_SELECTOR: TILE_NOCONTENT_SELECTOR, USQL_SELECTOR: USQL_SELECTOR
     }
 
     const PU_COLOR = '!PU(color):';
@@ -6042,6 +6043,9 @@ var DashboardPowerups = (function () {
                     positions.push(s[0] * max);
                 });
                 positions = positions.sort((a, b) => a - b);
+
+                //add formatting for USQL
+
 
                 //new chart
                 //default options

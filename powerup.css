@@ -1041,3 +1041,11 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupReportButton {
   padding-left: 0px;
 }
+
+.powerupGauge {
+  margin-top: 5px;
+}
+
+[uitestid="gwt-debug-dtaqlTile"] .powerupGaugeUSQL {
+  margin-top: 20px;
+}
