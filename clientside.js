@@ -35,7 +35,8 @@ var DashboardPowerups = (function () {
     const TAG_SELECTOR = '[uitestid="gwt-debug-showMoreTags"] ~ [title]';
     const FUNNEL_SELECTOR = '[uitestid="gwt-debug-funnelPanel"]';
     const SVT_PANEL_SELECTOR = '[uitestid="gwt-debug-chartPanel"], '
-        + '[uitestid="gwt-debug-dataExplorerTileVisualizationContainer"]';
+        + '[uitestid="gwt-debug-dataExplorerTileVisualizationContainer"], '
+        + '[uitestid="gwt-debug-dtaqlTile"]';
     const SVT_METRIC_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-title"]';
     const SVT_UNITS_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:nth-of-type(2), '
         + '[uitestid="gwt-debug-kpiValue"] > span:nth-of-type(2), '
