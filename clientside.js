@@ -12,11 +12,19 @@ var DashboardPowerups = (function () {
     const GRID_SELECTOR = '.grid-dashboard';
     const VIEWPORT_SELECTOR = '.grid-viewport';
     const TITLE_SELECTOR = '[uitestid="gwt-debug-title"]';
-    const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, [uitestid="gwt-debug-kpiValue"] > span:first-of-type, [uitestid="gwt-debug-dexp-visualization-single-value"] span:first-of-type, [uitestid="gwt-debug-visualization-single-value"] span:first-of-type, .powerupVlookup:not(.powerupOverridden) h1, .powerupMath:not(.powerupOverridden) h1, h1.powerupMath:not(.powerupOverridden)';
+    const VAL_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:first-of-type, '
+        + '[uitestid="gwt-debug-kpiValue"] > span:first-of-type, '
+        + '[uitestid="gwt-debug-dexp-visualization-single-value"] span:first-of-type, '
+        + '[uitestid="gwt-debug-visualization-single-value"] span:first-of-type, '
+        + '.powerupVlookup:not(.powerupOverridden) h1, '
+        + '.powerupMath:not(.powerupOverridden) h1, '
+        + 'h1.powerupMath:not(.powerupOverridden)';
     const TILE_SELECTOR = '.grid-tile';
     const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"]';
     const MARKDOWN_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
-    const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, [uitestid="gwt-debug-kpiValue"] span, [uitestid="gwt-debug-dexp-visualization-single-value"] span';
+    const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, '
+        + '[uitestid="gwt-debug-kpiValue"] span, '
+        + '[uitestid="gwt-debug-dexp-visualization-single-value"] span';
     const VLOOKUP_BIGNUM_SELECTOR = '.powerupVlookup h1';
     const TREND_SELECTOR = '[uitestid="gwt-debug-trendLabel"]';
     const MAP_SELECTOR = '[uitestid="gwt-debug-map"]';
@@ -26,15 +34,20 @@ var DashboardPowerups = (function () {
     const BANNER_SELECTOR = '[uitestid="gwt-debug-dashboardNameLabel"]';
     const TAG_SELECTOR = '[uitestid="gwt-debug-showMoreTags"] ~ [title]';
     const FUNNEL_SELECTOR = '[uitestid="gwt-debug-funnelPanel"]';
-    const SVT_PANEL_SELECTOR = '[uitestid="gwt-debug-chartPanel"], [uitestid="gwt-debug-visualization-single-value"]';
+    const SVT_PANEL_SELECTOR = '[uitestid="gwt-debug-chartPanel"], '
+        + '[uitestid="gwt-debug-dataExplorerTileVisualizationContainer"]';
     const SVT_METRIC_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-title"]';
-    const SVT_UNITS_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:nth-of-type(2), [uitestid="gwt-debug-kpiValue"] > span:nth-of-type(2), [uitestid="gwt-debug-visualization-single-value"] > div:first-of-type > div > span:nth-of-type(2)';
+    const SVT_UNITS_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:nth-of-type(2), '
+        + '[uitestid="gwt-debug-kpiValue"] > span:nth-of-type(2), '
+        + '[uitestid="gwt-debug-visualization-single-value"] > div:first-of-type > div > span:nth-of-type(2)';
     const COLUMN_SELECTOR = '.powerupTable > div > div > div:nth-of-type(1) > span';
     const MENU_ICON_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-icon"]';
     const MENU_POPUP_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-popup"]';
-    const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] > div:not([uitestid="gwt-debug-timeseries-tile-chart-root-panel"]), [uitestid="gwt-debug-visualization-top-list"]';
+    const TOPLIST_SELECTOR = '[uitestid="gwt-debug-chartPanel"] > div:not([uitestid="gwt-debug-timeseries-tile-chart-root-panel"]), '
+        + '[uitestid="gwt-debug-visualization-top-list"]';
     const TOPLIST_BAR_SELECTOR = 'div[data-dynamic-color]';
-    const NO_DATA_SELECTOR = 'div.grid-tileContent > div > div:nth-of-type(3) > div:nth-of-type(1), [uitestid="gwt-debug-renderedCustomError"] > div > div:nth-of-type(1)';
+    const NO_DATA_SELECTOR = 'div.grid-tileContent > div > div:nth-of-type(3) > div:nth-of-type(1), '
+        + '[uitestid="gwt-debug-renderedCustomError"] > div > div:nth-of-type(1)';
     const TILE_CONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:first-of-type';
     const TILE_NOCONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:nth-of-type(3)';
     const DASHBOARD_MENU_SELECTOR = '[uitestid="gwt-debug-homeContextMenu"]';
