@@ -26,9 +26,9 @@ var DashboardPowerups = (function () {
     const BANNER_SELECTOR = '[uitestid="gwt-debug-dashboardNameLabel"]';
     const TAG_SELECTOR = '[uitestid="gwt-debug-showMoreTags"] ~ [title]';
     const FUNNEL_SELECTOR = '[uitestid="gwt-debug-funnelPanel"]';
-    const SVT_PANEL_SELECTOR = '[uitestid="gwt-debug-chartPanel"]';
+    const SVT_PANEL_SELECTOR = '[uitestid="gwt-debug-chartPanel"], [uitestid="gwt-debug-DATA_EXPLORER"]';
     const SVT_METRIC_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-title"]';
-    const SVT_UNITS_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:nth-of-type(2), [uitestid="gwt-debug-kpiValue"] > span:nth-of-type(2)';
+    const SVT_UNITS_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] > span:nth-of-type(2), [uitestid="gwt-debug-kpiValue"] > span:nth-of-type(2), [uitestid="gwt-debug-visualization-single-value"] > div:first-of-type > div > span:nth-of-type(2)';
     const COLUMN_SELECTOR = '.powerupTable > div > div > div:nth-of-type(1) > span';
     const MENU_ICON_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-icon"]';
     const MENU_POPUP_SELECTOR = '[uitestid="gwt-debug-dashboard-tile-menu-popup"]';
