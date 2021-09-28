@@ -353,7 +353,7 @@ Example:
 ![Date](Assets/datePU.png)
 
 ### Gauge
-This powerup converts a Single Value Tile into a solid gauge. 
+This powerup converts a Single Value Tile into a solid gauge. Works for SVT from custom chart, explorer, or USQL.
 
 Syntax:
 `Memory !PU(gauge):stops=.5,.75,.9;colors=green,yellow,orange,red;min=0;max=100`
