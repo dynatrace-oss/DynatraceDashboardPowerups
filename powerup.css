@@ -266,30 +266,6 @@ h1.powerup-color-normal {
   text-align: center;
 }
 
-/*.powerupDeltaNeg {
-  color: #ef651f;
-  background-color: #6d6d6d;
-  padding: 2px;
-  border-radius: 3px;
-  font-weight: bold;
-}
-
-.powerupDeltaPos {
-  color: #2ab06f;
-  background-color: #6d6d6d;
-  padding: 2px;
-  border-radius: 3px;
-  font-weight: bold;
-}*/
-
-/*.powerupFunnelContainer svg g:hover path, #powerupFunnelContainer  svg g:hover path {
-  fill: #008cdb;
-}*/
-
-/*.powerupFunnelLabel:hover {
-  background: #008cdb;
-}*/
-
 .powerupTileDrillin {
   cursor: pointer;
 }
@@ -865,11 +841,6 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   margin-top: 5px;
 }
 
-/*.powerupOptionsContent {
-  display: flex;
-  flex-direction: column;
-}*/
-
 .powerupOptionsContent > div:not([class]) {
   display: flex;
   align-items: flex-end;
@@ -1026,7 +997,8 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   background-color: #454646;
 }
 
-.powerupTableGrid > div > div > span, .powerupTableGrid > div > div > a {
+.powerupTableGrid > div > div > span, 
+.powerupTableGrid > div > div > a {
   padding: 0 10px 0 4px;
   overflow: hidden;
   white-space: nowrap;
@@ -1046,6 +1018,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   margin-top: 5px;
 }
 
-[uitestid="gwt-debug-dtaqlTile"] .powerupGauge {
-  margin-top: 20px;
+[uitestid="gwt-debug-dtaqlTile"] .powerupGauge,
+[uitestid="gwt-debug-dtaqlTile"] .powerupHoneycomb {
+  margin-top: 25px;
 }
