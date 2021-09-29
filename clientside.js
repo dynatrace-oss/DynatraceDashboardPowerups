@@ -6669,9 +6669,18 @@ var DashboardPowerups = (function () {
                     .insertAfter($table);
 
                 //prep the data
-                let data = [];
-                let name = dataTable.keys[0];
-                let value = dataTable.keys[1];
+                let data = [],
+                    name = "",
+                    value = "";
+                if(dataTable.keys.length > 1){
+                    name = dataTable.keys[0];
+                    value = dataTable.keys[1];
+                } else {
+                    name = "";
+                    value = dataTable.keys[0];
+                }
+                
+                
                 let rows = dataTable.normalTable.length;
                 function add(i, x, y) {
                     if (i >= rows) return false;
@@ -6681,8 +6690,8 @@ var DashboardPowerups = (function () {
                     let point = dataTable.normalTable[i];
                     if (point == undefined) return false;
                     let p = {
-                        name: point[name],
-                        value: point[value],
+                        name: point[name] || " ",
+                        value: point[value] || 0,
                         x: xt,
                         y: yt,
                         events: {
