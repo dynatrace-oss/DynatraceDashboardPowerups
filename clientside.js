@@ -1401,6 +1401,8 @@ var DashboardPowerups = (function () {
         $oldContainer.parent().hide();
         let $newContainer = $('<div>')
             .addClass('powerupCumulative')
+            .css('width', chart.chartWidth + 'px')
+            .css('height', chart.chartHeight + 'px')
             .insertAfter($oldContainer.parent());
 
         let newData = [];
@@ -1411,6 +1413,7 @@ var DashboardPowerups = (function () {
                 runningTotal
             ])
         })
+        
         let opts = JSON.parse(JSON.stringify(chart.userOptions));
         opts.series[0].data = newData;
         opts.chart.renderTo = $newContainer[0];
