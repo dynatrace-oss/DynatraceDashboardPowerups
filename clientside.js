@@ -1373,7 +1373,7 @@ var DashboardPowerups = (function () {
     pub.PUcumulative = function (chart, title) { //!PU(cumulative):cast=5;castcolor=lightblue;lim=100;limcolor=red
         let data = chart.series[0].data;
         let dataSet = data.filter(i => i.y != null).map(i => [i.x, i.y]);
-        let args = argsplit(title, PU_FORECAST);
+        let args = argsplit(title, PU_CUMULATIVE);
 
         let cast = Number((args.find(x => x[0] == "cast") || [])[1]) || 0;
         let limit = Number((args.find(x => x[0] == "cast") || [])[1]);
