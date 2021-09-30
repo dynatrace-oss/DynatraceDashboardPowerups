@@ -1375,7 +1375,7 @@ var DashboardPowerups = (function () {
         let dataSet = data.filter(i => i.y != null).map(i => [i.x, i.y]);
         let args = argsplit(title, PU_CUMULATIVE);
 
-        let cast = Number((args.find(x => x[0] == "cast") || [])[1]) || 0;
+        let cast = (args.find(x => x[0] == "cast") || [])[1] || 0;
         let limit = Number((args.find(x => x[0] == "cast") || [])[1]);
         let castcolor = (args.find(x => x[0] == "castcolor") || [])[1] || "lightblue";
         let limcolor = (args.find(x => x[0] == "limcolor") || [])[1] || "yellow";
