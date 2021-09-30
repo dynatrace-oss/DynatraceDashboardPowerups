@@ -1398,10 +1398,10 @@ var DashboardPowerups = (function () {
             })
             $(el).remove();
         });
-        $oldContainer.hide();
+        $oldContainer.parent().hide();
         let $newContainer = $('<div>')
             .addClass('powerupCumulative')
-            .insertAfter($oldContainer);
+            .insertAfter($oldContainer.parent());
 
         let newData = [];
         data.forEach(d => {
