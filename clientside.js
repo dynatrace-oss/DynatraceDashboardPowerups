@@ -98,12 +98,13 @@ var DashboardPowerups = (function () {
     const PU_AUTOHIDE = '!PU(autohide):';
     const PU_TREEMAP = '!PU(treemap):';
     const PU_TIMEONPAGE = '!PU(timeonpage):';
+    const PU_CUMULATIVE = '!PU(cumulative):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE
     ];
 
     const COLOR_RED = "#c41425";
