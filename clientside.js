@@ -1417,10 +1417,13 @@ var DashboardPowerups = (function () {
         Object.keys(opts).forEach(k => { //remove old IDs
             if(Array.isArray(opts[k])){
                 opts[k].forEach(a => {
-                    if(typeof(a)=="object" && a.hasOwnProperty("id"))
+                    if(typeof(a)=="object" 
+                        && a.hasOwnProperty("id"))
                         delete a.id;
                 })
-            } else if(typeof(opts[k])=="object" && opts[k].hasOwnProperty("id")) 
+            } else if(typeof(opts[k])=="object" 
+                && opts[k] != null
+                && opts[k].hasOwnProperty("id")) 
                 delete opts[k].id;
         })
         let newChart = Highcharts.chart(opts);
