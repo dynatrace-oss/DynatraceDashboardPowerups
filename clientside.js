@@ -1326,6 +1326,15 @@ var DashboardPowerups = (function () {
                     enableExporting();
                     powerupsFired['PU_FORECAST'] ? powerupsFired['PU_FORECAST']++ : powerupsFired['PU_FORECAST'] = 1;
                 });
+            } else if (title.includes(PU_CUMULATIVE)) {
+                let p = pub.PUcumulative(chart, title);
+                promises.push(p);
+                $.when(p).done(val => {
+                    if (val) pu = true;
+                    lineChartPU();
+                    enableExporting();
+                    powerupsFired['PU_CUMULATIVE'] ? powerupsFired['PU_CUMULATIVE']++ : powerupsFired['PU_CUMULATIVE'] = 1;
+                });
             } else {
                 lineChartPU();
                 enableExporting();
@@ -1360,12 +1369,45 @@ var DashboardPowerups = (function () {
         }
     }
 
+    pub.PUcumulative = function (chart, title) { //!PU(cumulative):cast=5;castcolor=lightblue;lim=100;limcolor=red
+        let data = chart.series[0].data;
+        let dataSet = data.filter(i => i.y != null).map(i => [i.x, i.y]);
+        let args = argsplit(title, PU_FORECAST);
+
+        let cast = Number((args.find(x => x[0] == "cast") || [])[1]) || 0;
+        let limit = Number((args.find(x => x[0] == "cast") || [])[1]);
+        let castcolor = (args.find(x => x[0] == "castcolor") || [])[1] || "lightblue";
+        let limcolor = (args.find(x => x[0] == "limcolor") || [])[1] || "yellow";
+
+        let analysis = "Linear"; //((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
+
+        if (cast.includes("%")) {
+            cast = Number(cast.split('%')[0]) * 0.01;
+            cast = Math.round(cast * data.length);
+        } else {
+            cast = Number(cast);
+        }
+
+
+        //Step 1 - forecast into the future
+        pub.PUforecast(chart, title);
+
+        //Step 2 - add plotline for threshold
+        if (limit) {
+            chart.yAxis[0].update({
+                plotLines: {
+                    color: limcolor,
+                    value: limit
+                }
+            }, false)
+        }
+        //Step 3 - determine if forecast crosses threshold, if so add plotline for breach point
+    }
+
     pub.PUforecast = function (chart, title) { //!PU(forecast):alg=sma;n=5;color=lightblue
         const IDs = ["SMA", "EMA", "Mean", "Stdev", "Bands", "Linear"];
         let data = chart.series[0].data;
         let dataSet = data.filter(i => i.y != null).map(i => [i.x, i.y]);
-        //let argstring = title.split(PU_FORECAST)[1].split(/[!\n]/)[0].trim();
-        //let args = argstring.split(";").map(x => x.split("="));
         let args = argsplit(title, PU_FORECAST);
 
         let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
@@ -6672,15 +6714,15 @@ var DashboardPowerups = (function () {
                 let data = [],
                     name = "",
                     value = "";
-                if(dataTable.keys.length > 1){
+                if (dataTable.keys.length > 1) {
                     name = dataTable.keys[0];
                     value = dataTable.keys[1];
                 } else {
                     name = "";
                     value = dataTable.keys[0];
                 }
-                
-                
+
+
                 let rows = dataTable.normalTable.length;
                 function add(i, x, y) {
                     if (i >= rows) return false;
