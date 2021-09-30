@@ -1413,7 +1413,8 @@ var DashboardPowerups = (function () {
         })
         let opts = JSON.parse(JSON.stringify(chart.userOptions));
         opts.series[0].data = newData;
-        let newChart = Highcharts.chart(opts,$newContainer[0]);
+        opts.chart.renderTo = $newContainer[0];
+        let newChart = Highcharts.chart(opts);
 
         //Step 2 - forecast into the future
         let forecastTitle = `!PU(forecast):alg=Linear;n=${cast};color=${castcolor}`;
