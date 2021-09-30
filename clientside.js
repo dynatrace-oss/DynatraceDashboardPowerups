@@ -1371,8 +1371,8 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUcumulative = function (chart, title) { //!PU(cumulative):cast=5;castcolor=lightblue;lim=100;limcolor=red
-        let data = chart.series[0].data;
-        let dataSet = data.filter(i => i.y != null).map(i => [i.x, i.y]);
+        let data = chart.series[0].options.data;
+        let runningTotal = 0;
         let args = argsplit(title, PU_CUMULATIVE);
 
         let cast = (args.find(x => x[0] == "cast") || [])[1] || 0;
@@ -1389,12 +1389,18 @@ var DashboardPowerups = (function () {
             cast = Number(cast);
         }
 
+        //Step 1 - Add cumulative series
+        data.forEach(d => {
+            runningTotal += d[1];
+            d[1] = runningTotal;
+        })
+        chart.series[0].setData(data);
 
-        //Step 1 - forecast into the future
+        //Step 2 - forecast into the future
         let forecastTitle = `!PU(forecast):alg=Linear;n=${cast};color=${castcolor}`;
         pub.PUforecast(chart, forecastTitle);
 
-        //Step 2 - add plotline for threshold
+        //Step 3 - add plotline for threshold
         if (limit) {
             chart.yAxis[0].update({
                 plotLines: {
@@ -1403,7 +1409,7 @@ var DashboardPowerups = (function () {
                 }
             }, false)
         }
-        //Step 3 - determine if forecast crosses threshold, if so add plotline for breach point
+        //Step 4 - determine if forecast crosses threshold, if so add plotline for breach point
     }
 
     pub.PUforecast = function (chart, title) { //!PU(forecast):alg=sma;n=5;color=lightblue
