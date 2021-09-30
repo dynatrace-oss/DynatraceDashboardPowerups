@@ -1374,6 +1374,8 @@ var DashboardPowerups = (function () {
         let data = chart.series[0].options.data;
         let runningTotal = 0;
         let args = argsplit(title, PU_CUMULATIVE);
+        let $oldContainer = $(chart.container);
+        let $tile = $oldContainer.parents(TILE_SELECTOR);
 
         let cast = (args.find(x => x[0] == "cast") || [])[1] || 0;
         let limit = Number((args.find(x => x[0] == "cast") || [])[1]);
@@ -1389,16 +1391,33 @@ var DashboardPowerups = (function () {
             cast = Number(cast);
         }
 
-        //Step 1 - Add cumulative series
+        //Step 1 - Create new chart with cumulative series
+        $tile.find(`.powerupCumulative`).each((i,el) => { //cleanup any previous runs
+            Highcharts.charts.filter(c => c.container === el).forEach(oc => {
+                oc.destroy();
+            })
+            $(el).remove();
+        });
+        $oldContainer.hide();
+        let $newContainer = $('<div>')
+            .addClass('powerupCumulative')
+            .insertAfter($oldContainer);
+
+        let newData = [];
         data.forEach(d => {
             runningTotal += d[1];
-            d[1] = runningTotal;
+            newData.push([
+                d[0],
+                runningTotal
+            ])
         })
-        chart.series[0].setData(data);
+        let opts = JSON.parse(JSON.stringify(chart.userOptions));
+        opts.series[0].data = newData;
+        let newChart = Highcharts.chart(opts,$newContainer[0]);
 
         //Step 2 - forecast into the future
         let forecastTitle = `!PU(forecast):alg=Linear;n=${cast};color=${castcolor}`;
-        pub.PUforecast(chart, forecastTitle);
+        pub.PUforecast(newChart, forecastTitle);
 
         //Step 3 - add plotline for threshold
         if (limit) {
