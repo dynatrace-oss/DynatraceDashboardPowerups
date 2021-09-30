@@ -1414,8 +1414,14 @@ var DashboardPowerups = (function () {
         let opts = JSON.parse(JSON.stringify(chart.userOptions));
         opts.series[0].data = newData;
         opts.chart.renderTo = $newContainer[0];
-        Object.keys(opts).forEach(k => {
-            if(opts[k].hasOwnProperty("id")) delete opts[k].id;
+        Object.keys(opts).forEach(k => { //remove old IDs
+            if(Array.isArray(opts[k])){
+                opts[k].forEach(a => {
+                    if(typeof(a)=="object" && a.hasOwnProperty("id"))
+                        delete a.id;
+                })
+            } else if(typeof(opts[k])=="object" && opts[k].hasOwnProperty("id")) 
+                delete opts[k].id;
         })
         let newChart = Highcharts.chart(opts);
 
