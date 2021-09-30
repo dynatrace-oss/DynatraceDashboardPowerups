@@ -1414,6 +1414,9 @@ var DashboardPowerups = (function () {
         let opts = JSON.parse(JSON.stringify(chart.userOptions));
         opts.series[0].data = newData;
         opts.chart.renderTo = $newContainer[0];
+        Object.keys(opts).forEach(k => {
+            if(opts[k].hasOwnProperty("id")) delete opts[k].id;
+        })
         let newChart = Highcharts.chart(opts);
 
         //Step 2 - forecast into the future
