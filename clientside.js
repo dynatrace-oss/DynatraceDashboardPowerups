@@ -1659,6 +1659,7 @@ var DashboardPowerups = (function () {
         }
 
         function bands(ema) {
+            if (!showRange) return;
             let deltas = [];
             let stdevs = [];
             let count = 0;
@@ -1786,7 +1787,7 @@ var DashboardPowerups = (function () {
         }
 
         function rangeProjection(stdevs) {
-            if (!p && showRange) return;
+            if (!p || !showRange) return;
             let highs = stdevs.map(x => [x[0], x[2]]);
             let lows = stdevs.map(x => [x[0], x[1]]);
             let highLR = linearRegression(highs);
