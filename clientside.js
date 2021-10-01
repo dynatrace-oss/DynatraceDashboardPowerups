@@ -1404,7 +1404,8 @@ var DashboardPowerups = (function () {
                 })
             $(el).remove();
         });
-        $oldContainer.parent().hide();
+        $oldContainer.parent().addClass('powerupHide');
+        $(LEGEND_SELECTOR).addClass('powerupHide');
         let $newContainer = $('<div>')
             .addClass('powerupCumulative')
             .css('width', chart.chartWidth + 'px')
