@@ -1435,7 +1435,7 @@ var DashboardPowerups = (function () {
         Highcharts.chart($newContainer[0], opts, (newChart) => {
             //Step 2 - forecast into the future
             let forecastTitle = `!PU(forecast):alg=Linear;p=${cast};color=${castcolor}`;
-            //pub.PUforecast(newChart, forecastTitle);
+            pub.PUforecast(newChart, forecastTitle);
 
             //Step 3 - add plotline for threshold
             if (limit) {
@@ -1447,11 +1447,11 @@ var DashboardPowerups = (function () {
                 }, false)
             }
 
-            newChart.update({
+            /*newChart.update({
                 title: {
                     text: `Cumulative`
                 }
-            })
+            })*/
             //Step 4 - determine if forecast crosses threshold, if so add plotline for breach point
         });
 
