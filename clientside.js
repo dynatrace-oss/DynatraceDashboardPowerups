@@ -1460,7 +1460,7 @@ var DashboardPowerups = (function () {
             //Step 4 - determine if forecast crosses threshold, if so add plotline for breach point
             let breach;
             let s = newChart.series[0].userOptions.data;
-            let p = newChart.series.filter(s => s.id == "Projection")[0].userOptions.data;
+            let p = newChart.series.filter(s => s.userOptions.id == "Projection")[0].userOptions.data;
             breach = s.find(d => d[1] >= limit);
             if (breach) {
                 newChart.xAxis[0].update({
