@@ -1379,7 +1379,7 @@ var DashboardPowerups = (function () {
         let $tile = $oldContainer.parents(TILE_SELECTOR);
 
         let cast = (args.find(x => x[0] == "cast") || [])[1] || 0;
-        let limit = Number((args.find(x => x[0] == "cast") || [])[1]);
+        let limit = Number((args.find(x => x[0] == "limit") || [])[1]);
         let castcolor = (args.find(x => x[0] == "castcolor") || [])[1] || "lightblue";
         let limcolor = (args.find(x => x[0] == "limcolor") || [])[1] || "yellow";
 
