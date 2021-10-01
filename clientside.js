@@ -1439,7 +1439,7 @@ var DashboardPowerups = (function () {
        // pub.PUforecast(newChart, forecastTitle);
 
         //Step 3 - add plotline for threshold
-        if (limit) {
+        /*if (limit) {
             newChart.yAxis[0].update({
                 plotLines: {
                     color: limcolor,
@@ -1452,7 +1452,7 @@ var DashboardPowerups = (function () {
             title: {
                 text: `Cumulative`
             }
-        })
+        })*/
         //Step 4 - determine if forecast crosses threshold, if so add plotline for breach point
     }
 
