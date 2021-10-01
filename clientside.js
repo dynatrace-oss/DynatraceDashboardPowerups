@@ -1380,8 +1380,10 @@ var DashboardPowerups = (function () {
 
         let cast = (args.find(x => x[0] == "cast") || [])[1] || 0;
         let limit = Number((args.find(x => x[0] == "lim") || [])[1]);
-        let castcolor = (args.find(x => x[0] == "castcolor") || [])[1] || "lightblue";
-        let limcolor = (args.find(x => x[0] == "limcolor") || [])[1] || "yellow";
+        let castcolor = (args.find(x => x[0] == "castcolor") || [])[1] || "#14a8f5";
+        let limcolor = (args.find(x => x[0] == "limcolor") || [])[1] || "#dc172a";
+        let warncolor = (args.find(x => x[0] == "warncolor") || [])[1] || "#ffe11c";
+        let critcolor = (args.find(x => x[0] == "warncolor") || [])[1] || "#dc172a";
 
         let analysis = "Linear"; //((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
 
@@ -1395,11 +1397,11 @@ var DashboardPowerups = (function () {
         //Step 1 - Create new chart with cumulative series
         $tile.find(`.powerupCumulative`).each((i, el) => { //cleanup any previous runs
             Highcharts.charts
-            .filter(x=>typeof(x)!="undefined")
-            .filter(c => c.container === el)
-            .forEach(oc => {
-                oc.destroy();
-            })
+                .filter(x => typeof (x) != "undefined")
+                .filter(c => c.container === el)
+                .forEach(oc => {
+                    oc.destroy();
+                })
             $(el).remove();
         });
         $oldContainer.parent().hide();
@@ -1455,12 +1457,31 @@ var DashboardPowerups = (function () {
                 }, true)
             }
 
-            /*newChart.update({
-                title: {
-                    text: `Cumulative`
-                }
-            })*/
             //Step 4 - determine if forecast crosses threshold, if so add plotline for breach point
+            let breach;
+            let s = newChart.series[0].userOptions.data;
+            let p = newChart.series.filter(s => s.id == "Projection")[0].userOptions.data;
+            breach = s.find(d => d[1] >= limit);
+            if (breach) {
+                newChart.xAxis[0].update({
+                    plotLines: [{
+                        color: critcolor,
+                        value: breach[0],
+                        width: 2
+                    }]
+                }, true)
+            } else {
+                breach = p.find(d => d[1] >= limit);
+                if (breach) {
+                    newChart.xAxis[0].update({
+                        plotLines: [{
+                            color: warncolor,
+                            value: breach[0],
+                            width: 2
+                        }]
+                    }, true)
+                }
+            }
         });
 
 
