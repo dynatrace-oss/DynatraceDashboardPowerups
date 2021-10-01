@@ -1418,6 +1418,7 @@ var DashboardPowerups = (function () {
         let opts = JSON.parse(JSON.stringify(chart.userOptions));
         opts.series[0].data = newData;
         opts.series[0].name += " (cumulative)";
+        opts.series[0].showInLegend = true;
         opts.chart.renderTo = $newContainer[0];
         Object.keys(opts).forEach(k => { //remove old IDs
             if (Array.isArray(opts[k])) {
