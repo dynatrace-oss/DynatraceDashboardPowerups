@@ -1821,15 +1821,18 @@ var DashboardPowerups = (function () {
 
         function updateYAxis() {
             chart.axes
-                .filter(x => typeof (x.isXAxis) == "undefined"
-                    && x.series.length)
-                .forEach(x => {
-                    let tick = x.tickInterval;
-                    let min = Math.min.apply(Math, dataSet.map(x => x[1]));
+                .filter(axis => typeof (axis.isXAxis) == "undefined"
+                    && axis.series.length)
+                .forEach(yaxis => {
+                    let min,max;
+                    yaxis.series.forEach(s => {
+                        min = Math.min.apply(Math, s.data.map(d => d.y).concat([min]));
+                        max = Math.max.apply(Math, s.data.map(d => d.y).concat([max]));
+                    })
+                    let tick = yaxis.tickInterval;
                     min = Math.round((min * .9) / tick) * tick;
-                    let max = Math.max.apply(Math, dataSet.map(x => x[1]));
                     max = Math.round((max * 1.1) / tick) * tick;
-                    x.setExtremes(min, max, false);
+                    yaxis.setExtremes(min, max, false);
                 })
         }
 
