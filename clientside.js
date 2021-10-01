@@ -1474,7 +1474,12 @@ var DashboardPowerups = (function () {
                         value: breach[0],
                         width: 2,
                         label: {
-                            text: new Date(breach[0]).toLocaleDateString()
+                            text: new Date(breach[0]).toLocaleString(),
+                            verticalAlign: 'bottom',
+                            textAlign: 'right',
+                            style: {
+                                color: "white"
+                            }
                         }
                     }]
                 }, true)
@@ -1487,7 +1492,12 @@ var DashboardPowerups = (function () {
                             value: breach[0],
                             width: 2,
                             label: {
-                                text: new Date(breach[0]).toLocaleDateString()
+                                text: new Date(breach[0]).toLocaleString(),
+                                verticalAlign: 'bottom',
+                                textAlign: 'right',
+                                style: {
+                                    color: "white"
+                                }
                             }
                         }]
                     }, true)
