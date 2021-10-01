@@ -1436,7 +1436,7 @@ var DashboardPowerups = (function () {
 
         //Step 2 - forecast into the future
         let forecastTitle = `!PU(forecast):alg=Linear;p=${cast};color=${castcolor}`;
-        pub.PUforecast(newChart, forecastTitle);
+       // pub.PUforecast(newChart, forecastTitle);
 
         //Step 3 - add plotline for threshold
         if (limit) {
