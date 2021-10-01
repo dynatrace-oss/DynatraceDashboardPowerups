@@ -20,7 +20,8 @@ var DashboardPowerups = (function () {
         + '.powerupMath:not(.powerupOverridden) h1, '
         + 'h1.powerupMath:not(.powerupOverridden)';
     const TILE_SELECTOR = '.grid-tile';
-    const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"]';
+    const LEGEND_SELECTOR = '[uitestid="gwt-debug-legend"], '
+        + '[uitestid="gwt-debug-legendContainer"]';
     const MARKDOWN_SELECTOR = '[uitestid="gwt-debug-MARKDOWN"] > div:first-child > div:first-child';
     const BIGNUM_SELECTOR = '[uitestid="gwt-debug-custom-chart-single-value-formatted-value"] span, '
         + '[uitestid="gwt-debug-kpiValue"] span, '
@@ -1408,8 +1409,10 @@ var DashboardPowerups = (function () {
         $(LEGEND_SELECTOR).addClass('powerupHide');
         let $newContainer = $('<div>')
             .addClass('powerupCumulative')
-            .css('width', chart.chartWidth + 'px')
-            .css('height', chart.chartHeight + 'px')
+            //.css('width', chart.chartWidth + 'px')
+            //.css('height', chart.chartHeight + 'px')
+            .css('width', '100%')
+            .css('height', '100%')
             .insertAfter($oldContainer.parent());
 
         let newData = [];
