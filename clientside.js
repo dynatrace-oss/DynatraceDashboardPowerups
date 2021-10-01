@@ -1824,7 +1824,7 @@ var DashboardPowerups = (function () {
                 .filter(axis => typeof (axis.isXAxis) == "undefined"
                     && axis.series.length)
                 .forEach(yaxis => {
-                    let min,max;
+                    let min=0,max=0;
                     yaxis.series.forEach(s => {
                         min = Math.min.apply(Math, s.data.map(d => d.y).concat([min]));
                         max = Math.max.apply(Math, s.data.map(d => d.y).concat([max]));
