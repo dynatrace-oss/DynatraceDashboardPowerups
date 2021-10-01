@@ -746,6 +746,20 @@ var DashboardPowerups = (function () {
         }
     }
 
+    const cleanupOldChartsInTile = (tile,selector) => {
+        $(tile).find(selector).each((i, el) => {
+            let oldcontainer = $(el).find(`.highcharts-container`)[0];
+            if (oldcontainer) {
+                let oldcharts = Highcharts.charts
+                    .filter(x => typeof (x) != "undefined")
+                    .filter(x => x.container === oldcontainer);
+                if (oldcharts.length)
+                    oldcharts.forEach(oc => oc.destroy());
+            }
+            $(el).remove();
+        });
+    }
+
     const waitForHCmod = (mod, fn, retries = 5) => {
         if (retries < 1) {
             let error = `POWERUP: CRITICAL - failed to load Highcharts module ${mod}`;
@@ -1396,15 +1410,7 @@ var DashboardPowerups = (function () {
         }
 
         //Step 1 - Create new chart with cumulative series
-        $tile.find(`.powerupCumulative`).each((i, el) => { //cleanup any previous runs
-            Highcharts.charts
-                .filter(x => typeof (x) != "undefined")
-                .filter(c => c.container === el)
-                .forEach(oc => {
-                    oc.destroy();
-                })
-            $(el).remove();
-        });
+        cleanupOldChartsInTile($tile,`.powerupCumulative`);
         $oldContainer.parent().addClass('powerupHide');
         $(LEGEND_SELECTOR).addClass('powerupHide');
         let $newContainer = $('<div>')
@@ -4964,7 +4970,7 @@ var DashboardPowerups = (function () {
 
                 if (markdown) { // change behavior here. instead of swapping out the markdown, hide it and add a container div
                     let $containers = $(markdown).siblings("[data-highcharts-chart]").children(".highcharts-container");
-                    $containers.each((i, c) => { //sankey already exists, destroy and recreate later
+                    $containers.each((i, c) => { //sankey already exists, destroy and recreate later  //TODO: refactor to use cleanupOldChartsInTile()
                         let oldChart = Highcharts.charts
                             .filter(x => typeof (x) !== "undefined")
                             .find(x => x.container === c);
@@ -6176,18 +6182,8 @@ var DashboardPowerups = (function () {
                 let digits = Number(((args.find(x => x[0] == "digits") || [])[1]) || 1);
 
                 //cleanup any old gauges
-                $tile.find(`.powerupGauge`).each((i, el) => {
-                    let oldcontainer = $(el).find(`.highcharts-container`)[0];
-                    if (oldcontainer) {
-                        let oldcharts = Highcharts.charts
-                            .filter(x => typeof (x) != "undefined")
-                            .filter(x => x.container === oldcontainer);
-                        if (oldcharts.length)
-                            oldcharts.forEach(oc => oc.destroy());
-                    }
-                    $(el).remove();
-                });
-
+                cleanupOldChartsInTile($tile,`.powerupGauge`);
+                
                 //swap
                 $panel.hide();
                 let val = Number($panel.find(VAL_SELECTOR).text().replace(/,/g, ''));
@@ -6816,12 +6812,8 @@ var DashboardPowerups = (function () {
                 //swap in a container for our new chart
                 let $table = $tile.find(TABLE_SELECTOR);
                 $table.hide();
-                $tile.find('.powerupHoneycomb').each((i, el) => {
-                    Highcharts.charts.filter(x => typeof (x) !== "undefined")
-                        .filter(x => x.container === el)
-                        .forEach(chart => { chart.destroy(); });
-                    $(el).remove();
-                });
+                cleanupOldChartsInTile($tile,`.powerupHoneycomb`);
+                
                 let $container = $("<div>")
                     .addClass('powerupHoneycomb')
                     .insertAfter($table);
@@ -7008,12 +7000,8 @@ var DashboardPowerups = (function () {
                 //swap in a container for our new chart
                 let $table = $tile.find(TABLE_SELECTOR);
                 $table.hide();
-                $tile.find('.powerupTreemap').each((i, el) => {
-                    Highcharts.charts.filter(x => typeof (x) !== "undefined")
-                        .filter(x => x.container === el)
-                        .forEach(chart => { chart.destroy(); });
-                    $(el).remove();
-                });
+                cleanupOldChartsInTile($tile,`.powerupTreemap`);
+                
                 let $container = $("<div>")
                     .addClass('powerupTreemap')
                     .insertAfter($table);
