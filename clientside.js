@@ -1476,7 +1476,8 @@ var DashboardPowerups = (function () {
                         label: {
                             text: new Date(breach[0]).toLocaleString(),
                             verticalAlign: 'bottom',
-                            textAlign: 'left',
+                            align: 'right',
+                            y: -5,
                             style: {
                                 color: "white",
                                 fontSize: '10px'
@@ -1495,7 +1496,8 @@ var DashboardPowerups = (function () {
                             label: {
                                 text: new Date(breach[0]).toLocaleString(),
                                 verticalAlign: 'bottom',
-                                textAlign: 'left',
+                                align: 'right',
+                                y: -5,
                                 style: {
                                     color: "white",
                                     fontSize: '10px'
