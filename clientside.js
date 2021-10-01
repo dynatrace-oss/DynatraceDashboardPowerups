@@ -1393,7 +1393,7 @@ var DashboardPowerups = (function () {
         }
 
         //Step 1 - Create new chart with cumulative series
-        $tile.find(`.powerupCumulative`).each((i,el) => { //cleanup any previous runs
+        $tile.find(`.powerupCumulative`).each((i, el) => { //cleanup any previous runs
             Highcharts.charts.filter(c => c.container === el).forEach(oc => {
                 oc.destroy();
             })
@@ -1419,15 +1419,15 @@ var DashboardPowerups = (function () {
         opts.series[0].data = newData;
         opts.chart.renderTo = $newContainer[0];
         Object.keys(opts).forEach(k => { //remove old IDs
-            if(Array.isArray(opts[k])){
+            if (Array.isArray(opts[k])) {
                 opts[k].forEach(a => {
-                    if(typeof(a)=="object" 
+                    if (typeof (a) == "object"
                         && a.hasOwnProperty("id"))
                         delete a.id;
                 })
-            } else if(typeof(opts[k])=="object" 
+            } else if (typeof (opts[k]) == "object"
                 && opts[k] != null
-                && opts[k].hasOwnProperty("id")) 
+                && opts[k].hasOwnProperty("id"))
                 delete opts[k].id;
         })
         let newChart = Highcharts.chart(opts);
@@ -1438,13 +1438,19 @@ var DashboardPowerups = (function () {
 
         //Step 3 - add plotline for threshold
         if (limit) {
-            chart.yAxis[0].update({
+            newChart.yAxis[0].update({
                 plotLines: {
                     color: limcolor,
                     value: limit
                 }
             }, false)
         }
+
+        newChart.update({
+            title: {
+                text: `Cumulative`
+            }
+        })
         //Step 4 - determine if forecast crosses threshold, if so add plotline for breach point
     }
 
