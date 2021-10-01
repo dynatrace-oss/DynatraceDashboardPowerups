@@ -1480,7 +1480,8 @@ var DashboardPowerups = (function () {
                             y: -5,
                             style: {
                                 color: "white",
-                                fontSize: '10px'
+                                fontSize: '10px',
+                                textOutline: false
                             }
                         }
                     }]
@@ -1500,7 +1501,8 @@ var DashboardPowerups = (function () {
                                 y: -5,
                                 style: {
                                     color: "white",
-                                    fontSize: '10px'
+                                    fontSize: '10px',
+                                    textOutline: false
                                 }
                             }
                         }]
