@@ -1438,7 +1438,7 @@ var DashboardPowerups = (function () {
         opts.title.text = "Cumulative";
         Highcharts.chart($newContainer[0], opts, (newChart) => {
             //Step 2 - forecast into the future
-            let forecastTitle = `!PU(forecast):alg=Linear;p=${cast};color=${castcolor}`;
+            let forecastTitle = `!PU(forecast):alg=Linear;p=${cast};color=${castcolor};range=false`;
             pub.PUforecast(newChart, forecastTitle);
 
             //Step 3 - add plotline for threshold
@@ -1471,6 +1471,7 @@ var DashboardPowerups = (function () {
 
         let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
         let zIndex = Number((args.find(x => x[0] == "zIndex") || [])[1]);
+        let showRange = (args.find(x => x[0] == "range") || [])[1] == "false" ? false : true;
         if (isNaN(zIndex)) zIndex = undefined;
         let colors = ((args.find(x => x[0] == "colors") || [])[1] || "#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232").split(',');
         let n = (args.find(x => x[0] == "n") || [])[1] || "20%";
@@ -1622,6 +1623,7 @@ var DashboardPowerups = (function () {
         }
 
         function standardDeviation(m) {
+            if (!showRange) return;
             let deltas = [];
             let stdevs = [];
             let count = 0;
@@ -1784,7 +1786,7 @@ var DashboardPowerups = (function () {
         }
 
         function rangeProjection(stdevs) {
-            if (!p) return;
+            if (!p && showRange) return;
             let highs = stdevs.map(x => [x[0], x[2]]);
             let lows = stdevs.map(x => [x[0], x[1]]);
             let highLR = linearRegression(highs);
@@ -1824,7 +1826,7 @@ var DashboardPowerups = (function () {
                 .filter(axis => typeof (axis.isXAxis) == "undefined"
                     && axis.series.length)
                 .forEach(yaxis => {
-                    let min=0,max=0;
+                    let min = 0, max = 0;
                     yaxis.series.forEach(s => {
                         min = Math.min.apply(Math, s.userOptions.data.map(d => d[1]).concat([min]));
                         max = Math.max.apply(Math, s.userOptions.data.map(d => d[1]).concat([max]));
@@ -1839,7 +1841,7 @@ var DashboardPowerups = (function () {
         simpleMovingAverage();
         let ema = expontialMovingAverage();
         let m = mean();
-        let stdev = standardDeviation(m);
+        standardDeviation(m);
         let stdevs = bands(ema);
         let linear = linearTrendLine();
         linearProjection(linear);
