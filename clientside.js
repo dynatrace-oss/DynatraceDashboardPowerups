@@ -1430,30 +1430,32 @@ var DashboardPowerups = (function () {
                 && opts[k].hasOwnProperty("id"))
                 delete opts[k].id;
         });
-        if(!opts.legend) opts.legend = {};
+        if (!opts.legend) opts.legend = {};
         opts.legend.enabled = true;
-        let newChart = Highcharts.chart(opts);
+        let newChart = Highcharts.chart($newContainer[0], opts, () => {
+            //Step 2 - forecast into the future
+            let forecastTitle = `!PU(forecast):alg=Linear;p=${cast};color=${castcolor}`;
+            pub.PUforecast(newChart, forecastTitle);
 
-        //Step 2 - forecast into the future
-        let forecastTitle = `!PU(forecast):alg=Linear;p=${cast};color=${castcolor}`;
-       pub.PUforecast(newChart, forecastTitle);
-
-        //Step 3 - add plotline for threshold
-        /*if (limit) {
-            newChart.yAxis[0].update({
-                plotLines: {
-                    color: limcolor,
-                    value: limit
-                }
-            }, false)
-        }*/
-
-        newChart.update({
-            title: {
-                text: `Cumulative`
+            //Step 3 - add plotline for threshold
+            if (limit) {
+                newChart.yAxis[0].update({
+                    plotLines: {
+                        color: limcolor,
+                        value: limit
+                    }
+                }, false)
             }
-        })
-        //Step 4 - determine if forecast crosses threshold, if so add plotline for breach point
+
+            newChart.update({
+                title: {
+                    text: `Cumulative`
+                }
+            })
+            //Step 4 - determine if forecast crosses threshold, if so add plotline for breach point
+        });
+
+
     }
 
     pub.PUforecast = function (chart, title) { //!PU(forecast):alg=sma;n=5;color=lightblue
