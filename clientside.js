@@ -1372,7 +1372,7 @@ var DashboardPowerups = (function () {
 
     pub.PUcumulative = function (chart, title) { //!PU(cumulative):cast=5;castcolor=lightblue;lim=100;limcolor=red
         let data = chart.series[0].options.data
-            .filter(x => !isNaN(x[1]));
+            .filter(x => x[1] !== null && !isNaN(x[1]));
         let runningTotal = 0;
         let args = argsplit(title, PU_CUMULATIVE);
         let $oldContainer = $(chart.container);
