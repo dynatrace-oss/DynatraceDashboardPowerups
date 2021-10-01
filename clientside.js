@@ -1472,7 +1472,10 @@ var DashboardPowerups = (function () {
                     plotLines: [{
                         color: critcolor,
                         value: breach[0],
-                        width: 2
+                        width: 2,
+                        label: {
+                            text: new Date(breach[0]).toLocaleDateString()
+                        }
                     }]
                 }, true)
             } else {
@@ -1482,7 +1485,10 @@ var DashboardPowerups = (function () {
                         plotLines: [{
                             color: warncolor,
                             value: breach[0],
-                            width: 2
+                            width: 2,
+                            label: {
+                                text: new Date(breach[0]).toLocaleDateString()
+                            }
                         }]
                     }, true)
                 }
