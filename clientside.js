@@ -1429,7 +1429,9 @@ var DashboardPowerups = (function () {
                 && opts[k] != null
                 && opts[k].hasOwnProperty("id"))
                 delete opts[k].id;
-        })
+        });
+        if(!opts.legend) opts.legend = {};
+        opts.legend.enabled = true;
         let newChart = Highcharts.chart(opts);
 
         //Step 2 - forecast into the future
