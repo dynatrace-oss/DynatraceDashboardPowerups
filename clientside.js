@@ -1417,6 +1417,7 @@ var DashboardPowerups = (function () {
 
         let opts = JSON.parse(JSON.stringify(chart.userOptions));
         opts.series[0].data = newData;
+        opts.series[0].name += " (cumulative)";
         opts.chart.renderTo = $newContainer[0];
         Object.keys(opts).forEach(k => { //remove old IDs
             if (Array.isArray(opts[k])) {
@@ -1432,6 +1433,8 @@ var DashboardPowerups = (function () {
         });
         if (!opts.legend) opts.legend = {};
         opts.legend.enabled = true;
+        if (!opts.title) opts.title = {};
+        opts.title.text = "Cumulative";
         Highcharts.chart($newContainer[0], opts, (newChart) => {
             //Step 2 - forecast into the future
             let forecastTitle = `!PU(forecast):alg=Linear;p=${cast};color=${castcolor}`;
