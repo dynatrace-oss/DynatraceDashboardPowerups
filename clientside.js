@@ -1448,7 +1448,7 @@ var DashboardPowerups = (function () {
                         color: limcolor,
                         value: limit
                     }
-                }, false)
+                }, true)
             }
 
             /*newChart.update({
