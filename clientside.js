@@ -1394,7 +1394,10 @@ var DashboardPowerups = (function () {
 
         //Step 1 - Create new chart with cumulative series
         $tile.find(`.powerupCumulative`).each((i, el) => { //cleanup any previous runs
-            Highcharts.charts.filter(c => c.container === el).forEach(oc => {
+            Highcharts.charts
+            .filter(x=>typeof(x)!="undefined")
+            .filter(c => c.container === el)
+            .forEach(oc => {
                 oc.destroy();
             })
             $(el).remove();
