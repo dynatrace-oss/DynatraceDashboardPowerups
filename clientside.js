@@ -1446,7 +1446,8 @@ var DashboardPowerups = (function () {
                 newChart.yAxis[0].update({
                     plotLines: [{
                         color: limcolor,
-                        value: limit
+                        value: limit,
+                        width: 2
                     }]
                 }, true)
             }
