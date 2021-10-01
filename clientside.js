@@ -1826,8 +1826,8 @@ var DashboardPowerups = (function () {
                 .forEach(yaxis => {
                     let min=0,max=0;
                     yaxis.series.forEach(s => {
-                        min = Math.min.apply(Math, s.data.map(d => d.y).concat([min]));
-                        max = Math.max.apply(Math, s.data.map(d => d.y).concat([max]));
+                        min = Math.min.apply(Math, s.userOptions.data.map(d => d[1]).concat([min]));
+                        max = Math.max.apply(Math, s.userOptions.data.map(d => d[1]).concat([max]));
                     })
                     let tick = yaxis.tickInterval;
                     min = Math.round((min * .9) / tick) * tick;
