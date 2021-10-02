@@ -754,7 +754,10 @@ var DashboardPowerups = (function () {
                     .filter(x => typeof (x) != "undefined")
                     .filter(x => x.container === oldcontainer);
                 if (oldcharts.length)
-                    oldcharts.forEach(oc => oc.destroy());
+                    oldcharts.forEach(oc => {
+                        console.log(`POWERUP: INFO - Destroy old chart (index:${oc.index})`)
+                        oc.destroy()
+                    });
             }
             $(el).remove();
         });
