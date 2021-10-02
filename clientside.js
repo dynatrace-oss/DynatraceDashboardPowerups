@@ -1387,7 +1387,7 @@ var DashboardPowerups = (function () {
 
     pub.PUcumulative = function (chart, title) { //!PU(cumulative):cast=5;castcolor=lightblue;lim=100;limcolor=red
         if(typeof(chart) == "undefined") return false;
-        
+
         let data = chart.series[0].options.data
             .filter(x => x[1] !== null && !isNaN(x[1]));
         let runningTotal = 0;
@@ -1432,6 +1432,8 @@ var DashboardPowerups = (function () {
             ])
         })
 
+        if(typeof(chart.userOptions) == "undefined")
+            return false;
         let opts = JSON.parse(JSON.stringify(chart.userOptions));
         opts.series[0].data = newData;
         opts.series[0].name += " (cumulative)";
