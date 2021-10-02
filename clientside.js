@@ -751,11 +751,13 @@ var DashboardPowerups = (function () {
         .filter(x => typeof (x) != "undefined")
         .forEach(chart => {
             let $container = $(chart.container);
+            let $parent = $container.parent();
             let $tile = $(chart.container).parents(TILE_SELECTOR);
             if($tile[0] === tile[0]
-                && $container.parent().is(selector)){
+                && $parent.is(selector)){
                 console.log(`POWERUP: INFO - Destroy old chart (index:${chart.index})`)
-                chart.destroy()
+                chart.destroy();
+                $parent.remove();
             }
         })
 
