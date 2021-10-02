@@ -747,7 +747,19 @@ var DashboardPowerups = (function () {
     }
 
     const cleanupOldChartsInTile = (tile,selector) => {
-        $(tile).find(selector).each((i, el) => {
+        let oldcharts = Highcharts.charts
+        .filter(x => typeof (x) != "undefined")
+        .forEach(chart => {
+            let $container = $(x.container);
+            let $tile = $(x.container).parents(TILE_SELECTOR);
+            if($tile.is(tile)
+                && $container.is(selector)){
+                console.log(`POWERUP: INFO - Destroy old chart (index:${chart.index})`)
+                chart.destroy()
+            }
+        })
+
+        /*$(tile).find(selector).each((i, el) => {
             let oldcontainer = $(el).find(`.highcharts-container`)[0];
             if (oldcontainer) {
                 let oldcharts = Highcharts.charts
@@ -761,7 +773,9 @@ var DashboardPowerups = (function () {
             }
             $(el).remove();
         });
+        cleanOldChartsWithoutContainer();*/
     }
+
 
     const waitForHCmod = (mod, fn, retries = 5) => {
         if (retries < 1) {
