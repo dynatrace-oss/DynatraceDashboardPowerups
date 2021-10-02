@@ -1103,9 +1103,14 @@ var DashboardPowerups = (function () {
             wrapExporting();
             Highcharts.charts
                 .filter(x => typeof (x) != "undefined")
-                //.filter(x => !x.poweredup)
+                .filter(x => !x.PowerUpCreated)
                 .filter(x => typeof (x.container) != "undefined")
                 .filter(x => x.options.type != 'sankey' && x.options.type != 'heatmap')
+                //NOTICE: some powerups modify an existing chart, others hide the old chart and create a new one
+                //          Be sure to exclude any created charts here to avoid duplicating
+                //          In general, PUs that just change visuals are fine to modify existing chart.
+                //          Ones that change or create data, should hide the existing chart for safe keeping.
+                //          Be sure to set PowerUpCreated to exclude those created charts.
                 .forEach(chart => {
                     let p = pub.PUHighchart(chart);
                     promises.push(p);
@@ -1459,6 +1464,7 @@ var DashboardPowerups = (function () {
         if (!opts.title) opts.title = {};
         opts.title.text = "Cumulative";
         Highcharts.chart($newContainer[0], opts, (newChart) => {
+            newChart.PowerUpCreated = true; //prevent powering up the powerup
 
             //Step 2 - forecast into the future
             let forecastTitle = `!PU(forecast):alg=Linear;p=${cast};colors=${castcolor};range=false`;
