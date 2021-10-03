@@ -6165,10 +6165,12 @@ var DashboardPowerups = (function () {
 
                 let formattedDate = dateFns.format(dateMs, fmt);
 
+                let $wrapper = $(`<div>`)
                 let $sub = $(`<span>`)
                     .text(formattedDate)
                     .css("color", color)
-                    .css("font-size", size);
+                    .css("font-size", size)
+                    .appendTo($wrapper);
 
                 //swap markdown content
                 html = html.replace(subtext, $sub.html());
