@@ -746,20 +746,20 @@ var DashboardPowerups = (function () {
         }
     }
 
-    const cleanupOldChartsInTile = (tile,selector) => {
+    const cleanupOldChartsInTile = (tile, selector) => {
         let oldcharts = Highcharts.charts
-        .filter(x => typeof (x) != "undefined")
-        .forEach(chart => {
-            let $container = $(chart.container);
-            let $parent = $container.parent();
-            let $tile = $(chart.container).parents(TILE_SELECTOR);
-            if($tile[0] === tile[0]
-                && $parent.is(selector)){
-                console.log(`POWERUP: INFO - Destroy old chart (index:${chart.index})`)
-                chart.destroy();
-                $parent.remove();
-            }
-        })
+            .filter(x => typeof (x) != "undefined")
+            .forEach(chart => {
+                let $container = $(chart.container);
+                let $parent = $container.parent();
+                let $tile = $(chart.container).parents(TILE_SELECTOR);
+                if ($tile[0] === tile[0]
+                    && $parent.is(selector)) {
+                    console.log(`POWERUP: INFO - Destroy old chart (index:${chart.index})`)
+                    chart.destroy();
+                    $parent.remove();
+                }
+            })
     }
 
 
@@ -1394,7 +1394,7 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUcumulative = function (chart, title) { //!PU(cumulative):cast=5;castcolor=lightblue;lim=100;limcolor=red
-        if(typeof(chart) == "undefined") return false;
+        if (typeof (chart) == "undefined") return false;
 
         let data = chart.series[0].options.data
             .filter(x => x[1] !== null && !isNaN(x[1]));
@@ -1420,7 +1420,7 @@ var DashboardPowerups = (function () {
         }
 
         //Step 1 - Create new chart with cumulative series
-        cleanupOldChartsInTile($tile,`.powerupCumulative`);
+        cleanupOldChartsInTile($tile, `.powerupCumulative`);
         $oldContainer.parent().addClass('powerupHide');
         $(LEGEND_SELECTOR).addClass('powerupHide');
         let $newContainer = $('<div>')
@@ -1440,11 +1440,11 @@ var DashboardPowerups = (function () {
             ])
         })
 
-        if(typeof(chart.userOptions) == "undefined")
+        if (typeof (chart.userOptions) == "undefined")
             return false;
         let opts = JSON.parse(JSON.stringify(chart.userOptions));
         opts.series[0].data = newData;
-        
+
         opts.series[0].showInLegend = true;
         opts.chart.renderTo = $newContainer[0];
         Object.keys(opts).forEach(k => { //remove old IDs
@@ -1469,7 +1469,7 @@ var DashboardPowerups = (function () {
             //Step 2 - forecast into the future
             let forecastTitle = `!PU(forecast):p=${cast};colors=${castcolor};range=false;leg=Linear,Projection`;
             pub.PUforecast(newChart, forecastTitle);
-            newChart.series[0].update({name: opts.series[0].name + " (cumulative)"},false);
+            newChart.series[0].update({ name: opts.series[0].name + " (cumulative)" }, false);
 
             //Step 3 - add plotline for threshold
             if (limit) {
@@ -1541,7 +1541,7 @@ var DashboardPowerups = (function () {
         let args = argsplit(title, PU_FORECAST);
 
         let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
-        let legendList = ((args.find(x => x[0] == "leg") || [])[1] 
+        let legendList = ((args.find(x => x[0] == "leg") || [])[1]
             || IDs.join(","))
             .split(',');
         let zIndex = Number((args.find(x => x[0] == "zIndex") || [])[1]);
@@ -6130,41 +6130,60 @@ var DashboardPowerups = (function () {
             let $container = $(el);
             let $tile = $container.parents(".grid-tile");
             let text = $container.text();
-
             if (!text.includes(PU_DATE)) return;
-            if (pub.config.Powerups.debug) console.log("Powerup: date power-up found");
-            let args = argsplit(text, PU_DATE);
 
-            let res = (args.find(x => x[0] == "res") || [])[1];
-            let fmt = (args.find(x => x[0] == "fmt") || [])[1];
-            let color = (args.find(x => x[0] == "color") || [])[1];
-            let size = (args.find(x => x[0] == "size") || [])[1] || "20px";
+            $container.children(".powerupDate").remove(); //remove old maths before we get started
+            $container.children().each((i, el) => { //handle each paragraph individually
+                let $para = $(el);
+                let paratxt = $para.text();
+                if (!paratxt.includes(PU_DATE)) return; //not important, next paragraph
+                
+                if (pub.config.Powerups.debug) console.log("Powerup: date power-up found");
+                let args = argsplit(paratxt, PU_DATE);
 
-            let dtDate = dtDateMath.resolve(res);
-            if (!Array.isArray(dtDate) || dtDate.length < 3) {
-                let error = `Powerup: ERROR - ${PU_DATE} - dtDateMath did not return a valid result for: "${res}"`;
-                console.log(error);
-                errorBeacon(error);
-                return true; //return non-false to 'continue'
-            }
-            let from = dtDate[0];
-            let to = dtDate[1];
-            let dateMs = dtDate[2].start;
+                let res = (args.find(x => x[0] == "res") || [])[1];
+                let fmt = (args.find(x => x[0] == "fmt") || [])[1];
+                let color = (args.find(x => x[0] == "color") || [])[1];
+                let size = (args.find(x => x[0] == "size") || [])[1] || "20px";
+                let full = (args.find(x => x[0] == "full") || [])[1] == "false" ? false : true;
+
+                let dtDate = dtDateMath.resolve(res);
+                if (!Array.isArray(dtDate) || dtDate.length < 3) {
+                    let error = `Powerup: ERROR - ${PU_DATE} - dtDateMath did not return a valid result for: "${res}"`;
+                    console.log(error);
+                    errorBeacon(error);
+                    return true; //return non-false to 'continue'
+                }
+                let from = dtDate[0];
+                let to = dtDate[1];
+                let dateMs = dtDate[2].start;
 
 
-            let formattedDate = dateFns.format(dateMs, fmt);
+                let formattedDate = dateFns.format(dateMs, fmt);
 
-            //swap markdown content
-            $container.hide();
-            let $newContainer = $("<div>")
-                .addClass("powerupDate")
-                .insertAfter($container);
-            let h1 = $("<h2>")
-                .text(formattedDate)
-                .css("color", color)
-                .css("font-size", size)
-                .appendTo($newContainer);
-            powerupsFired['PU_DATE'] ? powerupsFired['PU_DATE']++ : powerupsFired['PU_DATE'] = 1;
+                //swap markdown content
+                if (full) {
+                    $container.hide();
+                    let $newContainer = $("<div>")
+                        .addClass("powerupDate")
+                        .insertAfter($container);
+                    let h1 = $("<h2>")
+                        .text(formattedDate)
+                        .css("color", color)
+                        .css("font-size", size)
+                        .appendTo($newContainer);
+                } else {
+                    $para.hide();
+                    $h1 = $("<h1>")
+                        .text(sVal)
+                        .css("font-size", size)
+                        .addClass("powerupDate")
+                        .insertAfter($para);
+                    $h1.siblings().addClass("powerupDateText");
+                    $para.parent().attr("class", "");
+                }
+                powerupsFired['PU_DATE'] ? powerupsFired['PU_DATE']++ : powerupsFired['PU_DATE'] = 1;
+            });
         });
     }
 
@@ -6207,8 +6226,8 @@ var DashboardPowerups = (function () {
                 let digits = Number(((args.find(x => x[0] == "digits") || [])[1]) || 1);
 
                 //cleanup any old gauges
-                cleanupOldChartsInTile($tile,`.powerupGauge`);
-                
+                cleanupOldChartsInTile($tile, `.powerupGauge`);
+
                 //swap
                 $panel.hide();
                 let val = Number($panel.find(VAL_SELECTOR).text().replace(/,/g, ''));
@@ -6837,8 +6856,8 @@ var DashboardPowerups = (function () {
                 //swap in a container for our new chart
                 let $table = $tile.find(TABLE_SELECTOR);
                 $table.hide();
-                cleanupOldChartsInTile($tile,`.powerupHoneycomb`);
-                
+                cleanupOldChartsInTile($tile, `.powerupHoneycomb`);
+
                 let $container = $("<div>")
                     .addClass('powerupHoneycomb')
                     .insertAfter($table);
@@ -7025,8 +7044,8 @@ var DashboardPowerups = (function () {
                 //swap in a container for our new chart
                 let $table = $tile.find(TABLE_SELECTOR);
                 $table.hide();
-                cleanupOldChartsInTile($tile,`.powerupTreemap`);
-                
+                cleanupOldChartsInTile($tile, `.powerupTreemap`);
+
                 let $container = $("<div>")
                     .addClass('powerupTreemap')
                     .insertAfter($table);
