@@ -6130,11 +6130,18 @@ var DashboardPowerups = (function () {
             let $container = $(el);
             let $tile = $container.parents(".grid-tile");
             let text = $container.text();
+            let html = $container.html();
             if (!text.includes(PU_DATE)) return;
 
-            let matches = text.matchAll(/(!PU\(date\):[^ ]+)/g);
-            if(matches) matches.forEach(subtext => {
-                
+            $container.hide();
+            let $newContainer = $("<div>")
+                .html(html)
+                .addClass("powerupDate")
+                .insertAfter($container);
+
+            let matches = text.match(/(!PU\(date\):[^ ]+)/g);
+            if (matches) matches.forEach(subtext => {
+
                 if (pub.config.Powerups.debug) console.log("Powerup: date power-up found");
                 let args = argsplit(subtext, PU_DATE);
 
@@ -6158,8 +6165,14 @@ var DashboardPowerups = (function () {
 
                 let formattedDate = dateFns.format(dateMs, fmt);
 
+                let $sub = $(`<span>`)
+                    .text(formattedDate)
+                    .css("color", color)
+                    .css("font-size", size);
+
                 //swap markdown content
-                if (full) {
+                html = html.replace(subtext, $sub.html());
+                /*if (full) {
                     $container.hide();
                     let $newContainer = $("<div>")
                         .addClass("powerupDate")
@@ -6179,9 +6192,10 @@ var DashboardPowerups = (function () {
                         .insertAfter($para);
                     $h1.siblings().addClass("powerupDateText");
                     $para.parent().attr("class", "");
-                }
+                }*/
                 powerupsFired['PU_DATE'] ? powerupsFired['PU_DATE']++ : powerupsFired['PU_DATE'] = 1;
             });
+            $newContainer.html(html);
         });
     }
 
