@@ -537,6 +537,7 @@ Explanation:
     - `Mean` - Determines the average or mean across the timeseries also showing 1 standard devation for the timeseries
     - `Linear` - Linear regression of the timeseries
     - `Projection` - (on by default if `p` > 0) Projects the Linear Regression `p` points into the future. Additionally, linear regressions are performed on +/- 1 standard deviation.
+- `leg=SMA,EMA,Mean,Stdev,Bands,Linear` - Which series to show in the legend, default shown
 - `colors=#2ab6f4,#4fd5e0,#748cff,#4fd5e0,#fd8232` - colors to use for analysis series.
 - `zIndex=2` - (optional) Place forecast series in foreground (2+) or background (1-). Default is background.
 
@@ -655,3 +656,20 @@ Required USQL:
 
 Example:
 ![timeonpage](Assets/timeonpage.png)
+
+### Cumulative
+Compare a running total of a timeseries versus a limit. Project forecast growth into the future and predict threshold breach.
+
+Syntax:
+- `Cumulative DDUs !PU(cumulative):cast=20%;lim=650`
+
+Explanation:
+- `cast=20%` - how far to forecast into the future. `cast=20` is 20 data points, `cast=20%` is 20% of the current interval shown.
+- `lim=650` - threshold limit. A predictive breach is shown in yellow and an existing breach is shown in red.
+- `castcolor=` - (optional) color of the forecast
+- `limcolor=` - (optional) color of the threshold limit line
+- `warncolor=` - (optional) color for a predictive breach
+- `critcolor=` - (optional) color for an existing breach
+
+Example:
+![cumulative](Assets/cumulative.png)
