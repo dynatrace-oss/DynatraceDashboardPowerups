@@ -6175,8 +6175,9 @@ var DashboardPowerups = (function () {
                 } else {
                     $para.hide();
                     $h1 = $("<h1>")
-                        .text(sVal)
+                        .text(formattedDate)
                         .css("font-size", size)
+                        .css("color", color)
                         .addClass("powerupDate")
                         .insertAfter($para);
                     $h1.siblings().addClass("powerupDateText");
