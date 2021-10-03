@@ -6132,7 +6132,7 @@ var DashboardPowerups = (function () {
             let text = $container.text();
             if (!text.includes(PU_DATE)) return;
 
-            let matches = text.matchAll(/(!PU\(date\):[^ ]+)/);
+            let matches = text.matchAll(/(!PU\(date\):[^ ]+)/g);
             if(matches) matches.forEach(subtext => {
                 
                 if (pub.config.Powerups.debug) console.log("Powerup: date power-up found");
