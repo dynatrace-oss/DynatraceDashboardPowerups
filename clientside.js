@@ -6132,20 +6132,16 @@ var DashboardPowerups = (function () {
             let text = $container.text();
             if (!text.includes(PU_DATE)) return;
 
-            $container.children(".powerupDate").remove(); //remove old maths before we get started
-            $container.children().each((i, el) => { //handle each paragraph individually
-                let $para = $(el);
-                let paratxt = $para.text();
-                if (!paratxt.includes(PU_DATE)) return; //not important, next paragraph
+            text.split(PU_DATE).forEach(subtext => {
                 
                 if (pub.config.Powerups.debug) console.log("Powerup: date power-up found");
-                let args = argsplit(paratxt, PU_DATE);
+                let args = argsplit(subtext, PU_DATE);
 
                 let res = (args.find(x => x[0] == "res") || [])[1];
                 let fmt = (args.find(x => x[0] == "fmt") || [])[1];
                 let color = (args.find(x => x[0] == "color") || [])[1];
                 let size = (args.find(x => x[0] == "size") || [])[1] || "20px";
-                let full = (args.find(x => x[0] == "full") || [])[1] == "false" ? false : true;
+                //let full = (args.find(x => x[0] == "full") || [])[1] == "false" ? false : true;
 
                 let dtDate = dtDateMath.resolve(res);
                 if (!Array.isArray(dtDate) || dtDate.length < 3) {
