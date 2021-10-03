@@ -760,22 +760,6 @@ var DashboardPowerups = (function () {
                 $parent.remove();
             }
         })
-
-        /*$(tile).find(selector).each((i, el) => {
-            let oldcontainer = $(el).find(`.highcharts-container`)[0];
-            if (oldcontainer) {
-                let oldcharts = Highcharts.charts
-                    .filter(x => typeof (x) != "undefined")
-                    .filter(x => x.container === oldcontainer);
-                if (oldcharts.length)
-                    oldcharts.forEach(oc => {
-                        console.log(`POWERUP: INFO - Destroy old chart (index:${oc.index})`)
-                        oc.destroy()
-                    });
-            }
-            $(el).remove();
-        });
-        cleanOldChartsWithoutContainer();*/
     }
 
 
@@ -1460,7 +1444,7 @@ var DashboardPowerups = (function () {
             return false;
         let opts = JSON.parse(JSON.stringify(chart.userOptions));
         opts.series[0].data = newData;
-        opts.series[0].name += " (cumulative)";
+        
         opts.series[0].showInLegend = true;
         opts.chart.renderTo = $newContainer[0];
         Object.keys(opts).forEach(k => { //remove old IDs
@@ -1483,8 +1467,9 @@ var DashboardPowerups = (function () {
             newChart.PowerUpCreated = true; //prevent powering up the powerup
 
             //Step 2 - forecast into the future
-            let forecastTitle = `!PU(forecast):alg=Linear;p=${cast};colors=${castcolor};range=false`;
+            let forecastTitle = `!PU(forecast):p=${cast};colors=${castcolor};range=false;leg=Linear,Projection`;
             pub.PUforecast(newChart, forecastTitle);
+            newChart.series[0].update({name: opts.series[0].name + " (cumulative)"},false);
 
             //Step 3 - add plotline for threshold
             if (limit) {
@@ -1556,6 +1541,9 @@ var DashboardPowerups = (function () {
         let args = argsplit(title, PU_FORECAST);
 
         let analysis = ((args.find(x => x[0] == "analysis") || [])[1] || "Linear").split(',');
+        let legendList = ((args.find(x => x[0] == "leg") || [])[1] 
+            || IDs.join(","))
+            .split(',');
         let zIndex = Number((args.find(x => x[0] == "zIndex") || [])[1]);
         let showRange = (args.find(x => x[0] == "range") || [])[1] == "false" ? false : true;
         if (isNaN(zIndex)) zIndex = undefined;
@@ -1653,7 +1641,8 @@ var DashboardPowerups = (function () {
                 data: sma,
                 color: nextColor(),
                 visible: analysis.includes("SMA"),
-                zIndex: zIndex
+                zIndex: zIndex,
+                showInLegend: legendList.includes("SMA")
             }, false);
         }
 
@@ -1675,7 +1664,8 @@ var DashboardPowerups = (function () {
                 data: ema,
                 color: nextColor(),
                 visible: analysis.includes("EMA"),
-                zIndex: zIndex
+                zIndex: zIndex,
+                showInLegend: legendList.includes("EMA")
             }, false);
 
             return ema;
@@ -1703,7 +1693,8 @@ var DashboardPowerups = (function () {
                 data: mean,
                 color: nextColor(),
                 visible: analysis.includes("Mean"),
-                zIndex: zIndex
+                zIndex: zIndex,
+                showInLegend: legendList.includes("Mean")
             }, false);
             return m;
         }
@@ -1740,7 +1731,8 @@ var DashboardPowerups = (function () {
                 opacity: 0.3,
                 linkedTo: "Mean",
                 visible: analysis.includes("Mean"),
-                zIndex: zIndex
+                zIndex: zIndex,
+                showInLegend: legendList.includes("Stdev")
             }, false);
         }
 
@@ -1785,7 +1777,8 @@ var DashboardPowerups = (function () {
                 opacity: 0.3,
                 linkedTo: "EMA",
                 visible: analysis.includes("EMA"),
-                zIndex: zIndex
+                zIndex: zIndex,
+                showInLegend: legendList.includes("Bands")
             }, false);
 
             return stdevs;
@@ -1833,7 +1826,8 @@ var DashboardPowerups = (function () {
                 data: line.line,
                 color: nextColor(),
                 visible: analysis.includes("Linear"),
-                zIndex: zIndex
+                zIndex: zIndex,
+                showInLegend: legendList.includes("Linear")
             }, false);
             return line;
         }
@@ -1862,7 +1856,8 @@ var DashboardPowerups = (function () {
                 data: newLine,
                 color: nextColor(),
                 dashStyle: "shortDash",
-                zIndex: zIndex
+                zIndex: zIndex,
+                showInLegend: legendList.includes("Projection")
             }, false);
 
             chart.axes.filter(x => x.isXAxis)[0].setExtremes(
@@ -1898,7 +1893,8 @@ var DashboardPowerups = (function () {
                 type: 'arearange',
                 linkedTo: "Projection",
                 opacity: 0.3,
-                zIndex: zIndex
+                zIndex: zIndex,
+                showInLegend: legendList.includes("RangeProjection")
             }, false);
 
             chart.axes.filter(x => x.isXAxis)[0].setExtremes(
