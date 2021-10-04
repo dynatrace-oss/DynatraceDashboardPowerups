@@ -5859,6 +5859,7 @@ var DashboardPowerups = (function () {
                 let currency = (args.find(x => x[0] == "currency") || [])[1];
                 let prio = Number((args.find(x => x[0] == "prio") || [])[1]) || 0;
                 let unit = (args.find(x => x[0] == "unit") || [])[1];
+                let dig = Number((args.find(x => x[0] == "dig") || [])[1]) || 2;
 
                 let scope = scopeStr.trim().split(',')
                     .map(x => (x.includes(':')
@@ -5961,7 +5962,7 @@ var DashboardPowerups = (function () {
                 if (currency)
                     fmt = Intl.NumberFormat(undefined, { style: 'currency', currency: currency }).format;
                 else
-                    fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format;
+                    fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: dig }).format;
                 let sVal = fmt(val);
 
                 //Format with target unit

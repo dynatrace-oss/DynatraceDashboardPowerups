@@ -329,6 +329,7 @@ Explanation:
 - `currency=` - (optional) display according to an ISO currency code, e.g. `USD`, `EUR`, `CNY`, etc
 - `prio=` - (optional) if you need to ensure the order of which math operations are performed in which order, set to an integer. Higher happens first. Please note: all PU(vlookup) operations happen before all PU(math), but this allows you to reliably reference other math results.
 - `unit=` - (optional) use unit aware calculations, ie look for a unit (e.g. `kB/s`) in linked tiles and convert to target unit (e.g. `MB/s`). See [units](units.md) for supported units and conversions.
+- `dig=` - (optional) set `maximumFractionDigits` to number, defaults to 2.
 
 Example:
 ![Math](Assets/mathPU.png)
