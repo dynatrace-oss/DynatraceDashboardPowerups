@@ -6173,7 +6173,7 @@ var DashboardPowerups = (function () {
                     .appendTo($wrapper);
 
                 //swap markdown content
-                html = html.replace(subtext, $sub.html());
+                html = html.replace(subtext, $wrapper.html());
                 /*if (full) {
                     $container.hide();
                     let $newContainer = $("<div>")
