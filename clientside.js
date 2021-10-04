@@ -6514,7 +6514,7 @@ var DashboardPowerups = (function () {
                         if (percent) //add it back if needed
                             vlookupVal += ' %';
                     } else if(typeof(vlookupVal) == "number") {
-                        vlookupVal = fmt(num);
+                        vlookupVal = fmt(vlookupVal);
                     }
 
                     //optionally compare to another table value
