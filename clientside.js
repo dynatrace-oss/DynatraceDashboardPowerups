@@ -54,8 +54,8 @@ var DashboardPowerups = (function () {
     const TILE_NOCONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:nth-of-type(3)';
     const DASHBOARD_MENU_SELECTOR = '[uitestid="gwt-debug-homeContextMenu"]';
     const USQL_SELECTOR = '[uitestid="gwt-debug-dtaqlTile"]'; //CAUTION: this is sometime repeated within the DOM heirarchy for a tile
-    const START_DATE_SELECTOR = '[uitestid="gwt-debug-resolvedStartDate"]';
-    const END_DATE_SELECTOR = '[uitestid="gwt-debug-resolvedEndDate"]';
+    const START_DATE_SELECTOR = '[uitestid="gwt-debug-resolvedStartDate"]:visible';
+    const END_DATE_SELECTOR = '[uitestid="gwt-debug-resolvedEndDate"]:visible';
 
     const SELECTORS = {
         GRID_SELECTOR: GRID_SELECTOR, VIEWPORT_SELECTOR: VIEWPORT_SELECTOR, TITLE_SELECTOR: TITLE_SELECTOR, VAL_SELECTOR: VAL_SELECTOR,
