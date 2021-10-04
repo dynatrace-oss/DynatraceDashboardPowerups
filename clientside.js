@@ -6150,9 +6150,9 @@ var DashboardPowerups = (function () {
 
                 let res = (args.find(x => x[0] == "res") || [])[1];
                 let fmt = (args.find(x => x[0] == "fmt") || [])[1];
+                if(typeof(fmt)) fmt.replace(/_/g,' ');
                 let color = (args.find(x => x[0] == "color") || [])[1];
                 let size = (args.find(x => x[0] == "size") || [])[1] || "20px";
-                //let full = (args.find(x => x[0] == "full") || [])[1] == "false" ? false : true;
 
                 let gtss = $(START_DATE_SELECTOR).text();
                 let gtse = $(END_DATE_SELECTOR).text();
