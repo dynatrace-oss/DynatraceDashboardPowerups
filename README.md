@@ -408,6 +408,7 @@ Options:
 - `notfound=0` - if value isn't found, instead use this value. Defaults to blank. Consider setting to zero if math tiles depend on this tile.
 - `size=14px` - optionally change size of text, defaults to 36px.
 - `unit=s` - optionally convert the unit, for example, if the USQL table returns results in `ms`, `unit=s` will convert to seconds. See [units](units.md) for supported units and conversions.
+- `dig=2` - (optional) set `maximumFractionDigits` to number, defaults to 2.
 
 Optional comparison:
 - `compareTable=table` - reference the table tile, ie put `!PU(link):table` in the title of the USQL tile
