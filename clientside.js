@@ -6910,11 +6910,12 @@ var DashboardPowerups = (function () {
                         }
                     }
 
-                    if (base === "low") {
+                    let usqlTile = $tile.find(USQL_SELECTOR).length > 0;
+                    if (base === "low" && usqlTile) {
                         if (p.value < warn) p.color = green;
                         else if (p.value >= crit) p.color = red;
                         else p.color = yellow;
-                    } else if (base === "high") {
+                    } else if (base === "high" && usqlTile) {
                         if (p.value > warn) p.color = green;
                         else if (p.value <= crit) p.color = red;
                         else p.color = yellow;
