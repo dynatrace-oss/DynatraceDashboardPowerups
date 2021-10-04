@@ -6141,6 +6141,7 @@ var DashboardPowerups = (function () {
 
             let matches = text.match(/(!PU\(date\):[^ ]+)/g);
             if (matches) matches.forEach(subtext => {
+                subtext = subtext.trim();
 
                 if (pub.config.Powerups.debug) console.log("Powerup: date power-up found");
                 let args = argsplit(subtext, PU_DATE);
