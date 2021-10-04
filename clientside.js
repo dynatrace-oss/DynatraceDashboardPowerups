@@ -6157,6 +6157,7 @@ var DashboardPowerups = (function () {
                 let gtss = $(START_DATE_SELECTOR).text();
                 let gtse = $(END_DATE_SELECTOR).text();
                 res = res
+                    .replace(/_/g,' ')
                     .replace(/\$gtss/g,gtss)
                     .replace(/\$gtse/g,gtse);
 
