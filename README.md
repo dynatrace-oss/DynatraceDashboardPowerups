@@ -349,6 +349,7 @@ Explanation:
 - `res=` - resolve this date string, click on global time selector for help with syntax. Use `$gtss` for the global time selector's start time and `$gtse` for end time.
 - `fmt=` - display format, see [date-fns](https://date-fns.org/v1.9.0/docs/format)
 - `color=` - a valid CSS color
+
 **⚠️ NOTE** Do not use a space in either `res` or `fmt`, instead use an underscore which will be replaced with a space at render time.
 
 Example:

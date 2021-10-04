@@ -6452,6 +6452,7 @@ var DashboardPowerups = (function () {
                 let notfound = (args.find(x => x[0] == "notfound") || [])[1] || null;
                 let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
                 let unit = (args.find(x => x[0] == "unit") || [1])[1];
+                let dig = Number((args.find(x => x[0] == "dig") || [])[1]) || 2;
 
                 //find the table
                 let tabletile = pub.findLinkedTile(link, PU_VLOOKUP);
@@ -6489,6 +6490,7 @@ var DashboardPowerups = (function () {
                     vlookupVal = dataTable.normalTable[rowIdx][colName];
 
                     //handle unit conversion
+                    let fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: dig }).format;
                     if (unit) {
                         let sUnit = (vlookupVal.match(/[^0-9]+$/) || [])[0];
                         let num = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
@@ -6499,10 +6501,18 @@ var DashboardPowerups = (function () {
                                 let conv = sourceUnit.conversions.find(c => c.unit == unit);
                                 if (conv && conv.factor) {
                                     num *= conv.factor;
+                                    num = fmt(num);
                                     vlookupVal = `${num} ${unit}`;
                                 }
                             }
                         }
+                    } else {
+                        let percent = vlookupVal.includes('%');
+                        let num = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
+                        if(!isNaN(num))
+                            vlookupVal = fmt(num);
+                        if(percent) //add it back if needed
+                            vlookupVal += ' %';
                     }
 
                     //optionally compare to another table value
