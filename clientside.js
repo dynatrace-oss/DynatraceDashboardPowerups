@@ -6200,7 +6200,7 @@ var DashboardPowerups = (function () {
                 powerupsFired['PU_DATE'] ? powerupsFired['PU_DATE']++ : powerupsFired['PU_DATE'] = 1;
             });
             $newContainer.html(html);
-            $newContainer.find(`:contains('dmpgdhbpdodhddciokonbahhbpaalmco')`).hide();
+            $newContainer.find(`[href*=dmpgdhbpdodhddciokonbahhbpaalmco]`).parent().hide(); //backwards compatability
         });
     }
 
