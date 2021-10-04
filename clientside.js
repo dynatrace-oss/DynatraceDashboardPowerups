@@ -6506,14 +6506,15 @@ var DashboardPowerups = (function () {
                                 }
                             }
                         }
-                    } else {
-                        let percent;
-                        if (typeof (vlookupVal) == "string") percent = vlookupVal.includes('%');
+                    } else if (typeof (vlookupVal) == "string") {
+                        let percent = vlookupVal.includes('%');
                         let num = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
                         if (!isNaN(num))
                             vlookupVal = fmt(num);
                         if (percent) //add it back if needed
                             vlookupVal += ' %';
+                    } else if(typeof(vlookupVal) == "number") {
+                        vlookupVal = fmt(num);
                     }
 
                     //optionally compare to another table value
