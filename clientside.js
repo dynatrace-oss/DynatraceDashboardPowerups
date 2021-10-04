@@ -54,6 +54,8 @@ var DashboardPowerups = (function () {
     const TILE_NOCONTENT_SELECTOR = '.grid-tileContent > div:first-of-type > div:nth-of-type(3)';
     const DASHBOARD_MENU_SELECTOR = '[uitestid="gwt-debug-homeContextMenu"]';
     const USQL_SELECTOR = '[uitestid="gwt-debug-dtaqlTile"]'; //CAUTION: this is sometime repeated within the DOM heirarchy for a tile
+    const START_DATE_SELECTOR = '[uitestid="gwt-debug-resolvedStartDate"]';
+    const END_DATE_SELECTOR = '[uitestid="gwt-debug-resolvedEndDate"]';
 
     const SELECTORS = {
         GRID_SELECTOR: GRID_SELECTOR, VIEWPORT_SELECTOR: VIEWPORT_SELECTOR, TITLE_SELECTOR: TITLE_SELECTOR, VAL_SELECTOR: VAL_SELECTOR,
@@ -6152,6 +6154,12 @@ var DashboardPowerups = (function () {
                 let size = (args.find(x => x[0] == "size") || [])[1] || "20px";
                 //let full = (args.find(x => x[0] == "full") || [])[1] == "false" ? false : true;
 
+                let gtss = $(START_DATE_SELECTOR).text();
+                let gtse = $(END_DATE_SELECTOR).text();
+                res = res
+                    .replace(/\$gtss/g,gtss)
+                    .replace(/\$gtse/g,gtse);
+
                 let dtDate = dtDateMath.resolve(res);
                 if (!Array.isArray(dtDate) || dtDate.length < 3) {
                     let error = `Powerup: ERROR - ${PU_DATE} - dtDateMath did not return a valid result for: "${res}"`;
@@ -6176,27 +6184,7 @@ var DashboardPowerups = (function () {
 
                 //swap markdown content
                 html = html.replace(subtext, $wrapper.html());
-                /*if (full) {
-                    $container.hide();
-                    let $newContainer = $("<div>")
-                        .addClass("powerupDate")
-                        .insertAfter($container);
-                    let h1 = $("<h2>")
-                        .text(formattedDate)
-                        .css("color", color)
-                        .css("font-size", size)
-                        .appendTo($newContainer);
-                } else {
-                    $para.hide();
-                    $h1 = $("<h1>")
-                        .text(formattedDate)
-                        .css("font-size", size)
-                        .css("color", color)
-                        .addClass("powerupDate")
-                        .insertAfter($para);
-                    $h1.siblings().addClass("powerupDateText");
-                    $para.parent().attr("class", "");
-                }*/
+                
                 powerupsFired['PU_DATE'] ? powerupsFired['PU_DATE']++ : powerupsFired['PU_DATE'] = 1;
             });
             $newContainer.html(html);
