@@ -6151,16 +6151,16 @@ var DashboardPowerups = (function () {
 
                 let res = (args.find(x => x[0] == "res") || [])[1];
                 let fmt = (args.find(x => x[0] == "fmt") || [])[1];
-                if(typeof(fmt) == "string") fmt = fmt.replace(/_/g,' ');
+                if (typeof (fmt) == "string") fmt = fmt.replace(/_/g, ' ');
                 let color = (args.find(x => x[0] == "color") || [])[1];
                 let size = (args.find(x => x[0] == "size") || [])[1] || "20px";
 
                 let gtss = $(START_DATE_SELECTOR).text();
                 let gtse = $(END_DATE_SELECTOR).text();
                 res = res
-                    .replace(/_/g,' ')
-                    .replace(/\$gtss/g,gtss)
-                    .replace(/\$gtse/g,gtse);
+                    .replace(/_/g, ' ')
+                    .replace(/\$gtss/g, gtss)
+                    .replace(/\$gtse/g, gtse);
 
                 let dtDate = dtDateMath.resolve(res);
                 if (!Array.isArray(dtDate) || dtDate.length < 3) {
@@ -6186,7 +6186,7 @@ var DashboardPowerups = (function () {
 
                 //swap markdown content
                 html = html.replace(subtext, $wrapper.html());
-                
+
                 powerupsFired['PU_DATE'] ? powerupsFired['PU_DATE']++ : powerupsFired['PU_DATE'] = 1;
             });
             $newContainer.html(html);
@@ -6491,7 +6491,7 @@ var DashboardPowerups = (function () {
 
                     //handle unit conversion
                     let fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: dig }).format;
-                    if (unit) {
+                    if (unit && typeof (vlookupVal) == "string") {
                         let sUnit = (vlookupVal.match(/[^0-9]+$/) || [])[0];
                         let num = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
                         if (sUnit && !isNaN(num)) {
@@ -6507,11 +6507,12 @@ var DashboardPowerups = (function () {
                             }
                         }
                     } else {
-                        let percent = vlookupVal.includes('%');
+                        let percent;
+                        if (typeof (vlookupVal) == "string") percent = vlookupVal.includes('%');
                         let num = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
-                        if(!isNaN(num))
+                        if (!isNaN(num))
                             vlookupVal = fmt(num);
-                        if(percent) //add it back if needed
+                        if (percent) //add it back if needed
                             vlookupVal += ' %';
                     }
 
