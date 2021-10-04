@@ -338,16 +338,17 @@ Note:
 ![Units](Assets/units.png)
 
 ### Date
-This powerup allows you to use Dynatrace date format strings and format in Markdown tiles. 
+This powerup allows you to use Dynatrace date format strings and format in Markdown tiles. Now supports mixing multiple dates with text.
 
 Syntax:
-`!PU(date):res=now-7d/d;fmt=YYYY-MM-DD;color=green`
+`My Date: !PU(date):res=now-7d/d;fmt=YYYY-MM-DD;color=green - !PU(date):res=now-6d/d;fmt=YYYY-MM-DD;color=orange`
 
 Explanation:
 - `!PU(date):` - denotes the date powerup
-- `res=` - resolve this date string, click on global time selector for help with syntax
+- `res=` - resolve this date string, click on global time selector for help with syntax. Use `$gtss` for the global time selector's start time and `$gtse` for end time.
 - `fmt=` - display format, see [date-fns](https://date-fns.org/v1.9.0/docs/format)
 - `color=` - a valid CSS color
+**⚠️ NOTE** Do not use a space in either `res` or `fmt`, instead use an underscore which will be replaced with a space at render time.
 
 Example:
 ![Date](Assets/datePU.png)
