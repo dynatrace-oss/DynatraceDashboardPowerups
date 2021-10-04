@@ -6171,6 +6171,7 @@ var DashboardPowerups = (function () {
                     .text(formattedDate)
                     .css("color", color)
                     .css("font-size", size)
+                    .css("font-weight", "bold")
                     .appendTo($wrapper);
 
                 //swap markdown content
@@ -6199,6 +6200,7 @@ var DashboardPowerups = (function () {
                 powerupsFired['PU_DATE'] ? powerupsFired['PU_DATE']++ : powerupsFired['PU_DATE'] = 1;
             });
             $newContainer.html(html);
+            $newContainer.find(`:contains('dmpgdhbpdodhddciokonbahhbpaalmco')`).hide();
         });
     }
 
