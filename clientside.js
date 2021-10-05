@@ -7399,6 +7399,7 @@ var DashboardPowerups = (function () {
                         }
 
                         let $icon = $tile.find(MENU_ICON_SELECTOR);
+                        $icon.parent().show();
                         $icon
                             .off(`.PUmenu-${name}`)
                             .on(`click.PUmenu-${name}`, menu_icon_click_handler);
