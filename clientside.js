@@ -1913,8 +1913,13 @@ var DashboardPowerups = (function () {
                 .forEach(yaxis => {
                     let min = 0, max = 0;
                     yaxis.series.forEach(s => {
-                        min = Math.min.apply(Math, s.userOptions.data.map(d => d[1]).concat([min]));
-                        max = Math.max.apply(Math, s.userOptions.data.map(d => d[1]).concat([max]));
+                        if (Array.isArray(s.userOptions.data[0])) {
+                            min = Math.min.apply(Math, s.userOptions.data.map(d => d[1]).concat([min]));
+                            max = Math.max.apply(Math, s.userOptions.data.map(d => d[1]).concat([max]));
+                        } else if (typeof (s.userOptions.data[0]) == "object") {
+                            min = Math.min.apply(Math, s.userOptions.data.map(d => d.y).concat([min]));
+                            max = Math.max.apply(Math, s.userOptions.data.map(d => d.y).concat([max]));
+                        }
                     })
                     let tick = yaxis.tickInterval;
                     min = Math.round((min * .9) / tick) * tick;
@@ -6513,7 +6518,7 @@ var DashboardPowerups = (function () {
                             vlookupVal = fmt(num);
                         if (percent) //add it back if needed
                             vlookupVal += ' %';
-                    } else if(typeof(vlookupVal) == "number") {
+                    } else if (typeof (vlookupVal) == "number") {
                         vlookupVal = fmt(vlookupVal);
                     }
 
