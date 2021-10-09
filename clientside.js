@@ -6684,7 +6684,10 @@ var DashboardPowerups = (function () {
                     let csvContent = dataTable.keys.join(',') + '\n';
                     dataTable.normalTable.forEach(row => {
                         dataTable.keys.forEach(k => {
-                            csvContent += row[k] + ',';
+                            if(row[k].includes(','))
+                                csvContent += `"${row[k]}",`;
+                            else 
+                                csvContent += row[k] + ',';
                         });
                         csvContent += '\n';
                     });
