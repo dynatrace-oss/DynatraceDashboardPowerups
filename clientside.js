@@ -6906,7 +6906,7 @@ var DashboardPowerups = (function () {
 
                     let rows = dt.normalTable.length;
                     function add(i, x, y) {
-                        if (i >= rows) return false;
+                        //if (i >= rows) return false;  //why was this here?
                         xt = Math.round(x + y / 2);
                         yt = Math.round(Math.sqrt(3) / 2 * y);
 
