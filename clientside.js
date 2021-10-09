@@ -6637,9 +6637,12 @@ var DashboardPowerups = (function () {
 
                 title = title.split(PU_TABLE)[0].trim();  //for use in filenames etc
                 let col = Number((args.find(x => x[0] == "col") || [])[1]);
+                let scroll = (args.find(x => x[0] == "scroll") || [])[1] == "false" ? false : true; 
 
                 //decorate the table
                 $table.addClass("powerupTable");
+                if(scroll)
+                    $table.addClass("powerupTableScroll");
                 //reorder link to make text selectable
                 $tile.find(`[uitestid="gwt-debug-DTAQL"] > a`)
                     .prependTo($tile.find(`[uitestid="gwt-debug-DTAQL"]`));
