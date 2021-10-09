@@ -6875,9 +6875,9 @@ var DashboardPowerups = (function () {
                         let linkedTable = readTableData(linkedTile, true, true);
                         if (!linkedTable) return false;
 
-                        let name = linkedTile.keys[0];
-                        let value = linkedTile.keys[1];
-                        linkedTile.normalTable.forEach(p => { //make tables similar
+                        let name = linkedTable.keys[0];
+                        let value = linkedTable.keys[1];
+                        linkedTable.normalTable.forEach(p => { //make tables similar
                             p.name = p[name];
                             p.value = p[value];
                             p.colname = name;
