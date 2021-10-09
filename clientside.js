@@ -6891,11 +6891,10 @@ var DashboardPowerups = (function () {
                     .insertAfter($table);
 
                 
-                let x = 0, y = 0, j = 0;
+                let x = 0, y = 0, j = 0, data = [];
                 dataTables.forEach(dt => {
                     //prep the data
-                    let data = [],
-                        name = "",
+                    let name = "",
                         value = "";
                     if (dt.keys.length > 1) {
                         name = dt.keys[0];
@@ -7008,7 +7007,6 @@ var DashboardPowerups = (function () {
 
                     tooltip: {
                         headerFormat: '',
-                        //pointFormat: 'The population of <b> {point.name}</b> is <b>{point.value}</b>'
                         pointFormat: `<b>{point.name}</b>: {point.value:.2f}`
                     },
 
