@@ -6859,13 +6859,15 @@ var DashboardPowerups = (function () {
 
                 //find the table
                 let dataTable = readTableData($tile, true, true);
-                let name = dataTable.keys[0];
-                let value = dataTable.keys[1];
-                dataTable.normalTable.forEach(p => { //make tables similar
-                    p.name = p[name];
-                    p.value = p[value];
-                    p.colname = name;
-                });
+                {
+                    let name = dataTable.keys[0];
+                    let value = dataTable.keys[1];
+                    dataTable.normalTable.forEach(p => { //make tables similar
+                        p.name = p[name];
+                        p.value = p[value];
+                        p.colname = name;
+                    });
+                }
                 if (Array.isArray(links) && links.length) {
                     links.forEach(link => {
                         let linkedTile = pub.findLinkedTile(link, PU_HONEYCOMB);
@@ -6873,8 +6875,8 @@ var DashboardPowerups = (function () {
                         let linkedTable = readTableData(linkedTile, true, true);
                         if (!linkedTable) return false;
 
-                        name = linkedTile.keys[0];
-                        value = linkedTile.keys[1];
+                        let name = linkedTile.keys[0];
+                        let value = linkedTile.keys[1];
                         linkedTile.normalTable.forEach(p => { //make tables similar
                             p.name = p[name];
                             p.value = p[value];
