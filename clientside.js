@@ -6858,19 +6858,23 @@ var DashboardPowerups = (function () {
                     [1]);
 
                 //find the table
+                let dataTables = [];
                 let dataTable = readTableData($tile, true, true);
+                dataTables.push(dataTable);
                 if (Array.isArray(links) && links.length) {
                     links.forEach(link => {
                         let linkedTile = pub.findLinkedTile(link, PU_HONEYCOMB);
                         if (linkedTile == undefined) return false;
                         let linkedTable = readTableData(linkedTile, true, true);
                         if (!linkedTable) return false;
-                        if (JSON.stringify(dataTable.keys) !== JSON.stringify(linkedTable.keys)) {
+                        /*if (JSON.stringify(dataTable.keys) !== JSON.stringify(linkedTable.keys)) {
                             let error = `POWERUP: ERROR - Honeycomb - tried to merge dissimilar tables.`;
                             console.warn(error);
                             errorBeacon(error);
+
                         }
-                        dataTable.normalTable = dataTable.normalTable.concat(linkedTable.normalTable);
+                        dataTable.normalTable = dataTable.normalTable.concat(linkedTable.normalTable);*/
+                        dataTables.push(linkedTable);
                     })
 
                 }
@@ -6886,74 +6890,77 @@ var DashboardPowerups = (function () {
                     .addClass('powerupHoneycomb')
                     .insertAfter($table);
 
-                //prep the data
-                let data = [],
-                    name = "",
-                    value = "";
-                if (dataTable.keys.length > 1) {
-                    name = dataTable.keys[0];
-                    value = dataTable.keys[1];
-                } else {
-                    name = "";
-                    value = dataTable.keys[0];
-                }
+                
+                let x = 0, y = 0, j = 0;
+                dataTables.forEach(dt => {
+                    //prep the data
+                    let data = [],
+                        name = "",
+                        value = "";
+                    if (dt.keys.length > 1) {
+                        name = dt.keys[0];
+                        value = dt.keys[1];
+                    } else {
+                        name = "";
+                        value = dt.keys[0];
+                    }
 
+                    let rows = dt.normalTable.length;
+                    function add(i, x, y) {
+                        if (i >= rows) return false;
+                        xt = Math.round(x + y / 2);
+                        yt = Math.round(Math.sqrt(3) / 2 * y);
 
-                let rows = dataTable.normalTable.length;
-                function add(i, x, y) {
-                    if (i >= rows) return false;
-                    xt = Math.round(x + y / 2);
-                    yt = Math.round(Math.sqrt(3) / 2 * y);
+                        let point = dt.normalTable[i];
+                        if (point == undefined) return false;
+                        let p = {
+                            name: point[name] || " ",
+                            value: point[value] || 0,
+                            x: xt,
+                            y: yt,
+                            events: {
+                                click: () => {
+                                    if (drill != undefined) {
+                                        let url = drill
+                                            .replace(/\$colname/g, name)
+                                            .replace(/\$name/g, point[name])
+                                            .replace(/\$value/g, point[value]);
+                                        window.location.assign(url);
+                                    } else if (point.link != undefined) {
+                                        window.location.assign(point.link);
+                                    }
 
-                    let point = dataTable.normalTable[i];
-                    if (point == undefined) return false;
-                    let p = {
-                        name: point[name] || " ",
-                        value: point[value] || 0,
-                        x: xt,
-                        y: yt,
-                        events: {
-                            click: () => {
-                                if (drill != undefined) {
-                                    let url = drill
-                                        .replace(/\$colname/g, name)
-                                        .replace(/\$name/g, point[name])
-                                        .replace(/\$value/g, point[value]);
-                                    window.location.assign(url);
-                                } else if (point.link != undefined) {
-                                    window.location.assign(point.link);
                                 }
-
                             }
                         }
+
+                        let usqlTile = $tile.find(USQL_SELECTOR).length > 0;
+                        if (base === "low" && usqlTile) {
+                            if (p.value < warn) p.color = green;
+                            else if (p.value >= crit) p.color = red;
+                            else p.color = yellow;
+                        } else if (base === "high" && usqlTile) {
+                            if (p.value > warn) p.color = green;
+                            else if (p.value <= crit) p.color = red;
+                            else p.color = yellow;
+                        } else if (point.color != undefined) {
+                            p.color = point.color
+                        } else {
+                            p.color = gray;
+                        }
+                        data.push(p);
                     }
 
-                    let usqlTile = $tile.find(USQL_SELECTOR).length > 0;
-                    if (base === "low" && usqlTile) {
-                        if (p.value < warn) p.color = green;
-                        else if (p.value >= crit) p.color = red;
-                        else p.color = yellow;
-                    } else if (base === "high" && usqlTile) {
-                        if (p.value > warn) p.color = green;
-                        else if (p.value <= crit) p.color = red;
-                        else p.color = yellow;
-                    } else if (point.color != undefined) {
-                        p.color = point.color
-                    } else {
-                        p.color = gray;
+                    add(j++, x, y); // add the first cell
+                    for (let N = 1; j < rows; ++N) {
+                        for (let i = 0; i < N; ++i) add(j++, ++x, y);  // move right
+                        for (let i = 0; i < N - 1; ++i) add(j++, x, ++y); // move down right. Note N-1
+                        for (let i = 0; i < N; ++i) add(j++, --x, ++y); // move down left
+                        for (let i = 0; i < N; ++i) add(j++, --x, y); // move left
+                        for (let i = 0; i < N; ++i) add(j++, x, --y); // move up left
+                        for (let i = 0; i < N; ++i) add(j++, ++x, --y); // move up right
                     }
-                    data.push(p);
-                }
-                let x = 0, y = 0, j = 0;
-                add(j++, x, y); // add the first cell
-                for (let N = 1; j < rows; ++N) {
-                    for (let i = 0; i < N; ++i) add(j++, ++x, y);  // move right
-                    for (let i = 0; i < N - 1; ++i) add(j++, x, ++y); // move down right. Note N-1
-                    for (let i = 0; i < N; ++i) add(j++, --x, ++y); // move down left
-                    for (let i = 0; i < N; ++i) add(j++, --x, y); // move left
-                    for (let i = 0; i < N; ++i) add(j++, x, --y); // move up left
-                    for (let i = 0; i < N; ++i) add(j++, ++x, --y); // move up right
-                }
+                })
 
                 //chart options
                 let options = {
