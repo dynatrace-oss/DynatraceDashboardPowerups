@@ -358,6 +358,11 @@ h1.powerup-color-normal {
   overflow: auto;
 }
 
+.powerupTableScroll > div > div > div:first-of-type {
+  position: sticky;
+  top: 0px;
+}
+
 .powerupTableScroll::-webkit-scrollbar
 {
   width: 6px;
