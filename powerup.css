@@ -380,7 +380,8 @@ h1.powerup-color-normal {
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
   background-color: transparent;
   border-radius: 10px;
-  border: 1px solid #00b9cc;
+  border: 1px solid #454646;
+  margin-top:10px;
 }
 
 .powerupTable span {
@@ -464,6 +465,7 @@ h1.powerup-color-normal {
   display: table;
   z-index: 1101;
   margin: 5px;
+  margin-top: 0px;
 }
 
 .powerupTableButton:hover {
