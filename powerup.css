@@ -358,18 +358,28 @@ h1.powerup-color-normal {
   overflow: auto;
 }
 
+.powerupTableScroll::-webkit-scrollbar
+{
+  width: 6px;
+  background-color: transparent;
+}
+
 .powerupTableScroll::-webkit-scrollbar-thumb
 {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
   background-color: #00b9cc;
-  
+  background-image: -webkit-linear-gradient(top,
+    #00848e 0%,
+    #00b9cc 50%,
+    #00848e 100%)
 }
 
-.powerupTableScroll::-webkit-scrollbar
+.powerupTableScroll::-webkit-scrollbar-track
 {
-  width: 6px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
   background-color: transparent;
+  border-radius: 10px;
   border: 1px solid #00b9cc;
 }
 
