@@ -351,9 +351,10 @@ h1.powerup-color-normal {
 
 .powerupTable {
   z-index: 1000;
+  padding-right: 10px;
 }
 
-.powerupTableScroll {
+.powerupTableScroll:hover {
   overflow: auto;
 }
 
