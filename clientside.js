@@ -1309,20 +1309,6 @@ var DashboardPowerups = (function () {
                     if (val) pu = true;
                     powerupsFired['PU_USQLSTACK'] ? powerupsFired['PU_USQLSTACK']++ : powerupsFired['PU_USQLSTACK'] = 1;
                 })
-            } else if (title.includes(PU_USQLCOLOR)) {
-                let p = pub.PUUsqlColor(chart, title);
-                promises.push(p);
-                $.when(p).done(val => {
-                    if (chart.series[0] && chart.series[0].type == "pie") {
-                        pieChartPU();
-                    } else {
-                        lineChartPU();
-                        enableExporting();
-                    }
-                    restoreHandlers();
-                    if (val) pu = true;
-                    powerupsFired['PU_USQLCOLOR'] ? powerupsFired['PU_USQLCOLOR']++ : powerupsFired['PU_USQLCOLOR'] = 1;
-                })
             } else if (title.includes(PU_HEATMAP)) {
                 if (pub.PUHeatmap(chart, title, chart.newContainer))
                     pu = true;
@@ -1348,8 +1334,24 @@ var DashboardPowerups = (function () {
                 promises.push(p);
                 $.when(p).done(val => {
                     if (val) pu = true;
-                    lineChartPU();
-                    enableExporting();
+                    if (title.includes(PU_USQLCOLOR)) {
+                        let p = pub.PUUsqlColor(chart, title);
+                        promises.push(p);
+                        $.when(p).done(val2 => {
+                            if (chart.series[0] && chart.series[0].type == "pie") {
+                                pieChartPU();
+                            } else {
+                                lineChartPU();
+                                enableExporting();
+                            }
+                            restoreHandlers();
+                            if (val2) pu = true;
+                            powerupsFired['PU_USQLCOLOR'] ? powerupsFired['PU_USQLCOLOR']++ : powerupsFired['PU_USQLCOLOR'] = 1;
+                        })
+                    } else {
+                        lineChartPU();
+                        enableExporting();
+                    }
                     powerupsFired['PU_FORECAST'] ? powerupsFired['PU_FORECAST']++ : powerupsFired['PU_FORECAST'] = 1;
                 });
             } else if (title.includes(PU_CUMULATIVE)) {
@@ -1357,10 +1359,40 @@ var DashboardPowerups = (function () {
                 promises.push(p);
                 $.when(p).done(val => {
                     if (val) pu = true;
-                    lineChartPU();
-                    enableExporting();
+                    if (title.includes(PU_USQLCOLOR)) {
+                        let p = pub.PUUsqlColor(chart, title);
+                        promises.push(p);
+                        $.when(p).done(val2 => {
+                            if (chart.series[0] && chart.series[0].type == "pie") {
+                                pieChartPU();
+                            } else {
+                                lineChartPU();
+                                enableExporting();
+                            }
+                            restoreHandlers();
+                            if (val2) pu = true;
+                            powerupsFired['PU_USQLCOLOR'] ? powerupsFired['PU_USQLCOLOR']++ : powerupsFired['PU_USQLCOLOR'] = 1;
+                        })
+                    } else {
+                        lineChartPU();
+                        enableExporting();
+                    }
                     powerupsFired['PU_CUMULATIVE'] ? powerupsFired['PU_CUMULATIVE']++ : powerupsFired['PU_CUMULATIVE'] = 1;
                 });
+            } else if (title.includes(PU_USQLCOLOR)) {
+                let p = pub.PUUsqlColor(chart, title);
+                promises.push(p);
+                $.when(p).done(val => {
+                    if (chart.series[0] && chart.series[0].type == "pie") {
+                        pieChartPU();
+                    } else {
+                        lineChartPU();
+                        enableExporting();
+                    }
+                    restoreHandlers();
+                    if (val) pu = true;
+                    powerupsFired['PU_USQLCOLOR'] ? powerupsFired['PU_USQLCOLOR']++ : powerupsFired['PU_USQLCOLOR'] = 1;
+                })
             } else {
                 lineChartPU();
                 enableExporting();
@@ -6637,11 +6669,11 @@ var DashboardPowerups = (function () {
 
                 title = title.split(PU_TABLE)[0].trim();  //for use in filenames etc
                 let col = Number((args.find(x => x[0] == "col") || [])[1]);
-                let scroll = (args.find(x => x[0] == "scroll") || [])[1] == "false" ? false : true; 
+                let scroll = (args.find(x => x[0] == "scroll") || [])[1] == "false" ? false : true;
 
                 //decorate the table
                 $table.addClass("powerupTable");
-                if(scroll)
+                if (scroll)
                     $table.addClass("powerupTableScroll");
                 //reorder link to make text selectable
                 $tile.find(`[uitestid="gwt-debug-DTAQL"] > a`)
@@ -6687,9 +6719,9 @@ var DashboardPowerups = (function () {
                     let csvContent = dataTable.keys.join(',') + '\n';
                     dataTable.normalTable.forEach(row => {
                         dataTable.keys.forEach(k => {
-                            if(row[k].includes(','))
+                            if (row[k].includes(','))
                                 csvContent += `"${row[k]}",`;
-                            else 
+                            else
                                 csvContent += row[k] + ',';
                         });
                         csvContent += '\n';
