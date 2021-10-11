@@ -471,12 +471,13 @@ h1.powerup-color-normal {
   border: 1px #00b9cc solid;
   background: #454646;
   padding: 3px;
-  width: 10px;
-  height: 10px;
+  width: 17px;
+  height: 17px;
   display: table;
   z-index: 1101;
   margin: 5px;
   margin-top: 0px;
+  text-align: center;
 }
 
 .powerupTableButton:hover {
