@@ -362,12 +362,6 @@ h1.powerup-color-normal {
   padding-right: 5px;
 }
 
-.powerupTableScroll > div > div > div:first-of-type {
-  position: sticky;
-  top: 0px;
-  align-self: start;
-}
-
 .powerupTableScroll::-webkit-scrollbar
 {
   width: 6px;
