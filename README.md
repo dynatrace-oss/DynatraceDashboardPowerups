@@ -454,7 +454,7 @@ Example:
 ![100stack](Assets/100stack.png)
 
 ### Table
-This powerup enables exporting USQL tables to CSV/XLS and sortable columns.
+This powerup enables exporting USQL tables to CSV/XLS, sortable columns, and scrolling.
 
 Syntax:
 `!PU(table):`
@@ -462,6 +462,7 @@ Syntax:
 Explanation:
 - `!PU(table):` - denotes this powerup
 - `col=` - (optional) default sort order, e.g. 1 sort by first column ascending, -5 sort by fifth column descending
+- `scroll=false` - (optional) do not add scrollbars
 
 Example: 
 ![tablexls](Assets/table.png)
