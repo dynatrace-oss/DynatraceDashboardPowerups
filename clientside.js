@@ -1282,9 +1282,7 @@ var DashboardPowerups = (function () {
             });
         }
 
-        if (pub.config.Powerups.tooltipPU &&
-            typeof (chart) !== "undefined" &&
-            //!chart.poweredup &&
+        if (typeof (chart) !== "undefined" &&
             typeof (chart.container) != "undefined") {
             let mainPromise = new $.Deferred();
             let promises = [];
@@ -1300,7 +1298,8 @@ var DashboardPowerups = (function () {
                     enableExporting();
                     powerupsFired['PU_LINE'] ? powerupsFired['PU_LINE']++ : powerupsFired['PU_LINE'] = 1;
                 }
-            } else if (title.includes(PU_USQLSTACK)) {
+            } 
+            if (title.includes(PU_USQLSTACK)) {
                 let p = pub.PUUsqlStack(chart, title);
                 promises.push(p);
                 $.when(p).done(val => {
@@ -1309,77 +1308,38 @@ var DashboardPowerups = (function () {
                     if (val) pu = true;
                     powerupsFired['PU_USQLSTACK'] ? powerupsFired['PU_USQLSTACK']++ : powerupsFired['PU_USQLSTACK'] = 1;
                 })
-            } else if (title.includes(PU_HEATMAP)) {
+            } 
+            if (title.includes(PU_HEATMAP)) {
                 if (pub.PUHeatmap(chart, title, chart.newContainer))
                     pu = true;
                 powerupsFired['PU_HEATMAP'] ? powerupsFired['PU_HEATMAP']++ : powerupsFired['PU_HEATMAP'] = 1;
-                /*} else if (title.includes(PU_GAUGE)) { //convert from Highcharts based to tile based
-                    let p = pub.puGauge(chart, title);
-                    promises.push(p);
-                    $.when(p).done(val => {
-                        //restoreHandlers();
-                        //enableExporting();
-                        if (val) pu = true;
-                        powerupsFired['PU_GAUGE'] ? powerupsFired['PU_GAUGE']++ : powerupsFired['PU_GAUGE'] = 1;
-                    })*/
-            } else if (title.includes(PU_100STACK)) {
+            }
+            if (title.includes(PU_100STACK)) {
                 if (PU100stack(chart, title))
                     pu = true;
                 powerupsFired['PU_100STACK'] ? powerupsFired['PU_100STACK']++ : powerupsFired['PU_100STACK'] = 1;
-            } else if (chart.series[0] && chart.series[0].type == "pie") {
-                pieChartPU();
-                enableExporting();
-            } else if (title.includes(PU_FORECAST)) {
+            }
+            if (title.includes(PU_FORECAST)) {
                 let p = pub.PUforecast(chart, title);
                 promises.push(p);
                 $.when(p).done(val => {
                     if (val) pu = true;
-                    if (title.includes(PU_USQLCOLOR)) {
-                        let p = pub.PUUsqlColor(chart, title);
-                        promises.push(p);
-                        $.when(p).done(val2 => {
-                            if (chart.series[0] && chart.series[0].type == "pie") {
-                                pieChartPU();
-                            } else {
-                                lineChartPU();
-                                enableExporting();
-                            }
-                            restoreHandlers();
-                            if (val2) pu = true;
-                            powerupsFired['PU_USQLCOLOR'] ? powerupsFired['PU_USQLCOLOR']++ : powerupsFired['PU_USQLCOLOR'] = 1;
-                        })
-                    } else {
                         lineChartPU();
                         enableExporting();
-                    }
                     powerupsFired['PU_FORECAST'] ? powerupsFired['PU_FORECAST']++ : powerupsFired['PU_FORECAST'] = 1;
                 });
-            } else if (title.includes(PU_CUMULATIVE)) {
+            } 
+            if (title.includes(PU_CUMULATIVE)) {
                 let p = pub.PUcumulative(chart, title);
                 promises.push(p);
                 $.when(p).done(val => {
                     if (val) pu = true;
-                    if (title.includes(PU_USQLCOLOR)) {
-                        let p = pub.PUUsqlColor(chart, title);
-                        promises.push(p);
-                        $.when(p).done(val2 => {
-                            if (chart.series[0] && chart.series[0].type == "pie") {
-                                pieChartPU();
-                            } else {
-                                lineChartPU();
-                                enableExporting();
-                            }
-                            restoreHandlers();
-                            if (val2) pu = true;
-                            powerupsFired['PU_USQLCOLOR'] ? powerupsFired['PU_USQLCOLOR']++ : powerupsFired['PU_USQLCOLOR'] = 1;
-                        })
-                    } else {
                         lineChartPU();
                         enableExporting();
-                    }
                     powerupsFired['PU_CUMULATIVE'] ? powerupsFired['PU_CUMULATIVE']++ : powerupsFired['PU_CUMULATIVE'] = 1;
                 });
-            } else if (title.includes(PU_USQLCOLOR)) {
+            }
+            if (title.includes(PU_USQLCOLOR)) {
                 let p = pub.PUUsqlColor(chart, title);
                 promises.push(p);
                 $.when(p).done(val => {
@@ -1393,9 +1353,17 @@ var DashboardPowerups = (function () {
                     if (val) pu = true;
                     powerupsFired['PU_USQLCOLOR'] ? powerupsFired['PU_USQLCOLOR']++ : powerupsFired['PU_USQLCOLOR'] = 1;
                 })
-            } else {
-                lineChartPU();
-                enableExporting();
+            } 
+
+            if(pub.config.Powerups.tooltipPU){
+                if (chart.series[0] && chart.series[0].type == "pie") {
+                    pieChartPU();
+                    enableExporting();
+                }
+                else {
+                    lineChartPU();
+                    enableExporting();
+                }
             }
 
 
