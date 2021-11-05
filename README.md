@@ -678,3 +678,16 @@ Explanation:
 
 Example:
 ![cumulative](Assets/cumulative.png)
+
+### Ellipsis
+Add menu items to the ellipsis menu. Add syntax to a markdown tile which will get hidden.
+
+Syntax:
+- `!PU(ellipsis):text=Help;url=https://github.com/dynatrace-oss/DynatraceDashboardPowerups#powerup-howto`
+
+Explanation:
+- `text=` - Text of the button. A PowerUp symbol will automatically be added.
+- `url=` - URL to open in a new tab
+
+Example:
+![ellipsis](Assets/ellipsis.png)
