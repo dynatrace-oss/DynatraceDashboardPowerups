@@ -780,11 +780,11 @@ var DashboardPowerups = (function () {
     }
 
     const argsplit = (str, pu) => {
-        let splits = str.split(pu);
-        splits.shift(); //remove leading text
-        let count = splits.length;
+        let splitByPU = str.split(pu);
+        splitByPU.shift(); //remove leading text
+        let count = splitByPU.length;
         let argObjs = [];
-        splits.forEach(split => {
+        splitByPU.forEach(split => {
             let argstring = split.split(/(!PU|\n)/)[0].trim();
             let args = argstring.split(";").map(x => x.split("="));
             args.argstring = argstring;
@@ -793,6 +793,21 @@ var DashboardPowerups = (function () {
         //return first argObj for backwards compatibility, w/ full array as a property
         let args = argObjs[0] || {};
         args.argObjs = argObjs;
+        //for convenience, also add as properties
+        //TODO: refactor args usage to property
+        args.forEach(arg => {
+            let key = arg[0];
+            if(key.length){
+                if(!args.hasOwnProperty(key))
+                    args[key] = arg[1];
+            }
+        })
+        //handle url patterns
+        if (args.argstring.includes("url=")) {
+            let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
+            if (url) url = url.trim();
+            if(url) args.url = url;
+        }
         return args;
     }
 
@@ -1300,7 +1315,7 @@ var DashboardPowerups = (function () {
                     enableExporting();
                     powerupsFired['PU_LINE'] ? powerupsFired['PU_LINE']++ : powerupsFired['PU_LINE'] = 1;
                 }
-            } 
+            }
             if (title.includes(PU_USQLSTACK)) {
                 let p = pub.PUUsqlStack(chart, title);
                 promises.push(p);
@@ -1310,7 +1325,7 @@ var DashboardPowerups = (function () {
                     if (val) pu = true;
                     powerupsFired['PU_USQLSTACK'] ? powerupsFired['PU_USQLSTACK']++ : powerupsFired['PU_USQLSTACK'] = 1;
                 })
-            } 
+            }
             if (title.includes(PU_HEATMAP)) {
                 if (pub.PUHeatmap(chart, title, chart.newContainer))
                     pu = true;
@@ -1326,18 +1341,18 @@ var DashboardPowerups = (function () {
                 promises.push(p);
                 $.when(p).done(val => {
                     if (val) pu = true;
-                        lineChartPU();
-                        enableExporting();
+                    lineChartPU();
+                    enableExporting();
                     powerupsFired['PU_FORECAST'] ? powerupsFired['PU_FORECAST']++ : powerupsFired['PU_FORECAST'] = 1;
                 });
-            } 
+            }
             if (title.includes(PU_CUMULATIVE)) {
                 let p = pub.PUcumulative(chart, title);
                 promises.push(p);
                 $.when(p).done(val => {
                     if (val) pu = true;
-                        lineChartPU();
-                        enableExporting();
+                    lineChartPU();
+                    enableExporting();
                     powerupsFired['PU_CUMULATIVE'] ? powerupsFired['PU_CUMULATIVE']++ : powerupsFired['PU_CUMULATIVE'] = 1;
                 });
             }
@@ -1355,9 +1370,9 @@ var DashboardPowerups = (function () {
                     if (val) pu = true;
                     powerupsFired['PU_USQLCOLOR'] ? powerupsFired['PU_USQLCOLOR']++ : powerupsFired['PU_USQLCOLOR'] = 1;
                 })
-            } 
+            }
 
-            if(pub.config.Powerups.tooltipPU){
+            if (pub.config.Powerups.tooltipPU) {
                 if (chart.series[0] && chart.series[0].type == "pie") {
                     pieChartPU();
                     enableExporting();
@@ -7715,26 +7730,9 @@ var DashboardPowerups = (function () {
         pub.addEllipsisButton('ReportButton',
             'Report',
             PowerupReporting.openReportGenerator);
-        /*let $menu = $(DASHBOARD_MENU_SELECTOR);
-        let $buttonContainer = $menu.find(`> div`);
-        let $buttons = $buttonContainer.find(`> a`);
-        let $reportButton = $buttons.filter(`.powerupReportButton`);
-
-        if (!$reportButton.length) {
-            $reportButton = $(`<a>`)
-                .attr('href', "javascript:")
-                .attr('class',
-                    $buttons.eq(0).attr('class'))
-                .addClass('powerupReportButton')
-                .appendTo($buttonContainer)
-                .on('click', PowerupReporting.openReportGenerator);
-            let $span = $('<span>')
-                .text('💎 Report')
-                .appendTo($reportButton);
-        }*/
     }
 
-    pub.addEllipsisButton = function (id,text,click) {
+    pub.addEllipsisButton = function (id, text, click) {
         let $menu = $(DASHBOARD_MENU_SELECTOR);
         let $buttonContainer = $menu.find(`> div`);
         let $buttons = $buttonContainer.find(`> a:visible`);
@@ -7743,7 +7741,7 @@ var DashboardPowerups = (function () {
         if (!$ellipsisButton.length) {
             $ellipsisButton = $(`<a>`)
                 .attr('href', "javascript:")
-                .attr('id',`powerup${id}`)
+                .attr('id', `powerup${id}`)
                 .attr('class',
                     $buttons.eq(0).attr('class'))
                 .addClass('powerupEllipsisButton')
@@ -7753,6 +7751,38 @@ var DashboardPowerups = (function () {
                 .text(`💎 ${text}`)
                 .appendTo($ellipsisButton);
         }
+    }
+
+    pub.PUellipsis = function () {
+        $(MARKDOWN_SELECTOR).each((i, el) => {
+            let $md = $(el);
+            let text = $md.text();
+            let $tile = $md.parents(TILE_SELECTOR);
+
+            if (text.includes(PU_ELLIPSIS)) {
+                let args = argsplit(text, PU_ELLIPSIS);
+                let text = args.text;
+                let url = args.url;
+                if(typeof(text) == "undefined"){
+                    console.warn(`Powerup: ERROR - ${PU_ELLIPSIS} - missing text`);
+                    return;
+                }
+                if(typeof(url) == "undefined"){
+                    console.warn(`Powerup: ERROR - ${PU_ELLIPSIS} - missing url`);
+                    return;
+                }
+                let id = text
+                    .replace(/ /g,"_")
+                    .replace(/^[0-9]/,'')
+                    .replace(/[^a-zA-Z0-9-_:.]/g,'');
+                if(!id.length){
+                    console.warn(`Powerup: ERROR - ${PU_ELLIPSIS} - unable to make valid id from text`);
+                    return;
+                }
+                pub.addEllipsisButton(id,text,url);
+            }
+
+        })
     }
 
     pub.fireAllPowerUps = function (update = false) {
