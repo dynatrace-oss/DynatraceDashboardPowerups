@@ -6561,7 +6561,7 @@ var DashboardPowerups = (function () {
                         let num =  (typeof (vlookupVal) == "string"
                             ? Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""))
                             : vlookupVal);
-                        if (sUnit && !isNaN(num)) {
+                        if (typeof(sUnit) !== "undefined" && !isNaN(num)) {
                             sUnit = sUnit.trim();
                             let sourceUnit = UNITS.find(u => u.unit == sUnit);
                             if (sourceUnit) {
