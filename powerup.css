@@ -1054,6 +1054,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 .powerupReportButton,
 .powerupEllipsisButton {
   padding-left: 0px;
+  text-align: justify !important;
 }
 
 .powerupGauge, .powerupHoneycomb {
