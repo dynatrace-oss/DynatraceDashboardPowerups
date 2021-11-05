@@ -7566,7 +7566,11 @@ var DashboardPowerups = (function () {
                 }, 50);
             }
 
-            if (title.includes(PU_AUTOHIDE) && $tilenocontent.is(":visible")) {
+            if (title.includes(PU_AUTOHIDE)){
+                if($tilenocontent.is(":visible")
+                    || $tilecontent.text().includes("Tile not configured yet")
+                    || $tilecontent.text().includes("No data.")
+                ) {
                 $tilecontent.addClass("powerupHide");
                 $tilenocontent.addClass("powerupHide");
                 powerupsFired['PU_AUTOHIDE'] ? powerupsFired['PU_AUTOHIDE']++ : powerupsFired['PU_AUTOHIDE'] = 1;
