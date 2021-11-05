@@ -5938,7 +5938,7 @@ var DashboardPowerups = (function () {
 
                 scope.forEach(s => {
                     s.val = pub.findLinkedVal(s.link, PU_MATH);
-                    if (unit) {
+                    if (typeof(unit) != "undefined") {
                         s.unit = pub.findLinkedUnit(s.link, PU_MATH);
                     }
                     if (dates) {
