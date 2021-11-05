@@ -7737,7 +7737,7 @@ var DashboardPowerups = (function () {
     pub.addEllipsisButton = function (id,text,click) {
         let $menu = $(DASHBOARD_MENU_SELECTOR);
         let $buttonContainer = $menu.find(`> div`);
-        let $buttons = $buttonContainer.find(`> a`);
+        let $buttons = $buttonContainer.find(`> a:visible`);
         let $ellipsisButton = $buttons.filter(`#powerup${id}`);
 
         if (!$ellipsisButton.length) {

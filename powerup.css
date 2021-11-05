@@ -1051,7 +1051,8 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   display: none;
 }
 
-.powerupReportButton {
+.powerupReportButton,
+.powerupEllipsisButton {
   padding-left: 0px;
 }
 
