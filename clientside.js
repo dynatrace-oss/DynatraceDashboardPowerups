@@ -2454,7 +2454,7 @@ var DashboardPowerups = (function () {
                             let $child = $(child);
                             let childtext = $child.text();
                             if($child.text().includes(PU_COLOR))
-                                $child.text(childtext.replace(/!PU(color):[^ ]*/,''));
+                                $child.text(childtext.replace(/!PU\(color\):[^ ]*/,''));
                             $child.css('color',color);
                         })
                 }
