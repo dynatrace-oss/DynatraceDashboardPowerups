@@ -44,6 +44,9 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [Honeycomb](#Honeycomb)
     - [Autohide](#Autohide)
     - [Treemap](#Treemap)
+    - [TimeOnPage](#TimeOnPage)
+    - [Cumulative](#Cumulative)
+    - [Ellipsis](#Ellipsis)
 
 ## Installation
 1. Install the extension from the
