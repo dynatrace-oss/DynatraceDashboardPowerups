@@ -7730,6 +7730,7 @@ var DashboardPowerups = (function () {
         pub.addEllipsisButton('ReportButton',
             'Report',
             PowerupReporting.openReportGenerator);
+        return true;
     }
 
     pub.addEllipsisButton = function (id, text, click) {
@@ -7784,6 +7785,7 @@ var DashboardPowerups = (function () {
                 }
                 pub.addEllipsisButton(id,text,newTab);
                 $md.hide();
+                powerupsFired['PU_ELLIPSIS'] ? powerupsFired['PU_ELLIPSIS']++ : powerupsFired['PU_ELLIPSIS'] = 1;
             }
 
         })
@@ -7835,11 +7837,12 @@ var DashboardPowerups = (function () {
             promises.push(pub.fixPublicDashboards());
             promises.push(pub.PUmenu());
             promises.push(pub.PUHideShow());
+            promises.push(pub.addReportButton());
             promises.push(pub.PUellipsis());
 
             //cleanup activities
             pub.loadChartSync();
-            pub.addReportButton();
+            
 
         } catch (e) {
             crashBeacon(e);
