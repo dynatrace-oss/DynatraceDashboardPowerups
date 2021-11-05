@@ -102,12 +102,13 @@ var DashboardPowerups = (function () {
     const PU_TREEMAP = '!PU(treemap):';
     const PU_TIMEONPAGE = '!PU(timeonpage):';
     const PU_CUMULATIVE = '!PU(cumulative):';
+    const PU_ELLIPSIS = '!PU(ellipsis):';
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS
     ];
 
     const COLOR_RED = "#c41425";
@@ -7710,7 +7711,10 @@ var DashboardPowerups = (function () {
     }
 
     pub.addReportButton = function () {
-        let $menu = $(DASHBOARD_MENU_SELECTOR);
+        pub.addEllipsisButton('ReportButton',
+            'Report',
+            PowerupReporting.openReportGenerator);
+        /*let $menu = $(DASHBOARD_MENU_SELECTOR);
         let $buttonContainer = $menu.find(`> div`);
         let $buttons = $buttonContainer.find(`> a`);
         let $reportButton = $buttons.filter(`.powerupReportButton`);
@@ -7726,6 +7730,27 @@ var DashboardPowerups = (function () {
             let $span = $('<span>')
                 .text('💎 Report')
                 .appendTo($reportButton);
+        }*/
+    }
+
+    pub.addEllipsisButton = function (id,text,click) {
+        let $menu = $(DASHBOARD_MENU_SELECTOR);
+        let $buttonContainer = $menu.find(`> div`);
+        let $buttons = $buttonContainer.find(`> a`);
+        let $ellipsisButton = $buttons.filter(`#powerup${id}`);
+
+        if (!$ellipsisButton.length) {
+            $ellipsisButton = $(`<a>`)
+                .attr('href', "javascript:")
+                .attr('id',`powerup${id}`)
+                .attr('class',
+                    $buttons.eq(0).attr('class'))
+                .addClass('powerupEllipsisButton')
+                .appendTo($buttonContainer)
+                .on('click', click);
+            let $span = $('<span>')
+                .text(`💎 ${text}`)
+                .appendTo($ellipsisButton);
         }
     }
 
