@@ -7756,11 +7756,11 @@ var DashboardPowerups = (function () {
     pub.PUellipsis = function () {
         $(MARKDOWN_SELECTOR).each((i, el) => {
             let $md = $(el);
-            let text = $md.text();
+            let mdtext = $md.text();
             let $tile = $md.parents(TILE_SELECTOR);
 
-            if (text.includes(PU_ELLIPSIS)) {
-                let args = argsplit(text, PU_ELLIPSIS);
+            if (mdtext.includes(PU_ELLIPSIS)) {
+                let args = argsplit(mdtext, PU_ELLIPSIS);
                 let text = args.text;
                 let url = args.url;
                 if(typeof(text) == "undefined"){
