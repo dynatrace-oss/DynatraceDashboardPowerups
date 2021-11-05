@@ -2437,6 +2437,21 @@ var DashboardPowerups = (function () {
                 powerupsFired['PU_COLOR'] ? powerupsFired['PU_COLOR']++ : powerupsFired['PU_COLOR'] = 1;
             }
         });
+
+        $(MARKDOWN_SELECTOR).each((i,el) => {
+            let $markdown = $(el);
+            let markdown = $markdown.text();
+            let $tile = $markdown.parents(TILE_SELECTOR);
+
+            if (markdown.includes(PU_COLOR)) {
+                let args = argsplit(markdown, PU_COLOR);
+                let color = (args.find(x => x[0] == "color") || [])[1];
+
+                if(color) {
+                    $tile.css('color',color);
+                }
+            }
+        })
     }
 
     pub.PUTopListColor = function () {
