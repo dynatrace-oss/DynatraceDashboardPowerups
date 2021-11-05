@@ -7831,6 +7831,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.fixPublicDashboards());
             promises.push(pub.PUmenu());
             promises.push(pub.PUHideShow());
+            promises.push(pub.PUellipsis());
 
             //cleanup activities
             pub.loadChartSync();
