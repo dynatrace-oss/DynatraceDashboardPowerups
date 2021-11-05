@@ -7783,6 +7783,7 @@ var DashboardPowerups = (function () {
                     window.open(url, '_blank').focus();
                 }
                 pub.addEllipsisButton(id,text,newTab);
+                $md.hide();
             }
 
         })
