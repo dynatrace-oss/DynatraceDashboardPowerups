@@ -2452,10 +2452,10 @@ var DashboardPowerups = (function () {
                         .find(`h2, p`)
                         .each((ci,child)=>{
                             let $child = $(child);
+                            let childtext = $child.text();
                             if($child.text().includes(PU_COLOR))
-                                $child.hide();
-                            else
-                                $child.css('color',color);
+                                $child.text(childtext.replace(/!PU(color):[^ ]*/,''));
+                            $child.css('color',color);
                         })
                 }
             }
