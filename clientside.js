@@ -6554,7 +6554,7 @@ var DashboardPowerups = (function () {
 
                     //handle unit conversion
                     let fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: dig }).format;
-                    if (unit && typeof (vlookupVal) == "string") {
+                    if (typeof(unit) != "undefined" && typeof (vlookupVal) == "string") {
                         let sUnit = (vlookupVal.match(/[^0-9]+$/) || [])[0];
                         let num = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
                         if (sUnit && !isNaN(num)) {
