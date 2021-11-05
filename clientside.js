@@ -5951,7 +5951,7 @@ var DashboardPowerups = (function () {
                 });
 
                 //if units are enabled, confirm target and all sources are compatible units, then convert to target units first
-                if (unit) {
+                if (typeof(unit)!= "undefined") {
                     let convertable = true;
                     scope.forEach(s => {
                         let sourceUnit = UNITS.find(u => u.unit == s.unit);
