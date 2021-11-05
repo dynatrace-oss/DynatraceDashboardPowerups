@@ -798,8 +798,8 @@ var DashboardPowerups = (function () {
         //TODO: refactor args usage to property
         args.forEach(arg => {
             let key = arg[0];
-            if(key.length){
-                if(!args.hasOwnProperty(key))
+            if (key.length) {
+                if (!args.hasOwnProperty(key))
                     args[key] = arg[1];
             }
         })
@@ -807,7 +807,7 @@ var DashboardPowerups = (function () {
         if (args.argstring.includes("url=")) {
             let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
             if (url) url = url.trim();
-            if(url) args.url = url;
+            if (url) args.url = url;
         }
         return args;
     }
@@ -2439,7 +2439,7 @@ var DashboardPowerups = (function () {
             }
         });
 
-        $(MARKDOWN_SELECTOR).each((i,el) => {
+        $(MARKDOWN_SELECTOR).each((i, el) => {
             let $markdown = $(el);
             let markdown = $markdown.text();
             let $tile = $markdown.parents(TILE_SELECTOR);
@@ -2448,21 +2448,21 @@ var DashboardPowerups = (function () {
                 let args = argsplit(markdown, PU_COLOR);
                 let color = (args.find(x => x[0] == "color") || [])[1];
 
-                if(color) {
+                if (color) {
                     $markdown
                         .find(`h2, p`)
-                        .each((ci,child)=>{
+                        .each((ci, child) => {
                             let $child = $(child);
                             let childtext = $child.text();
-                            if($child.text().includes(PU_COLOR))
-                                $child.text(childtext.replace(/!PU\(color\):[^ ]*/,''));
-                            $child.css('color',color);
+                            if ($child.text().includes(PU_COLOR))
+                                $child.text(childtext.replace(/!PU\(color\):[^ ]*/, ''));
+                            $child.css('color', color);
                         })
                 }
             }
         })
 
-        $(HEADER_SELECTOR).each((i,el) => {
+        $(HEADER_SELECTOR).each((i, el) => {
             let $header = $(el);
             let text = $header.text();
             let $tile = $header.parents(TILE_SELECTOR);
@@ -2471,10 +2471,10 @@ var DashboardPowerups = (function () {
                 let args = argsplit(text, PU_COLOR);
                 let color = (args.find(x => x[0] == "color") || [])[1];
 
-                if(color) {
+                if (color) {
                     $header
-                        .text(text.replace(/!PU\(color\):[^ ]*/,''))
-                        .css('color',color);
+                        .text(text.replace(/!PU\(color\):[^ ]*/, ''))
+                        .css('color', color);
                 }
             }
         })
@@ -6793,7 +6793,7 @@ var DashboardPowerups = (function () {
                                         $table //handle links
                                             .find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 2}) > a`)
                                             .text(row[col])
-                                            .attr('href',row.link);
+                                            .attr('href', row.link);
                                     })
                                 })
                             });
@@ -6928,7 +6928,7 @@ var DashboardPowerups = (function () {
 
                 //find the table
                 let dataTable = readTableData($tile, true, true);
-                if(!dataTable){
+                if (!dataTable) {
                     console.log(`Powerup: WARN - PU_HONEYCOMB - no table found`);
                     return;
                 }
@@ -7566,14 +7566,15 @@ var DashboardPowerups = (function () {
                 }, 50);
             }
 
-            if (title.includes(PU_AUTOHIDE)){
-                if($tilenocontent.is(":visible")
+            if (title.includes(PU_AUTOHIDE)) {
+                if ($tilenocontent.is(":visible")
                     || $tilecontent.text().includes("Tile not configured yet")
                     || $tilecontent.text().includes("No data.")
                 ) {
-                $tilecontent.addClass("powerupHide");
-                $tilenocontent.addClass("powerupHide");
-                powerupsFired['PU_AUTOHIDE'] ? powerupsFired['PU_AUTOHIDE']++ : powerupsFired['PU_AUTOHIDE'] = 1;
+                    $tilecontent.addClass("powerupHide");
+                    $tilenocontent.addClass("powerupHide");
+                    powerupsFired['PU_AUTOHIDE'] ? powerupsFired['PU_AUTOHIDE']++ : powerupsFired['PU_AUTOHIDE'] = 1;
+                }
             }
             $menuicon.on("click", addHideShow);
         });
@@ -7820,26 +7821,26 @@ var DashboardPowerups = (function () {
                 let args = argsplit(mdtext, PU_ELLIPSIS);
                 let text = args.text;
                 let url = args.url;
-                if(typeof(text) == "undefined"){
+                if (typeof (text) == "undefined") {
                     console.warn(`Powerup: ERROR - ${PU_ELLIPSIS} - missing text`);
                     return;
                 }
-                if(typeof(url) == "undefined"){
+                if (typeof (url) == "undefined") {
                     console.warn(`Powerup: ERROR - ${PU_ELLIPSIS} - missing url`);
                     return;
                 }
                 let id = text
-                    .replace(/ /g,"_")
-                    .replace(/^[0-9]/,'')
-                    .replace(/[^a-zA-Z0-9-_:.]/g,'');
-                if(!id.length){
+                    .replace(/ /g, "_")
+                    .replace(/^[0-9]/, '')
+                    .replace(/[^a-zA-Z0-9-_:.]/g, '');
+                if (!id.length) {
                     console.warn(`Powerup: ERROR - ${PU_ELLIPSIS} - unable to make valid id from text`);
                     return;
                 }
-                let newTab = ()=>{
+                let newTab = () => {
                     window.open(url, '_blank').focus();
                 }
-                pub.addEllipsisButton(id,text,newTab);
+                pub.addEllipsisButton(id, text, newTab);
                 $md.hide();
                 powerupsFired['PU_ELLIPSIS'] ? powerupsFired['PU_ELLIPSIS']++ : powerupsFired['PU_ELLIPSIS'] = 1;
             }
@@ -7898,7 +7899,7 @@ var DashboardPowerups = (function () {
 
             //cleanup activities
             pub.loadChartSync();
-            
+
 
         } catch (e) {
             crashBeacon(e);
