@@ -6882,6 +6882,11 @@ var DashboardPowerups = (function () {
 
                 //find the table
                 let dataTable = readTableData($tile, true, true);
+                if(!dataTable){
+                    console.warn(`Powerup: ERROR - PU_HONEYCOMB - no table found`);
+                    return;
+                }
+
                 {
                     let name = dataTable.keys[0];
                     let value = dataTable.keys[1];
