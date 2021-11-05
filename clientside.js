@@ -56,6 +56,7 @@ var DashboardPowerups = (function () {
     const USQL_SELECTOR = '[uitestid="gwt-debug-dtaqlTile"]'; //CAUTION: this is sometime repeated within the DOM heirarchy for a tile
     const START_DATE_SELECTOR = '[uitestid="gwt-debug-resolvedStartDate"]:visible';
     const END_DATE_SELECTOR = '[uitestid="gwt-debug-resolvedEndDate"]:visible';
+    const HEADER_SELECTOR = '[uitestid="gwt-debug-HEADER"] [uitestid="gwt-debug-inlineEditLabelViewText"]';
 
     const SELECTORS = {
         GRID_SELECTOR: GRID_SELECTOR, VIEWPORT_SELECTOR: VIEWPORT_SELECTOR, TITLE_SELECTOR: TITLE_SELECTOR, VAL_SELECTOR: VAL_SELECTOR,
@@ -67,7 +68,7 @@ var DashboardPowerups = (function () {
         MENU_ICON_SELECTOR: MENU_ICON_SELECTOR, MENU_POPUP_SELECTOR: MENU_POPUP_SELECTOR, TOPLIST_SELECTOR: TOPLIST_SELECTOR,
         TOPLIST_BAR_SELECTOR: TOPLIST_BAR_SELECTOR, NO_DATA_SELECTOR: NO_DATA_SELECTOR, TILE_CONTENT_SELECTOR: TILE_CONTENT_SELECTOR,
         TILE_NOCONTENT_SELECTOR: TILE_NOCONTENT_SELECTOR, DASHBOARD_MENU_SELECTOR: DASHBOARD_MENU_SELECTOR, USQL_SELECTOR: USQL_SELECTOR,
-        START_DATE_SELECTOR: START_DATE_SELECTOR, END_DATE_SELECTOR: END_DATE_SELECTOR
+        START_DATE_SELECTOR: START_DATE_SELECTOR, END_DATE_SELECTOR: END_DATE_SELECTOR, HEADER_SELECTOR: HEADER_SELECTOR
     }
 
     const PU_COLOR = '!PU(color):';
@@ -2457,6 +2458,23 @@ var DashboardPowerups = (function () {
                                 $child.text(childtext.replace(/!PU\(color\):[^ ]*/,''));
                             $child.css('color',color);
                         })
+                }
+            }
+        })
+
+        $(HEADER_SELECTOR).each((i,el) => {
+            let $header = $(el);
+            let text = $header.text();
+            let $tile = $header.parents(TILE_SELECTOR);
+
+            if (text.includes(PU_COLOR)) {
+                let args = argsplit(text, PU_COLOR);
+                let color = (args.find(x => x[0] == "color") || [])[1];
+
+                if(color) {
+                    $header
+                        .text(text.replace(/!PU\(color\):[^ ]*/,''))
+                        .css('color',color);
                 }
             }
         })
