@@ -117,6 +117,8 @@ Example:
 For Single Value Tiles, either custom chart or USQL, you can add color coding by adding markup to the title:
 `!PU(color):base=high;warn=90;crit=80`. Note: also see [USQL colors](#USQL-colors) PowerUp for simply changing colors for USQL and Explorer tiles.
 
+For markdown and header tiles, use `!PU(color):color=blue` style syntax.
+
 Explanation:
 - `!PU(color):` this starts the markup
 - `base=high` this is the base case for your metric, ie is it good to be `low` or `high`?
