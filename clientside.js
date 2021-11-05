@@ -7453,7 +7453,8 @@ var DashboardPowerups = (function () {
                         $icon.parent().show();
                         $icon
                             .off(`.PUmenu-${name}`)
-                            .on(`click.PUmenu-${name}`, menu_icon_click_handler);
+                            .on(`click.PUmenu-${name}`, menu_icon_click_handler)
+                            .addClass("powerupMenuIcon");
 
                         if ($icon.length) {
                             powerupsFired['PU_MENU'] ? powerupsFired['PU_MENU']++ : powerupsFired['PU_MENU'] = 1;

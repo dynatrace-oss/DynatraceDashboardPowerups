@@ -1065,3 +1065,7 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 [uitestid="gwt-debug-dtaqlTile"] .powerupHoneycomb {
   margin-top: 25px;
 }
+
+.powerupMenuIcon > svg {
+  fill: #00848e !important;
+}
