@@ -7779,7 +7779,10 @@ var DashboardPowerups = (function () {
                     console.warn(`Powerup: ERROR - ${PU_ELLIPSIS} - unable to make valid id from text`);
                     return;
                 }
-                pub.addEllipsisButton(id,text,url);
+                let newTab = ()=>{
+                    window.open(url, '_blank').focus();
+                }
+                pub.addEllipsisButton(id,text,newTab);
             }
 
         })
