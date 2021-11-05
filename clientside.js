@@ -2448,7 +2448,15 @@ var DashboardPowerups = (function () {
                 let color = (args.find(x => x[0] == "color") || [])[1];
 
                 if(color) {
-                    $tile.css('color',color);
+                    $markdown
+                        .find(`h2, p`)
+                        .each((ci,child)=>{
+                            let $child = $(child);
+                            if($child.text().includes(PU_COLOR))
+                                $child.hide();
+                            else
+                                $child.css('color',color);
+                        })
                 }
             }
         })
