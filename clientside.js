@@ -920,8 +920,8 @@ var DashboardPowerups = (function () {
             case "string":
                 if (a[key].match(/^[0-9]/)
                     && b[key].match(/^[0-9]/)) { //likely number as a string
-                    let a0 = a[key].replace(/[^0-9]*/g, '');
-                    let b0 = b[key].replace(/[^0-9]*/g, '');
+                    let a0 = Number(a[key].replace(/[^0-9]*/g, ''));
+                    let b0 = Number(b[key].replace(/[^0-9]*/g, ''));
                     return a0 - b0;
                 } else { //should be a string
                     return (a[key].toLowerCase() > b[key].toLowerCase() ? -1 : 1);
