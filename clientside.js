@@ -7494,7 +7494,23 @@ var DashboardPowerups = (function () {
                             }, 50);
                         }
 
-                        let $icon = $tile.find(MENU_ICON_SELECTOR);
+                        let $icon;
+                        if(args.hasOwnProperty("title")){
+                            let title = args.title.toLowerCase().trim();
+                            $(TITLE_SELECTOR).each((ti,target)=>{
+                                let $target = $(target);
+                                let targettitle = $target.text().toLowerCase().trim();
+                                if(targettitle === title){
+                                    let $targettile = $target.parents(TILE_SELECTOR);
+                                    $icon = $targettile.find(MENU_ICON_SELECTOR);
+                                }
+                            })
+                            if(typeof($icon) == "undefined")
+                                $icon = $tile.find(MENU_ICON_SELECTOR);
+                        } else {
+                            $icon = $tile.find(MENU_ICON_SELECTOR);
+                        }
+                        
                         $icon.parent().show();
                         $icon
                             .off(`.PUmenu-${name}`)
