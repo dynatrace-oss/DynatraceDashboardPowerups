@@ -592,6 +592,7 @@ Syntax:
 
 Explanation:
 - `!PU(menu):` - denotes the powerup
+- `title=Azure_Servicebus_SLO` - (optional) for tiles which don't have a spot for PowerUp markup, use a seperate markdown tile and include a parameter for `title` which matches the title of the tile you wish to add to the context menu. Be sure to use underscores in place of spaces in the title.
 - `name=` - what text to put in the menu (do not use spaces)
 - `url=` - URL to link to. Note: Absolute URLs (ie starts with `http`) will open in a new tab.
 
