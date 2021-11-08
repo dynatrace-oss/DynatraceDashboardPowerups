@@ -790,19 +790,20 @@ var DashboardPowerups = (function () {
             let args = argstring.split(";").map(x => x.split("="));
             args.argstring = argstring;
             argObjs.push(args);
+            //for convenience, also add as properties
+            //TODO: refactor args usage to property
+            args.forEach(arg => {
+                let key = arg[0];
+                if (key.length) {
+                    if (!args.hasOwnProperty(key))
+                        args[key] = arg[1];
+                }
+            })
         })
         //return first argObj for backwards compatibility, w/ full array as a property
         let args = argObjs[0] || {};
         args.argObjs = argObjs;
-        //for convenience, also add as properties
-        //TODO: refactor args usage to property
-        args.forEach(arg => {
-            let key = arg[0];
-            if (key.length) {
-                if (!args.hasOwnProperty(key))
-                    args[key] = arg[1];
-            }
-        })
+
         //handle url patterns
         if (args.argstring.includes("url=")) {
             let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
@@ -5938,7 +5939,7 @@ var DashboardPowerups = (function () {
 
                 scope.forEach(s => {
                     s.val = pub.findLinkedVal(s.link, PU_MATH);
-                    if (typeof(unit) != "undefined") {
+                    if (typeof (unit) != "undefined") {
                         s.unit = pub.findLinkedUnit(s.link, PU_MATH);
                     }
                     if (dates) {
@@ -5951,7 +5952,7 @@ var DashboardPowerups = (function () {
                 });
 
                 //if units are enabled, confirm target and all sources are compatible units, then convert to target units first
-                if (typeof(unit)!= "undefined") {
+                if (typeof (unit) != "undefined") {
                     let convertable = true;
                     scope.forEach(s => {
                         let sourceUnit = UNITS.find(u => u.unit == s.unit);
@@ -6554,14 +6555,14 @@ var DashboardPowerups = (function () {
 
                     //handle unit conversion
                     let fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: dig }).format;
-                    if (typeof(unit) != "undefined") {
+                    if (typeof (unit) != "undefined") {
                         let sUnit = (typeof (vlookupVal) == "string"
                             ? (vlookupVal.match(/[^0-9]+$/) || [])[0]
                             : "");
-                        let num =  (typeof (vlookupVal) == "string"
+                        let num = (typeof (vlookupVal) == "string"
                             ? Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""))
                             : vlookupVal);
-                        if (typeof(sUnit) !== "undefined" && !isNaN(num)) {
+                        if (typeof (sUnit) !== "undefined" && !isNaN(num)) {
                             sUnit = sUnit.trim();
                             let sourceUnit = UNITS.find(u => u.unit == sUnit);
                             if (sourceUnit) {
@@ -7495,22 +7496,22 @@ var DashboardPowerups = (function () {
                         }
 
                         let $icon;
-                        if(args.hasOwnProperty("title")){
-                            let title = args.title.toLowerCase().trim().replace(/_/g,' ');
-                            $(TITLE_SELECTOR).each((ti,target)=>{
+                        if (args.hasOwnProperty("title")) {
+                            let title = args.title.toLowerCase().trim().replace(/_/g, ' ');
+                            $(TITLE_SELECTOR).each((ti, target) => {
                                 let $target = $(target);
                                 let targettitle = $target.text().toLowerCase().trim();
-                                if(targettitle === title){
+                                if (targettitle === title) {
                                     let $targettile = $target.parents(TILE_SELECTOR);
                                     $icon = $targettile.find(MENU_ICON_SELECTOR);
                                 }
                             })
-                            if(typeof($icon) == "undefined")
+                            if (typeof ($icon) == "undefined")
                                 $icon = $tile.find(MENU_ICON_SELECTOR);
                         } else {
                             $icon = $tile.find(MENU_ICON_SELECTOR);
                         }
-                        
+
                         $icon.parent().show();
                         $icon
                             .off(`.PUmenu-${name}`)
