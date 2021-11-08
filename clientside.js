@@ -7496,7 +7496,7 @@ var DashboardPowerups = (function () {
 
                         let $icon;
                         if(args.hasOwnProperty("title")){
-                            let title = args.title.toLowerCase().trim();
+                            let title = args.title.toLowerCase().trim().replace(/_/g,' ');
                             $(TITLE_SELECTOR).each((ti,target)=>{
                                 let $target = $(target);
                                 let targettitle = $target.text().toLowerCase().trim();
