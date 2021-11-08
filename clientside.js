@@ -7506,8 +7506,10 @@ var DashboardPowerups = (function () {
                                     $icon = $targettile.find(MENU_ICON_SELECTOR);
                                 }
                             })
-                            if (typeof ($icon) == "undefined")
+                            if (typeof ($icon) == "undefined") //didn't find it, apply to MD tile instead
                                 $icon = $tile.find(MENU_ICON_SELECTOR);
+                            else
+                                $text.hide(); //probably didn't need to show this tile to the user anyway
                         } else {
                             $icon = $tile.find(MENU_ICON_SELECTOR);
                         }
