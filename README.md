@@ -469,7 +469,7 @@ Explanation:
 - `!PU(table):` - denotes this powerup
 - `col=` - (optional) default sort order, e.g. 1 sort by first column ascending, -5 sort by fifth column descending
 - `scroll=false` - (optional) do not add scrollbars
-- `url=/ui/user-sessions/${userSessionId}` - (optional) add/replace link for 1st column. Use `${columnName}` syntax for value substitution.
+- `url=/ui/user-sessions/${userSessionId}` - (optional) add/replace link for 1st column. Use `${columnName}` syntax for value substitution. Note: must base last parameter in the powerup syntax.
 
 Example: 
 ![tablexls](Assets/table.png)
