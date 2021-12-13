@@ -398,15 +398,21 @@ h1.powerup-color-normal {
   cursor: default;
 }
 
-.powerupTable a,
-.powerupTable a:hover {
+.powerupTable a.powerupTableCol,
+.powerupTable a.powerupTableCol:hover {
   color: #00b9cc !important;
   font-size: 1.1em !important;
   text-decoration: none;
   z-index: 1001;
 }
 
-.powerupTable a:hover:not(.powerupTableColAsc) {
+.powerupTable a,
+.powerupTable a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.powerupTable a.powerupTableCol:hover:not(.powerupTableColAsc) {
   cursor: s-resize;
 }
 
