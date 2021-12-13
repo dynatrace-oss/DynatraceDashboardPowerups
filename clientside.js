@@ -6575,8 +6575,11 @@ var DashboardPowerups = (function () {
                             }
                         }
                     } else if (typeof (vlookupVal) == "string") {
-                        let percent = vlookupVal.includes('%');
-                        let num = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
+                        const percent = vlookupVal.includes('%');
+                        const stripped = vlookupVal.replace(/[,a-zA-Z %]/g, "");
+                        const num = stripped.length
+                            ? Number(stripped)
+                            : NaN;
                         if (!isNaN(num))
                             vlookupVal = fmt(num);
                         if (percent) //add it back if needed
