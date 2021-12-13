@@ -412,19 +412,19 @@ h1.powerup-color-normal {
   text-decoration: underline;
 }
 
-.powerupTable a.powerupTableCol:hover:not(.powerupTableColAsc) {
+.powerupTable a.powerupTableCol:hover:not(.powerupTableColDesc) {
   cursor: s-resize;
 }
 
 .powerupTableColAsc:hover {
-  cursor: n-resize;
-}
-
-.powerupTableColDesc:hover {
   cursor: s-resize;
 }
 
-.powerupTableColAsc::after {
+.powerupTableColDesc:hover {
+  cursor: n-resize;
+}
+
+.powerupTableColDesc::after {
   content: "";
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
@@ -433,7 +433,7 @@ h1.powerup-color-normal {
   margin-left: 5px;
 }
 
-.powerupTableColDesc::after {
+.powerupTableColAsc::after {
   content: "";
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;

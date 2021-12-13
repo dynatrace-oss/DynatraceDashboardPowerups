@@ -926,7 +926,7 @@ var DashboardPowerups = (function () {
                     let b0 = Number(b[key].replace(/[^0-9.]*/g, ''));
                     return a0 - b0;
                 } else { //should be a string
-                    return (a[key].toLowerCase() > b[key].toLowerCase() ? -1 : 1);
+                    return (a[key].toLowerCase() < b[key].toLowerCase() ? -1 : 1);
                 }
             default:
                 return false;
@@ -944,7 +944,7 @@ var DashboardPowerups = (function () {
                     let b0 = Number(b[key].replace(/[^0-9.]*/g, ''));
                     return b0 - a0;
                 } else { //should be a string
-                    return (a[key].toLowerCase() < b[key].toLowerCase() ? -1 : 1);
+                    return (b[key].toLowerCase() < a[key].toLowerCase() ? -1 : 1);
                 }
             default:
                 return false;
