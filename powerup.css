@@ -412,8 +412,8 @@ h1.powerup-color-normal {
   text-decoration: underline;
 }
 
-.powerupTable a.powerupTableCol:hover:not(.powerupTableColDesc) {
-  cursor: n-resize;
+.powerupTable a.powerupTableCol:hover:not(.powerupTableColAsc) {
+  cursor: s-resize;
 }
 
 .powerupTableColAsc:hover {
