@@ -6822,7 +6822,7 @@ var DashboardPowerups = (function () {
                                             const $anchor = $table //handle links
                                             .find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 2}) > a`);
                                         if($span && $span.length){
-                                            if(row.link && row.link.length){ //convert span to anchor
+                                            if(j===0 && row.link && row.link.length){ //convert span to anchor
                                                 const $newAnchor = $(`<a>`)
                                                     .text(row[col])
                                                     .attr('href', row.link);
