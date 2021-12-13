@@ -6817,13 +6817,25 @@ var DashboardPowerups = (function () {
                                 }
                                 sorted.forEach((row, i) => {
                                     dataTable.keys.forEach((col, j) => {
-                                        $table //handle spans
-                                            .find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 2}) > span`)
-                                            .text(row[col]);
-                                        $table //handle links
-                                            .find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 2}) > a`)
-                                            .text(row[col])
-                                            .attr('href', row.link);
+                                        const $span = $table //handle spans
+                                            .find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 2}) > span`);
+                                            const $anchor = $table //handle links
+                                            .find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 2}) > a`);
+                                        if($span && $span.length){
+                                            if(row.link && row.link.length){ //convert span to anchor
+                                                const $newAnchor = $(`<a>`)
+                                                    .text(row[col])
+                                                    .attr('href', row.link);
+                                                $span.replaceWith($newAnchor);
+                                            } else { //update existing span
+                                                $span.text(row[col]);
+                                            }
+                                        }
+                                        if($anchor && $anchor.length){ //update existing anchor
+                                            $anchor
+                                                .text(row[col])
+                                                .attr('href', row.link);
+                                        }
                                     })
                                 })
                             });
