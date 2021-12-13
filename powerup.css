@@ -413,7 +413,7 @@ h1.powerup-color-normal {
 }
 
 .powerupTable a.powerupTableCol:hover:not(.powerupTableColDesc) {
-  cursor: s-resize;
+  cursor: n-resize;
 }
 
 .powerupTableColAsc:hover {
