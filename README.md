@@ -32,6 +32,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [VLookup](#VLookup)
     - [Stdev](#Stdev)
     - [100stack](#100stack)
+    - [Table](#Table)
     - [mCompare](#mCompare)
     - [Image](#Image)
     - [Background](#Background)

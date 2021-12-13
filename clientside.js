@@ -6766,6 +6766,31 @@ var DashboardPowerups = (function () {
                     downloadExcel(filename, sheetname, dataTable.normalTable);
                 });
 
+                //make custom links
+                if(args && args.url && args.url.length){
+                    const re = /\${([\w]+)}/g;
+                    dataTable.normalTable.forEach(row => {
+                        let link = args.url;
+                        const matches = [...link.matchAll(re)];
+                        //console.log(matches);
+                        for (let m = matches.length-1; m >= 0; m--) { //reverse order to keep indexes consistent
+                            const match = matches[m];
+                            //console.log(match);
+                            const key = match[1];
+                            if(dataTable.keys.includes(key)){
+                                const replacement = row[key] || '';
+                                link = link.slice(0,match["index"]) 
+                                    + replacement 
+                                    + link.slice(match["index"] + match[0].length);
+                                    //console.log(link);
+                                    row.link = link;
+                            } else {
+                                console.log(`key not found: ${key} in `,dataTable.keys);
+                            }
+                        }
+                    })
+                }
+
                 //make column headers clickable
                 $tile.find(COLUMN_SELECTOR)
                     .each((i, el) => {
