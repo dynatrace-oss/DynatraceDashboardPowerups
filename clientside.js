@@ -6517,6 +6517,7 @@ var DashboardPowerups = (function () {
                 let size = (args.find(x => x[0] == "size") || [])[1] || "36px";
                 let unit = (args.find(x => x[0] == "unit") || [1])[1];
                 let dig = Number((args.find(x => x[0] == "dig") || [])[1]) || 2;
+                let string = (args.find(x => x[0] == "string") || [])[1] === "true" ? true : false;
 
                 //find the table
                 let tabletile = pub.findLinkedTile(link, PU_VLOOKUP);
@@ -6553,108 +6554,112 @@ var DashboardPowerups = (function () {
                 } else {
                     vlookupVal = dataTable.normalTable[rowIdx][colName];
 
-                    //handle unit conversion
-                    let fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: dig }).format;
-                    if (typeof (unit) != "undefined") {
-                        let sUnit = (typeof (vlookupVal) == "string"
-                            ? (vlookupVal.match(/[^0-9]+$/) || [])[0]
-                            : "");
-                        let num = (typeof (vlookupVal) == "string"
-                            ? Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""))
-                            : vlookupVal);
-                        if (typeof (sUnit) !== "undefined" && !isNaN(num)) {
-                            sUnit = sUnit.trim();
-                            let sourceUnit = UNITS.find(u => u.unit == sUnit);
-                            if (sourceUnit) {
-                                let conv = sourceUnit.conversions.find(c => c.unit == unit);
-                                if (conv && conv.factor) {
-                                    num *= conv.factor;
-                                    num = fmt(num);
-                                    vlookupVal = `${num} ${unit}`;
+                    if (!string) { //if treating as string, don't do any processing
+                        //handle unit conversion
+                        let fmt = Intl.NumberFormat(undefined, { maximumFractionDigits: dig }).format;
+                        if (typeof (unit) != "undefined") {
+                            let sUnit = (typeof (vlookupVal) == "string"
+                                ? (vlookupVal.match(/[^0-9]+$/) || [])[0]
+                                : "");
+                            let num = (typeof (vlookupVal) == "string"
+                                ? Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""))
+                                : vlookupVal);
+                            if (typeof (sUnit) !== "undefined" && !isNaN(num)) {
+                                sUnit = sUnit.trim();
+                                let sourceUnit = UNITS.find(u => u.unit == sUnit);
+                                if (sourceUnit) {
+                                    let conv = sourceUnit.conversions.find(c => c.unit == unit);
+                                    if (conv && conv.factor) {
+                                        num *= conv.factor;
+                                        num = fmt(num);
+                                        vlookupVal = `${num} ${unit}`;
+                                    }
                                 }
                             }
+                        } else if (typeof (vlookupVal) == "string") {
+                            const percent = vlookupVal.includes('%');
+                            const stripped = vlookupVal.replace(/[,a-zA-Z %]/g, "");
+                            const num = stripped.length
+                                ? Number(stripped)
+                                : NaN;
+                            if (!isNaN(num))
+                                vlookupVal = fmt(num);
+                            if (percent) //add it back if needed
+                                vlookupVal += ' %';
+                        } else if (typeof (vlookupVal) == "number") {
+                            vlookupVal = fmt(vlookupVal);
                         }
-                    } else if (typeof (vlookupVal) == "string") {
-                        const percent = vlookupVal.includes('%');
-                        const stripped = vlookupVal.replace(/[,a-zA-Z %]/g, "");
-                        const num = stripped.length
-                            ? Number(stripped)
-                            : NaN;
-                        if (!isNaN(num))
-                            vlookupVal = fmt(num);
-                        if (percent) //add it back if needed
-                            vlookupVal += ' %';
-                    } else if (typeof (vlookupVal) == "number") {
-                        vlookupVal = fmt(vlookupVal);
-                    }
 
-                    //optionally compare to another table value
-                    //compareTable=table;compareVal=/easytravel/rest/journeys/;compareCol=2;lt=red;gt=green;eq=yellow
-                    let compareLink = (args.find(x => x[0] == "compareTable") || [])[1];
-                    let compareVal = (args.find(x => x[0] == "compareVal") || [])[1];
-                    if (compareLink && compareVal) {
-                        let compareCol = (args.find(x => x[0] == "compareCol") || [1])[1];
-                        let lt = (args.find(x => x[0] == "lt") || ['red'])[1];
-                        let eq = (args.find(x => x[0] == "eq") || ['yellow'])[1];
-                        let gt = (args.find(x => x[0] == "gt") || ['green'])[1];
-                        let compareTable;
-                        if (link === compareLink) compareTable = dataTable;
-                        else {
-                            let comparetabletile = pub.findLinkedTile(compareLink, PU_VLOOKUP + "-compareLink");
-                            if (typeof (comparetabletile) == "undefined") return false;
-                            let $comparetabletile = $(comparetabletile);
-                            compareTable = readTableData($comparetabletile);
-                        }
-                        if (!compareTable || typeof (compareTable.keys) == "undefined" || !compareTable.keys.length) {
-                            let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in compareTable.`;
-                            console.log(error);
-                            errorBeacon(error);
-                            return true; //return non-false to 'continue'
-                        }
-                        let compareFirstColName = compareTable.keys[0];
-                        let compareRowIdx = compareTable.normalTable.findIndex(x => x[compareFirstColName] === compareVal);
-                        if (compareRowIdx < 0) {
-                            console.log("POWERUP: WARN - vlookup compareVal not found in table.");
-                        } else {
-                            let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
-                            let compareVlookupVal = compareTable.normalTable[compareRowIdx][compareColName];
-                            let a, b;
-                            //a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
+                        //optionally compare to another table value
+                        //compareTable=table;compareVal=/easytravel/rest/journeys/;compareCol=2;lt=red;gt=green;eq=yellow
+                        let compareLink = (args.find(x => x[0] == "compareTable") || [])[1];
+                        let compareVal = (args.find(x => x[0] == "compareVal") || [])[1];
+                        if (compareLink && compareVal) {
+                            let compareCol = (args.find(x => x[0] == "compareCol") || [1])[1];
+                            let lt = (args.find(x => x[0] == "lt") || ['red'])[1];
+                            let eq = (args.find(x => x[0] == "eq") || ['yellow'])[1];
+                            let gt = (args.find(x => x[0] == "gt") || ['green'])[1];
+                            let compareTable;
+                            if (link === compareLink) compareTable = dataTable;
+                            else {
+                                let comparetabletile = pub.findLinkedTile(compareLink, PU_VLOOKUP + "-compareLink");
+                                if (typeof (comparetabletile) == "undefined") return false;
+                                let $comparetabletile = $(comparetabletile);
+                                compareTable = readTableData($comparetabletile);
+                            }
+                            if (!compareTable || typeof (compareTable.keys) == "undefined" || !compareTable.keys.length) {
+                                let error = `POWERUP: WARN - ${PU_VLOOKUP} - no columns found in compareTable.`;
+                                console.log(error);
+                                errorBeacon(error);
+                                return true; //return non-false to 'continue'
+                            }
+                            let compareFirstColName = compareTable.keys[0];
+                            let compareRowIdx = compareTable.normalTable.findIndex(x => x[compareFirstColName] === compareVal);
+                            if (compareRowIdx < 0) {
+                                console.log("POWERUP: WARN - vlookup compareVal not found in table.");
+                            } else {
+                                let compareColName = (Number.isNaN(compareCol) ? compareCol : compareTable.keys[compareCol]);
+                                let compareVlookupVal = compareTable.normalTable[compareRowIdx][compareColName];
+                                let a, b;
+                                //a = Number(vlookupVal.replace(/[,a-zA-Z]/g, ""));
+                                if (typeof (vlookupVal) == "string")
+                                    a = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
+                                if (typeof (vlookupVal) == "number")
+                                    a = vlookupVal;
+                                //b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
+                                if (typeof (compareVlookupVal) == "string")
+                                    b = Number(compareVlookupVal.replace(/[,a-zA-Z %]/g, ""));
+                                if (typeof (compareVlookupVal) == "number")
+                                    b = compareVlookupVal;
+                                if (Number.isNaN(a) || Number.isNaN(b)) {
+                                    console.log("POWERUP: WARN - vlookup could not compare vals.");
+                                } else {
+                                    if (a < b) color = lt;
+                                    else if (a === b) color = eq;
+                                    else if (a > b) color = gt;
+                                }
+                            }
+                        } else if (base && !isNaN(warn) && !isNaN(crit)) {
+                            let a;
                             if (typeof (vlookupVal) == "string")
                                 a = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
                             if (typeof (vlookupVal) == "number")
                                 a = vlookupVal;
-                            //b = Number(compareVlookupVal.replace(/[,a-zA-Z]/g, ""));
-                            if (typeof (compareVlookupVal) == "string")
-                                b = Number(compareVlookupVal.replace(/[,a-zA-Z %]/g, ""));
-                            if (typeof (compareVlookupVal) == "number")
-                                b = compareVlookupVal;
-                            if (Number.isNaN(a) || Number.isNaN(b)) {
-                                console.log("POWERUP: WARN - vlookup could not compare vals.");
-                            } else {
-                                if (a < b) color = lt;
-                                else if (a === b) color = eq;
-                                else if (a > b) color = gt;
+                            switch (base) {
+                                case "low":
+                                    if (a < warn) color = "green";
+                                    else if (a < crit) color = "yellow";
+                                    else color = "red";
+                                    break;
+                                case "high":
+                                    if (a > warn) color = "green";
+                                    else if (a > crit) color = "yellow";
+                                    else color = "red";
+                                    break;
                             }
                         }
-                    } else if (base && !isNaN(warn) && !isNaN(crit)) {
-                        let a;
-                        if (typeof (vlookupVal) == "string")
-                            a = Number(vlookupVal.replace(/[,a-zA-Z %]/g, ""));
-                        if (typeof (vlookupVal) == "number")
-                            a = vlookupVal;
-                        switch (base) {
-                            case "low":
-                                if (a < warn) color = "green";
-                                else if (a < crit) color = "yellow";
-                                else color = "red";
-                                break;
-                            case "high":
-                                if (a > warn) color = "green";
-                                else if (a > crit) color = "yellow";
-                                else color = "red";
-                                break;
-                        }
+                    } else {
+                        vlookupVal = vlookupVal; //keep it as-is
                     }
                 }
 
@@ -6770,25 +6775,25 @@ var DashboardPowerups = (function () {
                 });
 
                 //make custom links
-                if(args && args.url && args.url.length){
+                if (args && args.url && args.url.length) {
                     const re = /\${([\w]+)}/g;
                     dataTable.normalTable.forEach(row => {
                         let link = args.url;
                         const matches = [...link.matchAll(re)];
                         //console.log(matches);
-                        for (let m = matches.length-1; m >= 0; m--) { //reverse order to keep indexes consistent
+                        for (let m = matches.length - 1; m >= 0; m--) { //reverse order to keep indexes consistent
                             const match = matches[m];
                             //console.log(match);
                             const key = match[1];
-                            if(dataTable.keys.includes(key)){
+                            if (dataTable.keys.includes(key)) {
                                 const replacement = row[key] || '';
-                                link = link.slice(0,match["index"]) 
-                                    + replacement 
+                                link = link.slice(0, match["index"])
+                                    + replacement
                                     + link.slice(match["index"] + match[0].length);
-                                    //console.log(link);
-                                    row.link = link;
+                                //console.log(link);
+                                row.link = link;
                             } else {
-                                console.log(`key not found: ${key} in `,dataTable.keys);
+                                console.log(`key not found: ${key} in `, dataTable.keys);
                             }
                         }
                     })
@@ -6822,10 +6827,10 @@ var DashboardPowerups = (function () {
                                     dataTable.keys.forEach((col, j) => {
                                         const $span = $table //handle spans
                                             .find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 2}) > span`);
-                                            const $anchor = $table //handle links
+                                        const $anchor = $table //handle links
                                             .find(`div > div:nth-of-type(${j + 1}) > div:nth-of-type(${i + 2}) > a`);
-                                        if($span && $span.length){
-                                            if(j===0 && row.link && row.link.length){ //convert span to anchor
+                                        if ($span && $span.length) {
+                                            if (j === 0 && row.link && row.link.length) { //convert span to anchor
                                                 const $newAnchor = $(`<a>`)
                                                     .text(row[col])
                                                     .attr('href', row.link);
@@ -6834,7 +6839,7 @@ var DashboardPowerups = (function () {
                                                 $span.text(row[col]);
                                             }
                                         }
-                                        if($anchor && $anchor.length){ //update existing anchor
+                                        if ($anchor && $anchor.length) { //update existing anchor
                                             $anchor
                                                 .text(row[col])
                                                 .attr('href', row.link);
