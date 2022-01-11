@@ -341,6 +341,10 @@ var DashboardPowerups = (function () {
                 {
                     unit: "GB",
                     factor: 0.000000001
+                },
+                {
+                    unit: "TB",
+                    factor: 0.000000000001
                 }
             ]
         },
@@ -363,6 +367,10 @@ var DashboardPowerups = (function () {
                 {
                     unit: "GB",
                     factor: 0.000001
+                },
+                {
+                    unit: "TB",
+                    factor: 0.000000001
                 }
             ]
         },
@@ -385,6 +393,10 @@ var DashboardPowerups = (function () {
                 {
                     unit: "GB",
                     factor: 0.001
+                },
+                {
+                    unit: "TB",
+                    factor: 0.000001
                 }
             ]
         },
@@ -406,6 +418,36 @@ var DashboardPowerups = (function () {
                 },
                 {
                     unit: "GB",
+                    factor: 1
+                },
+                {
+                    unit: "TB",
+                    factor: .001
+                },
+            ]
+        },
+        {
+            name: "terabytes",
+            unit: "TB",
+            conversions: [
+                {
+                    unit: "B",
+                    factor: 1000000000000
+                },
+                {
+                    unit: "kB",
+                    factor: 1000000000
+                },
+                {
+                    unit: "MB",
+                    factor: 1000000
+                },
+                {
+                    unit: "GB",
+                    factor: 1000
+                },
+                {
+                    unit: "TB",
                     factor: 1
                 },
             ]
