@@ -6726,8 +6726,12 @@ var DashboardPowerups = (function () {
                     else if (as) {
                         const oldhtml = $p.html();
                         const search = "${" + as + "}";
+                        const searchenc = encodeURIComponent(search);
                         if (oldhtml.includes(search)) {
                             const newhtml = oldhtml.replace(new RegExp("\\"+search), vlookupVal);
+                            $p.html(newhtml);
+                        } else if(oldhtml.includes(searchenc)){
+                            const newhtml = oldhtml.replace(new RegExp(searchenc), vlookupVal);
                             $p.html(newhtml);
                         }
                     }
