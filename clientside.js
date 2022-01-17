@@ -6560,6 +6560,7 @@ var DashboardPowerups = (function () {
                 let unit = (args.find(x => x[0] == "unit") || [1])[1];
                 let dig = Number((args.find(x => x[0] == "dig") || [])[1]) || 2;
                 let string = (args.find(x => x[0] == "string") || [])[1] === "true" ? true : false;
+                let as = (args.find(x => x[0] == "as") || [])[1];
 
                 //find the table
                 let tabletile = pub.findLinkedTile(link, PU_VLOOKUP);
@@ -6722,6 +6723,14 @@ var DashboardPowerups = (function () {
                         .appendTo($newContainer);
                     if ($p.text().includes(PU_VLOOKUP)) //mark text to swap
                         $p.addClass('powerupVlookupToBeSwapped');
+                    else if (as) {
+                        const oldhtml = $p.html();
+                        const search = "\\${" + as + "}";
+                        if (oldhtml.includes(search)) {
+                            const newhtml = oldhtml.replace(new RegExp(search), vlookupVal);
+                            $p.html(newhtml);
+                        }
+                    }
                 });
 
                 //replace in the new val
