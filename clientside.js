@@ -6731,7 +6731,7 @@ var DashboardPowerups = (function () {
                             const newhtml = oldhtml.replace(new RegExp("\\"+search), vlookupVal);
                             $p.html(newhtml);
                         } else if(oldhtml.includes(searchenc)){
-                            const newhtml = oldhtml.replace(new RegExp("\\"+searchenc), vlookupVal);
+                            const newhtml = oldhtml.replace(new RegExp("\\"+searchenc), encodeURIComponent(vlookupVal));
                             $p.html(newhtml);
                         }
                     }
