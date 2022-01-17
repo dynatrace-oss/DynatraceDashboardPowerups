@@ -6725,9 +6725,9 @@ var DashboardPowerups = (function () {
                         $p.addClass('powerupVlookupToBeSwapped');
                     else if (as) {
                         const oldhtml = $p.html();
-                        const search = "\\${" + as + "}";
+                        const search = "${" + as + "}";
                         if (oldhtml.includes(search)) {
-                            const newhtml = oldhtml.replace(new RegExp(search), vlookupVal);
+                            const newhtml = oldhtml.replace(new RegExp("\\"+search), vlookupVal);
                             $p.html(newhtml);
                         }
                     }
