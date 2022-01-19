@@ -7591,7 +7591,13 @@ var DashboardPowerups = (function () {
                                 //check for already added
                                 $popup.children("a").each((child_idx, child) => {
                                     let $child = $(child);
-                                    if ($child.text() == name) $a = $child;
+                                    if ($child.text() == name) {
+                                        if ($child.attr("href") == url)
+                                            $a = $child;
+                                        else
+                                            $child.remove();
+
+                                    }
                                 })
 
                                 if (typeof ($a) == "undefined"
