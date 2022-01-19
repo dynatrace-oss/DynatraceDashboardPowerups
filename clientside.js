@@ -6711,6 +6711,20 @@ var DashboardPowerups = (function () {
                 $markdown.hide();
                 $markdown.parent().children(".powerupVlookup").remove();
 
+                //potentially dangerous: swap text in original tile
+                if (as) {
+                    const oldhtml = $markdown.html();
+                    const search = "${" + as + "}";
+                    const searchenc = "$" + encodeURIComponent("{" + as + "}");
+                    if (oldhtml.includes(search)) {
+                        const newhtml = oldhtml.replace(new RegExp("\\" + search), vlookupVal);
+                        $markdown.html(newhtml);
+                    } else if (oldhtml.includes(searchenc)) {
+                        const newhtml = oldhtml.replace(new RegExp("\\" + searchenc), encodeURIComponent(vlookupVal));
+                        $markdown.html(newhtml);
+                    }
+                }
+
                 //create new container
                 let $newContainer = $("<div>")
                     .addClass("powerupVlookup")
@@ -6726,12 +6740,12 @@ var DashboardPowerups = (function () {
                     else if (as) {
                         const oldhtml = $p.html();
                         const search = "${" + as + "}";
-                        const searchenc = "$" + encodeURIComponent("{"+as+"}");
+                        const searchenc = "$" + encodeURIComponent("{" + as + "}");
                         if (oldhtml.includes(search)) {
-                            const newhtml = oldhtml.replace(new RegExp("\\"+search), vlookupVal);
+                            const newhtml = oldhtml.replace(new RegExp("\\" + search), vlookupVal);
                             $p.html(newhtml);
-                        } else if(oldhtml.includes(searchenc)){
-                            const newhtml = oldhtml.replace(new RegExp("\\"+searchenc), encodeURIComponent(vlookupVal));
+                        } else if (oldhtml.includes(searchenc)) {
+                            const newhtml = oldhtml.replace(new RegExp("\\" + searchenc), encodeURIComponent(vlookupVal));
                             $p.html(newhtml);
                         }
                     }
