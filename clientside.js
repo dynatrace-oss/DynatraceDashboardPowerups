@@ -6753,16 +6753,16 @@ var DashboardPowerups = (function () {
             const searchValEncoded = "${" + as + ".enc}";
             const searchEncodedValEncoded = "$" + encodeURIComponent("{" + as + ".enc}");
             if (newhtml.includes(search)) {
-                const newhtml = newhtml.replace(new RegExp("\\" + search, "g"), val);
+                newhtml = newhtml.replace(new RegExp("\\" + search, "g"), val);
             }
             if (newhtml.includes(searchEncoded)) {
-                const newhtml = newhtml.replace(new RegExp("\\" + searchEncoded, "g"), val);
+                newhtml = newhtml.replace(new RegExp("\\" + searchEncoded, "g"), val);
             }
             if (newhtml.includes(searchValEncoded)) {
-                const newhtml = newhtml.replace(new RegExp("\\" + searchValEncoded, "g"), encodeURIComponent(val));
+                newhtml = newhtml.replace(new RegExp("\\" + searchValEncoded, "g"), encodeURIComponent(val));
             }
             if (newhtml.includes(searchEncodedValEncoded)) {
-                const newhtml = newhtml.replace(new RegExp("\\" + searchEncodedValEncoded, "g"), encodeURIComponent(val));
+                newhtml = newhtml.replace(new RegExp("\\" + searchEncodedValEncoded, "g"), encodeURIComponent(val));
             }
             if (newhtml != oldhtml)
                 $el.html(newhtml);
