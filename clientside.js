@@ -6755,13 +6755,13 @@ var DashboardPowerups = (function () {
                 const newhtml = oldhtml.replace(new RegExp("\\" + search, "g"), val);
                 $el.html(newhtml);
             } else if (oldhtml.includes(searchEncoded)) {
-                const newhtml = oldhtml.replace(new RegExp("\\" + searchenc, "g"), val);
+                const newhtml = oldhtml.replace(new RegExp("\\" + searchEncoded, "g"), val);
                 $el.html(newhtml);
             } else if (oldhtml.includes(searchValEncoded)) {
-                const newhtml = oldhtml.replace(new RegExp("\\" + search, "g"), encodeURIComponent(val));
+                const newhtml = oldhtml.replace(new RegExp("\\" + searchValEncoded, "g"), encodeURIComponent(val));
                 $el.html(newhtml);
             } else if (oldhtml.includes(searchEncodedValEncoded)) {
-                const newhtml = oldhtml.replace(new RegExp("\\" + searchenc, "g"), encodeURIComponent(val));
+                const newhtml = oldhtml.replace(new RegExp("\\" + searchEncodedValEncoded, "g"), encodeURIComponent(val));
                 $el.html(newhtml);
             }
         }
