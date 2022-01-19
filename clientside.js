@@ -6713,16 +6713,7 @@ var DashboardPowerups = (function () {
 
                 //potentially dangerous: swap text in original tile
                 if (as) {
-                    const oldhtml = $markdown.html();
-                    const search = "${" + as + "}";
-                    const searchenc = "$" + encodeURIComponent("{" + as + "}");
-                    if (oldhtml.includes(search)) {
-                        const newhtml = oldhtml.replace(new RegExp("\\" + search,"g"), vlookupVal);
-                        $markdown.html(newhtml);
-                    } else if (oldhtml.includes(searchenc)) {
-                        const newhtml = oldhtml.replace(new RegExp("\\" + searchenc,"g"), encodeURIComponent(vlookupVal));
-                        $markdown.html(newhtml);
-                    }
+                    asSwap($markdown,as,vlookupVal);
                 }
 
                 //create new container
@@ -6738,16 +6729,7 @@ var DashboardPowerups = (function () {
                     if ($p.text().includes(PU_VLOOKUP)) //mark text to swap
                         $p.addClass('powerupVlookupToBeSwapped');
                     else if (as) {
-                        const oldhtml = $p.html();
-                        const search = "${" + as + "}";
-                        const searchenc = "$" + encodeURIComponent("{" + as + "}");
-                        if (oldhtml.includes(search)) {
-                            const newhtml = oldhtml.replace(new RegExp("\\" + search,"g"), vlookupVal);
-                            $p.html(newhtml);
-                        } else if (oldhtml.includes(searchenc)) {
-                            const newhtml = oldhtml.replace(new RegExp("\\" + searchenc,"g"), encodeURIComponent(vlookupVal));
-                            $p.html(newhtml);
-                        }
+                        asSwap($p,as,vlookupVal);
                     }
                 });
 
@@ -6761,6 +6743,28 @@ var DashboardPowerups = (function () {
             }
         });
         return true;
+
+        function asSwap(el, as, val) {
+            const $el = $(el);
+            const oldhtml = $el.html();
+            const search = "${" + as + "}";
+            const searchEncoded = "$" + encodeURIComponent("{" + as + "}");
+            const searchValEncoded = "${" + as + ".enc}";
+            const searchEncodedValEncoded = "$" + encodeURIComponent("{" + as + ".enc}");
+            if (oldhtml.includes(search)) {
+                const newhtml = oldhtml.replace(new RegExp("\\" + search, "g"), val);
+                $el.html(newhtml);
+            } else if (oldhtml.includes(searchEncoded)) {
+                const newhtml = oldhtml.replace(new RegExp("\\" + searchenc, "g"), val);
+                $el.html(newhtml);
+            } else if (oldhtml.includes(searchValEncoded)) {
+                const newhtml = oldhtml.replace(new RegExp("\\" + search, "g"), encodeURIComponent(val));
+                $el.html(newhtml);
+            } else if (oldhtml.includes(searchEncodedValEncoded)) {
+                const newhtml = oldhtml.replace(new RegExp("\\" + searchenc, "g"), encodeURIComponent(val));
+                $el.html(newhtml);
+            }
+        }
     }
 
     pub.PUtable = function () {
