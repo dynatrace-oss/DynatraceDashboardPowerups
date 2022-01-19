@@ -6713,7 +6713,7 @@ var DashboardPowerups = (function () {
 
                 //potentially dangerous: swap text in original tile
                 if (as) {
-                    asSwap($markdown,as,vlookupVal);
+                    asSwap($markdown, as, vlookupVal);
                 }
 
                 //create new container
@@ -6729,7 +6729,7 @@ var DashboardPowerups = (function () {
                     if ($p.text().includes(PU_VLOOKUP)) //mark text to swap
                         $p.addClass('powerupVlookupToBeSwapped');
                     else if (as) {
-                        asSwap($p,as,vlookupVal);
+                        asSwap($p, as, vlookupVal);
                     }
                 });
 
@@ -6747,23 +6747,25 @@ var DashboardPowerups = (function () {
         function asSwap(el, as, val) {
             const $el = $(el);
             const oldhtml = $el.html();
+            let newhtml = oldhtml;
             const search = "${" + as + "}";
             const searchEncoded = "$" + encodeURIComponent("{" + as + "}");
             const searchValEncoded = "${" + as + ".enc}";
             const searchEncodedValEncoded = "$" + encodeURIComponent("{" + as + ".enc}");
-            if (oldhtml.includes(search)) {
-                const newhtml = oldhtml.replace(new RegExp("\\" + search, "g"), val);
-                $el.html(newhtml);
-            } else if (oldhtml.includes(searchEncoded)) {
-                const newhtml = oldhtml.replace(new RegExp("\\" + searchEncoded, "g"), val);
-                $el.html(newhtml);
-            } else if (oldhtml.includes(searchValEncoded)) {
-                const newhtml = oldhtml.replace(new RegExp("\\" + searchValEncoded, "g"), encodeURIComponent(val));
-                $el.html(newhtml);
-            } else if (oldhtml.includes(searchEncodedValEncoded)) {
-                const newhtml = oldhtml.replace(new RegExp("\\" + searchEncodedValEncoded, "g"), encodeURIComponent(val));
-                $el.html(newhtml);
+            if (newhtml.includes(search)) {
+                const newhtml = newhtml.replace(new RegExp("\\" + search, "g"), val);
             }
+            if (newhtml.includes(searchEncoded)) {
+                const newhtml = newhtml.replace(new RegExp("\\" + searchEncoded, "g"), val);
+            }
+            if (newhtml.includes(searchValEncoded)) {
+                const newhtml = newhtml.replace(new RegExp("\\" + searchValEncoded, "g"), encodeURIComponent(val));
+            }
+            if (newhtml.includes(searchEncodedValEncoded)) {
+                const newhtml = newhtml.replace(new RegExp("\\" + searchEncodedValEncoded, "g"), encodeURIComponent(val));
+            }
+            if (newhtml != oldhtml)
+                $el.html(newhtml);
         }
     }
 
