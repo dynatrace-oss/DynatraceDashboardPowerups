@@ -6717,10 +6717,10 @@ var DashboardPowerups = (function () {
                     const search = "${" + as + "}";
                     const searchenc = "$" + encodeURIComponent("{" + as + "}");
                     if (oldhtml.includes(search)) {
-                        const newhtml = oldhtml.replace(new RegExp("\\" + search), vlookupVal);
+                        const newhtml = oldhtml.replace(new RegExp("\\" + search,"g"), vlookupVal);
                         $markdown.html(newhtml);
                     } else if (oldhtml.includes(searchenc)) {
-                        const newhtml = oldhtml.replace(new RegExp("\\" + searchenc), encodeURIComponent(vlookupVal));
+                        const newhtml = oldhtml.replace(new RegExp("\\" + searchenc,"g"), encodeURIComponent(vlookupVal));
                         $markdown.html(newhtml);
                     }
                 }
@@ -6742,10 +6742,10 @@ var DashboardPowerups = (function () {
                         const search = "${" + as + "}";
                         const searchenc = "$" + encodeURIComponent("{" + as + "}");
                         if (oldhtml.includes(search)) {
-                            const newhtml = oldhtml.replace(new RegExp("\\" + search), vlookupVal);
+                            const newhtml = oldhtml.replace(new RegExp("\\" + search,"g"), vlookupVal);
                             $p.html(newhtml);
                         } else if (oldhtml.includes(searchenc)) {
-                            const newhtml = oldhtml.replace(new RegExp("\\" + searchenc), encodeURIComponent(vlookupVal));
+                            const newhtml = oldhtml.replace(new RegExp("\\" + searchenc,"g"), encodeURIComponent(vlookupVal));
                             $p.html(newhtml);
                         }
                     }
