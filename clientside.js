@@ -6752,6 +6752,7 @@ var DashboardPowerups = (function () {
             const searchEncoded = "$" + encodeURIComponent("{" + as + "}");
             const searchValEncoded = "${" + as + ".enc}";
             const searchEncodedValEncoded = "$" + encodeURIComponent("{" + as + ".enc}");
+            const sessionQueryEncoded = encodeURIComponent(searchValEncoded);
             if (newhtml.includes(search)) {
                 newhtml = newhtml.replace(new RegExp("\\" + search, "g"), val);
             }
@@ -6763,6 +6764,9 @@ var DashboardPowerups = (function () {
             }
             if (newhtml.includes(searchEncodedValEncoded)) {
                 newhtml = newhtml.replace(new RegExp("\\" + searchEncodedValEncoded, "g"), encodeURIComponent(val));
+            }
+            if (newhtml.includes(sessionQueryEncoded)) {
+                newhtml = newhtml.replace(new RegExp("\\" + sessionQueryEncoded, "g"), encodeURIComponent(val));
             }
             if (newhtml != oldhtml)
                 $el.html(newhtml);
