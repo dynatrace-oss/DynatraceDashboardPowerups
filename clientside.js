@@ -7298,7 +7298,7 @@ var DashboardPowerups = (function () {
                 let numlevels = Math.min(dataTable.keys.length - 1, 5);
 
                 let tree = {
-                    sub =[]
+                    sub: []
                 }
 
                 dataTable.normalTable.forEach(row => {
