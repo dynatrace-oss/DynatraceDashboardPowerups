@@ -2895,7 +2895,6 @@ var DashboardPowerups = (function () {
             }
         }
 
-
     }
 
     pub.findLinkedTile = function (link, from = "") {
