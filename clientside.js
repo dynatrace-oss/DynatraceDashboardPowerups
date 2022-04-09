@@ -7844,6 +7844,10 @@ var DashboardPowerups = (function () {
 
                         if (Array.isArray(actions)) {
                             for (let i = 0; i < actions.length - 1; i++) {
+                                if (typeof (actions[i]) == "undefined" || typeof (ends[i]) == "undefined" || typeof (starts[i]) == "undefined") {
+                                    console.log(PU_TIMEONPAGE + ": invalid, skipping...", { actions: actions[i], starts: starts[i], ends: ends[i] });
+                                    continue;
+                                }
                                 let name = actions[i];
                                 let loaded = Number(ends[i].replace(/[ ,]+/g, ''));
                                 let next = Number(starts[i + 1].replace(/[ ,]+/g, ''));
