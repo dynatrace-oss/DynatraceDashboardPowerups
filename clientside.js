@@ -7830,6 +7830,9 @@ var DashboardPowerups = (function () {
                 //read the table
                 let dataTable = readTableData($tile, false);
 
+                if(!dataTable || !Array.isArray(dataTable.keys) || !dataTable.keys.length)
+                    return; //no data, continue
+
                 if (dataTable.keys.includes("start")
                     && dataTable.keys.includes("end")
                     && dataTable.keys.includes("name")) {
