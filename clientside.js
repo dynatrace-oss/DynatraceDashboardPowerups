@@ -105,12 +105,14 @@ var DashboardPowerups = (function () {
     const PU_TIMEONPAGE = '!PU(timeonpage):';
     const PU_CUMULATIVE = '!PU(cumulative):';
     const PU_ELLIPSIS = '!PU(ellipsis):';
+    const PU_RAGELICKS = '!PU(rageclicks):';
+
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS, PU_RAGELICKS
     ];
 
     const COLOR_RED = "#c41425";
@@ -2894,6 +2896,7 @@ var DashboardPowerups = (function () {
                 return "";
             }
         }
+
 
     }
 
@@ -7029,6 +7032,237 @@ var DashboardPowerups = (function () {
         return true;
     }
 
+    // Count rage clicks
+    pub.PUrageclicks = function () {
+        const red = '#C93234';
+        const green = '#8EC355';
+        const yellow = '#f5d30f';
+        const gray = '#cccccc';
+        const orange = '##fd8232';
+
+        // Standard code copied from other plugins
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let title = $title.text();
+            let $tile = $title.parents(TILE_SELECTOR);
+
+            if (title.includes(PU_RAGELICKS)) {
+                let args = argsplit(title, PU_RAGELICKS);
+                let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',').filter(x => x != "");
+                let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
+                if (drill) drill = drill.trim();
+                let base = (args.find(x => x[0] == "base") || [])[1] || "";
+                let warn = Number(
+                    (args.find(x => x[0] == "warn") || [])
+                    [1]);
+                let crit = Number(
+                    (args.find(x => x[0] == "crit") || [])
+                    [1]);
+
+                //find the table
+                let dataTable = readTableData($tile, true, true);
+                if (!dataTable) {
+                    console.log(`Powerup: WARN - PU_RAGELICKS - no table found`);
+                    return;
+                }
+
+                {
+                    let name = dataTable.keys[0];
+                    let value = dataTable.keys[1];
+                    dataTable.normalTable.forEach(p => { //make tables similar
+                        p.name = p[name];
+                        p.value = p[value];
+                        p.colname = name;
+                    });
+                }
+                if (Array.isArray(links) && links.length) {
+                    links.forEach(link => {
+                        let linkedTile = pub.findLinkedTile(link, PU_RAGELICKS);
+                        if (linkedTile == undefined) return false;
+                        let linkedTable = readTableData(linkedTile, true, true);
+                        if (!linkedTable) return false;
+
+                        let name = linkedTable.keys[0];
+                        let value = linkedTable.keys[1];
+                        linkedTable.normalTable.forEach(p => { //make tables similar
+                            p.name = p[name];
+                            p.value = p[value];
+                            p.colname = name;
+                        });
+                        dataTable.normalTable = dataTable.normalTable.concat(linkedTable.normalTable);
+                    })
+
+                }
+                if (!dataTable) return;
+
+                // Start of custom code
+
+                var pages = null;
+                var events = null;
+                var pageRages = {};
+
+                // Loop through data retrived from data
+                for (var i = dataTable.normalTable.length - 1; i >= 0; i--) {
+
+                    // Pull line from table
+                    pages = dataTable.normalTable[i].name;
+                    events = dataTable.normalTable[i].value;
+
+                    // as values are text remove unwanted chars
+                    pages = pages.replaceAll('[', '');
+                    pages = pages.replaceAll(']', '');
+                    events = events.replaceAll('[', '');
+                    events = events.replaceAll(']', '');
+                    pages = pages.split(",");
+                    events = events.split(",");
+
+                    // define the highest loop length (sure theres a better way)
+                    var highLoop = 0;
+                    if(pages.length > events.length){
+                        highLoop = pages.length;
+                    }else{
+                        highLoop = events.length;
+                    }
+
+
+                    var pageRage = "";
+                    var pageRageCollection = [];
+
+                    // Loop through the data
+                    for (var j = 0; j < highLoop; j++) {
+                        if(j < pages.length){
+                            // if page has loading in it then make pageRage the value of the page
+                            if(pages[j].toLowerCase().indexOf("loading") > -1){
+                                pageRage = pages[j].toLowerCase().replaceAll('loading of page ', '').trim();
+                            }
+                        }
+
+                        if(j < events.length){
+                            // if the event is raging then add the page defined in the previous step to pageRageCollection
+                            if(events[j].toLowerCase().indexOf("rage") > -1){
+                                pageRageCollection.push(pageRage);
+                            }
+                        }
+                    }
+
+                    // Count and organise the rages by page
+                   for (var x = pageRageCollection.length - 1; x >= 0; x--) {
+                        if(pageRages[pageRageCollection[x]] == null){
+                            pageRages[pageRageCollection[x]] = 1;
+                        }else{
+                            pageRages[pageRageCollection[x]]++;
+                        }
+                   }
+                }
+                
+
+                // define table data
+                var tablepages = [];
+                var tablecounts = [];
+
+                for (var key in pageRages) {
+                    tablepages.push(key);
+                    tablecounts.push(pageRages[key]);
+                }
+
+
+                var keys = ["page","ragecount"];
+
+                //swap in a container for our new table
+                let $table = $tile.find(TABLE_SELECTOR);
+                $table.hide();
+
+                    let $newTable = $(`<div>`)
+                        .addClass('powerupNewTable')
+                        .insertAfter($table);
+                    let $grid = $(`<div>`)
+                        .addClass('powerupTableGrid')
+                        .addClass('rageClicks')
+                        .appendTo($newTable);
+                    outputCol($grid, 'pages', tablepages);
+                    outputCol($grid, 'rage count', tablecounts);
+                    let numCols = $grid.children().length;
+                    $grid.css('grid-template-columns', `repeat(${numCols}, minmax(80px, auto))`)
+
+                powerupsFired['PU_RAGELICKS'] ? powerupsFired['PU_RAGELICKS']++ : powerupsFired['PU_RAGELICKS'] = 1;
+            }
+        });
+
+        function outputCol(target, header, data) {
+            let $col = $(`<div>`)
+                .addClass('powerupTableCol');
+            let $head = $(`<div>`)
+                .appendTo($col);
+            $(`<span>`)
+                .text(header)
+                .appendTo($head);
+            data.forEach(d => {
+                let $div = $(`<div>`)
+                    .appendTo($col);
+                $(`<span>`)
+                    .text(d)
+                    .appendTo($div);
+            });
+            $col.appendTo($(target));
+        }
+
+        function httpGetAsync(theUrl, callback)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() { 
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                    callback(JSON.parse(xmlHttp.responseText));
+            }
+            xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+            xmlHttp.send(null);
+        }
+
+        function httpPostAsync(theUrl,payload, callback)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() { 
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                    callback(JSON.parse(xmlHttp.responseText));
+            }
+            xmlHttp.open("POST", theUrl, true); // true for asynchronous 
+            xmlHttp.setRequestHeader('Content-Type', 'application/json');
+            xmlHttp.send(JSON.stringify(payload));
+        }
+
+
+        function getDTData(url, queryObj, callback, data){
+            if(data == null){
+                data = [];
+            }
+            httpPostAsync(url,
+            queryObj, 
+                function(securityData){
+                httpPostAsync(url+"&parts_dtaqlquery="+securityData.baseEntity.progressResponses.dtaqlquery.token,
+                    queryObj,
+                     function(tableData){
+
+                        if(!tableData.table){
+                            callback(data);
+                        }else{
+                            var dataLength = tableData.table.rows.length;
+                            data = data.concat(tableData.table.rows);
+                            if(!queryObj.limit || dataLength < queryObj.limit){
+                                callback(data);
+                            }else{
+                                queryObj.skip += queryObj.limit;
+                                getDTData(url, queryObj, callback, data);
+                            }
+                        }
+                })
+            })
+        }
+
+        return true;
+    }
+
+
+
+
     pub.PUhoneycomb = function () {
         const red = '#C93234';
         const green = '#8EC355';
@@ -7830,9 +8064,6 @@ var DashboardPowerups = (function () {
                 //read the table
                 let dataTable = readTableData($tile, false);
 
-                if(!dataTable || !Array.isArray(dataTable.keys) || !dataTable.keys.length)
-                    return; //no data, continue
-
                 if (dataTable.keys.includes("start")
                     && dataTable.keys.includes("end")
                     && dataTable.keys.includes("name")) {
@@ -7847,10 +8078,6 @@ var DashboardPowerups = (function () {
 
                         if (Array.isArray(actions)) {
                             for (let i = 0; i < actions.length - 1; i++) {
-                                if (typeof (actions[i]) == "undefined" || typeof (ends[i]) == "undefined" || typeof (starts[i]) == "undefined") {
-                                    console.log(PU_TIMEONPAGE + ": invalid, skipping...", { actions: actions[i], starts: starts[i], ends: ends[i] });
-                                    continue;
-                                }
                                 let name = actions[i];
                                 let loaded = Number(ends[i].replace(/[ ,]+/g, ''));
                                 let next = Number(starts[i + 1].replace(/[ ,]+/g, ''));
@@ -8040,6 +8267,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUhoneycomb());
             promises.push(pub.PUtreemap());
             promises.push(pub.puGauge());
+            promises.push(pub.PUrageclicks());
 
             //misc visualizations
             promises.push(pub.PUbackground());
