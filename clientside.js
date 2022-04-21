@@ -7206,57 +7206,6 @@ var DashboardPowerups = (function () {
             $col.appendTo($(target));
         }
 
-        function httpGetAsync(theUrl, callback)
-        {
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.onreadystatechange = function() { 
-                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-                    callback(JSON.parse(xmlHttp.responseText));
-            }
-            xmlHttp.open("GET", theUrl, true); // true for asynchronous 
-            xmlHttp.send(null);
-        }
-
-        function httpPostAsync(theUrl,payload, callback)
-        {
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.onreadystatechange = function() { 
-                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-                    callback(JSON.parse(xmlHttp.responseText));
-            }
-            xmlHttp.open("POST", theUrl, true); // true for asynchronous 
-            xmlHttp.setRequestHeader('Content-Type', 'application/json');
-            xmlHttp.send(JSON.stringify(payload));
-        }
-
-
-        function getDTData(url, queryObj, callback, data){
-            if(data == null){
-                data = [];
-            }
-            httpPostAsync(url,
-            queryObj, 
-                function(securityData){
-                httpPostAsync(url+"&parts_dtaqlquery="+securityData.baseEntity.progressResponses.dtaqlquery.token,
-                    queryObj,
-                     function(tableData){
-
-                        if(!tableData.table){
-                            callback(data);
-                        }else{
-                            var dataLength = tableData.table.rows.length;
-                            data = data.concat(tableData.table.rows);
-                            if(!queryObj.limit || dataLength < queryObj.limit){
-                                callback(data);
-                            }else{
-                                queryObj.skip += queryObj.limit;
-                                getDTData(url, queryObj, callback, data);
-                            }
-                        }
-                })
-            })
-        }
-
         return true;
     }
 
