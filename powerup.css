@@ -1053,6 +1053,17 @@ section.powerupOptionsOpen .powerupExpandableArrow {
   font-size: .9em;
 }
 
+/* rage clicks */
+.powerupTableGrid.rageClicks > div > div:first-child {
+    line-height: 0em;
+}
+.powerupTableGrid.rageClicks > div > div {
+    font-family: BerninaSansWeb, sans-serif;
+    font-size: 1.2em;
+    line-height: 1.9em;
+}
+
+
 .powerupOverridden {
   display: none;
 }
