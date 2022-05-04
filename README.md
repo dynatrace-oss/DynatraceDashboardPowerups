@@ -118,6 +118,8 @@ Example:
 For Single Value Tiles, either custom chart or USQL, you can add color coding by adding markup to the title:
 `!PU(color):base=high;warn=90;crit=80`. Note: also see [USQL colors](#USQL-colors) PowerUp for simply changing colors for USQL and Explorer tiles.
 
+**✔️ Deprecated** Please use Data Explorer.
+
 For markdown and header tiles, use `!PU(color):color=blue` style syntax.
 
 Explanation:
@@ -143,6 +145,8 @@ This powerup renders icons in place of Markdown tiles. These icons change color 
 [Extension Needed](https://github.com/LucasHocker/DynatraceDashboardPowerUps)
 !PU(svg):icon=creditcard;link=val3;base=high;warn=90;crit=85
 ```
+
+**✔️ Deprecated** Please use built-in image tiles, where possible.
 
 Explanation:
 - Link to extension: this lets users without the extension know to download it
@@ -189,6 +193,8 @@ Example:
 If you would like a chart that shows as one color above a threshold but a different color below, this powerup enables that. Add markup to to the chart title like so:
 `!PU(line):thld=4000;hcol=green;lcol=red`
 
+**✔️ Deprecated** Please use Data Explorer.
+
 Explanation:
 - `!PU(line):` indicates this linechart should have a threshold
 - `thld=4000;` the threshold (Note: does not currently support units)
@@ -227,6 +233,9 @@ Example:
 
 ### Heatmap
 Currently this powerup can display a heatmap based on a **bar chart**. Eventually, it will be more generic.
+
+**✔️ Deprecated** Please use Data Explorer.
+
 ```
 Apdex !PU(heatmap):vals=.5,.7,.85,.94;names=Unacceptable,Poor,Fair,Good,Excellent;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f
 ```
@@ -304,6 +313,8 @@ Notes:
 This powerup changes the Dynatrace horizontal funnel into a vertical funnel. To utilize encode your title like so:
 `Angular UserJourney !PU(funnel):mode=height;small=5;big=20;links=funnelinks`
 
+**✔️ Deprecated** due to low usage.
+
 Explanation:
 - `mode=height` - which type of funnel visualization, options are `height`, `slope`, `bar`
 - `small=` - minimum percentage to treat as a small positive or negative change, ie gray below this and light green/red above
@@ -315,6 +326,8 @@ Example:
 
 ### Math
 This powerup allows you to do complex math based on other values on the dashboard. See [math-expression-evaluator](http://bugwheels94.github.io/math-expression-evaluator/#supported-maths-symbols) for help with math expressions. 
+
+**✔️ Targeted for Deprecation** Please use Metric Expressions instead.
 
 Syntax:
 `!PU(math):exp=(x1+x2+x3+x4)/4;scope=x1,x2,x3,x4:link4;color=blue`
@@ -488,6 +501,8 @@ Example:
 ### Background
 This powerup changes the background of the dashdoard to an external image. This should be placed in an offscreen markdown tile. The tile will auto-hide when the extension runs.
 
+**✔️ Deprecated** Please use built-in image tiles, where possible.
+
 Syntax:
 `!PU(background):url=https://myurl.com/myimage.png`
 
@@ -499,6 +514,8 @@ Note: you should limit usage to only trusted image sources and keep file size re
 
 ### Image
 This powerup adds an external image. This swaps a markdown tile with the image.
+
+**✔️ Deprecated** Please use built-in image tiles.
 
 Syntax:
 `!PU(background):url=https://myurl.com/myimage.png out=https://www.dynatrace.com`
@@ -570,6 +587,8 @@ Example:
 ### Grid
 Add grid lines to your dashboards.
 
+**✔️ Deprecated** due to low usage.
+
 Syntax:
 - `!PU(grid):hor=0,9,18;ver=0,9,18,27,35;color=#454646`
 
@@ -586,6 +605,8 @@ Example:
 
 ### TileCSS
 Use CSS directives to further style a tile. Note: First version is somewhat limited; further enhancements will be made to select different parts of the tile.
+
+**✔️ Deprecated** due to low usage.
 
 Syntax:
 - ``Revenue !PU(tilecss):`border:3px green solid;border-radius: 15px;transform: rotateZ(45deg);` ``
@@ -615,6 +636,8 @@ Example:
 ### Topcolor
 Apply coloring to toplists. Note: where possible please use Explorer tiles instead of this PowerUp. Explorer tiles should support sorting in a few sprints (~1.220).
 
+**✔️ Deprecated** Please use Data Explorer.
+
 Syntax:
 - `Worst Apdex by Geo !PU(topcolor):vals=.5,.7,.85,.94;colors=#dc172a,#ef651f,#ffe11c,#6bcb8b,#2ab06f`
 
@@ -628,6 +651,8 @@ Example:
 
 ### Honeycomb
 Transform an Explorer tile table into honeycombs. Color coding should be done in Explorer.
+
+**✔️ Deprecated** Please use Data Explorer.
 
 Syntax:
 - `CPU Usage !PU(honeycomb):`
@@ -658,6 +683,8 @@ Example:
 
 ### Treemap
 Convert an Explorer or USQL table into a tree map. Clicking on the chart drills down a level. Each level is a column in your table. Note: requires version 1.51+.
+
+**✔️ Deprecated** due to low usage, please open an issue if still needed.
 
 Syntax:
 - `Users by Geo !PU(treemap):`
