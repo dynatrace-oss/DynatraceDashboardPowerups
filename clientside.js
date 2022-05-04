@@ -1099,6 +1099,32 @@ var DashboardPowerups = (function () {
         let wbout = XLSX.writeFile(wb, filename);
     }
 
+    function deprecatePU(tile, message = "Deprecated...") {
+        let $tile = $(tile);
+        //find menu carat
+        let $menuicon = $tile.find(MENU_ICON_SELECTOR);
+        if (!$menuicon.length) return false; //fail
+        //check if already deprecated
+        let $depicon = $menuicon.prev('.powerupDepIcon');
+        if ($depicon.length) return true; //noop
+        //insert grayed out gem & insert tooltip message
+        $depicon = $('<div>')
+            .addClass('powerupDepIcon')
+            .html(`<img src='${pub.SVGLib() + 'jewel.svg'}' onload="DashboardPowerups.SVGInject(this)" class='powerup-icon-gray'>`,)
+            .insertBefore($menuicon);
+
+        $tooltip = $('<div class="powerupDepIconTooltip">')
+            .html(`<span class="powerupDepIconTooltipText">${message}</span>`);
+        $depicon.on("mouseover", () => {
+            let offset = $depicon.offset();
+            $tooltip.appendTo(`body`)
+                .offset(offset)
+        })
+        $depicon.on("mouseout click", () => {
+            $tooltip.detach();
+        })
+    }
+
     //Public methods
     var pub = {};
 
@@ -1198,6 +1224,8 @@ var DashboardPowerups = (function () {
     }
 
     pub.PUHighchart = function (chart) {
+        let $container = $(chart.container);
+        let $tile = $container.parents(TILE_SELECTOR);
         let pu = false;
         var EXPORT_OPTS = {
             enabled: true,
@@ -1275,7 +1303,7 @@ var DashboardPowerups = (function () {
         }
 
         var lineChartPU = function () {
-            let $container = $(chart.container);
+            //deprecatePU($tile, "Deprecated... Please use Data Explorer.");
 
             chart.series.forEach(series => {
                 if (!compare(SERIES_OPTS, series.options)) {
@@ -1353,6 +1381,7 @@ var DashboardPowerups = (function () {
             let $title = $tile.find(TITLE_SELECTOR);
             let title = $title.text();
             if (title.includes(PU_LINE)) {
+                deprecatePU($tile, "PU_Line deprecated. Please use Data Explorer.");
                 if (pub.PULine(chart, title)) {
                     pu = true;
                     lineChartPU();
@@ -2419,6 +2448,7 @@ var DashboardPowerups = (function () {
             //Step1: change tile colors
             if ($title.text().includes(PU_COLOR)) { //example !PU(color):base=high;warn=90;crit=70
                 if (pub.config.Powerups.debug) console.log("Powerup: color power-up found");
+                deprecatePU($tile, "PU_Color deprecated. Please use Data Explorer.");
 
                 let args = argsplit(title, PU_COLOR);
                 let base = (args.find(x => x[0] == "base") || [])[1] || "low";
@@ -2531,6 +2561,7 @@ var DashboardPowerups = (function () {
 
             if ($title.text().includes(PU_TOPCOLOR)) { //example !PU(topcolor):base=high;warn=90;crit=70
                 if (pub.config.Powerups.debug) console.log("Powerup: toplist color power-up found");
+                deprecatePU($tile, "PU_Toplist deprecated. Please use Data Explorer.");
 
                 let args = argsplit(title, PU_TOPCOLOR);
                 let vals = ((args.find(x => x[0] == "vals") || [])[1] || ".5,.7,.85,.94").split(',').map(x => Number(x));
@@ -5481,6 +5512,7 @@ var DashboardPowerups = (function () {
         //handle containers
         let oldContainer = chart.container;
         let $tile = $(oldContainer).parents(TILE_SELECTOR);
+        deprecatePU($tile, "PU_Heatmap deprecated. Please use Data Explorer.");
         let $newContainer;
         if (typeof (newContainer) !== "undefined") {
             let oldChart = Highcharts.charts
@@ -5735,6 +5767,7 @@ var DashboardPowerups = (function () {
             let title = $title.text();
 
             if ($title.text().includes(PU_FUNNEL)) {
+                deprecatePU($tile, "PU_Funnel deprecated due to low usage... Please create an issue on GitHub if still needed.");
                 //let argstring = $title.text().split(PU_FUNNEL)[1].split('!')[0];
                 //let args = argstring.split(";").map(x => x.split("="));
                 let args = argsplit(title, PU_FUNNEL);
@@ -5942,6 +5975,7 @@ var DashboardPowerups = (function () {
             let $container = $(el);
             let $tile = $container.parents(".grid-tile");
             let text = $container.text();
+            deprecatePU($tile, "PU_Math targetted for deprecation. Please use Metric Expressions.");
 
             $container.children(".powerupMath").remove(); //remove old maths before we get started
             $container.children().each((i, el) => { //handle each paragraph individually
@@ -7042,6 +7076,7 @@ var DashboardPowerups = (function () {
             let $tile = $title.parents(TILE_SELECTOR);
 
             if (title.includes(PU_HONEYCOMB)) {
+                deprecatePU($tile, "PU_Honeycomb deprecated. Please use Data Explorer.");
                 let args = argsplit(title, PU_HONEYCOMB);
                 let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',').filter(x => x != "");
                 let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
@@ -7450,7 +7485,8 @@ var DashboardPowerups = (function () {
                         url: url,
                         targetSelector: VIEWPORT_SELECTOR
                     }, "*");
-                $markdown.hide();
+                //$markdown.hide();
+                deprecatePU($tile,"Deprecated. Please use built-in image tiles, where possible.");
                 powerupsFired['PU_BACKGROUND'] ? powerupsFired['PU_BACKGROUND']++ : powerupsFired['PU_BACKGROUND'] = 1;
                 backgrounded = true;
                 return true;
@@ -7470,6 +7506,7 @@ var DashboardPowerups = (function () {
             let $tile = $markdown.parents(TILE_SELECTOR);
 
             if (text.includes(PU_IMAGE)) {
+                deprecatePU($tile, "PU_Image deprecated. Please use built-in image tile.");
                 //let argstring = $markdown.text().split(PU_IMAGE)[1].split(/[!\n]/)[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
                 let args = argsplit(text, PU_IMAGE);
@@ -7552,6 +7589,7 @@ var DashboardPowerups = (function () {
                 let $tile = $text.parents(TILE_SELECTOR);
 
                 if ($text.text().includes(PU_TILECSS)) {
+                    deprecatePU($tile, "PU_Tilecss deprecated due to low usage. Create an issue on GitHub if still needed.");
                     let match = $text.text().match(reTitle);
                     if (match && match.length) {
                         let cssText = match[0];
@@ -7742,6 +7780,7 @@ var DashboardPowerups = (function () {
             let $tile = $md.parents(TILE_SELECTOR);
 
             if (text.includes(PU_GRID)) {
+                deprecatePU($tile, "PU_Grid deprecated due to low usage.");
                 //let argstring = $md.text().split(PU_GRID)[1].split(/[!\n]/)[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
                 let args = argsplit(text, PU_GRID);
@@ -7830,7 +7869,7 @@ var DashboardPowerups = (function () {
                 //read the table
                 let dataTable = readTableData($tile, false);
 
-                if(!dataTable || !Array.isArray(dataTable.keys) || !dataTable.keys.length)
+                if (!dataTable || !Array.isArray(dataTable.keys) || !dataTable.keys.length)
                     return; //no data, continue
 
                 if (dataTable.keys.includes("start")
@@ -8021,23 +8060,23 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUstdev());
 
             //data processing operations
-            promises.push(pub.PUMath());
+            promises.push(pub.PUMath()); //deprecated
             promises.push(pub.puDate());
 
             //visualize data
             promises.push(pub.PUHighcharts());
-            promises.push(pub.colorPowerUp());
+            promises.push(pub.colorPowerUp()); //deprecated
             promises.push(pub.updateSVGPowerUp());
             promises.push(pub.svgPowerUp());
             promises.push(pub.mapPowerUp());
-            promises.push(pub.PUfunnel());
+            promises.push(pub.PUfunnel()); //deprecated
             promises.push(pub.PUCompare());
             promises.push(pub.PUmCompare());
             promises.push(pub.PUtable());
             promises.push(pub.PUfunnelColors());
-            promises.push(pub.PUTopListColor());
+            promises.push(pub.PUTopListColor()); //deprecated
             waitForHCmod('sankey', () => { promises.push(pub.sankeyPowerUp()) });
-            promises.push(pub.PUhoneycomb());
+            promises.push(pub.PUhoneycomb()); //deprecated
             promises.push(pub.PUtreemap());
             promises.push(pub.puGauge());
 
@@ -8045,9 +8084,9 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUbackground());
             promises.push(pub.extDisclaimer());
             promises.push(pub.bannerPowerUp());
-            promises.push(pub.PUimage());
-            promises.push(pub.PUtilecss());
-            promises.push(pub.PUgrid());
+            promises.push(pub.PUimage()); //deprecated
+            promises.push(pub.PUtilecss()); //deprecated
+            promises.push(pub.PUgrid()); //deprecated
             promises.push(pub.sunburnMode());
             promises.push(pub.hideEarlyAdopter());
             promises.push(pub.fixPublicDashboards());

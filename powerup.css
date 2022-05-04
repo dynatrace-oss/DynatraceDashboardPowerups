@@ -244,6 +244,10 @@ h1.powerup-color-normal {
   fill: #a972cc;
 }
 
+.powerup-icon-gray {
+  fill: #b7b7b7;
+}
+
 .powerup-sankey-tooltip {
   z-index: 1100;
   background: white;
@@ -1074,4 +1078,44 @@ section.powerupOptionsOpen .powerupExpandableArrow {
 
 .powerupMenuIcon > svg {
   fill: #00848e !important;
+}
+
+.powerupDepIcon {
+  float: left;
+}
+
+.powerupDepIconTooltipText {
+  width: 300px;
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 3px;
+  opacity: 0.8;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  white-space: normal;
+
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  margin-left: -140px; /* Use half of the width (120/2 = 60), to center the tooltip */
+
+  border: 1px #00a1b2 solid;
+  background-color: #e6e6e6;
+}
+
+.powerupDepIcon:hover > .powerupDepIconTooltipText {
+  visibility: visible;
+}
+
+.powerupDepIconTooltip .powerupDepIconTooltipText::after {
+  content: " ";
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #00a1b2 transparent transparent transparent;
 }
