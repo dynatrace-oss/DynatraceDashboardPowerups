@@ -697,7 +697,7 @@ Example:
 ![treemap](Assets/treemap.png)
 
 ### TimeOnPage
-Calculate the time spent on a page, based on when that page's load action ended and the next one started.
+Calculate the time spent on a page, based on when that page's load action ended and the next one started. Note: user action names cannot contain commas, use a renaming rule to replace.
 
 Syntax:
 - `Title !PU(timeonpage): !PU(table):`

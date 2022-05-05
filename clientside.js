@@ -7875,7 +7875,7 @@ var DashboardPowerups = (function () {
                 if (dataTable.keys.includes("start")
                     && dataTable.keys.includes("end")
                     && dataTable.keys.includes("name")) {
-                    console.log(dataTable);
+                    //console.log(dataTable);
                     let timeOnPagePerName = {};
 
                     //parse
@@ -7883,6 +7883,14 @@ var DashboardPowerups = (function () {
                         let actions = parseUSQLField(session["name"]);
                         let starts = parseUSQLField(session["start"], "", false);
                         let ends = parseUSQLField(session["end"], "", false);
+                        if(actions.length != starts.length || actions.length != ends.length){
+                            console.warn("WARN - puTimeOnPage mismatched action sizes",{
+                                actions: actions,
+                                starts: starts,
+                                ends: ends
+                            });
+                            return;
+                        }
 
                         if (Array.isArray(actions)) {
                             for (let i = 0; i < actions.length - 1; i++) {
@@ -7891,8 +7899,20 @@ var DashboardPowerups = (function () {
                                     continue;
                                 }
                                 let name = actions[i];
-                                let loaded = Number(ends[i].replace(/[ ,]+/g, ''));
-                                let next = Number(starts[i + 1].replace(/[ ,]+/g, ''));
+                                let loaded = ends[i];
+                                if(typeof loaded != "string"){
+                                    console.warn("WARN - puTimeOnPage loaded is not a string");
+                                    continue;
+                                }
+                                loaded = loaded.replace(/[ ,]+/g, '');
+                                loaded = Number(loaded);
+                                let next = starts[i + 1];
+                                if(typeof next != "string"){
+                                    console.warn("WARN - puTimeOnPage next is not a string");
+                                    continue;
+                                }
+                                next = next.replace(/[ ,]+/g, '');
+                                next = Number(next);
                                 if (isNaN(loaded) || isNaN(next)) {
                                     console.warn(`Powerup: WARN - ${PU_TIMEONPAGE} - NaN! loaded:${ends[i]} next:${starts[i + 1]}`);
                                     continue;
@@ -7907,7 +7927,7 @@ var DashboardPowerups = (function () {
                         }
 
                     });
-                    console.log(timeOnPagePerName);
+                    //console.log(timeOnPagePerName);
                     //calculate
                     let keys = Object.keys(timeOnPagePerName);
                     let vals = Object.values(timeOnPagePerName);
