@@ -7486,7 +7486,7 @@ var DashboardPowerups = (function () {
                         targetSelector: VIEWPORT_SELECTOR
                     }, "*");
                 //$markdown.hide();
-                deprecatePU($tile,"Deprecated. Please use built-in image tiles, where possible.");
+                deprecatePU($tile,"Targetted for Deprecation. Please use built-in image tiles, where possible.");
                 powerupsFired['PU_BACKGROUND'] ? powerupsFired['PU_BACKGROUND']++ : powerupsFired['PU_BACKGROUND'] = 1;
                 backgrounded = true;
                 return true;

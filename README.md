@@ -146,8 +146,6 @@ This powerup renders icons in place of Markdown tiles. These icons change color 
 !PU(svg):icon=creditcard;link=val3;base=high;warn=90;crit=85
 ```
 
-**✔️ Deprecated** Please use built-in image tiles, where possible.
-
 Explanation:
 - Link to extension: this lets users without the extension know to download it
 - `!PU(svg):` this starts the markup
@@ -501,7 +499,7 @@ Example:
 ### Background
 This powerup changes the background of the dashdoard to an external image. This should be placed in an offscreen markdown tile. The tile will auto-hide when the extension runs.
 
-**✔️ Deprecated** Please use built-in image tiles, where possible.
+**✔️ Targetted for Deprecation** Please use built-in image tiles, where possible.
 
 Syntax:
 `!PU(background):url=https://myurl.com/myimage.png`
