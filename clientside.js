@@ -105,12 +105,13 @@ var DashboardPowerups = (function () {
     const PU_TIMEONPAGE = '!PU(timeonpage):';
     const PU_CUMULATIVE = '!PU(cumulative):';
     const PU_ELLIPSIS = '!PU(ellipsis):';
+    const PU_MARKY = '!PU(marky):';   // santiago
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS, PU_MARKY //last added by santiago
     ];
 
     const COLOR_RED = "#c41425";
@@ -8114,6 +8115,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUHideShow());
             promises.push(pub.addReportButton());
             promises.push(pub.PUellipsis());
+            promises.push(pub.PUMarky());  //added by santi
 
             //cleanup activities
             pub.loadChartSync();
@@ -8134,6 +8136,85 @@ var DashboardPowerups = (function () {
         });
 
         return mainPromise;
+    }
+
+    //added by santi
+    //==============
+    function sortItems(array) {  //function that sort left position from left to right
+        for (let i = 0; i < array.length; i++) {
+            for (let j = 0; j < array.length; j++) {
+                if (array[j] > array[j + 1]) {
+                    let temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                }
+            }
+        }
+        return array;
+    }
+    
+    let flag = true; // global variable to prevent new setinterval thread 
+    pub.PUMarky = function () {
+
+        let tileArray = []; //initializing tile array to loop through all of them
+        let unsortLeftArr = []; //array for left values 
+        let tileArr = []
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let title = $title.text();
+            let $tile = $title.parents(TILE_SELECTOR);
+            
+            if (title.includes(PU_MARKY)){
+                let args = argsplit(title, PU_MARKY);
+                $tile.attr('marky-attr', args.argstring)
+                unsortLeftArr.push(parseInt($($tile).css("left").slice(0, -2))) //extracting left position as integer and build array (ex. 38px -> 38)
+                console.log('unsortLeftArr:', unsortLeftArr)
+                tileArray.push($tile) // adding marky tile to array might or might not use
+                
+            }
+            
+        });
+        const leftPosArr = sortItems(unsortLeftArr); // array of left position items sorted
+        // console.log('leftPosArr:', leftPosArr)
+        let counter = 1; // counter initialization for cyclical loop
+        
+        //build a sorted tile array
+
+
+        if (flag) {
+            const cycleTicker = () => {
+
+                //loop through the count of the array and grab the leftPosArr values 
+                  
+        
+                for (let i = 0; i < leftPosArr.length; i++) {
+                        $(`.grid-tile[marky-attr=${i + 1}]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.5s"})
+                }
+                counter++;   //increment counter for position
+               
+                if (counter === leftPosArr.length) {
+                    counter = 0;
+                }   
+
+                // $(`.grid-tile[marky-attr=1]`).css({"left": `${counter > leftPosArr.length ? leftPosArr[counter % leftPosArr.length] : leftPosArr[counter]}px`, "transition": "left 0.5s"})
+
+                // $(`.grid-tile[marky-attr=2]`).css({"left": `${(counter + 1) >= leftPosArr.length ? leftPosArr[(counter + 1) % leftPosArr.length] : leftPosArr[counter + 1]}px`, "transition": "left 0.5s"})
+
+                // $(`.grid-tile[marky-attr=3]`).css({"left": `${(counter + 2) >= leftPosArr.length ? leftPosArr[(counter + 2) % leftPosArr.length] : leftPosArr[counter + 2]}px`, "transition": "left 0.5s"})
+
+                // $(`.grid-tile[marky-attr=4]`).css({"left": `${(counter + 3) >= leftPosArr.length ? leftPosArr[(counter + 3) % leftPosArr.length] : leftPosArr[counter + 3]}px`, "transition": "left 0.5s"})
+      
+                // $(`.grid-tile[marky-attr=5]`).css({"left": `${(counter + 4) >= leftPosArr.length ? leftPosArr[(counter + 4) % leftPosArr.length] : leftPosArr[counter + 4]}px`, "transition": "left 0.5s"})
+       
+                
+                //
+
+            }
+            setInterval(cycleTicker, 2000)
+            flag = false;
+        }
+        // powerupsFired['PU_MARKY'] ? powerupsFired['PU_MARKY']++ : powerupsFired['PU_MARKY'] = 0;
+
     }
 
     pub.GridObserver = (function () {
