@@ -8151,13 +8151,13 @@ var DashboardPowerups = (function () {
             
             if (title.includes(PU_MARKY)){
                 let args = argsplit(title, PU_MARKY);
-                if (args.argstring.indexOf(',') > -1) { //if the timer has been defined this will set the timer for cycleTicker
-                    const newargs = args.argstring.split(',');
-                    $tile.attr('marky-attr', newargs[0]);
-                    timer = newargs[1]*1000; 
-                } else {
-                    $tile.attr('marky-attr', args.argstring);
+                let row = Number((args.find(x => x[0] == "row") || [])[1]);
+                if (args.find(x => x[0] == "timer")) {
+                    timer = Number((args.find(x => x[0] == "timer") || [])[1])*1000; //defines the timer interval
                 }
+                let tileNum = Number((args.find(x => x[0] == "tile") || [])[1]);
+                $tile.attr('marky-attr', tileNum); //variable that adds tile number attribute
+                $tile.attr('marky-row', row); // variable for later use to include more than one ticker
                 leftPosArr.push(parseInt($($tile).css("left").slice(0, -2))) //extracting left position as integer and build array (ex. 38px -> 38)              
             }
         });
