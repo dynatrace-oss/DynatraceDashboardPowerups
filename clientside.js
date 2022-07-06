@@ -8172,7 +8172,7 @@ var DashboardPowerups = (function () {
             const cycleTicker = (t) => {
                 //loop through the count of the array and grab the leftPosArr values 
                 for (let i = 0; i < leftPosArr.length; i++) {
-                    $(`.grid-tile[marky-attr=${i + 1}]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.8s"})
+                    $(`.grid-tile[marky-attr=${i + 1}][marky-row=1]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.8s"})
                 }
                 counter--;   //increment counter for position
                 if (counter === 0) {
