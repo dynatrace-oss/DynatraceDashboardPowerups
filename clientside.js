@@ -8138,27 +8138,12 @@ var DashboardPowerups = (function () {
         return mainPromise;
     }
 
-    //added by santi
-    //==============
-    function sortItems(array) {  //function that sort left position from left to right
-        for (let i = 0; i < array.length; i++) {
-            for (let j = 0; j < array.length; j++) {
-                if (array[j] > array[j + 1]) {
-                    let temp = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = temp;
-                }
-            }
-        }
-        return array;
-    }
-    
     let flag = true; // global variable to prevent new setinterval thread 
     pub.PUMarky = function () {
 
-        let tileArray = []; //initializing tile array to loop through all of them
-        let unsortLeftArr = []; //array for left values 
-        let tileArr = []
+        let leftPosArr = []; //array for left values 
+        let timer = 2500;  //timer for the setInterval
+
         $(TITLE_SELECTOR).each((i, el) => {
             let $title = $(el);
             let title = $title.text();
@@ -8166,55 +8151,48 @@ var DashboardPowerups = (function () {
             
             if (title.includes(PU_MARKY)){
                 let args = argsplit(title, PU_MARKY);
-                $tile.attr('marky-attr', args.argstring)
-                unsortLeftArr.push(parseInt($($tile).css("left").slice(0, -2))) //extracting left position as integer and build array (ex. 38px -> 38)
-                console.log('unsortLeftArr:', unsortLeftArr)
-                tileArray.push($tile) // adding marky tile to array might or might not use
-                
+                if (args.argstring.indexOf(',') > -1) { //if the timer has been defined this will set the timer for cycleTicker
+                    const newargs = args.argstring.split(',');
+                    $tile.attr('marky-attr', newargs[0]);
+                    timer = newargs[1]*1000; 
+                } else {
+                    $tile.attr('marky-attr', args.argstring);
+                }
+                leftPosArr.push(parseInt($($tile).css("left").slice(0, -2))) //extracting left position as integer and build array (ex. 38px -> 38)              
             }
-            
         });
-        const leftPosArr = sortItems(unsortLeftArr); // array of left position items sorted
-        // console.log('leftPosArr:', leftPosArr)
-        let counter = 1; // counter initialization for cyclical loop
+
+        leftPosArr = leftPosArr.sort(function(a, b) { //sorting numbers from least to greatest
+            return a - b;
+        });
+        let counter = leftPosArr.length; // counter initialization for cyclical loop right-to-left 
         
         //build a sorted tile array
-
-
         if (flag) {
-            const cycleTicker = () => {
-
+            const cycleTicker = (t) => {
                 //loop through the count of the array and grab the leftPosArr values 
-                  
-        
                 for (let i = 0; i < leftPosArr.length; i++) {
-                        $(`.grid-tile[marky-attr=${i + 1}]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.5s"})
+                    $(`.grid-tile[marky-attr=${i + 1}]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.8s"})
                 }
-                counter++;   //increment counter for position
-               
-                if (counter === leftPosArr.length) {
-                    counter = 0;
+                counter--;   //increment counter for position
+                if (counter === 0) {
+                    counter = leftPosArr.length;
                 }   
-
-                // $(`.grid-tile[marky-attr=1]`).css({"left": `${counter > leftPosArr.length ? leftPosArr[counter % leftPosArr.length] : leftPosArr[counter]}px`, "transition": "left 0.5s"})
-
-                // $(`.grid-tile[marky-attr=2]`).css({"left": `${(counter + 1) >= leftPosArr.length ? leftPosArr[(counter + 1) % leftPosArr.length] : leftPosArr[counter + 1]}px`, "transition": "left 0.5s"})
-
-                // $(`.grid-tile[marky-attr=3]`).css({"left": `${(counter + 2) >= leftPosArr.length ? leftPosArr[(counter + 2) % leftPosArr.length] : leftPosArr[counter + 2]}px`, "transition": "left 0.5s"})
-
-                // $(`.grid-tile[marky-attr=4]`).css({"left": `${(counter + 3) >= leftPosArr.length ? leftPosArr[(counter + 3) % leftPosArr.length] : leftPosArr[counter + 3]}px`, "transition": "left 0.5s"})
-      
-                // $(`.grid-tile[marky-attr=5]`).css({"left": `${(counter + 4) >= leftPosArr.length ? leftPosArr[(counter + 4) % leftPosArr.length] : leftPosArr[counter + 4]}px`, "transition": "left 0.5s"})
-       
                 
-                //
-
+                //commented out, possible future addition to cycle the other direction 
+                // for (let i = 0; i < leftPosArr.length; i++) {
+                    //         $(`.grid-tile[marky-attr=${i + 1}]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.5s"})
+                    // }
+                    // counter++;   //increment counter for position
+                    
+                    // if (counter === leftPosArr.length) {
+                        //     counter = 0;
+                        // }   
+                powerupsFired['PU_MARKY'] ? powerupsFired['PU_MARKY']++ : powerupsFired['PU_MARKY'] = 1;
             }
-            setInterval(cycleTicker, 2000)
+            setInterval(cycleTicker, timer)
             flag = false;
         }
-        // powerupsFired['PU_MARKY'] ? powerupsFired['PU_MARKY']++ : powerupsFired['PU_MARKY'] = 0;
-
     }
 
     pub.GridObserver = (function () {
