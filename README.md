@@ -48,6 +48,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [TimeOnPage](#TimeOnPage)
     - [Cumulative](#Cumulative)
     - [Ellipsis](#Ellipsis)
+    - [Marquee](#Marky)
 
 ## Installation
 1. Install the extension from the

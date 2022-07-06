@@ -8063,9 +8063,67 @@ var DashboardPowerups = (function () {
                 $md.hide();
                 powerupsFired['PU_ELLIPSIS'] ? powerupsFired['PU_ELLIPSIS']++ : powerupsFired['PU_ELLIPSIS'] = 1;
             }
-
+            
         })
     }
+    
+    let PUMarkyFlag = true; // global variable to prevent new setinterval thread 
+    pub.PUMarky = function () {
+
+        let leftPosArr = []; //array for left values 
+        let timer = 2500;  //timer for the setInterval
+
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let title = $title.text();
+            let $tile = $title.parents(TILE_SELECTOR);
+            
+            if (title.includes(PU_MARKY)){
+                let args = argsplit(title, PU_MARKY);
+                let row = Number((args.find(x => x[0] == "row") || [])[1]);
+                if (args.find(x => x[0] == "timer")) {
+                    timer = Number((args.find(x => x[0] == "timer") || [])[1])*1000; //defines the timer interval
+                }
+                let tileNum = Number((args.find(x => x[0] == "tile") || [])[1]);
+                $tile.attr('marky-attr', tileNum); //variable that adds tile number attribute    add "pu" for the attributes
+                $tile.attr('marky-row', row); // variable for later use to include more than one ticker
+                leftPosArr.push(parseInt($($tile).css("left").slice(0, -2))) //extracting left position as integer and build array (ex. 38px -> 38)              
+            }
+        });
+
+        leftPosArr = leftPosArr.sort(function(a, b) { //sorting numbers from least to greatest
+            return a - b;
+        });
+        let counter = leftPosArr.length; // counter initialization for cyclical loop right-to-left 
+        
+        //build a sorted tile array
+        if (PUMarkyFlag) {
+            const cycleTicker = (t) => {
+                //loop through the count of the array and grab the leftPosArr values 
+                for (let i = 0; i < leftPosArr.length; i++) {
+                    $(`.grid-tile[marky-attr=${i + 1}][marky-row=1]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.8s"})
+                }
+                counter--;   //increment counter for position
+                if (counter === 0) {
+                    counter = leftPosArr.length;
+                }   
+                
+                //commented out, possible future addition to cycle the other direction 
+                // for (let i = 0; i < leftPosArr.length; i++) {
+                    //         $(`.grid-tile[marky-attr=${i + 1}]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.5s"})
+                    // }
+                    // counter++;   //increment counter for position
+                    
+                    // if (counter === leftPosArr.length) {
+                        //     counter = 0;
+                        // }   
+                powerupsFired['PU_MARKY'] ? powerupsFired['PU_MARKY']++ : powerupsFired['PU_MARKY'] = 1;
+            }
+            setInterval(cycleTicker, timer)
+            PUMarkyFlag = false;
+        }
+    }
+
 
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
@@ -8102,6 +8160,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.puGauge());
 
             //misc visualizations
+            promises.push(pub.PUMarky());  //added by santi
             promises.push(pub.PUbackground());
             promises.push(pub.extDisclaimer());
             promises.push(pub.bannerPowerUp());
@@ -8115,7 +8174,6 @@ var DashboardPowerups = (function () {
             promises.push(pub.PUHideShow());
             promises.push(pub.addReportButton());
             promises.push(pub.PUellipsis());
-            promises.push(pub.PUMarky());  //added by santi
 
             //cleanup activities
             pub.loadChartSync();
@@ -8138,62 +8196,6 @@ var DashboardPowerups = (function () {
         return mainPromise;
     }
 
-    let flag = true; // global variable to prevent new setinterval thread 
-    pub.PUMarky = function () {
-
-        let leftPosArr = []; //array for left values 
-        let timer = 2500;  //timer for the setInterval
-
-        $(TITLE_SELECTOR).each((i, el) => {
-            let $title = $(el);
-            let title = $title.text();
-            let $tile = $title.parents(TILE_SELECTOR);
-            
-            if (title.includes(PU_MARKY)){
-                let args = argsplit(title, PU_MARKY);
-                let row = Number((args.find(x => x[0] == "row") || [])[1]);
-                if (args.find(x => x[0] == "timer")) {
-                    timer = Number((args.find(x => x[0] == "timer") || [])[1])*1000; //defines the timer interval
-                }
-                let tileNum = Number((args.find(x => x[0] == "tile") || [])[1]);
-                $tile.attr('marky-attr', tileNum); //variable that adds tile number attribute
-                $tile.attr('marky-row', row); // variable for later use to include more than one ticker
-                leftPosArr.push(parseInt($($tile).css("left").slice(0, -2))) //extracting left position as integer and build array (ex. 38px -> 38)              
-            }
-        });
-
-        leftPosArr = leftPosArr.sort(function(a, b) { //sorting numbers from least to greatest
-            return a - b;
-        });
-        let counter = leftPosArr.length; // counter initialization for cyclical loop right-to-left 
-        
-        //build a sorted tile array
-        if (flag) {
-            const cycleTicker = (t) => {
-                //loop through the count of the array and grab the leftPosArr values 
-                for (let i = 0; i < leftPosArr.length; i++) {
-                    $(`.grid-tile[marky-attr=${i + 1}][marky-row=1]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.8s"})
-                }
-                counter--;   //increment counter for position
-                if (counter === 0) {
-                    counter = leftPosArr.length;
-                }   
-                
-                //commented out, possible future addition to cycle the other direction 
-                // for (let i = 0; i < leftPosArr.length; i++) {
-                    //         $(`.grid-tile[marky-attr=${i + 1}]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.5s"})
-                    // }
-                    // counter++;   //increment counter for position
-                    
-                    // if (counter === leftPosArr.length) {
-                        //     counter = 0;
-                        // }   
-                powerupsFired['PU_MARKY'] ? powerupsFired['PU_MARKY']++ : powerupsFired['PU_MARKY'] = 1;
-            }
-            setInterval(cycleTicker, timer)
-            flag = false;
-        }
-    }
 
     pub.GridObserver = (function () {
         /* New method for deciding when to fire powerups
