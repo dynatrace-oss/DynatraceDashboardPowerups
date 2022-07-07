@@ -48,7 +48,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [TimeOnPage](#TimeOnPage)
     - [Cumulative](#Cumulative)
     - [Ellipsis](#Ellipsis)
-    - [Marquee](#Marky)
+    - [Marquee](#Marquee)
 
 ## Installation
 1. Install the extension from the
@@ -736,3 +736,17 @@ Explanation:
 
 Example:
 ![ellipsis](Assets/ellipsis.png)
+
+
+### Marquee 
+Group of data explorer tiles which will automatically scroll to the right. 
+
+Syntax:
+- `!PU(marky):row=1;tile=1;timer=3`
+
+Explanation:
+- `row=` - Row to which this tile will belong to if ther eis more than one group of marquee tiles (1, 2, 3, etc.).
+- `tile=` - Number of tile that belongs to the group (1, 2, 3, etc.).
+- `timer=` - (optional) Timer is 2.5 sec by default. This will override the timer value in seconds (1, 2, 3, 4, etc.)
+
+![marky](Assets/marquee.gif)

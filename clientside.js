@@ -8085,8 +8085,8 @@ var DashboardPowerups = (function () {
                     timer = Number((args.find(x => x[0] == "timer") || [])[1])*1000; //defines the timer interval
                 }
                 let tileNum = Number((args.find(x => x[0] == "tile") || [])[1]);
-                $tile.attr('marky-attr', tileNum); //variable that adds tile number attribute    add "pu" for the attributes
-                $tile.attr('marky-row', row); // variable for later use to include more than one ticker
+                $tile.attr('pu-marky-attr', tileNum); //variable that adds tile number attribute    add "pu" for the attributes
+                $tile.attr('pu-marky-row', row); // variable for later use to include more than one ticker
                 leftPosArr.push(parseInt($($tile).css("left").slice(0, -2))) //extracting left position as integer and build array (ex. 38px -> 38)              
             }
         });
@@ -8101,22 +8101,13 @@ var DashboardPowerups = (function () {
             const cycleTicker = (t) => {
                 //loop through the count of the array and grab the leftPosArr values 
                 for (let i = 0; i < leftPosArr.length; i++) {
-                    $(`.grid-tile[marky-attr=${i + 1}][marky-row=1]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.8s"})
+                    $(`.grid-tile[pu-marky-attr=${i + 1}][pu-marky-row=1]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.8s"})
                 }
                 counter--;   //increment counter for position
                 if (counter === 0) {
                     counter = leftPosArr.length;
                 }   
-                
-                //commented out, possible future addition to cycle the other direction 
-                // for (let i = 0; i < leftPosArr.length; i++) {
-                    //         $(`.grid-tile[marky-attr=${i + 1}]`).css({"left": `${(counter + i) >= leftPosArr.length ? leftPosArr[(counter + i) % leftPosArr.length] : leftPosArr[(counter + i)]}px`, "transition": "left 0.5s"})
-                    // }
-                    // counter++;   //increment counter for position
-                    
-                    // if (counter === leftPosArr.length) {
-                        //     counter = 0;
-                        // }   
+
                 powerupsFired['PU_MARKY'] ? powerupsFired['PU_MARKY']++ : powerupsFired['PU_MARKY'] = 1;
             }
             setInterval(cycleTicker, timer)
