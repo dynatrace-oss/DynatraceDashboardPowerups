@@ -8112,8 +8112,6 @@ var DashboardPowerups = (function () {
         });
         let counterRow1 = leftPosArrRow1.length; // counterRow1 initialization for cyclical loop right-to-left 
         let counterRow2 = leftPosArrRow2.length; // counterRow1 initialization for cyclical loop right-to-left 
-        console.log('leftPosArrRow1:', leftPosArrRow1)
-        console.log('leftPosArrRow2:', leftPosArrRow2)
         
         //build a sorted tile array
         if (PUMarkyFlag) {
