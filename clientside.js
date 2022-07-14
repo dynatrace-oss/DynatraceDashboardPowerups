@@ -8073,6 +8073,8 @@ var DashboardPowerups = (function () {
         let leftPosArrRow1 = []; //array for left values 
         let leftPosArrRow2 = []; //array for left values 
         let timer = 2500;  //timer for the setInterval
+        let timerRow1 = timer;
+        let timerRow2 = timer;
 
         $(TITLE_SELECTOR).each((i, el) => {
             let $title = $(el);
