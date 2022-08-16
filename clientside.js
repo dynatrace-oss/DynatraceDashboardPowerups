@@ -105,13 +105,15 @@ var DashboardPowerups = (function () {
     const PU_TIMEONPAGE = '!PU(timeonpage):';
     const PU_CUMULATIVE = '!PU(cumulative):';
     const PU_ELLIPSIS = '!PU(ellipsis):';
-    const PU_MARKY = '!PU(marky):';   // santiago
+    const PU_MARKY = '!PU(marky):';                             // Santiago
+    const PU_RAGECLICK = '!PU(rageclick):';                     // Trevor
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS, PU_MARKY //last added by santiago
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS, PU_MARKY, //last added by Santi
+        PU_RAGECLICK //last added by trevor
     ];
 
     const COLOR_RED = "#c41425";
@@ -8146,6 +8148,107 @@ var DashboardPowerups = (function () {
         powerupsFired['PU_MARKY'] ? powerupsFired['PU_MARKY']++ : powerupsFired['PU_MARKY'] = 1;
     }
 
+    let PURageCLickFlag = true;
+    pub.PURageClick = function () {
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let $tile = $title.parents(TILE_SELECTOR);
+            let title = $title.text();
+
+            if (title.includes(PU_RAGECLICK)) {
+                let rageActions = {};
+                let $table = $tile.find(TABLE_SELECTOR);
+                // let args = argsplit(title, PU_RAGECLICK);
+                let dataTable = readTableData($tile, false);
+
+                //Converts USQL Array of Strings to Array of Arrays of Strings
+                dataTable.normalTable.forEach(row => {
+                    dataTable.keys.forEach(k => {
+                        let temp = row[k].substring(1, row[k].length-1);
+                        temp = temp.split(", ");
+                        row[k] = temp;                        
+                    });
+                });
+
+                // Look for Rage Click event, then find the action that occured just before it.
+                dataTable.normalTable.forEach(row => {
+                    row.UserEvent.forEach((ev, i) => {
+                        if(ev.includes("Rage click")){
+                            let rageUA = '';
+                            // Finds action that occured just before Rage Click
+                            row.UserAction.forEach((act, j) => {
+                                if(new Date (row.ActionTime[Number(j)]) <= new Date(row.EventTime[Number(i)])){
+                                    rageUA = act;
+                                }
+                            });
+                            //Adds user action to datastructure
+                            if(rageActions.hasOwnProperty(rageUA)) rageActions[rageUA] ++;
+                            else rageActions[rageUA] = Number(1);
+                        }
+                    });
+                });
+
+                let ref = Object.keys(rageActions);
+                let sortedRageActions = [];
+                let sortedScores = [];
+                let count = 0;      //used to protect browser from going into an infinite loop
+                while(ref.length > 0 && count < 100){
+                    count++;
+                    let x = 0;
+                    const limit = ref.length-1;
+                    let highscore = 0;
+                    let player = "";
+                    for(x; x <= limit; x++){
+                        if(rageActions[ref[x]] >= highscore){
+                            highscore = rageActions[ref[x]];
+                            player = ref[x];
+                        }
+                    }
+                    //Adds most raged user action to sorted array, then removes from json
+                    sortedRageActions.push(player);
+                    sortedScores.push(highscore);
+                    delete rageActions[player];
+                    ref = Object.keys(rageActions);
+                }
+
+                //arrays are created. Now build table and push it to the tile.
+                $table.hide();
+                let $newTable = $(`<div>`)
+                    .addClass('powerupNewTable')
+                    .insertAfter($table);
+                let $grid = $(`<div>`)
+                    .addClass('powerupTableGrid')
+                    .appendTo($newTable);
+                outputCol($grid, 'Name', sortedRageActions, true);
+                outputCol($grid, 'Rage Click Count', sortedScores, false);
+                let numCols = $grid.children().length;
+                $grid.css('grid-template-columns', `repeat(${numCols}, minmax(80px, auto))`)
+
+                powerupsFired['PU_RAGECLICK'] ? powerupsFired['PU_RAGECLICK']++ : powerupsFired['PU_RAGECLICK'] = 1;
+            }
+        });
+
+        function outputCol(target, header, data, left) {
+            let css = {'text-align': 'right', 'font-family': 'monospace'}
+            if (left) css = {'text-align': 'left', 'font-family': 'monospace'}
+            let $col = $(`<div>`)
+                .addClass('powerupTableCol');
+            let $head = $(`<div>`)
+                .appendTo($col);
+            $(`<span>`)
+                .text(header)
+                .appendTo($head);
+            data.forEach(d => {
+                let $div = $(`<div>`)
+                    .css(css)
+                    .appendTo($col);
+                $(`<span>`)
+                    .text(d)
+                    .appendTo($div);
+            });
+            $col.appendTo($(target));
+        }
+    }
 
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
@@ -8182,7 +8285,8 @@ var DashboardPowerups = (function () {
             promises.push(pub.puGauge());
 
             //misc visualizations
-            promises.push(pub.PUMarky());  //added by santi
+            promises.push(pub.PUMarky());               //added by Santi
+            promises.push(pub.PURageClick());           //added by Trevor
             promises.push(pub.PUbackground());
             promises.push(pub.extDisclaimer());
             promises.push(pub.bannerPowerUp());
@@ -8217,7 +8321,6 @@ var DashboardPowerups = (function () {
 
         return mainPromise;
     }
-
 
     pub.GridObserver = (function () {
         /* New method for deciding when to fire powerups
