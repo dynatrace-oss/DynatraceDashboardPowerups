@@ -8260,6 +8260,7 @@ var DashboardPowerups = (function () {
             pub.cleanupArtifacts();
             //data gathering operations
             promises.push(pub.puTimeOnPage());
+            promises.push(pub.PURageClick());           //added by Trevor
             promises.push(pub.PUvlookup());
             promises.push(pub.PUstdev());
 
@@ -8286,7 +8287,6 @@ var DashboardPowerups = (function () {
 
             //misc visualizations
             promises.push(pub.PUMarky());               //added by Santi
-            promises.push(pub.PURageClick());           //added by Trevor
             promises.push(pub.PUbackground());
             promises.push(pub.extDisclaimer());
             promises.push(pub.bannerPowerUp());
