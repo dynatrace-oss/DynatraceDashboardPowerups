@@ -8158,7 +8158,6 @@ var DashboardPowerups = (function () {
             if (title.includes(PU_RAGECLICK)) {
                 let rageActions = {};
                 let $table = $tile.find(TABLE_SELECTOR);
-                // let args = argsplit(title, PU_RAGECLICK);
                 let dataTable = readTableData($tile, false);
 
                 //Converts USQL Array of Strings to Array of Arrays of Strings
