@@ -49,6 +49,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [Cumulative](#Cumulative)
     - [Ellipsis](#Ellipsis)
     - [Marquee](#Marquee)
+    - [RageClick](#RageClick)
 
 ## Installation
 1. Install the extension from the
@@ -750,3 +751,18 @@ Explanation:
 - `timer=` - (optional) Timer is 2.5 sec by default. This will override the timer value in seconds (1, 2, 3.5, 4, etc.)
 
 ![marky](Assets/marquee.gif)
+
+
+### RageClick 
+This powerup correlates Rage Click events with the User Action that appears at the same time in any session, displaying a Rage Click count per unique User Action.
+Create a new User Session Query Language tile and use the below query as a base.
+You may apply additional `WHERE` filters, but do not modify the query in any other way.
+In the query editor, do not toggle on `Compare with previous timeframe` and leave the `Visualization type` as Table Only.
+
+Query:
+- `SELECT useraction.name as "UserAction", userevent.name as "UserEvent", DATETIME(useraction.startTime, 'yyyy-MM-dd HH:mm:ss', '1s') as "ActionTime", DATETIME(userevent.startTime, 'yyyy-MM-dd HH:mm:ss', '1s') as "EventTime" from usersession where userevent.type="RageClick"`
+
+Syntax:
+- `!PU(rageclick):`
+
+![rageclick](Assets/RageClickExample.png)
