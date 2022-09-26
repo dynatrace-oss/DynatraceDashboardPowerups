@@ -105,15 +105,16 @@ var DashboardPowerups = (function () {
     const PU_TIMEONPAGE = '!PU(timeonpage):';
     const PU_CUMULATIVE = '!PU(cumulative):';
     const PU_ELLIPSIS = '!PU(ellipsis):';
-    const PU_MARKY = '!PU(marky):';                             // Santiago
-    const PU_RAGECLICK = '!PU(rageclick):';                     // Trevor
+    const PU_MARKY = '!PU(marky):';                                // Santiago
+    const PU_RAGECLICK = '!PU(rageclick):';                        // Trevor
+    const PU_MULTIDIMENSIONAL = '!PU(multidimensional):';          // Trevor
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS, PU_MARKY, //last added by Santi
-        PU_RAGECLICK //last added by trevor
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS, PU_MARKY,
+        PU_RAGECLICK, PU_MULTIDIMENSIONAL
     ];
 
     const COLOR_RED = "#c41425";
@@ -8160,69 +8161,70 @@ var DashboardPowerups = (function () {
                 let $table = $tile.find(TABLE_SELECTOR);
                 // let args = argsplit(title, PU_RAGECLICK);
                 let dataTable = readTableData($tile, false);
-
-                //Converts USQL Array of Strings to Array of Arrays of Strings
-                dataTable.normalTable.forEach(row => {
-                    dataTable.keys.forEach(k => {
-                        let temp = row[k].substring(1, row[k].length-1);
-                        temp = temp.split(", ");
-                        row[k] = temp;                        
+                if(dataTable.normalTable){
+                    //Converts USQL Array of Strings to Array of Arrays of Strings
+                    dataTable.normalTable.forEach(row => {
+                        dataTable.keys.forEach(k => {
+                            let temp = row[k].substring(1, row[k].length-1);
+                            temp = temp.split(", ");
+                            row[k] = temp;                        
+                        });
                     });
-                });
 
-                // Look for Rage Click event, then find the action that occured just before it.
-                dataTable.normalTable.forEach(row => {
-                    row.UserEvent.forEach((ev, i) => {
-                        if(ev.includes("Rage click")){
-                            let rageUA = '';
-                            // Finds action that occured just before Rage Click
-                            row.UserAction.forEach((act, j) => {
-                                if(new Date (row.ActionTime[Number(j)]) <= new Date(row.EventTime[Number(i)])){
-                                    rageUA = act;
-                                }
-                            });
-                            //Adds user action to datastructure
-                            if(rageActions.hasOwnProperty(rageUA)) rageActions[rageUA] ++;
-                            else rageActions[rageUA] = Number(1);
-                        }
+                    // Look for Rage Click event, then find the action that occured just before it.
+                    dataTable.normalTable.forEach(row => {
+                        row.UserEvent.forEach((ev, i) => {
+                            if(ev.includes("Rage click")){
+                                let rageUA = '';
+                                // Finds action that occured just before Rage Click
+                                row.UserAction.forEach((act, j) => {
+                                    if(new Date (row.ActionTime[Number(j)]) <= new Date(row.EventTime[Number(i)])){
+                                        rageUA = act;
+                                    }
+                                });
+                                //Adds user action to datastructure
+                                if(rageActions.hasOwnProperty(rageUA)) rageActions[rageUA] ++;
+                                else rageActions[rageUA] = Number(1);
+                            }
+                        });
                     });
-                });
 
-                let ref = Object.keys(rageActions);
-                let sortedRageActions = [];
-                let sortedScores = [];
-                let count = 0;      //used to protect browser from going into an infinite loop
-                while(ref.length > 0 && count < 100){
-                    count++;
-                    let x = 0;
-                    const limit = ref.length-1;
-                    let highscore = 0;
-                    let player = "";
-                    for(x; x <= limit; x++){
-                        if(rageActions[ref[x]] >= highscore){
-                            highscore = rageActions[ref[x]];
-                            player = ref[x];
+                    let ref = Object.keys(rageActions);
+                    let sortedRageActions = [];
+                    let sortedScores = [];
+                    let count = 0;      //used to protect browser from going into an infinite loop
+                    while(ref.length > 0 && count < 100){
+                        count++;
+                        let x = 0;
+                        const limit = ref.length-1;
+                        let highscore = 0;
+                        let player = "";
+                        for(x; x <= limit; x++){
+                            if(rageActions[ref[x]] >= highscore){
+                                highscore = rageActions[ref[x]];
+                                player = ref[x];
+                            }
                         }
+                        //Adds most raged user action to sorted array, then removes from json
+                        sortedRageActions.push(player);
+                        sortedScores.push(highscore);
+                        delete rageActions[player];
+                        ref = Object.keys(rageActions);
                     }
-                    //Adds most raged user action to sorted array, then removes from json
-                    sortedRageActions.push(player);
-                    sortedScores.push(highscore);
-                    delete rageActions[player];
-                    ref = Object.keys(rageActions);
-                }
 
-                //arrays are created. Now build table and push it to the tile.
-                $table.hide();
-                let $newTable = $(`<div>`)
-                    .addClass('powerupNewTable')
-                    .insertAfter($table);
-                let $grid = $(`<div>`)
-                    .addClass('powerupTableGrid')
-                    .appendTo($newTable);
-                outputCol($grid, 'Name', sortedRageActions, true);
-                outputCol($grid, 'Rage Click Count', sortedScores, false);
-                let numCols = $grid.children().length;
-                $grid.css('grid-template-columns', `repeat(${numCols}, minmax(80px, auto))`)
+                    //arrays are created. Now build table and push it to the tile.
+                    $table.hide();
+                    let $newTable = $(`<div>`)
+                        .addClass('powerupNewTable')
+                        .insertAfter($table);
+                    let $grid = $(`<div>`)
+                        .addClass('powerupTableGrid')
+                        .appendTo($newTable);
+                    outputCol($grid, 'Name', sortedRageActions, true);
+                    outputCol($grid, 'Rage Click Count', sortedScores, false);
+                    let numCols = $grid.children().length;
+                    $grid.css('grid-template-columns', `repeat(${numCols}, minmax(80px, auto))`)
+                }
 
                 powerupsFired['PU_RAGECLICK'] ? powerupsFired['PU_RAGECLICK']++ : powerupsFired['PU_RAGECLICK'] = 1;
             }
@@ -8247,6 +8249,186 @@ var DashboardPowerups = (function () {
                     .appendTo($div);
             });
             $col.appendTo($(target));
+        }
+    }
+
+    let PUMultiDimensional = true;
+    pub.PUMultiDimensional = function () {
+        if(PUMultiDimensional){
+            $(TITLE_SELECTOR).each((i, el) => {                    
+                let $title = $(el);
+                let $tile = $title.parents(TILE_SELECTOR);
+                let title = $title.text();
+                // Fix issue: Does not populate tile when the replacement tile would show no data.
+
+                if (title.includes(PU_MULTIDIMENSIONAL)) {
+                    let $table = $tile.find(TABLE_SELECTOR);
+                    let url = title.substring(26);
+                    let dataTable = readTableData($tile, false);
+
+                    // rebuild mda link with dashboard filters (management zone + timeframe)
+                    const URLPARTS  = (window.location.href).split(";");
+                    let gtf = ''; //Timeframe
+                    let gf = ''; //ManagementZone ID
+                    URLPARTS.forEach(element => {
+                        if(element.includes('gtf=')) gtf = element;
+                        if(element.includes('gf=')) gf = element;
+                    });
+                    const URI = url.split("mda?");
+                    const UARR = URI[1].split("&");
+                    let url2 = URI[0] + "mda?" + gtf + "&" + gf + "&";
+                    UARR.forEach(element => {
+                        if(!element.includes('gtf=') && !element.includes('gf=')) url2 += element + "&";
+                    });
+                    url2 = url2.substring(0, url2.length-1);
+                    url = url2;
+
+                    // create iframe and add to page (loads MDA page)
+                    let iff = document.createElement("IFRAME");
+                    iff.id = url;
+                    iff.src = url;
+                    iff.style.display = "none";
+                    document.body.appendChild(iff);
+
+                    let mdData = {};
+
+                    const p = extract(iff, 0);
+                    const promises = [p];
+
+                    Promise.allSettled(promises).then(
+                        function(){                          
+                            // arrays are created. Now build table and push it to the tile.
+                            const parentE = $table[0].parentElement;
+                            (parentE).style.display = "inline";
+                            //console.log(parentE);
+                            (parentE.parentElement.childNodes[0]).style.display = "none";
+                            const tileList = parentE.getElementsByClassName("powerupNewTable");
+                            // After editing a dashboard, last injected table will still be in tile, resulting in duplicates.
+                            // This removes the old table.
+                            while(tileList.length > 0){
+                                tileList[0].parentNode.removeChild(tileList[0]);
+                            }
+                            $table.hide();
+                            let $newTable = $(`<div>`)
+                                .addClass('powerupNewTable')
+                                .insertAfter($table);
+                            let $grid = $(`<div>`)
+                                .addClass('powerupTableGrid')
+                                .appendTo($newTable);
+                            if(mdData.hasOwnProperty("serviceNames")){
+                                outputCol($grid, mdData.head[1], mdData["serviceNames"], true);
+                                outputCol($grid, mdData.head[0], mdData["names"], true);
+                                outputCol($grid, mdData.head[2], mdData["metrics"], false);
+                            }
+                            else{
+                                outputCol($grid, mdData.head[0], mdData["names"], true);
+                                outputCol($grid, mdData.head[1], mdData["metrics"], false);
+                            }
+                            let numCols = $grid.children().length;
+                            $grid.css('grid-template-columns', `repeat(${numCols}, minmax(80px, auto))`);
+                            document.getElementById(url).remove();
+                            // powerupNewTable
+            
+                            powerupsFired['PU_MULTIDIMENSIONAL'] ? powerupsFired['PU_MULTIDIMENSIONAL']++ : powerupsFired['PU_MULTIDIMENSIONAL'] = 1;
+                        }
+                    );
+                    
+                    // Extracts data from MD Table and preps it
+                    async function extract(iframe, num) {
+                        return new Promise(resolve => {
+                            // extract cells from iframe
+                            const names = iframe.contentWindow.document.getElementsByClassName("dt-table-column-name");
+                            // tries for 30 seconds, then gives up
+                            if (num > 3000){
+                                //give up
+                                //console.log("I gave up :( ");
+                                resolve(1);
+                            }
+                            // if element not found, page not done loading. Try again.
+                            else if(names.length == 0){
+                                setTimeout(function(){
+                                    //console.log("Trying again...");
+                                    const p = extract(iframe, num + 1);
+                                    let arr = [p];
+                                    Promise.allSettled(arr).then(function(){resolve(1)});
+                                }, 10);
+                            }
+                            // data loaded
+                            else{                      
+                                const serviceNames = iframe.contentWindow.document.getElementsByClassName("dt-table-column-serviceName");
+                                const metrics = iframe.contentWindow.document.getElementsByClassName("dt-table-column-totals");
+                                //console.log(metrics);
+                                sNamesExist = true;
+
+                                if(!serviceNames.length){
+                                    sNamesExist = false;
+                                    let temp = {
+                                        "names": [],
+                                        "metrics": [],
+                                        "head": [names[0].innerText, metrics[0].innerText]
+                                    }
+                                    // Loads data from MD Table, skips header
+                                    const limit = names.length -1;
+                                    let i = 1;
+                                    for(i; i <= limit; i++){
+                                        if(metrics[i].innerText != "-"){
+                                            temp["names"].push(names[i].innerText);
+                                            temp["metrics"].push(metrics[i].innerText);
+                                        }
+                                    }
+                                    // console.log(temp);
+                                    mdData = temp;
+                                    resolve(1);
+                                }
+                                else{
+                                    let temp = {
+                                        "names": [],
+                                        "serviceNames": [],
+                                        "metrics": [],
+                                        "head": [names[0].innerText, serviceNames[0].innerText, metrics[0].innerText]
+                                    }
+                                    // Loads data from MD Table, skips header
+                                    const limit = names.length -1;
+                                    let i = 1;
+                                    for(i; i <= limit; i++){
+                                        if(metrics[i].innerText != "-"){
+                                            temp["names"].push(names[i].innerText);
+                                            temp["serviceNames"].push(serviceNames[i].innerText.substring(0, 30) + "...");
+                                            temp["metrics"].push(metrics[i].innerText);
+                                        }
+                                    }
+                                    // console.log(temp);
+                                    mdData = temp;
+                                    resolve(1);
+                                }
+                            }
+                        });
+                    }
+
+                }
+            });
+
+            function outputCol(target, header, data, left) {
+                let css = {'text-align': 'right', 'font-family': 'monospace'}
+                if (left) css = {'text-align': 'left', 'font-family': 'monospace'}
+                let $col = $(`<div>`)
+                    .addClass('powerupTableCol');
+                let $head = $(`<div>`)
+                    .css(css)
+                    .appendTo($col);
+                $(`<span>`)
+                    .text(header)
+                    .appendTo($head);
+                data.forEach(d => {
+                    let $div = $(`<div>`)
+                        .css(css)
+                        .appendTo($col);
+                    $(`<span>`)
+                        .text(d)
+                        .appendTo($div);
+                });
+                $col.appendTo($(target));
+            }
         }
     }
 
@@ -8287,6 +8469,7 @@ var DashboardPowerups = (function () {
 
             //misc visualizations
             promises.push(pub.PUMarky());               //added by Santi
+            promises.push(pub.PUMultiDimensional());    //added by Trevor
             promises.push(pub.PUbackground());
             promises.push(pub.extDisclaimer());
             promises.push(pub.bannerPowerUp());
