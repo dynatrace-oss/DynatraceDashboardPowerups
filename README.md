@@ -781,6 +781,6 @@ Add a Graph tile to your dashboard and plot Response time (builtin:service.respo
 Syntax:
 - `!PU(multidimensional):mda=REPLACE-WITH-YOUR-SAVED-MDA-URL`
 
-![MultidimensionalAnalysis](Assets/mdaProp.png)
+![MultidimensionalAnalysis](Assets/mdaPrep.png)
 ![MultidimensionalAnalysis](Assets/mdaDashboard.png)
 ![MultidimensionalAnalysis](Assets/mdaOriginal.png)
