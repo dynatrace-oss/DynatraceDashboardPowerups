@@ -8249,13 +8249,18 @@ var DashboardPowerups = (function () {
             $col.appendTo($(target));
         }
     }
-
-    
-    let PUMultiDimensional = true;
+  
     pub.PUMultiDimensional = function () {
-        if(PUMultiDimensional){
-            $(TITLE_SELECTOR).each((i, el) => {   
-                console.log(window.performance.memory);                 
+        try{
+            MDA();
+        }
+        catch(e){
+            console.log(e);
+            MDA();
+        }
+
+        function MDA(){
+            $(TITLE_SELECTOR).each((i, el) => {                  
                 let $title = $(el);
                 let $tile = $title.parents(TILE_SELECTOR);
                 let title = $title.text();
@@ -8287,7 +8292,6 @@ var DashboardPowerups = (function () {
 
                     url = obj.url2;
                     obj = {};
-                    console.log(url);
                     //Refactored to here
 
                     // create iframe and add to page (loads MDA page)
@@ -8351,15 +8355,12 @@ var DashboardPowerups = (function () {
                             obj.names = iframe.contentWindow.document.getElementsByClassName("dt-table-column-name");
                             // tries for 30 seconds, then gives up
                             if (num > 3000){
-                                //give up
-                                //console.log("I gave up :( ");
                                 obj = null;
                                 resolve(1);
                             }
                             // if element not found, page not done loading. Try again.
                             else if(obj.names.length == 0){
                                 setTimeout(function(){
-                                    //console.log("Trying again...");
                                     const p = extract(iframe, num + 1);
                                     obj = null;
                                     Promise.allSettled([p]).then(function(){resolve(1)});
