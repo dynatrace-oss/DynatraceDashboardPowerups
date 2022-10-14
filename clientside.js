@@ -8348,7 +8348,7 @@ var DashboardPowerups = (function () {
                     );
                     
                     // Extracts data from MD Table and preps it
-                    async function extract(iframe, num) {
+                    function extract(iframe, num) {
                         return new Promise(resolve => {
                             // extract cells from iframe
                             let obj = {};
