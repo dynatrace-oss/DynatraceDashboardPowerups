@@ -105,15 +105,16 @@ var DashboardPowerups = (function () {
     const PU_TIMEONPAGE = '!PU(timeonpage):';
     const PU_CUMULATIVE = '!PU(cumulative):';
     const PU_ELLIPSIS = '!PU(ellipsis):';
-    const PU_MARKY = '!PU(marky):';                             // Santiago
-    const PU_RAGECLICK = '!PU(rageclick):';                     // Trevor
+    const PU_MARKY = '!PU(marky):';                                // Santiago
+    const PU_RAGECLICK = '!PU(rageclick):';                        // Trevor
+    const PU_MULTIDIMENSIONAL = '!PU(multidimensional):';          // Trevor
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS, PU_MARKY, //last added by Santi
-        PU_RAGECLICK //last added by trevor
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS, PU_MARKY,
+        PU_RAGECLICK, PU_MULTIDIMENSIONAL
     ];
 
     const COLOR_RED = "#c41425";
@@ -8249,6 +8250,199 @@ var DashboardPowerups = (function () {
         }
     }
 
+    
+    let PUMultiDimensional = true;
+    pub.PUMultiDimensional = function () {
+        if(PUMultiDimensional){
+            $(TITLE_SELECTOR).each((i, el) => {   
+                console.log(window.performance.memory);                 
+                let $title = $(el);
+                let $tile = $title.parents(TILE_SELECTOR);
+                let title = $title.text();
+                // Fix issue: Does not populate tile when the replacement tile would show no data.
+
+                if (title.includes(PU_MULTIDIMENSIONAL)) {
+                    let $table = $tile.find(TABLE_SELECTOR);
+                    let url = title.substring(26);
+
+                    // rebuild mda link with dashboard filters (management zone + timeframe)
+                    let obj = {
+                        URLPARTS: (window.location.href).split(";"),
+                        gtf: '',    //Timeframe
+                        gt: '',     //ManagementZone ID
+                        URI: url.split("mda?"),
+                        UARR: ''
+                    }
+                    obj.UARR = obj.URI[1].split("&");
+
+                    (obj.URLPARTS).forEach(element => {
+                        if(element.includes('gtf=')) obj.gtf = element;
+                        if(element.includes('gf=')) obj.gf = element;
+                    });
+                    obj.url2 = obj.URI[0] + "mda?" + obj.gtf + "&" + obj.gf + "&";
+                    (obj.UARR).forEach(element => {
+                        if(!element.includes('gtf=') && !element.includes('gf=')) obj.url2 += element + "&";
+                    });
+                    obj.url2 = obj.url2.substring(0, obj.url2.length-1);
+
+                    url = obj.url2;
+                    obj = {};
+                    console.log(url);
+                    //Refactored to here
+
+                    // create iframe and add to page (loads MDA page)
+                    let iff = document.createElement("IFRAME");
+                    iff.id = url;
+                    iff.src = url;
+                    iff.style.display = "none";
+                    document.body.appendChild(iff);
+
+                    let mdData = {};
+
+                    let p = extract(iff, 0);
+
+                    Promise.allSettled([p]).then(
+                        function(){                          
+                            // arrays are created. Now build table and push it to the tile.
+                            let parentE = $table[0].parentElement;
+                            (parentE).style.display = "inline";
+                            (parentE.parentElement.childNodes[0]).style.display = "none";
+                            let tileList = parentE.getElementsByClassName("powerupNewTable");
+                            // After editing a dashboard, last injected table will still be in tile, resulting in duplicates.
+                            // This removes the old table.
+                            while(tileList.length > 0){
+                                tileList[0].parentNode.removeChild(tileList[0]);
+                            }
+                            $table.hide();
+                            let $newTable = $(`<div>`)
+                                .addClass('powerupNewTable')
+                                .insertAfter($table);
+                            let $grid = $(`<div>`)
+                                .addClass('powerupTableGrid')
+                                .appendTo($newTable);
+                            if(mdData.hasOwnProperty("serviceNames")){
+                                outputCol($grid, mdData.head[1], mdData["serviceNames"], true);
+                                outputCol($grid, mdData.head[0], mdData["names"], true);
+                                outputCol($grid, mdData.head[2], mdData["metrics"], false);
+                            }
+                            else{
+                                outputCol($grid, mdData.head[0], mdData["names"], true);
+                                outputCol($grid, mdData.head[1], mdData["metrics"], false);
+                            }
+                            let numCols = $grid.children().length;
+                            $grid.css('grid-template-columns', `repeat(${numCols}, minmax(80px, auto))`);
+                            document.getElementById(url).remove();
+                            tileList = null;
+                            parentE = null;
+                            p = null;
+                            iff = null;
+                            mdData = null;
+                            // powerupNewTable
+            
+                            powerupsFired['PU_MULTIDIMENSIONAL'] ? powerupsFired['PU_MULTIDIMENSIONAL']++ : powerupsFired['PU_MULTIDIMENSIONAL'] = 1;
+                        }
+                    );
+                    
+                    // Extracts data from MD Table and preps it
+                    async function extract(iframe, num) {
+                        return new Promise(resolve => {
+                            // extract cells from iframe
+                            let obj = {};
+                            obj.names = iframe.contentWindow.document.getElementsByClassName("dt-table-column-name");
+                            // tries for 30 seconds, then gives up
+                            if (num > 3000){
+                                //give up
+                                //console.log("I gave up :( ");
+                                obj = null;
+                                resolve(1);
+                            }
+                            // if element not found, page not done loading. Try again.
+                            else if(obj.names.length == 0){
+                                setTimeout(function(){
+                                    //console.log("Trying again...");
+                                    const p = extract(iframe, num + 1);
+                                    obj = null;
+                                    Promise.allSettled([p]).then(function(){resolve(1)});
+                                }, 100);
+                            }
+                            // data loaded
+                            else{                      
+                                obj.serviceNames = iframe.contentWindow.document.getElementsByClassName("dt-table-column-serviceName");
+                                obj.metrics = iframe.contentWindow.document.getElementsByClassName("dt-table-column-totals");
+                                obj.sNamesExist = true;
+
+                                if(!obj.serviceNames.length){
+                                    obj.sNamesExist = false;
+                                    obj.temp = {
+                                        "names": [],
+                                        "metrics": [],
+                                        "head": [obj.names[0].innerText, obj.metrics[0].innerText]
+                                    }
+                                    // Loads data from MD Table, skips header
+                                    let limit = obj.names.length -1;
+                                    let i = 1;
+                                    for(i; i <= limit; i++){
+                                        if(obj.metrics[i].innerText != "-"){
+                                            obj.temp["names"].push(obj.names[i].innerText);
+                                            obj.temp["metrics"].push(obj.metrics[i].innerText);
+                                        }
+                                    }
+                                    mdData = obj.temp;
+                                    obj = null;
+                                    resolve(1);
+                                }
+                                else{
+                                    obj.temp = {
+                                        "names": [],
+                                        "serviceNames": [],
+                                        "metrics": [],
+                                        "head": [obj.names[0].innerText, obj.serviceNames[0].innerText, obj.metrics[0].innerText]
+                                    }
+                                    // Loads data from MD Table, skips header
+                                    let limit = obj.names.length -1;
+                                    let i = 1;
+                                    for(i; i <= limit; i++){
+                                        if(obj.metrics[i].innerText != "-"){
+                                            obj.temp["names"].push(obj.names[i].innerText);
+                                            obj.temp["serviceNames"].push(obj.serviceNames[i].innerText.substring(0, 30) + "...");
+                                            obj.temp["metrics"].push(obj.metrics[i].innerText);
+                                        }
+                                    }
+                                    mdData = obj.temp;
+                                    obj = null;
+                                    resolve(1);
+                                }
+                            }
+                        });
+                    }
+
+                }
+            });
+
+            function outputCol(target, header, data, left) {
+                let css = {'text-align': 'right', 'font-family': 'monospace'}
+                if (left) css = {'text-align': 'left', 'font-family': 'monospace'}
+                let $col = $(`<div>`)
+                    .addClass('powerupTableCol');
+                let $head = $(`<div>`)
+                    .css(css)
+                    .appendTo($col);
+                $(`<span>`)
+                    .text(header)
+                    .appendTo($head);
+                data.forEach(d => {
+                    let $div = $(`<div>`)
+                        .css(css)
+                        .appendTo($col);
+                    $(`<span>`)
+                        .text(d)
+                        .appendTo($div);
+                });
+                $col.appendTo($(target));
+            }
+        }
+    }
+
     pub.fireAllPowerUps = function (update = false) {
         let mainPromise = new $.Deferred();
         let promises = [];
@@ -8285,7 +8479,8 @@ var DashboardPowerups = (function () {
             promises.push(pub.puGauge());
 
             //misc visualizations
-            promises.push(pub.PUMarky());               //added by Santi
+            promises.push(pub.PUMarky());               //added by Santi            
+            promises.push(pub.PUMultiDimensional());    //added by Trevor
             promises.push(pub.PUbackground());
             promises.push(pub.extDisclaimer());
             promises.push(pub.bannerPowerUp());
