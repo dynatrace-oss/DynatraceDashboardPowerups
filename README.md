@@ -50,7 +50,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [Ellipsis](#Ellipsis)
     - [Marquee](#Marquee)
     - [RageClick](#RageClick)
-    - [MultidimensionalAnalysis](#MultidimensionalAnalysis)
+    - [Graph](#Graph)
 
 ## Installation
 1. Install the extension from the
@@ -769,16 +769,16 @@ Syntax:
 ![rageclick](Assets/RageClickExample.png)
 
 
-### MultidimensionalAnalysis 
-This powerup takes a link to a saved Multidimensional Analysis view, extracts the data, and displays it in a tile on a dashboard.
-Works for Top Web Requests, Top Database Statements, and Exception Analysis. The tile will also take whatever Management Zone filter or timeframe that is displayed in the dashboard. The Multidimensional Analysis view **MUST** be from the same Dynatrace environment as the dashboard it is displayed in.
-Apply the metric, aggregation, and any filters from the Multidimensional Analysis view.
+### Graph 
+This powerup will plot a list of datapoints that you specify using !PU(link) within a Markdown tile.
+Datapoints will be plotted in the order that they are listed. Thresholds can be included.
 
-**Note:** This tile will take a few seconds to display in your dashboard, as it is dependent on the Multidimensional Analysis page, which can load slow if querying a large data set.
+To use, create a new Graph tile, plot a metric, replace the chart title with the Power Up syntax.
 
-Add a Graph tile to your dashboard and plot Response time (builtin:service.response.time). Don't do anything else in the Data Explorer other than pinning it to a dashboard. Replace the title of the tile in the dashboard with the syntax below.
+Graph Syntax:
+- `!PU(graph):values=R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11`
+- `!PU(graph):values=D1,D2,D3,D4,D5;color=green;thld=15;hcol=green;lcol=red`
 
-Syntax:
-- `!PU(multidimensional):mda=REPLACE-WITH-YOUR-SAVED-MDA-URL`
 
-![MultidimensionalAnalysis](Assets/mda.png)
+![Graph](Assets/Graph1.png)
+![Graph](Assets/Graph2.png)
