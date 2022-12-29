@@ -8156,8 +8156,6 @@ var DashboardPowerups = (function () {
             let $tile = $title.parents(TILE_SELECTOR);
             
             if (title.includes(PU_GRAPH)){
-                // console.clear(); 
-                // console.log(new Date());
                 let args = argsplit(title, PU_GRAPH);
                 console.log(args);
                 const vals = args.values.split(',');
@@ -8167,6 +8165,8 @@ var DashboardPowerups = (function () {
                 if(args.hasOwnProperty("thld")) graphThresholdValue = args.thld;
                 let graphThresholdColor = "red";
                 if(args.hasOwnProperty("lcol")) graphThresholdColor = args.lcol;
+                let graphType = 'area';
+                if(args.hasOwnProperty("type")) graphType = args.type;
                 let dataPoints = [].concat(vals);
                 let graphThreshold = [];
                 let completedElements = [];
@@ -8177,17 +8177,13 @@ var DashboardPowerups = (function () {
                         const el = vals[i];
                         const regex = new RegExp("("+el+"$|"+el+"\\D)", 'g');
                         if (!completedElements.includes(el) && p.innerText.includes("!PU(link):" + el) && p.innerText.search(regex)) {
-                            console.log(el);
                             const hasPMath = (p.parentElement.parentElement).childNodes;
                             if(hasPMath[1] && hasPMath[1].classList.contains("powerupMath")){
-                                // console.log("has math");
                                 dataPoints[dataPoints.indexOf(el)] = Number(hasPMath[1].innerText);
-                                console.log("D: " + el + " = " + Number(hasPMath[1].innerText));
                                 if(graphThresholdValue != null) graphThreshold.push(Number(graphThresholdValue));
                             }
                             else{
                                 dataPoints[dataPoints.indexOf(el)] = Number(p.nextElementSibling.innerText);
-                                console.log("D: " + el + " = " + Number(p.nextElementSibling.innerText));
                                 if(graphThresholdValue != null) graphThreshold.push(Number(graphThresholdValue));
                             }
                             completedElements.push(el);
@@ -8195,66 +8191,43 @@ var DashboardPowerups = (function () {
                         } 
                     };
                 };
-                console.log(dataPoints);
-                console.log(graphThreshold);
-                // console.log("replaceTileContent");
-                // console.log(replaceTileContent);
-                // console.log($tile[0].getElementsByClassName("highcharts-container"));
-                // console.log(JSON.stringify($tile[0].querySelector('[uitestid="gwt-debug-legendContainer"]')));
                 const leg = $tile[0].querySelector('[uitestid="gwt-debug-legendContainer"]');
                 if(leg) leg.remove();
 
                 //Replaces tile's chart with data.
                 let chartdata = {    
-                    chart: {
-                        backgroundColor: 'transparent'
-                    },        
+                    chart: { backgroundColor: 'transparent' },        
                     yAxis: {
-                        labels: {
-                           style: {
-                              color: '#ffffff',
-                           }
-                        },
+                        labels: { style: { color: '#ffffff', } },
                         gridLineColor: '#888',
-                        title: {
-                            text: ''
-                        }
+                        title: { text: '' }
                     },   
-                    xAxis: {
-                        visible: false
-                    },              
+                    xAxis: { visible: false },              
                     plotOptions: {
                         series: {
-                            label: {
-                                connectorAllowed: false
-                            },
+                            label: { connectorAllowed: false},
                             marker: {
                                 enabled: false,
-                                states: {
-                                    hover: {
-                                        enabled: false
-                                    }
-                                }
+                                states: { hover: { enabled: false } }
                             }
+                        },
+                        column: {
+                          negativeColor: 'red',
+                          threshold: 0,
+                          dataLabels: {
+                            enabled: true,
+                            formatter: function() {}
+                          }
                         }
                     },     
-                    legend: {
-                        enabled: false
-                    },
-                    exporting:{
-                        buttons:{
-                          contextButton:{
-                            enabled: false
-                        }
-                      }
-                    },
-                    credits: {
-                        enabled: false
-                    },
+                    legend: { enabled: false },
+                    exporting:{ buttons:{ contextButton:{ enabled: false } } },
+                    credits: { enabled: false },
                     series: [
                         {
                             name: 'Data',
                             data: dataPoints,
+                            type: graphType,
                             color: graphLineColor
                         }
                     ]
@@ -8263,6 +8236,7 @@ var DashboardPowerups = (function () {
                     chartdata['series'] = [{
                         name: 'Data',
                         data: dataPoints,
+                        type: graphType,
                         color: graphLineColor,
                         threshold: graphThresholdValue,
                         negativeColor: graphThresholdColor
