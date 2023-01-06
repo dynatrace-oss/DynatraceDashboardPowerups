@@ -105,15 +105,16 @@ var DashboardPowerups = (function () {
     const PU_TIMEONPAGE = '!PU(timeonpage):';
     const PU_CUMULATIVE = '!PU(cumulative):';
     const PU_ELLIPSIS = '!PU(ellipsis):';
-    const PU_MARKY = '!PU(marky):';                             // Santiago
-    const PU_RAGECLICK = '!PU(rageclick):';                     // Trevor
+    const PU_MARKY = '!PU(marky):';                                // Santiago
+    const PU_RAGECLICK = '!PU(rageclick):';                        // Trevor
+    const PU_GRAPH = '!PU(graph):';                                // Trevor
 
     const USQL_URL = `ui/user-sessions/query?sessionquery=`;
     const MARKERS = [PU_COLOR, PU_SVG, PU_LINK, PU_MAP, PU_BANNER, PU_LINE, PU_USQLSTACK, PU_HEATMAP,
         PU_FUNNEL, PU_SANKEY, PU_MATH, PU_DATE, PU_GAUGE, PU_USQLCOLOR, PU_COMPARE, PU_VLOOKUP, PU_STDEV, PU_100STACK,
         PU_TABLE, PU_BACKGROUND, PU_MCOMPARE, PU_FUNNELCOLORS, PU_FORECAST, PU_TILECSS, PU_GRID, PU_MENU,
-        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS, PU_MARKY, //last added by Santi
-        PU_RAGECLICK //last added by trevor
+        PU_TOPCOLOR, PU_HONEYCOMB, PU_AUTOHIDE, PU_TREEMAP, PU_TIMEONPAGE, PU_CUMULATIVE, PU_ELLIPSIS, PU_MARKY,
+        PU_RAGECLICK, PU_GRAPH
     ];
 
     const COLOR_RED = "#c41425";
@@ -8148,7 +8149,111 @@ var DashboardPowerups = (function () {
         powerupsFired['PU_MARKY'] ? powerupsFired['PU_MARKY']++ : powerupsFired['PU_MARKY'] = 1;
     }
 
-    let PURageCLickFlag = true;
+    pub.PUGraph = function () {
+        $(TITLE_SELECTOR).each((i, el) => {
+            let $title = $(el);
+            let title = $title.text();
+            let $tile = $title.parents(TILE_SELECTOR);
+            
+            if (title.includes(PU_GRAPH)){
+                let args = argsplit(title, PU_GRAPH);
+                console.log(args);
+                const vals = args.values.split(',');
+                let graphLineColor = "#7C38A1";
+                if(args.hasOwnProperty("hcol")) graphLineColor = args.hcol;
+                let graphThresholdValue = null;
+                if(args.hasOwnProperty("thld")) graphThresholdValue = args.thld;
+                let graphThresholdColor = "red";
+                if(args.hasOwnProperty("lcol")) graphThresholdColor = args.lcol;
+                let graphType = 'area';
+                if(args.hasOwnProperty("type")) graphType = args.type;
+                let dataPoints = [].concat(vals);
+                let graphThreshold = [];
+                let completedElements = [];
+                //Looks for all datapoints by searching tiles for PUlink + value name
+                for (const p of document.querySelectorAll('p')) {
+                    let i = vals.length-1;
+                    for(i; i >= 0; i--){
+                        const el = vals[i];
+                        const regex = new RegExp("("+el+"$|"+el+"\\D)", 'g');
+                        if (!completedElements.includes(el) && p.innerText.includes("!PU(link):" + el) && p.innerText.search(regex)) {
+                            const hasPMath = (p.parentElement.parentElement).childNodes;
+                            if(hasPMath[1] && hasPMath[1].classList.contains("powerupMath")){
+                                dataPoints[dataPoints.indexOf(el)] = Number(hasPMath[1].innerText);
+                                if(graphThresholdValue != null) graphThreshold.push(Number(graphThresholdValue));
+                            }
+                            else{
+                                dataPoints[dataPoints.indexOf(el)] = Number(p.nextElementSibling.innerText);
+                                if(graphThresholdValue != null) graphThreshold.push(Number(graphThresholdValue));
+                            }
+                            completedElements.push(el);
+                            break;
+                        } 
+                    };
+                };
+                const leg = $tile[0].querySelector('[uitestid="gwt-debug-legendContainer"]');
+                if(leg) leg.remove();
+
+                //Replaces tile's chart with data.
+                let chartdata = {    
+                    chart: { backgroundColor: 'transparent' },        
+                    yAxis: {
+                        labels: { style: { color: '#ffffff', } },
+                        gridLineColor: '#888',
+                        title: { text: '' }
+                    },   
+                    xAxis: { visible: false },              
+                    plotOptions: {
+                        series: {
+                            label: { connectorAllowed: false},
+                            marker: {
+                                enabled: false,
+                                states: { hover: { enabled: false } }
+                            }
+                        },
+                        column: {
+                          negativeColor: 'red',
+                          threshold: 0,
+                          dataLabels: {
+                            enabled: true,
+                            formatter: function() {}
+                          }
+                        }
+                    },     
+                    legend: { enabled: false },
+                    exporting:{ buttons:{ contextButton:{ enabled: false } } },
+                    credits: { enabled: false },
+                    series: [
+                        {
+                            name: 'Data',
+                            data: dataPoints,
+                            type: graphType,
+                            color: graphLineColor
+                        }
+                    ]
+                }
+                if(graphThresholdValue != null){
+                    chartdata['series'] = [{
+                        name: 'Data',
+                        data: dataPoints,
+                        type: graphType,
+                        color: graphLineColor,
+                        threshold: graphThresholdValue,
+                        negativeColor: graphThresholdColor
+                    },
+                    {
+                        name: "threshold",
+                        data: graphThreshold,
+                        color: "#7A7A23",
+                        enableMouseTracking: false    
+                    }]
+                }
+                const graphChart = Highcharts.chart($tile[0].getElementsByClassName("highcharts-container")[0].id, chartdata);
+            }
+        });
+        powerupsFired['PU_GRAPH'] ? powerupsFired['PU_GRAPH']++ : powerupsFired['PU_GRAPH'] = 1;
+    }
+
     pub.PURageClick = function () {
         $(TITLE_SELECTOR).each((i, el) => {
             let $title = $(el);
@@ -8285,7 +8390,8 @@ var DashboardPowerups = (function () {
             promises.push(pub.puGauge());
 
             //misc visualizations
-            promises.push(pub.PUMarky());               //added by Santi
+            promises.push(pub.PUMarky());               //added by Santi          
+            promises.push(pub.PUGraph());               //added by Trevor
             promises.push(pub.PUbackground());
             promises.push(pub.extDisclaimer());
             promises.push(pub.bannerPowerUp());

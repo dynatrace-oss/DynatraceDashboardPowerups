@@ -50,6 +50,7 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
     - [Ellipsis](#Ellipsis)
     - [Marquee](#Marquee)
     - [RageClick](#RageClick)
+    - [Graph](#Graph)
 
 ## Installation
 1. Install the extension from the
@@ -766,3 +767,19 @@ Syntax:
 - `!PU(rageclick):`
 
 ![rageclick](Assets/RageClickExample.png)
+
+
+### Graph 
+This powerup will plot a list of datapoints that you specify using `!PU(link)` within a Markdown tile.
+Datapoints will be plotted in the order that they are listed. Thresholds can be included.
+The `type` argument can take `line`, `column`, or `area` arguments.
+
+To use, create a new Graph tile, plot a metric, replace the chart title with the Power Up syntax.
+
+Syntax:
+- `!PU(graph):values=R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11;type=line`
+- `!PU(graph):values=D1,D2,D3,D4,D5;color=green;thld=15;hcol=green;lcol=red;type=line`
+
+
+![Graph](Assets/Graph1.png)
+![Graph](Assets/Graph2.png)
