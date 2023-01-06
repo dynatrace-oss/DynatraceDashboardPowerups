@@ -50,11 +50,9 @@ if (typeof (INJECTED) == "undefined") {
                     dGrid.style.visibility = 'hidden';
                     dGrid.style.zoom = '10%';
                     zoomA = true;
-                    console.log('hide');
                     setTimeout(function(){
                         dGrid.style.zoom = '100%';
                         dGrid.style.visibility = 'visible';
-                        console.log('unhide');
                     }, 100);
                 }            
             }, 100);
