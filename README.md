@@ -160,6 +160,7 @@ Explanation:
 - `tooltip=` tooltip text for the icon. Use underscores in place of spaces, they'll be swapped for spaces.
 - `url=` (optional) if you want the icon to be clickable, give it a url. REQUIRED: use this as last argument.
 Just be sure to include the `!PU(link):` with a matching string in the desired Single Value Tile
+- `number=` (optional) set to true if you want a number to be displayed along with the SVG, false by default.
 
 Example:
 ![Icons](Assets/icons.png)

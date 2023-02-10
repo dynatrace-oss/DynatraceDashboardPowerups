@@ -62,6 +62,8 @@ if (typeof (INJECTED) == "undefined") {
             !$(".loader").length &&                                 //main loading distractor gone
             !$('[uitestid="gwt-debug-tileLoader"]:visible').length  //tile distractors hidden
         ) {
+            dGrid.style.zoom = '100%';
+            dGrid.style.visibility = 'visible';
             if (POWERUPDEBUG) console.log("Powerup: things look ready, begin power-ups...");
             let config_p = loadConfig();
 

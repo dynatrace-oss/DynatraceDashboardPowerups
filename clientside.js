@@ -1385,7 +1385,7 @@ var DashboardPowerups = (function () {
             let $title = $tile.find(TITLE_SELECTOR);
             let title = $title.text();
             if (title.includes(PU_LINE)) {
-                deprecatePU($tile, "PU_Line deprecated. Please use Data Explorer.");
+                //deprecatePU($tile, "PU_Line deprecated. Please use Data Explorer.");
                 if (pub.PULine(chart, title)) {
                     pu = true;
                     lineChartPU();
@@ -2452,7 +2452,7 @@ var DashboardPowerups = (function () {
             //Step1: change tile colors
             if ($title.text().includes(PU_COLOR)) { //example !PU(color):base=high;warn=90;crit=70
                 if (pub.config.Powerups.debug) console.log("Powerup: color power-up found");
-                deprecatePU($tile, "PU_Color deprecated. Please use Data Explorer.");
+                //deprecatePU($tile, "PU_Color deprecated. Please use Data Explorer.");
 
                 let args = argsplit(title, PU_COLOR);
                 let base = (args.find(x => x[0] == "base") || [])[1] || "low";
@@ -2565,7 +2565,7 @@ var DashboardPowerups = (function () {
 
             if ($title.text().includes(PU_TOPCOLOR)) { //example !PU(topcolor):base=high;warn=90;crit=70
                 if (pub.config.Powerups.debug) console.log("Powerup: toplist color power-up found");
-                deprecatePU($tile, "PU_Toplist deprecated. Please use Data Explorer.");
+                //deprecatePU($tile, "PU_Toplist deprecated. Please use Data Explorer.");
 
                 let args = argsplit(title, PU_TOPCOLOR);
                 let vals = ((args.find(x => x[0] == "vals") || [])[1] || ".5,.7,.85,.94").split(',').map(x => Number(x));
@@ -2652,6 +2652,7 @@ var DashboardPowerups = (function () {
             let warn = Number((args.find(x => x[0] == "warn") || [])[1]);
             let crit = Number((args.find(x => x[0] == "crit") || [])[1]);
             let tooltip = (args.find(x => x[0] == "tooltip") || [])[1];
+            let numBool = (args.find(x => x[0] == "number") || [])[1];
 
             let url = (args.argstring.match(/url=([^ ]+)/) || [])[1];
             //let url = (args.find(x => x[0] == "url") || [])[1]; //this does not work due to ; in urls
@@ -2662,7 +2663,8 @@ var DashboardPowerups = (function () {
                 base: base,
                 warn: warn,
                 crit: crit,
-                url: url
+                url: url,
+                numBool: numBool
             }
             let val;
             if (link != undefined)
@@ -2691,24 +2693,96 @@ var DashboardPowerups = (function () {
                         $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
                         $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
                         $svg.removeClass("powerup-svg-nan");
+                        let tc = 'white';
+                        let x = 0;
+                        if(numBool) x = 1;
                         if (isNaN(val)) {
                             $svg.addClass("powerup-svg-nan");
                         } else if (base == "low") {
-                            if (val < warn) $svg.addClass(class_norm);
-                            else if (val < crit) $svg.addClass(class_warn);
-                            else $svg.addClass(class_crit);
+                            if (val < warn) {
+                                $svg.addClass(class_norm);
+                                tc = 'green';
+                            }
+                            else if (val < crit) {
+                                $svg.addClass(class_warn);
+                                tc = 'yellow';
+                            }
+                            else {
+                                $svg.addClass(class_crit);
+                                tc = 'red';
+                            }
                         } else if (base == "high") {
-                            if (val > warn) $svg.addClass(class_norm);
-                            else if (val > crit) $svg.addClass(class_warn);
-                            else $svg.addClass(class_crit);
+                            if (val > warn) {
+                                $svg.addClass(class_norm);
+                                tc = 'green';
+                            }
+                            else if (val > crit) {
+                                $svg.addClass(class_warn);
+                                tc = 'yellow';
+                            }
+                            else {
+                                $svg.addClass(class_crit);
+                                tc = 'red';
+                            }
                         } else if (typeof (base) == "string" && base.startsWith("abs")) {
                             let abs = Number((base.split(',') || ["abs", "0"])[1]);
-                            if (val >= abs + crit || val <= abs - crit) $target.addClass(class_crit);
-                            else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
-                            else $target.addClass(class_norm);
+                            if (val >= abs + crit || val <= abs - crit) {
+                                $target.addClass(class_crit);
+                                tc = 'red';
+                            }
+                            else if (val >= abs + warn || val <= abs - warn) {
+                                $target.addClass(class_warn);
+                                tc = 'yellow';
+                            }
+                            else {
+                                $target.addClass(class_norm);
+                                tc = 'green';
+                            }
                         } else if (color) {
                             $svg.css("fill", color);
+                        }                    
+                        let tm = $svgcontainer[0];
+                        if(numBool){
+                            if(tm.innerHTML.includes('span')){
+                                if($svgcontainer[0].childNodes[0]!= null) $svgcontainer[0].childNodes[0].remove();
+                                console.log('removed number');
+                            }
+                            tm.innerHTML = "<span style='font-size: 12px;color:"+tc+";'>" + val + "&nbsp;</span>" + tm.innerHTML;                            
                         }
+                        $svgcontainer[0].childNodes.forEach(element => {
+                            element.style.display = "inline";
+                            element.style.height = "100%";
+                            element.style.verticalAlign = "middle";
+                        });
+                        if(tc == 'yellow') {
+                            if($svgcontainer[0].childNodes[x+2]!= null) $svgcontainer[0].childNodes[x+2].style.display = 'none';
+                            if($svgcontainer[0].childNodes[x]!= null) $svgcontainer[0].childNodes[x].style.display = 'none';
+                        }
+                        else if (base == 'low'){ 
+                            if (tc == 'green'){
+                                if($svgcontainer[0].childNodes[x+2]!= null) $svgcontainer[0].childNodes[x+2].style.display = 'none';
+                                if($svgcontainer[0].childNodes[x+1]!= null) $svgcontainer[0].childNodes[x+1].style.display = 'none';
+                                if($svgcontainer[0].childNodes[x]!= null) $svgcontainer[0].childNodes[x].style.display = 'inline';
+                            }
+                            else{
+                                if($svgcontainer[0].childNodes[x+1]!= null) $svgcontainer[0].childNodes[x+1].style.display = 'none';
+                                if($svgcontainer[0].childNodes[x]!= null) $svgcontainer[0].childNodes[x].style.display = 'none'; 
+                                if($svgcontainer[0].childNodes[x+2]!= null) $svgcontainer[0].childNodes[x+2].style.display = 'inline';                               
+                            }
+                        }
+                        else{
+                            if (tc == 'green'){
+                                if($svgcontainer[0].childNodes[x+1]!= null) $svgcontainer[0].childNodes[x+1].style.display = 'none';
+                                if($svgcontainer[0].childNodes[x+2]!= null) $svgcontainer[0].childNodes[x+2].style.display = 'none';
+                                if($svgcontainer[0].childNodes[x]!= null) $svgcontainer[0].childNodes[x].style.display = 'inline'; 
+                            }
+                            else{
+                                if($svgcontainer[0].childNodes[x]!= null) $svgcontainer[0].childNodes[x].style.display = 'none';
+                                if($svgcontainer[0].childNodes[x+1]!= null) $svgcontainer[0].childNodes[x+1].style.display = 'none';
+                                if($svgcontainer[0].childNodes[x+2]!= null) $svgcontainer[0].childNodes[x+2].style.display = 'inline'; 
+                            }
+                        }
+
                         if (url) {
                             $a = $(`<a>`)
                                 .attr('href', url)
@@ -2813,21 +2887,89 @@ var DashboardPowerups = (function () {
                 $svg.removeClass("powerup-svg-critical powerup-svg-warning powerup-svg-normal");
                 $svg.removeClass("powerup-svg-critical-blink powerup-svg-warning-blink threeBlink");
                 $svg.removeClass("powerup-svg-nan");
+                let tc = 'white';
+                let x = 0;
+                if(args.numBool) x = 1;
                 if (isNaN(val)) {
                     $svg.addClass("powerup-svg-nan");
                 } else if (args.base == "low") {
-                    if (val < args.warn) $svg.addClass(class_norm);
-                    else if (val < args.crit) $svg.addClass(class_warn);
-                    else $svg.addClass(class_crit);
+                    if (val < args.warn) {
+                        $svg.addClass(class_norm);
+                        tc = 'green';
+                    }
+                    else if (val < args.crit) {
+                        $svg.addClass(class_warn);
+                        tc = 'yellow';
+                    }
+                    else {
+                        $svg.addClass(class_crit);
+                        tc = 'red';
+                    }
                 } else if (args.base == "high") {
-                    if (val > args.warn) $svg.addClass(class_norm);
-                    else if (val > args.crit) $svg.addClass(class_warn);
-                    else $svg.addClass(class_crit);
-                } else if (typeof (base) == "string" && base.startsWith("abs")) {
-                    let abs = Number((base.split(',') || ["abs", "0"])[1]);
-                    if (val >= abs + crit || val <= abs - crit) $target.addClass(class_crit);
-                    else if (val >= abs + warn || val <= abs - warn) $target.addClass(class_warn);
-                    else $target.addClass(class_norm);
+                    if (val > args.warn) {
+                        $svg.addClass(class_norm);
+                        tc = 'green';
+                    }
+                    else if (val > args.crit) {
+                        $svg.addClass(class_warn);
+                        tc = 'yellow';                     
+                    }
+                    else {
+                        $svg.addClass(class_crit);
+                        tc = 'red';
+                    }
+                } else if (typeof (args.base) == "string" && args.base.startsWith("abs")) {
+                    let abs = Number((args.base.split(',') || ["abs", "0"])[1]);
+                    if (val >= abs + crit || val <= abs - args.crit) {
+                        $target.addClass(class_crit);
+                        tc = 'red';
+                    }
+                    else if (val >= abs + warn || val <= abs - warn) {
+                        $target.addClass(class_warn);
+                        tc = 'yellow';
+                    }
+                    else {
+                        $target.addClass(class_norm);
+                        tc = 'green';
+                    }
+                } else if (color) {
+                    $svg.css("fill", color);
+                }         
+                let tm = $svgcontainer[0];                
+                if(args.numBool){
+                    if(tm.innerHTML.includes('span')){
+                        if($svgcontainer[0].childNodes[0]!= null) $svgcontainer[0].childNodes[0].remove();
+                        console.log('removed number');
+                    }
+                    tm.innerHTML = "<span style='font-size: 12px;color:"+tc+";'>" + val + "&nbsp;</span>" + tm.innerHTML;                            
+                }
+                if(tc == 'yellow') {
+                    if($svgcontainer[0].childNodes[x+2]!= null) $svgcontainer[0].childNodes[x+2].style.display = 'none';
+                    if($svgcontainer[0].childNodes[x]!= null) $svgcontainer[0].childNodes[x].style.display = 'none';
+                }
+                else if (args.base == 'low'){ 
+                    if (tc == 'green'){
+                        if($svgcontainer[0].childNodes[x+2]!= null) $svgcontainer[0].childNodes[x+2].style.display = 'none';
+                        if($svgcontainer[0].childNodes[x+1]!= null) $svgcontainer[0].childNodes[x+1].style.display = 'none';
+                        if($svgcontainer[0].childNodes[x]!= null) $svgcontainer[0].childNodes[x].style.display = 'inline';
+                    }
+                    else{
+                        if($svgcontainer[0].childNodes[x+1]!= null) $svgcontainer[0].childNodes[x+1].style.display = 'none';
+                        if($svgcontainer[0].childNodes[x]!= null) $svgcontainer[0].childNodes[x].style.display = 'none'; 
+                        if($svgcontainer[0].childNodes[x+2]!= null) $svgcontainer[0].childNodes[x+2].style.display = 'inline';                               
+                    }
+                }
+                else{
+                    if (tc == 'green'){
+                        if($svgcontainer[0].childNodes[x+1]!= null) $svgcontainer[0].childNodes[x+1].style.display = 'none';
+                        if($svgcontainer[0].childNodes[x+2]!= null) $svgcontainer[0].childNodes[x+2].style.display = 'none';
+                        if($svgcontainer[0].childNodes[x]!= null) $svgcontainer[0].childNodes[x].style.display = 'inline'; 
+                    }
+                    else{
+                        if($svgcontainer[0].childNodes[x]!= null) $svgcontainer[0].childNodes[x].style.display = 'none';
+                        if($svgcontainer[0].childNodes[x+1]!= null) $svgcontainer[0].childNodes[x+1].style.display = 'none';
+                        if($svgcontainer[0].childNodes[x+2]!= null) $svgcontainer[0].childNodes[x+2].style.display = 'inline'; 
+                    }
                 }
 
                 //hide menu icon
@@ -5516,7 +5658,7 @@ var DashboardPowerups = (function () {
         //handle containers
         let oldContainer = chart.container;
         let $tile = $(oldContainer).parents(TILE_SELECTOR);
-        deprecatePU($tile, "PU_Heatmap deprecated. Please use Data Explorer.");
+        //deprecatePU($tile, "PU_Heatmap deprecated. Please use Data Explorer.");
         let $newContainer;
         if (typeof (newContainer) !== "undefined") {
             let oldChart = Highcharts.charts
@@ -5771,7 +5913,7 @@ var DashboardPowerups = (function () {
             let title = $title.text();
 
             if ($title.text().includes(PU_FUNNEL)) {
-                deprecatePU($tile, "PU_Funnel deprecated due to low usage... Please create an issue on GitHub if still needed.");
+                //deprecatePU($tile, "PU_Funnel deprecated due to low usage... Please create an issue on GitHub if still needed.");
                 //let argstring = $title.text().split(PU_FUNNEL)[1].split('!')[0];
                 //let args = argstring.split(";").map(x => x.split("="));
                 let args = argsplit(title, PU_FUNNEL);
@@ -5979,7 +6121,7 @@ var DashboardPowerups = (function () {
             let $container = $(el);
             let $tile = $container.parents(".grid-tile");
             let text = $container.text();
-            deprecatePU($tile, "PU_Math targetted for deprecation. Please use Metric Expressions.");
+            // deprecatePU($tile, "PU_Math targetted for deprecation. Please use Metric Expressions.");
 
             $container.children(".powerupMath").remove(); //remove old maths before we get started
             $container.children().each((i, el) => { //handle each paragraph individually
@@ -7080,7 +7222,7 @@ var DashboardPowerups = (function () {
             let $tile = $title.parents(TILE_SELECTOR);
 
             if (title.includes(PU_HONEYCOMB)) {
-                deprecatePU($tile, "PU_Honeycomb deprecated. Please use Data Explorer.");
+                //deprecatePU($tile, "PU_Honeycomb deprecated. Please use Data Explorer.");
                 let args = argsplit(title, PU_HONEYCOMB);
                 let links = (args.find(x => x[0] == "links") || ["", ""])[1].split(',').filter(x => x != "");
                 let drill = (args.argstring.match(/drill=([^ ]+)/) || [])[1];
@@ -7490,7 +7632,7 @@ var DashboardPowerups = (function () {
                         targetSelector: VIEWPORT_SELECTOR
                     }, "*");
                 //$markdown.hide();
-                deprecatePU($tile,"Targetted for Deprecation. Please use built-in image tiles, where possible.");
+                //deprecatePU($tile,"Targetted for Deprecation. Please use built-in image tiles, where possible.");
                 powerupsFired['PU_BACKGROUND'] ? powerupsFired['PU_BACKGROUND']++ : powerupsFired['PU_BACKGROUND'] = 1;
                 backgrounded = true;
                 return true;
@@ -7510,7 +7652,7 @@ var DashboardPowerups = (function () {
             let $tile = $markdown.parents(TILE_SELECTOR);
 
             if (text.includes(PU_IMAGE)) {
-                deprecatePU($tile, "PU_Image deprecated. Please use built-in image tile.");
+                //deprecatePU($tile, "PU_Image deprecated. Please use built-in image tile.");
                 //let argstring = $markdown.text().split(PU_IMAGE)[1].split(/[!\n]/)[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
                 let args = argsplit(text, PU_IMAGE);
@@ -7593,7 +7735,7 @@ var DashboardPowerups = (function () {
                 let $tile = $text.parents(TILE_SELECTOR);
 
                 if ($text.text().includes(PU_TILECSS)) {
-                    deprecatePU($tile, "PU_Tilecss deprecated due to low usage. Create an issue on GitHub if still needed.");
+                    //deprecatePU($tile, "PU_Tilecss deprecated due to low usage. Create an issue on GitHub if still needed.");
                     let match = $text.text().match(reTitle);
                     if (match && match.length) {
                         let cssText = match[0];
@@ -7784,7 +7926,7 @@ var DashboardPowerups = (function () {
             let $tile = $md.parents(TILE_SELECTOR);
 
             if (text.includes(PU_GRID)) {
-                deprecatePU($tile, "PU_Grid deprecated due to low usage.");
+                //deprecatePU($tile, "PU_Grid deprecated due to low usage.");
                 //let argstring = $md.text().split(PU_GRID)[1].split(/[!\n]/)[0].trim();
                 //let args = argstring.split(";").map(x => x.split("="));
                 let args = argsplit(text, PU_GRID);
