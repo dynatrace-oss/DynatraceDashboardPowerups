@@ -8532,7 +8532,7 @@ var DashboardPowerups = (function () {
             promises.push(pub.puGauge());
 
             //misc visualizations
-            promises.push(pub.PUMarky());               //added by Santi      
+            promises.push(pub.PUMarky());               //added by Santi          
             promises.push(pub.PUGraph());               //added by Trevor
             promises.push(pub.PUbackground());
             promises.push(pub.extDisclaimer());

@@ -45,9 +45,17 @@ if (typeof (INJECTED) == "undefined") {
         //Looks for dashboard grid, then scrolls to bottom right, added checks and variable to prevent jittering.
         let dGrid = document.querySelector('[uitestid="gwt-debug-dashboardGrid"]');
         if(dGrid) {
-            dGrid.style.visibility = 'hidden';
-            dGrid.style.zoom = '10%';
-            zoomA = true;
+            setTimeout(function(){
+                if(!zoomA) {
+                    dGrid.style.visibility = 'hidden';
+                    dGrid.style.zoom = '10%';
+                    zoomA = true;
+                    setTimeout(function(){
+                        dGrid.style.zoom = '100%';
+                        dGrid.style.visibility = 'visible';
+                    }, 100);
+                }            
+            }, 100);
         }
         if (document.readyState == 'complete' &&
             $('[uitestid="gwt-debug-dashboardGrid"]').length &&     //grid is loaded
