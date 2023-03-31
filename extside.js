@@ -24,6 +24,7 @@ if (typeof (INJECTED) == "undefined") {
     var HotFixMode = 0;
     var waits = 0;
     var timeout;
+    let zoomA = false;
 
     //Function to check to see if we should do some 
     function powerupListener() {
@@ -40,12 +41,29 @@ if (typeof (INJECTED) == "undefined") {
 
     //This is a function that runs when on the "dashboard" page (the check if we are on that page is at the bottom) 
     function powerupDashboards() {
-        //Wait for the dashboard page to load before proceeding 
+        //Wait for the dashboard page to load before proceeding
+        //Looks for dashboard grid, then scrolls to bottom right, added checks and variable to prevent jittering.
+        let dGrid = document.querySelector('[uitestid="gwt-debug-dashboardGrid"]');
+        if(dGrid) {
+            setTimeout(function(){
+                if(!zoomA) {
+                    dGrid.style.visibility = 'hidden';
+                    dGrid.style.zoom = '10%';
+                    zoomA = true;
+                    setTimeout(function(){
+                        dGrid.style.zoom = '100%';
+                        dGrid.style.visibility = 'visible';
+                    }, 100);
+                }            
+            }, 100);
+        }
         if (document.readyState == 'complete' &&
             $('[uitestid="gwt-debug-dashboardGrid"]').length &&     //grid is loaded
             !$(".loader").length &&                                 //main loading distractor gone
             !$('[uitestid="gwt-debug-tileLoader"]:visible').length  //tile distractors hidden
         ) {
+            dGrid.style.zoom = '100%';
+            dGrid.style.visibility = 'visible';
             if (POWERUPDEBUG) console.log("Powerup: things look ready, begin power-ups...");
             let config_p = loadConfig();
 
