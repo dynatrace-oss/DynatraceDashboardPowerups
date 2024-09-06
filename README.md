@@ -8,6 +8,8 @@ This extension powers-up Dynatrace dashboards to enable cool new experimental fe
    
 *Please note: this is a community developed demonstration application. It is provided without any representations, warranties, or support from Dynatrace. If you have questions about this app, please post on our forum or create an [issue](https://github.com/LucasHocker/DynatraceDashboardPowerUps/issues) on Github*
 
+*End of life notice: 2024.09.06 - This application will no longer be actively maintained, due to greater capabilities in new Dynatrace dashboards and [new restrictions](https://developer.chrome.com/docs/extensions/develop/migrate/mv2-deprecation-timeline) from Chrome. Bug and security fixes will continue as before until such point as this is no longer feasible for Chrome extensions.
+
 ## Table of contents
 - [Install](#Installation)
 - [Configure](#Configure-extension)
